@@ -74,6 +74,12 @@ const itemVariants = {
   }
 };
 
+const getImageUrl = (url: string) => {
+  if (url.startsWith('http') || url.startsWith('data:')) return url;
+  const baseUrl = import.meta.env.BASE_URL || '/';
+  return `${baseUrl}${url.replace(/^\//, '')}`;
+};
+
 export const InfoPanel = () => {
   const { selectedComponent, setSelectedComponent } = usePC();
   const [zoomedImageIndex, setZoomedImageIndex] = useState<number | null>(null);
@@ -168,7 +174,7 @@ export const InfoPanel = () => {
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent z-10 opacity-60"></div>
                 <img 
-                  src={selectedComponent.imageUrls[0]} 
+                  src={getImageUrl(selectedComponent.imageUrls[0])} 
                   alt={selectedComponent.name} 
                   loading="lazy"
                   className="w-full h-40 sm:h-48 object-cover transition-transform duration-700 group-hover:scale-105" 
@@ -184,7 +190,7 @@ export const InfoPanel = () => {
                     <Search size={20} className="text-white drop-shadow-md" />
                   </div>
                   <img 
-                    src={selectedComponent.imageUrls[1]} 
+                    src={getImageUrl(selectedComponent.imageUrls[1])} 
                     alt={`${selectedComponent.name} - opcjonalny widok`} 
                     loading="lazy"
                     className="w-full h-40 sm:h-48 object-cover opacity-90 transition-transform duration-700 group-hover:scale-110 group-hover:opacity-100" 
@@ -263,7 +269,7 @@ export const InfoPanel = () => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              src={selectedComponent.imageUrls[zoomedImageIndex]} 
+              src={getImageUrl(selectedComponent.imageUrls[zoomedImageIndex])} 
               className="relative max-w-full max-h-full object-contain rounded-xl shadow-[0_0_80px_rgba(0,0,0,0.8)] border border-white/5 z-40 pointer-events-none"
             />
           </AnimatePresence>
