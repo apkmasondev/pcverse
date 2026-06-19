@@ -175,7 +175,7 @@ export const UI = () => {
                     if (!rgbEnabled) toggleRgbEnabled();
                     setShowPalette(false);
                   }}
-                  className={`w-8 h-8 rounded-full border-2 transition-transform hover:scale-125 cursor-pointer flex-shrink-0 ${!rgbEnabled ? 'opacity-50 grayscale' : ''}`}
+                  className="w-8 h-8 rounded-full border-2 transition-transform hover:scale-125 cursor-pointer flex-shrink-0"
                   style={{ 
                     backgroundColor: c.hex,
                     borderColor: rgbColor === c.hex && rgbEnabled ? 'white' : 'transparent',
