@@ -22,7 +22,7 @@ export const pcComponents: PCComponent[] = [
     name: "Płyta Główna - Motherboard",
     description: "Główna płytka drukowana, która łączy wszystkie komponenty ze sobą, stanowiąc kręgosłup komputera.",
     role: [
-      "Dostarcza zasilanie do podzespołów",
+      "Dystrybuuje zasilanie i filtruje napięcia poprzez sekcję zasilania (VRM)",
       "Umożliwia komunikację między CPU, RAM i GPU",
       "Przechowuje oprogramowanie BIOS/UEFI"
     ],
@@ -41,7 +41,7 @@ export const pcComponents: PCComponent[] = [
     role: [
       "Wykonuje instrukcje programów",
       "Przeprowadza skomplikowane obliczenia matematyczne",
-      "Zarządza pracą pozostałych podzespołów sprzętowych"
+      "Koordynuje działanie całego systemu, delegując wyspecjalizowane zadania do GPU i RAMu"
     ],
     funFact: "Współczesny procesor zawiera miliardy mikroskopijnych tranzystorów na powierzchni kilku centymetrów kwadratowych.",
     position: [0, 1, -1.7],
@@ -60,7 +60,7 @@ export const pcComponents: PCComponent[] = [
       "Przenosi ciepło na radiatory za pomocą ciepłowodów",
       "Wydmuchuje gorące powietrze za pomocą dedykowanego wentylatora"
     ],
-    funFact: "Chłodzenie wodne potrafi być nawet 4 razy bardziej efektywne w transferze ciepła niż chłodzenie powietrzem.",
+    funFact: "Woda używana w chłodzeniach cieczą (AIO) potrafi odebrać ciepło z procesora ponad 20 razy szybciej niż powietrze, redukując nagłe skoki temperatur (tzw. spiki).",
     position: [0, 1, -1.35],
     explodedPosition: [-0.5, 6.5, 0],
     color: "#a0a0a0",
@@ -88,7 +88,7 @@ export const pcComponents: PCComponent[] = [
   {
     id: "ram_1",
     name: "Pamięć RAM - Memory Module",
-    description: "Pamięć ulotna o ultra-wysokiej prędkości, używana przez procesor do przechowywania aktualnie działających programów.",
+    description: "Pamięć operacyjna o ultra-niskich opóźnieniach (rzędu nanosekund), używana przez procesor do przechowywania aktualnie działających programów.",
     role: [
       "Przechowuje dane dla błyskawicznego dostępu przez CPU",
       "Umożliwia wielozadaniowość bez zacięć systemu",
@@ -128,7 +128,7 @@ export const pcComponents: PCComponent[] = [
       "Przechowuje dane trwale i bezpiecznie",
       "Łączy się bezpośrednio z szyną PCIe dla maksymalnej prędkości"
     ],
-    funFact: "Nowoczesne dyski NVMe SSD potrafią odczytywać dane z prędkością przekraczającą 7 000 megabajtów na sekundę.",
+    funFact: "Najnowsze dyski NVMe (w standardzie PCIe 5.0) osiągają oszałamiającą prędkość odczytu na poziomie przekraczającym 14 000 MB/s!",
     position: [0, -0.2, -1.7],
     explodedPosition: [4.5, -1, -2],
     color: "#f8b500",
@@ -222,7 +222,7 @@ export const pcComponents: PCComponent[] = [
       'Tani koszt w przeliczeniu na 1 Terabajt',
       'System tworzenia kopii zapasowych (Backup)'
     ],
-    funFact: 'Talerze w dysku HDD wirują tak szybko, że gdyby auto poruszało się z tą prędkością kół, jechałoby ponad 400 km/h. Głowica odczytująca unosi się nanometry nad nimi!',
+    funFact: 'Talerze w dysku HDD wirują tak szybko, że głowica odczytująca lewituje ledwie 2 nanometry nad nimi! To tak, jakby lecieć Boeingiem 747 milimetr nad ziemią.',
     position: [1.3, -2.27, -0.5],
     explodedPosition: [6.0, -2.5, 4.0],
     color: "#4a6984",
