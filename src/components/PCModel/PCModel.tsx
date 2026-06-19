@@ -387,13 +387,13 @@ const PSUGeometry = () => {
         <boxGeometry args={[1.8, 0.8, 1.5]} />
         <meshStandardMaterial color="#111" metalness={0.6} roughness={0.5} />
       </mesh>
-      {/* Top Fan Grill - aligned horizontally on Y-axis */}
-      <mesh position={[0, 0.401, 0]}>
+      {/* Bottom Fan Grill - aligned horizontally on Y-axis */}
+      <mesh position={[0, -0.401, 0]}>
         <cylinderGeometry args={[0.6, 0.6, 0.01, 32]} />
         <meshStandardMaterial color="#050505" metalness={0.8} roughness={0.2} />
       </mesh>
       {/* Inner Rotating Fan Blades (horizontal XZ plane, rotating around Y-axis) */}
-      <group position={[0, 0.36, 0]} ref={fanRef}>
+      <group position={[0, -0.36, 0]} ref={fanRef}>
         {/* Hub */}
         <mesh>
           <cylinderGeometry args={[0.15, 0.15, 0.03, 16]} />
@@ -425,9 +425,13 @@ const PSUGeometry = () => {
         <boxGeometry args={[1.5, 0.7, 0.02]} />
         <meshStandardMaterial color="#1a1a1a" roughness={0.8} />
       </mesh>
-      {/* Airflow Exhaust */}
-      <group position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <LocalAirflowParticles count={30} radius={0.4} length={2.5} speedMult={1.5} color="#ef4444" />
+      {/* Airflow Intake (Blue, from bottom into the PSU) */}
+      <group position={[0, -1.0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <LocalAirflowParticles count={20} radius={0.3} length={0.6} speedMult={1.2} color="#38bdf8" />
+      </group>
+      {/* Airflow Exhaust (Red, out the back) */}
+      <group position={[0, 0, -0.75]} rotation={[0, Math.PI, 0]}>
+        <LocalAirflowParticles count={30} radius={0.3} length={1.5} speedMult={1.5} color="#ef4444" />
       </group>
     </group>
   );
