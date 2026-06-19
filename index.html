@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://raw.githubusercontent.com; connect-src 'self' https://raw.githubusercontent.com; worker-src 'self' blob:;" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>PCVerse — Interaktywna Anatomia Komputera 3D | Poznaj Budowę PC</title>
+    <meta name="description" content="Odkryj wnętrze komputera w interaktywnej wizualizacji 3D. Kliknij dowolny podzespół — procesor, kartę graficzną, pamięć RAM — i poznaj jego rolę, budowę oraz wpływ na wydajność." />
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="PCVerse — Interaktywna Anatomia Komputera 3D" />
+    <meta property="og:description" content="Odkryj wnętrze komputera w interaktywnej wizualizacji 3D. Kliknij podzespół i poznaj jego budowę." />
+    <meta property="og:image" content="/images/og-cover.png" />
+    <meta property="og:url" content="https://pcverse.app" />
+    <meta property="og:locale" content="pl_PL" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="PCVerse — Interaktywna Anatomia Komputera 3D" />
+    <meta name="twitter:description" content="Interaktywny model 3D komputera PC. Kliknij podzespół i dowiedz się więcej." />
+    <meta name="twitter:image" content="/images/og-cover.png" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "PCVerse",
+      "description": "Interaktywna anatomia komputera 3D — poznaj budowę procesora, karty graficznej, pamięci RAM i więcej.",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Web",
+      "inLanguage": "pl",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "PLN" }
+    }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

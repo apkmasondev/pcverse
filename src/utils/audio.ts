@@ -1,0 +1,129 @@
+let audioCtx: AudioContext | null = null;
+
+const getContext = () => {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+  return audioCtx;
+};
+
+export const playHoverSound = () => {
+  try {
+    const ctx = getContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(800, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.05);
+    
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.02, ctx.currentTime + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+    
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.1);
+  } catch(e) {}
+};
+
+export const playSelectSound = () => {
+  try {
+    const ctx = getContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(400, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.15);
+    
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+    
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.2);
+  } catch(e) {}
+};
+
+export const playExplodeSound = () => {
+  try {
+    const ctx = getContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    
+    // Sci-fi deep bass sweep
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(150, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.5);
+    
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + 0.1);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+    
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.6);
+  } catch(e) {}
+};
+
+let ambientOsc: OscillatorNode | null = null;
+let ambientGain: GainNode | null = null;
+
+export const playAmbientSound = () => {
+  try {
+    const ctx = getContext();
+    if (ambientOsc) return;
+    
+    ambientOsc = ctx.createOscillator();
+    ambientGain = ctx.createGain();
+    
+    ambientOsc.type = 'brown' as any; // fake brown noise using low sine
+    ambientOsc.type = 'sine';
+    // Server room deep hum
+    ambientOsc.frequency.setValueAtTime(50, ctx.currentTime);
+    
+    // Create a second oscillator for a bit of fan whine
+    const whineOsc = ctx.createOscillator();
+    whineOsc.type = 'triangle';
+    whineOsc.frequency.setValueAtTime(250, ctx.currentTime);
+    
+    ambientOsc.connect(ambientGain);
+    whineOsc.connect(ambientGain);
+    ambientGain.connect(ctx.destination);
+    
+    ambientGain.gain.setValueAtTime(0, ctx.currentTime);
+    ambientGain.gain.linearRampToValueAtTime(0.015, ctx.currentTime + 2); // slow fade in
+    
+    ambientOsc.start(ctx.currentTime);
+    whineOsc.start(ctx.currentTime);
+    
+    // Attach whineOsc to ambientOsc so we can stop it together (hacky but works if we just store whine in custom property or stop it directly)
+    (ambientOsc as any).whine = whineOsc;
+  } catch(e) {}
+};
+
+export const stopAmbientSound = () => {
+  try {
+    if (ambientGain && ambientOsc) {
+      const ctx = getContext();
+      ambientGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1);
+      ambientOsc.stop(ctx.currentTime + 1.1);
+      if ((ambientOsc as any).whine) {
+        (ambientOsc as any).whine.stop(ctx.currentTime + 1.1);
+      }
+      ambientOsc = null;
+      ambientGain = null;
+    }
+  } catch(e) {}
+};

@@ -1,0 +1,236 @@
+export interface PCComponent {
+  id: string;
+  name: string;
+  description: string;
+  role: string[];
+  funFact: string;
+  position: [number, number, number];
+  explodedPosition: [number, number, number];
+  color: string;
+  perfImpact: {
+    gaming: number;
+    ai: number;
+    productivity: number;
+  };
+  geometryArgs: [number, number, number];
+  imageUrls: [string, string];
+}
+
+export const pcComponents: PCComponent[] = [
+  {
+    id: "motherboard",
+    name: "Płyta Główna - Motherboard",
+    description: "Główna płytka drukowana, która łączy wszystkie komponenty ze sobą, stanowiąc kręgosłup komputera.",
+    role: [
+      "Dostarcza zasilanie do podzespołów",
+      "Umożliwia komunikację między CPU, RAM i GPU",
+      "Przechowuje oprogramowanie BIOS/UEFI"
+    ],
+    funFact: "Nowoczesne płyty główne mogą mieć ponad 10 warstw włókna szklanego i miedzianych ścieżek.",
+    position: [0, 0, -1.75],
+    explodedPosition: [-2.5, 0, -7.5],
+    color: "#1a1a2e",
+    perfImpact: { gaming: 5, ai: 5, productivity: 5 },
+    geometryArgs: [3, 4, 0.05],
+    imageUrls: ["/images/components/motherboard.webp", "/images/components/motherboard_macro.webp", "/images/components/mb_alt.webp"],
+  },
+  {
+    id: "cpu",
+    name: "Procesor - CPU",
+    description: "Główny układ obliczeniowy komputera, pełniący rolę jego elektronicznego mózgu.",
+    role: [
+      "Wykonuje instrukcje programów",
+      "Przeprowadza skomplikowane obliczenia matematyczne",
+      "Zarządza pracą pozostałych podzespołów sprzętowych"
+    ],
+    funFact: "Współczesny procesor zawiera miliardy mikroskopijnych tranzystorów na powierzchni kilku centymetrów kwadratowych.",
+    position: [0, 1, -1.7],
+    explodedPosition: [-1.5, 5, -2],
+    color: "#e94560",
+    perfImpact: { gaming: 25, ai: 20, productivity: 40 },
+    geometryArgs: [0.8, 0.8, 0.05],
+    imageUrls: ["/images/components/cpu.webp", "/images/components/cpu_macro.webp", "/images/components/cpu_alt.webp"],
+  },
+  {
+    id: "cpu_cooler",
+    name: "Chłodzenie Procesora - CPU Cooler",
+    description: "Rozprasza ciepło generowane przez procesor, zapobiegając przegrzaniu i spadkom wydajności (thermal throttling).",
+    role: [
+      "Odbiera ciepło poprzez miedziany lub aluminiowy blok",
+      "Przenosi ciepło na radiatory za pomocą ciepłowodów",
+      "Wydmuchuje gorące powietrze za pomocą dedykowanego wentylatora"
+    ],
+    funFact: "Chłodzenie wodne potrafi być nawet 4 razy bardziej efektywne w transferze ciepła niż chłodzenie powietrzem.",
+    position: [0, 1, -1.35],
+    explodedPosition: [-0.5, 6.5, 0],
+    color: "#a0a0a0",
+    perfImpact: { gaming: 5, ai: 5, productivity: 5 },
+    geometryArgs: [1, 0.8, 0.8],
+    imageUrls: ["/images/components/cooler.webp", "/images/components/cooler_macro.webp", "/images/components/cooler_alt.webp"],
+  },
+  {
+    id: "gpu",
+    name: "Karta Graficzna - GPU",
+    description: "Wyspecjalizowany procesor zaprojektowany do akceleracji renderowania grafiki oraz obliczeń równoległych.",
+    role: [
+      "Renderuje grafikę 3D oraz wideo",
+      "Akceleruje zadania związane ze sztuczną inteligencją",
+      "Przetwarza potężne pakiety danych równolegle"
+    ],
+    funFact: "Współczesne układy graficzne (GPU) są wykorzystywane nie tylko w grach, ale także jako potężne 'mózgi' dla sztucznej inteligencji, ponieważ potrafią przetwarzać tysiące operacji matematycznych jednocześnie.",
+    position: [-0.25, -1, -1.15],
+    explodedPosition: [-5, -0.5, -2.5],
+    color: "#6366f1",
+    perfImpact: { gaming: 60, ai: 60, productivity: 15 },
+    geometryArgs: [2.5, 0.5, 1.2],
+    imageUrls: ["/images/components/gpu.webp", "/images/components/gpu_macro.webp", "/images/components/gpu_alt.webp"],
+  },
+  {
+    id: "ram_1",
+    name: "Pamięć RAM - Memory Module",
+    description: "Pamięć ulotna o ultra-wysokiej prędkości, używana przez procesor do przechowywania aktualnie działających programów.",
+    role: [
+      "Przechowuje dane dla błyskawicznego dostępu przez CPU",
+      "Umożliwia wielozadaniowość bez zacięć systemu",
+      "Traci wszystkie dane w momencie odłączenia zasilania"
+    ],
+    funFact: "Pamięć RAM jest około 100 000 razy szybsza od tradycyjnego dysku twardego HDD.",
+    position: [0.8, 1, -1.55],
+    explodedPosition: [2, 5.5, -1.5],
+    color: "#00b8a9",
+    perfImpact: { gaming: 10, ai: 15, productivity: 20 },
+    geometryArgs: [0.1, 1.2, 0.4],
+    imageUrls: ["/images/components/ram.webp", "/images/components/ram_macro.webp", "/images/components/ram_alt.webp"],
+  },
+  {
+    id: "ram_2",
+    name: "Pamięć RAM - Memory Module",
+    description: "Drugi moduł pamięci operacyjnej, pracujący w parze w celu maksymalizacji przepustowości.",
+    role: [
+      "Działa w trybie dual-channel, podwajając przepustowość pamięci",
+      "Zwiększa całkowitą pojemność do obsługi ciężkich zadań",
+      "Redukuje zacinanie się w nowoczesnych grach"
+    ],
+    funFact: "Użycie dwóch kości RAM zamiast jednej dużej może zwiększyć wydajność procesora nawet o 15%.",
+    position: [1.2, 1, -1.55],
+    explodedPosition: [3.5, 5.5, -1.5],
+    color: "#00b8a9",
+    perfImpact: { gaming: 2, ai: 1, productivity: 5 },
+    geometryArgs: [0.1, 1.2, 0.4],
+    imageUrls: ["/images/components/ram.webp", "/images/components/ram_macro.webp", "/images/components/ram_alt.webp"],
+  },
+  {
+    id: "ssd",
+    name: "Dysk NVMe - SSD",
+    description: "Ultraszybka pamięć masowa przechowująca system operacyjny, gry oraz wszystkie pliki użytkownika.",
+    role: [
+      "Dramatycznie redukuje czasy uruchamiania i ładowania",
+      "Przechowuje dane trwale i bezpiecznie",
+      "Łączy się bezpośrednio z szyną PCIe dla maksymalnej prędkości"
+    ],
+    funFact: "Nowoczesne dyski NVMe SSD potrafią odczytywać dane z prędkością przekraczającą 7 000 megabajtów na sekundę.",
+    position: [0, -0.2, -1.7],
+    explodedPosition: [4.5, -1, -2],
+    color: "#f8b500",
+    perfImpact: { gaming: 10, ai: 5, productivity: 15 },
+    geometryArgs: [0.2, 0.8, 0.05],
+    imageUrls: ["/images/components/ssd.webp", "/images/components/ssd_macro.webp", "/images/components/ssd_alt.webp"],
+  },
+  {
+    id: "psu",
+    name: "Zasilacz - PSU",
+    description: "Konwertuje prąd przemienny z gniazdka na stabilny prąd stały, zasilając komputer.",
+    role: [
+      "Dostarcza czyste, stabilne napięcie do czułej elektroniki",
+      "Chroni przed przepięciami i zwarciami",
+      "Zasila wszystkie wewnętrzne podzespoły"
+    ],
+    funFact: "Wydajny zasilacz zamienia mniej prądu w bezużyteczne ciepło, oszczędzając Twoje pieniądze na rachunkach za prąd.",
+    position: [-1.2, -1.92, -1.0],
+    explodedPosition: [-3.5, -3.5, 0.5],
+    color: "#2a363b",
+    perfImpact: { gaming: 0, ai: 0, productivity: 0 },
+    geometryArgs: [1.8, 1, 1.5],
+    imageUrls: ["/images/components/psu.webp", "/images/components/psu_macro.webp", "/images/components/psu_alt.webp"],
+  },
+
+  {
+    id: "case_fan",
+    name: "Wentylatory Obudowy - Intake Fans",
+    description: "Wentylatory wtłaczające chłodne powietrze do wnętrza obudowy, tworzące nadciśnienie.",
+    role: [
+      "Kieruje świeże powietrze prosto na kartę graficzną i procesor",
+      "Pomaga utrzymać nadciśnienie, chroniąc przed kurzem",
+      "Działa w tandemie z systemem wyciągowym"
+    ],
+    funFact: "Wentylatory RGB potrafią synchronizować się tworząc niesamowite, płynne pokazy świetlne wewnątrz obudowy.",
+    position: [0, -0.4, 1.8],
+    explodedPosition: [3, -2, 4],
+    color: "#ffffff",
+    perfImpact: { gaming: 10, ai: 10, productivity: 5 },
+    geometryArgs: [1.2, 1.2, 0.2],
+    imageUrls: [
+      '/images/components/fan.webp',
+      '/images/components/fan_macro.webp',
+      '/images/components/fan_alt.webp'
+    ]
+  },
+  {
+    id: "rear_fan",
+    name: "Wentylator Wyciągowy - Exhaust Fan",
+    description: "Zainstalowany z tyłu obudowy wentylator odpowiedzialny za wyciąganie gorącego powietrza na zewnątrz systemu.",
+    role: [
+      "Bezpośrednio odbiera ciepło z okolic procesora",
+      "Wyrzuca rozgrzane powietrze poza obręb obudowy",
+      "Równoważy ciśnienie dla optymalnej krzywej chłodzenia"
+    ],
+    funFact: "Wyciąg ciepłego powietrza z tyłu jest kluczowy – gorące powietrze naturalnie unosi się do góry i gromadzi z tyłu obudowy.",
+    position: [-1.8, 1.4, -0.4],
+    explodedPosition: [-4, 2, -0.4],
+    color: "#ffffff",
+    perfImpact: { gaming: 10, ai: 10, productivity: 5 },
+    geometryArgs: [1.2, 1.2, 0.2],
+    imageUrls: [
+      '/images/components/fan.webp',
+      '/images/components/fan_macro.webp',
+      '/images/components/fan_alt.webp'
+    ]
+  },
+  {
+    id: "case",
+    name: "Obudowa - PC Case",
+    description: "Szkielet konstrukcyjny chroniący i organizujący wszystkie komponenty komputera.",
+    role: [
+      "Zapewnia wsparcie strukturalne dla hardware'u",
+      "Wymusza kierunek obiegu przepływającego powietrza",
+      "Kryje w sobie komponenty, chroniąc je przed uszkodzeniami i zanieczyszczeniami"
+    ],
+    funFact: "Wczesne obudowy PC były niemal w całości beżowe, w przeciwieństwie do dzisiejszych rzeźb z hartowanego szkła i LED.",
+    position: [0, 0, 0],
+    explodedPosition: [0, 0, 0],
+    color: "#4a6984",
+    perfImpact: { gaming: 0, ai: 0, productivity: 0 },
+    geometryArgs: [4, 5, 2],
+    imageUrls: ["/images/components/case.webp", "/images/components/case_macro.webp", "/images/components/case_alt.webp"],
+  },
+  {
+    id: 'storage_hdd',
+    name: "Dysk Twardy - HDD",
+    description: 'Tradycyjny, magnetyczny nośnik danych o ogromnej pojemności. Używa fizycznych talerzy wirujących z prędkością tysięcy obrotów na minutę i głowicy odczytującej dane.',
+    role: [
+      'Główny magazyn dużych plików (zdjęcia, filmy, archiwa)',
+      'Tani koszt w przeliczeniu na 1 Terabajt',
+      'System tworzenia kopii zapasowych (Backup)'
+    ],
+    funFact: 'Talerze w dysku HDD wirują tak szybko, że gdyby auto poruszało się z tą prędkością kół, jechałoby ponad 400 km/h. Głowica odczytująca unosi się nanometry nad nimi!',
+    position: [1.3, -2.27, -0.5],
+    explodedPosition: [6.0, -2.5, 4.0],
+    color: "#4a6984",
+    perfImpact: { gaming: 5, ai: 2, productivity: 30 },
+    geometryArgs: [1.0, 0.25, 1.4],
+    imageUrls: [
+      '/images/components/hdd_macro.webp',
+      '/images/components/hdd_alt.webp'
+    ]
+  }
+];
