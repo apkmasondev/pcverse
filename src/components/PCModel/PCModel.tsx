@@ -546,12 +546,10 @@ const PSUGeometry = () => {
       <group position={[1.2, 1.9, 1.0]}>
         <mesh position={[-1.98, -1.92, -1.0]}>
           <boxGeometry args={[0.04, 1.0, 1.8]} />
-          <meshStandardMaterial color="#1c1d22" metalness={0.6} roughness={0.5} />
-        </mesh>
-        <mesh position={[-2.0, -1.92, -1.0]} rotation={[0, Math.PI / 2, 0]}>
-          <planeGeometry args={[1.8, 1.0]} />
           <meshStandardMaterial 
-            color="#050505" 
+            color="#1c1d22" 
+            metalness={0.6} 
+            roughness={0.5}
             alphaMap={backMeshTexture} 
             transparent={true} 
             side={THREE.DoubleSide} 
@@ -692,8 +690,10 @@ const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string }) => (
 
 const CaseGeometry = () => {
   const { explodeStep } = usePC();
-  const sideGlassRef = useRef<THREE.Mesh>(null);
+  const sideGlassRef = useRef<THREE.Group>(null);
   const sideGlassMatRef = useRef<any>(null);
+  const frontGlassRef = useRef<THREE.Group>(null);
+  const frontGlassMatRef = useRef<any>(null);
 
   useFrame((_state, delta) => {
     if (sideGlassRef.current && sideGlassMatRef.current) {
@@ -703,7 +703,57 @@ const CaseGeometry = () => {
       sideGlassRef.current.position.x = THREE.MathUtils.lerp(sideGlassRef.current.position.x, targetX, delta * 4);
       sideGlassMatRef.current.opacity = THREE.MathUtils.lerp(sideGlassMatRef.current.opacity, targetOpacity, delta * 4);
     }
+    if (frontGlassRef.current && frontGlassMatRef.current) {
+      const targetZ = explodeStep >= 1 ? 9.0 : 1.95;
+      const targetOpacity = explodeStep >= 1 ? 0 : 0.25;
+      
+      frontGlassRef.current.position.z = THREE.MathUtils.lerp(frontGlassRef.current.position.z, targetZ, delta * 4);
+      frontGlassMatRef.current.opacity = THREE.MathUtils.lerp(frontGlassMatRef.current.opacity, targetOpacity, delta * 4);
+    }
   });
+
+  const leftPanelShape = useMemo(() => {
+    const shape = new THREE.Shape();
+    shape.moveTo(-1.95, -2.5);
+    shape.lineTo(1.95, -2.5);
+    shape.lineTo(1.95, 2.5);
+    shape.lineTo(-1.95, 2.5);
+    shape.lineTo(-1.95, -2.5);
+
+    const ioHole = new THREE.Path();
+    ioHole.moveTo(-1.55 - 0.35, 1.2 - 0.725);
+    ioHole.lineTo(-1.55 + 0.35, 1.2 - 0.725);
+    ioHole.lineTo(-1.55 + 0.35, 1.2 + 0.725);
+    ioHole.lineTo(-1.55 - 0.35, 1.2 + 0.725);
+    ioHole.lineTo(-1.55 - 0.35, 1.2 - 0.725);
+    shape.holes.push(ioHole);
+
+    const psuHole = new THREE.Path();
+    psuHole.moveTo(-1.0 - 0.9, -1.92 - 0.5);
+    psuHole.lineTo(-1.0 + 0.9, -1.92 - 0.5);
+    psuHole.lineTo(-1.0 + 0.9, -1.92 + 0.5);
+    psuHole.lineTo(-1.0 - 0.9, -1.92 + 0.5);
+    psuHole.lineTo(-1.0 - 0.9, -1.92 - 0.5);
+    shape.holes.push(psuHole);
+
+    const pcieHole = new THREE.Path();
+    pcieHole.moveTo(-1.15 - 0.6, -0.1 - 0.25);
+    pcieHole.lineTo(-1.15 + 0.6, -0.1 - 0.25);
+    pcieHole.lineTo(-1.15 + 0.6, -0.1 + 0.25);
+    pcieHole.lineTo(-1.15 - 0.6, -0.1 + 0.25);
+    pcieHole.lineTo(-1.15 - 0.6, -0.1 - 0.25);
+    shape.holes.push(pcieHole);
+
+    const fanHole = new THREE.Path();
+    fanHole.moveTo(-0.4 - 0.6, 1.4 - 0.6);
+    fanHole.lineTo(-0.4 + 0.6, 1.4 - 0.6);
+    fanHole.lineTo(-0.4 + 0.6, 1.4 + 0.6);
+    fanHole.lineTo(-0.4 - 0.6, 1.4 + 0.6);
+    fanHole.lineTo(-0.4 - 0.6, 1.4 - 0.6);
+    shape.holes.push(fanHole);
+
+    return shape;
+  }, []);
 
   const meshTexture = useMemo(() => {
     const canvas = document.createElement('canvas');
@@ -761,12 +811,7 @@ const CaseGeometry = () => {
       </mesh>
       
 
-
-      {/* PSU Cutout (Hole left in the case when PSU explodes) */}
-      <mesh position={[-1.95, -1.92, -1.0]}>
-        <boxGeometry args={[0.06, 1.0, 1.8]} />
-        <meshStandardMaterial color="#000000" roughness={1} />
-      </mesh>
+      
 
       {/* GPU PCIe Brackets at the left wall (Shifted to X = -1.98) */}
       {[-1.0, -1.15, -1.3].map((y, i) => (
@@ -775,19 +820,6 @@ const CaseGeometry = () => {
             <boxGeometry args={[0.04, 0.14, 1.2]} />
             <meshStandardMaterial color="#1f2229" metalness={0.9} roughness={0.3} />
           </mesh>
-          {/* DisplayPort / HDMI cutout lines (X = -2.0) */}
-          {i === 0 && (
-            <>
-              <mesh position={[-2.0, y, -1.45]}>
-                <boxGeometry args={[0.02, 0.04, 0.15]} />
-                <meshStandardMaterial color="#111" />
-              </mesh>
-              <mesh position={[-2.0, y, -1.05]}>
-                <boxGeometry args={[0.02, 0.04, 0.15]} />
-                <meshStandardMaterial color="#111" />
-              </mesh>
-            </>
-          )}
         </group>
       ))}
 
@@ -853,15 +885,34 @@ const CaseGeometry = () => {
         <meshStandardMaterial color="#050505" roughness={1} />
       </mesh>
 
-      {/* Front Panel - Glass */}
-      <mesh position={[0, 0, 1.95]}>
-        <boxGeometry args={[4, 5, 0.05]} />
-        <meshPhysicalMaterial 
-          color="#c7d2fe" metalness={0.1} roughness={0.05} 
-          transmission={1.0} thickness={1.5} transparent opacity={0.25}
-          ior={1.5} clearcoat={1.0} clearcoatRoughness={0.05}
-        />
-      </mesh>
+      {/* Front Panel - Glass with Frame */}
+      <group position={[0, 0, 1.95]} ref={frontGlassRef as any}>
+        <mesh>
+          <boxGeometry args={[4, 5, 0.02]} />
+          <meshPhysicalMaterial 
+            ref={frontGlassMatRef}
+            color="#c7d2fe" metalness={0.1} roughness={0.05} 
+            transmission={1.0} thickness={1.5} transparent opacity={0.25}
+            ior={1.5} clearcoat={1.0} clearcoatRoughness={0.05}
+          />
+        </mesh>
+        
+        {/* Glass Frame Elements */}
+        {/* Top/Bottom Frames */}
+        {[-2.45, 2.45].map(y => (
+          <mesh key={`front-h-frame-${y}`} position={[0, y, 0.015]}>
+            <boxGeometry args={[4, 0.1, 0.04]} />
+            <meshStandardMaterial color="#111317" roughness={0.4} metalness={0.8} />
+          </mesh>
+        ))}
+        {/* Left/Right Frames */}
+        {[-1.95, 1.95].map(x => (
+          <mesh key={`front-v-frame-${x}`} position={[x, 0, 0.015]}>
+            <boxGeometry args={[0.1, 4.8, 0.04]} />
+            <meshStandardMaterial color="#111317" roughness={0.4} metalness={0.8} />
+          </mesh>
+        ))}
+      </group>
       
       {/* Side Panel - Glass with Frame */}
       <group position={[1.95, 0, 0]} ref={sideGlassRef as any}>
@@ -893,14 +944,9 @@ const CaseGeometry = () => {
       </group>
       
       {/* Solid Side Panel (Back) - with Honeycomb Mesh pattern for the Exhaust fan area! */}
-      <mesh position={[-1.95, 0, 0]}>
-        <boxGeometry args={[0.05, 5, 3.9]} />
+      <mesh position={[-1.975, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
+        <extrudeGeometry args={[leftPanelShape, { depth: 0.05, bevelEnabled: false }]} />
         <meshStandardMaterial color="#22242a" metalness={0.7} roughness={0.4} />
-      </mesh>
-      {/* IO Panel Cutout (Hole left in the case when motherboard explodes) */}
-      <mesh position={[-1.95, 1.2, -1.55]}>
-        <boxGeometry args={[0.06, 1.45, 0.7]} />
-        <meshStandardMaterial color="#000000" roughness={1} />
       </mesh>
       {/* Side mesh cutout where the side exhaust fan is! (Outside) */}
       <mesh position={[-1.98, 1.4, -0.4]} rotation={[0, Math.PI / 2, 0]}>

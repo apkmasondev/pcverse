@@ -14,6 +14,10 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - Zastąpiono ręczne modyfikowanie kursora systemowego zoptymalizowanym hookiem `useCursor` od `@react-three/drei`.
 - Zaimplementowano zamykanie modalu instrukcji za pomocą klawisza `Escape`.
 - Usunięto martwy kod i nieużywane importy w całym projekcie (np. `ContactShadows`, `Float`).
+- Całkowicie przebudowano lewy panel obudowy w `CaseGeometry` używając `ExtrudeGeometry` i `THREE.Shape` by stworzyć autentyczne, puste na wylot luki montażowe dla sekcji I/O płyty głównej, wylotu GPU (PCIe), wentylatora wyciągowego oraz zasilacza.
+- Skorygowano wysokość mocowania GPU by porty HDMI/DP idealnie wychodziły przez dedykowane otwory obudowy (eliminacja martwego bloku blachy).
+- Materiał tylnej siatki wylotowej zasilacza nakłada teraz kanał przezroczystości (alphaMap) bezpośrednio na strukturę siatki, dzięki czemu przewiewny plaster miodu widać naturalnie zarówno z wnętrza, jak i zewnątrz budy PC.
+- Animacja eksplozji rozsuwa teraz nie tylko boczny, ale również przedni, szklany panel obudowy. Przednie szkło otrzymało też dopasowaną cienką stalową ramkę.
 
 ## [Nieopublikowane] - Audyt SEO, Bezpieczeństwa i Wydajności
 ### Dodane
