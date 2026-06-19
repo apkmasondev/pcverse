@@ -210,6 +210,7 @@ const RAMGeometry = ({ rgbColor }: { color?: Color, rgbColor: string }) => (
     {/* Drobne nacięcia na pasku RGB (detal premium) */}
     {[0.4, 0, -0.4].map((y, i) => (
       <mesh key={i} position={[0, y, 0.22]}>
+        <boxGeometry args={[0.065, 0.05, 0.02]} />
         <meshStandardMaterial color="#111" roughness={0.8} />
       </mesh>
     ))}
