@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { CameraControls, Environment, PerspectiveCamera, Sparkles, PerformanceMonitor, Grid } from '@react-three/drei';
 import { EffectComposer, Bloom, N8AO, Vignette, ChromaticAberration } from '@react-three/postprocessing';
-import { Vector2, Vector3 } from 'three';
+import { Vector2, Vector3, PointLight } from 'three';
 import { BlendFunction } from 'postprocessing';
 
 const CHROMA_OFFSET = new Vector2(0.0005, 0.0005);
@@ -11,7 +11,7 @@ import { usePC } from '../../hooks/usePC';
 import { GlobalErrorBoundary as ErrorBoundary } from '../ErrorBoundary';
 
 const CursorLight = () => {
-  const lightRef = useRef<THREE.PointLight>(null);
+  const lightRef = useRef<PointLight>(null);
   const _vec = useRef(new Vector3());
 
   useFrame(({ raycaster, camera }) => {
@@ -35,7 +35,7 @@ const CursorLight = () => {
 };
 
 const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
-  const { selectedComponent, cameraResetTrigger, explodeStep, envPreset, rgbColor } = usePC();
+  const { selectedComponent, cameraResetTrigger, explodeStep, envPreset } = usePC();
   const cameraControlsRef = useRef<CameraControls>(null);
   const { camera } = useThree();
 
@@ -159,7 +159,7 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
           fadeDistance={30} 
           fadeStrength={1} 
         />
-        <EffectComposer disableNormalPass>
+        <EffectComposer>
           <Bloom luminanceThreshold={1} mipmapBlur intensity={1.0} />
           <N8AO aoRadius={0.5} intensity={2.0} distanceFalloff={0.5} quality="medium" halfRes />
           <Vignette eskil={false} offset={0.2} darkness={0.6} />

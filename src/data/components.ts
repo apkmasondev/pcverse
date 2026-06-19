@@ -13,7 +13,7 @@ export interface PCComponent {
     productivity: number;
   };
   geometryArgs: [number, number, number];
-  imageUrls: [string, string];
+  imageUrls: string[];
 }
 
 export const pcComponents: PCComponent[] = [

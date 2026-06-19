@@ -176,7 +176,7 @@ const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
   );
 };
 
-const RAMGeometry = ({ color, rgbColor }: { color: Color, rgbColor: string }) => (
+const RAMGeometry = ({ rgbColor }: { color?: Color, rgbColor: string }) => (
   <group>
     {/* RAM PCB (Długa na osi Y, wpięta w płytę główną osiami Z) */}
     <mesh position={[0, 0, 0]}>
@@ -1044,7 +1044,7 @@ const ComponentMesh = ({ data, isMobile }: { data: PCComponent, isMobile: boolea
             onPointerEnter={(e) => {
               if (isMobile) return;
               e.stopPropagation();
-              if (!hovered && selectedComponent?.id !== data.id) {
+              if (!hovered) {
                 playHoverSound();
               }
               setHovered(true);
@@ -1056,9 +1056,7 @@ const ComponentMesh = ({ data, isMobile }: { data: PCComponent, isMobile: boolea
             }}
             onClick={(e) => {
               e.stopPropagation();
-              if (selectedComponent?.id !== data.id) {
-                playSelectSound();
-              }
+              playSelectSound();
               setSelectedComponent(data);
             }}
           >
@@ -1177,7 +1175,6 @@ export const PCModel = () => {
     if (groupRef.current) {
       groupRef.current.traverse((child: any) => {
         if (child.isMesh && child.material) {
-          const mat = child.material;
           // Store original properties
           if (!child.userData.originalMaterial) {
             child.userData.originalMaterial = {
