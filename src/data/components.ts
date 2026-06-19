@@ -78,8 +78,8 @@ export const pcComponents: PCComponent[] = [
       "Przetwarza potężne pakiety danych równolegle"
     ],
     funFact: "Współczesne układy graficzne (GPU) są wykorzystywane nie tylko w grach, ale także jako potężne 'mózgi' dla sztucznej inteligencji, ponieważ potrafią przetwarzać tysiące operacji matematycznych jednocześnie.",
-    position: [-0.25, -1, -1.15],
-    explodedPosition: [-5, -0.5, -2.5],
+    position: [-0.25, -0.1, -1.15],
+    explodedPosition: [-5, 0.5, -2.5],
     color: "#6366f1",
     perfImpact: { gaming: 60, ai: 60, productivity: 15 },
     geometryArgs: [2.5, 0.5, 1.2],
@@ -129,8 +129,8 @@ export const pcComponents: PCComponent[] = [
       "Łączy się bezpośrednio z szyną PCIe dla maksymalnej prędkości"
     ],
     funFact: "Najnowsze dyski NVMe (w standardzie PCIe 5.0) osiągają oszałamiającą prędkość odczytu na poziomie przekraczającym 14 000 MB/s!",
-    position: [0, -0.2, -1.7],
-    explodedPosition: [4.5, -1, -2],
+    position: [0, 0.35, -1.7],
+    explodedPosition: [4.5, 0.5, -2],
     color: "#f8b500",
     perfImpact: { gaming: 10, ai: 5, productivity: 15 },
     geometryArgs: [0.2, 0.8, 0.05],
