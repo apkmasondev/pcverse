@@ -27,8 +27,8 @@ export const pcComponents: PCComponent[] = [
       "Przechowuje oprogramowanie BIOS/UEFI"
     ],
     funFact: "Nowoczesne płyty główne mogą mieć ponad 10 warstw włókna szklanego i miedzianych ścieżek.",
-    position: [0, 0, -1.75],
-    explodedPosition: [-2.5, 0, -7.5],
+    position: [-0.45, 0, -1.75],
+    explodedPosition: [-2.95, 0, -7.5],
     color: "#1a1a2e",
     perfImpact: { gaming: 5, ai: 5, productivity: 5 },
     geometryArgs: [3, 4, 0.05],
@@ -44,8 +44,8 @@ export const pcComponents: PCComponent[] = [
       "Koordynuje działanie całego systemu, delegując wyspecjalizowane zadania do GPU i RAMu"
     ],
     funFact: "Współczesny procesor zawiera miliardy mikroskopijnych tranzystorów na powierzchni kilku centymetrów kwadratowych.",
-    position: [0, 1, -1.7],
-    explodedPosition: [-1.5, 5, -2],
+    position: [-0.45, 1, -1.7],
+    explodedPosition: [-1.95, 5, -2],
     color: "#e94560",
     perfImpact: { gaming: 25, ai: 20, productivity: 40 },
     geometryArgs: [0.8, 0.8, 0.05],
@@ -61,7 +61,7 @@ export const pcComponents: PCComponent[] = [
       "Wydmuchuje gorące powietrze za pomocą dedykowanego wentylatora"
     ],
     funFact: "Woda używana w chłodzeniach cieczą (AIO) potrafi odebrać ciepło z procesora ponad 20 razy szybciej niż powietrze, redukując nagłe skoki temperatur (tzw. spiki).",
-    position: [0, 1, -1.35],
+    position: [-0.45, 1, -1.35],
     explodedPosition: [-0.5, 6.5, 0],
     color: "#a0a0a0",
     perfImpact: { gaming: 5, ai: 5, productivity: 5 },
@@ -78,7 +78,7 @@ export const pcComponents: PCComponent[] = [
       "Przetwarza potężne pakiety danych równolegle"
     ],
     funFact: "Współczesne układy graficzne (GPU) są wykorzystywane nie tylko w grach, ale także jako potężne 'mózgi' dla sztucznej inteligencji, ponieważ potrafią przetwarzać tysiące operacji matematycznych jednocześnie.",
-    position: [-0.25, -0.1, -1.15],
+    position: [-0.7, -0.1, -1.15],
     explodedPosition: [-5, 0.5, -2.5],
     color: "#6366f1",
     perfImpact: { gaming: 60, ai: 60, productivity: 15 },
@@ -95,8 +95,8 @@ export const pcComponents: PCComponent[] = [
       "Traci wszystkie dane w momencie odłączenia zasilania"
     ],
     funFact: "Pamięć RAM jest około 100 000 razy szybsza od tradycyjnego dysku twardego HDD.",
-    position: [0.8, 1, -1.55],
-    explodedPosition: [2, 5.5, -1.5],
+    position: [0.35, 1, -1.55],
+    explodedPosition: [1.55, 5.5, -1.5],
     color: "#00b8a9",
     perfImpact: { gaming: 10, ai: 15, productivity: 20 },
     geometryArgs: [0.1, 1.2, 0.4],
@@ -112,8 +112,8 @@ export const pcComponents: PCComponent[] = [
       "Redukuje zacinanie się w nowoczesnych grach"
     ],
     funFact: "Użycie dwóch kości RAM zamiast jednej dużej może zwiększyć wydajność procesora nawet o 15%.",
-    position: [1.2, 1, -1.55],
-    explodedPosition: [3.5, 5.5, -1.5],
+    position: [0.75, 1, -1.55],
+    explodedPosition: [3.05, 5.5, -1.5],
     color: "#00b8a9",
     perfImpact: { gaming: 2, ai: 1, productivity: 5 },
     geometryArgs: [0.1, 1.2, 0.4],
@@ -129,7 +129,7 @@ export const pcComponents: PCComponent[] = [
       "Łączy się bezpośrednio z szyną PCIe dla maksymalnej prędkości"
     ],
     funFact: "Najnowsze dyski NVMe (w standardzie PCIe 5.0) osiągają oszałamiającą prędkość odczytu na poziomie przekraczającym 14 000 MB/s!",
-    position: [0, 0.35, -1.7],
+    position: [-0.45, 0.35, -1.7],
     explodedPosition: [4.5, 0.5, -2],
     color: "#f8b500",
     perfImpact: { gaming: 10, ai: 5, productivity: 15 },

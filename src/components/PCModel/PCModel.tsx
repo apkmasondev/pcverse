@@ -371,25 +371,25 @@ const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => (
 
     {/* IO Ports Area (moved from CaseGeometry to stay attached when exploded) */}
     <group position={[0, 0, 1.75]}>
-      {/* Motherboard IO Panel Accent (Shifted to X = -1.98 to sit on the outside of the left panel) */}
-      <mesh position={[-1.98, 1.2, -1.55]}>
+      {/* Motherboard IO Panel Accent (Shifted to X = -1.53 to sit on the outside of the left panel) */}
+      <mesh position={[-1.53, 1.2, -1.55]}>
         <boxGeometry args={[0.04, 1.4, 0.65]} />
         <meshStandardMaterial color="#888c94" metalness={0.8} roughness={0.3} />
       </mesh>
       {/* Motherboard IO Ports - Professional High-End Layout */}
       {/* BIOS Flashback & Clear CMOS */}
-      <mesh position={[-2.0, 1.75, -1.65]}>
+      <mesh position={[-1.55, 1.75, -1.65]}>
         <boxGeometry args={[0.02, 0.06, 0.06]} />
         <meshStandardMaterial color="#111" roughness={0.8} />
       </mesh>
-      <mesh position={[-2.0, 1.75, -1.45]} rotation={[0, 0, Math.PI/2]}>
+      <mesh position={[-1.55, 1.75, -1.45]} rotation={[0, 0, Math.PI/2]}>
         <cylinderGeometry args={[0.02, 0.02, 0.02, 16]} />
         <meshStandardMaterial color="#444" metalness={0.5} />
       </mesh>
 
       {/* Wi-Fi Antenna Connectors (Gold) */}
       {[-1.65, -1.45].map(z => (
-        <mesh key={`wifi-${z}`} position={[-2.0, 1.6, z]} rotation={[0, 0, Math.PI/2]}>
+        <mesh key={`wifi-${z}`} position={[-1.55, 1.6, z]} rotation={[0, 0, Math.PI/2]}>
           <cylinderGeometry args={[0.03, 0.03, 0.04, 16]} />
           <meshStandardMaterial color="#d4af37" metalness={1} roughness={0.2} />
         </mesh>
@@ -397,7 +397,7 @@ const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => (
 
       {/* USB 2.0 (Black) */}
       {[-1.65, -1.45].map(z => (
-        <mesh key={`usb2-${z}`} position={[-2.0, 1.45, z]}>
+        <mesh key={`usb2-${z}`} position={[-1.55, 1.45, z]}>
           <boxGeometry args={[0.02, 0.04, 0.1]} />
           <meshStandardMaterial color="#111" roughness={0.9} />
         </mesh>
@@ -405,47 +405,47 @@ const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => (
 
       {/* USB 3.2 Gen 1 (Blue) */}
       {[-1.65, -1.45].map(z => (
-        <mesh key={`usb3-${z}`} position={[-2.0, 1.3, z]}>
+        <mesh key={`usb3-${z}`} position={[-1.55, 1.3, z]}>
           <boxGeometry args={[0.02, 0.04, 0.1]} />
           <meshStandardMaterial color="#1e3a8a" roughness={0.6} />
         </mesh>
       ))}
 
       {/* 2.5G Ethernet & USB 3.2 Gen 2 (Red) */}
-      <mesh position={[-2.0, 1.15, -1.65]}>
+      <mesh position={[-1.55, 1.15, -1.65]}>
         <boxGeometry args={[0.02, 0.08, 0.12]} />
         <meshStandardMaterial color="#1f2937" metalness={0.6} />
       </mesh>
-      <mesh position={[-2.0, 1.15, -1.45]}>
+      <mesh position={[-1.55, 1.15, -1.45]}>
         <boxGeometry args={[0.02, 0.04, 0.1]} />
         <meshStandardMaterial color="#991b1b" roughness={0.6} />
       </mesh>
 
       {/* USB-C & USB 3.2 Gen 2 (Red) */}
-      <mesh position={[-2.0, 1.0, -1.65]}>
+      <mesh position={[-1.55, 1.0, -1.65]}>
         <boxGeometry args={[0.02, 0.025, 0.08]} />
         <meshStandardMaterial color="#111" roughness={0.7} />
       </mesh>
-      <mesh position={[-2.0, 1.0, -1.45]}>
+      <mesh position={[-1.55, 1.0, -1.45]}>
         <boxGeometry args={[0.02, 0.04, 0.1]} />
         <meshStandardMaterial color="#991b1b" roughness={0.6} />
       </mesh>
 
       {/* High-End Audio Stack (Gold Plated) */}
       {[-1.65, -1.55, -1.45].map((z, i) => (
-        <mesh key={`audio-top-${i}`} position={[-2.0, 0.85, z]} rotation={[0, 0, Math.PI/2]}>
+        <mesh key={`audio-top-${i}`} position={[-1.55, 0.85, z]} rotation={[0, 0, Math.PI/2]}>
           <cylinderGeometry args={[0.025, 0.025, 0.03, 16]} />
           <meshStandardMaterial color="#d4af37" metalness={0.9} roughness={0.2} />
         </mesh>
       ))}
       {[-1.65, -1.55].map((z, i) => (
-        <mesh key={`audio-bot-${i}`} position={[-2.0, 0.75, z]} rotation={[0, 0, Math.PI/2]}>
+        <mesh key={`audio-bot-${i}`} position={[-1.55, 0.75, z]} rotation={[0, 0, Math.PI/2]}>
           <cylinderGeometry args={[0.025, 0.025, 0.03, 16]} />
           <meshStandardMaterial color="#d4af37" metalness={0.9} roughness={0.2} />
         </mesh>
       ))}
       {/* SPDIF Optical out */}
-      <mesh position={[-2.0, 0.75, -1.45]}>
+      <mesh position={[-1.55, 0.75, -1.45]}>
         <boxGeometry args={[0.02, 0.04, 0.04]} />
         <meshStandardMaterial color="#111" />
       </mesh>
@@ -805,7 +805,7 @@ const CaseGeometry = () => {
       </mesh>
 
       {/* CPU Cooler Backplate Mesh Cutout (on the Back Panel, directly behind the CPU) */}
-      <mesh position={[0, 1.0, -2.01]}>
+      <mesh position={[-0.45, 1.0, -2.01]}>
         <planeGeometry args={[1.4, 1.4]} />
         <meshStandardMaterial 
           color="#151515" 
@@ -816,7 +816,7 @@ const CaseGeometry = () => {
       </mesh>
       
       {/* CPU Cooler Backplate Hole (on the Motherboard Tray itself, slightly recessed) */}
-      <mesh position={[0, 1.0, -1.77]}>
+      <mesh position={[-0.45, 1.0, -1.77]}>
         <planeGeometry args={[1.4, 1.4]} />
         <meshStandardMaterial color="#050505" roughness={1} />
       </mesh>
@@ -864,6 +864,11 @@ const CaseGeometry = () => {
       <mesh position={[-1.95, 0, 0]}>
         <boxGeometry args={[0.05, 5, 3.9]} />
         <meshStandardMaterial color="#22242a" metalness={0.7} roughness={0.4} />
+      </mesh>
+      {/* IO Panel Cutout (Hole left in the case when motherboard explodes) */}
+      <mesh position={[-1.95, 1.2, -1.55]}>
+        <boxGeometry args={[0.06, 1.45, 0.7]} />
+        <meshStandardMaterial color="#000000" roughness={1} />
       </mesh>
       {/* Side mesh cutout where the side exhaust fan is! (Outside) */}
       <mesh position={[-1.98, 1.4, -0.4]} rotation={[0, Math.PI / 2, 0]}>
