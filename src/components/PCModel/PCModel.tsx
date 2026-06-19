@@ -456,6 +456,32 @@ const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => (
 const PSUGeometry = () => {
   const fanRef = useRef<Group>(null);
   
+  const backMeshTexture = useMemo(() => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 16;
+    canvas.height = 16;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, 16, 16);
+      ctx.fillStyle = '#000000';
+      ctx.beginPath();
+      ctx.arc(8, 8, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(12, 12);
+    return texture;
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      backMeshTexture.dispose();
+    };
+  }, [backMeshTexture]);
+  
   useFrame((_state, delta) => {
     if (fanRef.current) {
       fanRef.current.rotation.y += delta * 15;
@@ -514,6 +540,31 @@ const PSUGeometry = () => {
       {/* Airflow Exhaust (Red, out the back) */}
       <group position={[0, 0, -0.75]} rotation={[0, Math.PI, 0]}>
         <LocalAirflowParticles count={30} radius={0.3} length={1.5} speedMult={1.5} color="#ef4444" />
+      </group>
+
+      {/* PSU Backplate cutout & switch (Offset by [1.2, 1.9, 1.0] to reverse PSU position logic) */}
+      <group position={[1.2, 1.9, 1.0]}>
+        <mesh position={[-1.98, -1.92, -1.0]}>
+          <boxGeometry args={[0.04, 1.0, 1.8]} />
+          <meshStandardMaterial color="#1c1d22" metalness={0.6} roughness={0.5} />
+        </mesh>
+        <mesh position={[-2.0, -1.92, -1.0]} rotation={[0, Math.PI / 2, 0]}>
+          <planeGeometry args={[1.8, 1.0]} />
+          <meshStandardMaterial 
+            color="#050505" 
+            alphaMap={backMeshTexture} 
+            transparent={true} 
+            side={THREE.DoubleSide} 
+          />
+        </mesh>
+        <mesh position={[-2.0, -1.72, -0.4]}>
+          <boxGeometry args={[0.02, 0.2, 0.15]} />
+          <meshStandardMaterial color="#ef4444" roughness={0.5} />
+        </mesh>
+        <mesh position={[-2.0, -1.72, -1.5]}>
+          <boxGeometry args={[0.02, 0.25, 0.3]} />
+          <meshStandardMaterial color="#111" roughness={0.7} />
+        </mesh>
       </group>
     </group>
   );
@@ -711,29 +762,10 @@ const CaseGeometry = () => {
       
 
 
-      {/* PSU Backplate cutout & switch (Shifted to X = -1.98 to sit on the outside of the left panel) */}
-      <mesh position={[-1.98, -1.92, -1.0]}>
-        <boxGeometry args={[0.04, 1.0, 1.8]} />
-        <meshStandardMaterial color="#1c1d22" metalness={0.6} roughness={0.5} />
-      </mesh>
-      {/* PSU Honeycomb ventilation grid (X = -2.0) */}
-      <mesh position={[-2.0, -1.92, -1.0]} rotation={[0, Math.PI / 2, 0]}>
-        <planeGeometry args={[1.8, 1.0]} />
-        <meshStandardMaterial 
-          color="#050505" 
-          alphaMap={backMeshTexture} 
-          transparent={true} 
-          side={THREE.DoubleSide} 
-        />
-      </mesh>
-      {/* Power switch & plug (X = -2.0) */}
-      <mesh position={[-2.0, -1.72, -0.4]}>
-        <boxGeometry args={[0.02, 0.2, 0.15]} />
-        <meshStandardMaterial color="#ef4444" roughness={0.5} />
-      </mesh>
-      <mesh position={[-2.0, -1.72, -1.5]}>
-        <boxGeometry args={[0.02, 0.25, 0.3]} />
-        <meshStandardMaterial color="#111" roughness={0.7} />
+      {/* PSU Cutout (Hole left in the case when PSU explodes) */}
+      <mesh position={[-1.95, -1.92, -1.0]}>
+        <boxGeometry args={[0.06, 1.0, 1.8]} />
+        <meshStandardMaterial color="#000000" roughness={1} />
       </mesh>
 
       {/* GPU PCIe Brackets at the left wall (Shifted to X = -1.98) */}

@@ -78,7 +78,7 @@ export const pcComponents: PCComponent[] = [
       "Przetwarza potężne pakiety danych równolegle"
     ],
     funFact: "Współczesne układy graficzne (GPU) są wykorzystywane nie tylko w grach, ale także jako potężne 'mózgi' dla sztucznej inteligencji, ponieważ potrafią przetwarzać tysiące operacji matematycznych jednocześnie.",
-    position: [-0.7, -0.1, -1.15],
+    position: [-0.25, -0.1, -1.15],
     explodedPosition: [-5, 0.5, -2.5],
     color: "#6366f1",
     perfImpact: { gaming: 60, ai: 60, productivity: 15 },
