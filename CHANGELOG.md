@@ -60,6 +60,7 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 ### Zmienione
 - Poprawiono teksturę portów I/O karty graficznej na idealnie odwzorowującą układ złączy NVIDIA (3x DisplayPort, 1x HDMI) po dostarczeniu nowej grafiki.
 - Zaktualizowano model zasilacza (PSU) o nową, fotorealistyczną teksturę tylnego panelu (złącza modularne, przełącznik AC i gęsty mesh wentylacyjny), dostarczoną przez użytkownika.
+- **UI Menu RGB**: Poprawiono wygląd palety kolorów po wyłączeniu podświetlenia – opcje do wyboru nie są już wyszarzone, by jasno komunikować ich naturalne barwy.
 - **Animacja Dekompozycji**: Przycisk "Rozłóż na Części" wyzwala teraz sekwencyjną animację (`explodeStep`). Boczny szklany panel płynnie cofa się i zanika przed wysunięciem głównych komponentów.
 - Zmieniono UI Panelu Informacyjnego: Zmniejszono wysokość głównego obrazu, dając więcej pionowej przestrzeni na tekst i szczegóły bez konieczności przewijania.
 - Przebudowano od zera model Płyty Głównej (Motherboard), dodając high-endowe detale (chłodzenie VRM, osłony NVMe M.2, modelowane kondensatory, gniazda ATX/EPS/SATA, podświetlaną sekcję audio, baterię CMOS oraz czerwony wyświetlacz POST).
