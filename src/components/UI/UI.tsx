@@ -20,8 +20,14 @@ const COLORS = [
   { name: 'Gold', hex: '#fbbf24' }
 ];
 
+const Tooltip = ({ text }: { text: string }) => (
+  <span className="absolute top-full mt-3 hidden md:block opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none bg-[#0a0a0a]/95 backdrop-blur-xl border border-white/10 text-slate-300 text-[11px] px-3 py-1.5 rounded-lg whitespace-nowrap shadow-[0_10px_25px_rgba(0,0,0,0.8)] z-50 font-medium tracking-wide">
+    {text}
+  </span>
+);
+
 export const UI = () => {
-  const { explodeStep, toggleExploded, triggerCameraReset, xrayMode, toggleXrayMode, rgbColor, setRgbColor, showAirflow, toggleAirflow, envPreset, setEnvPreset, showLabels, toggleLabels, showInstructions, setShowInstructions } = usePC();
+  const { explodeStep, toggleExploded, triggerCameraReset, xrayMode, toggleXrayMode, rgbColor, setRgbColor, rgbEnabled, toggleRgbEnabled, showAirflow, toggleAirflow, envPreset, setEnvPreset, showLabels, toggleLabels, showInstructions, setShowInstructions } = usePC();
   const [showHint, setShowHint] = useState(true);
   const [showPalette, setShowPalette] = useState(false);
   const [showEnv, setShowEnv] = useState(false);
@@ -74,10 +80,10 @@ export const UI = () => {
           else playSelectSound();
           toggleExploded();
         }}
-        title={explodeStep === 2 ? 'Złóż Komputer' : explodeStep === 1 ? 'Sekwencja...' : 'Rozłóż na Części'}
-        className="group flex items-center justify-center w-9 h-9 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/5 rounded-full transition-all hover:bg-indigo-500/20 hover:border-indigo-500/30"
+        className="group relative flex items-center justify-center w-9 h-9 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/5 rounded-full transition-all hover:bg-indigo-500/20 hover:border-indigo-500/30"
       >
         <Layers size={16} className={`transition-transform duration-500 ${explodeStep > 0 ? 'rotate-180 text-indigo-400' : 'text-slate-400 group-hover:text-indigo-300'}`} />
+        <Tooltip text={explodeStep === 2 ? 'Złóż Komputer' : explodeStep === 1 ? 'Sekwencja...' : 'Rozłóż na Części'} />
       </motion.button>
       
       <motion.button
@@ -88,10 +94,10 @@ export const UI = () => {
           playSelectSound();
           triggerCameraReset();
         }}
-        title="Zresetuj Widok"
-        className="group flex items-center justify-center w-9 h-9 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/5 rounded-full transition-all hover:bg-indigo-500/20 hover:border-indigo-500/30"
+        className="group relative flex items-center justify-center w-9 h-9 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/5 rounded-full transition-all hover:bg-indigo-500/20 hover:border-indigo-500/30"
       >
         <Focus size={16} className="text-slate-400 group-hover:text-indigo-300" />
+        <Tooltip text="Zresetuj Widok" />
       </motion.button>
 
       <motion.button
@@ -102,10 +108,10 @@ export const UI = () => {
           playSelectSound();
           toggleXrayMode();
         }}
-        title="Hologram"
-        className={`group flex items-center justify-center w-9 h-9 backdrop-blur-md border rounded-full transition-all ${xrayMode ? 'bg-cyan-500/20 border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.3)]' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-cyan-500/20 hover:border-cyan-500/30'}`}
+        className={`group relative flex items-center justify-center w-9 h-9 backdrop-blur-md border rounded-full transition-all ${xrayMode ? 'bg-cyan-500/20 border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.3)]' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-cyan-500/20 hover:border-cyan-500/30'}`}
       >
         <Scan size={16} className={`transition-all duration-500 ${xrayMode ? 'text-cyan-400 scale-110' : 'text-slate-400 group-hover:text-cyan-300'}`} />
+        <Tooltip text="Hologram (X-Ray)" />
       </motion.button>
 
       <motion.button
@@ -116,10 +122,10 @@ export const UI = () => {
           playSelectSound();
           toggleAirflow();
         }}
-        title="Symulacja Airflow"
-        className={`group flex items-center justify-center w-9 h-9 backdrop-blur-md border rounded-full transition-all ${showAirflow ? 'bg-blue-500/20 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-blue-500/20 hover:border-blue-500/30'}`}
+        className={`group relative flex items-center justify-center w-9 h-9 backdrop-blur-md border rounded-full transition-all ${showAirflow ? 'bg-blue-500/20 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-blue-500/20 hover:border-blue-500/30'}`}
       >
         <Wind size={16} className={`transition-all duration-500 ${showAirflow ? 'text-blue-400 scale-110' : 'text-slate-400 group-hover:text-blue-300'}`} />
+        <Tooltip text="Symulacja Airflow" />
       </motion.button>
 
       <div className="relative">
@@ -132,10 +138,10 @@ export const UI = () => {
             setShowPalette(!showPalette);
             setShowEnv(false);
           }}
-          title="Tryb RGB"
-          className={`group flex items-center justify-center w-9 h-9 backdrop-blur-md border rounded-full transition-all ${showPalette ? 'bg-purple-500/20 border-purple-500/50 shadow-[0_0_15px_rgba(168,85,247,0.3)] text-purple-300' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-purple-500/20 hover:border-purple-500/30'}`}
+          className={`group relative flex items-center justify-center w-9 h-9 backdrop-blur-md border rounded-full transition-all ${showPalette || rgbEnabled ? 'bg-purple-500/20 border-purple-500/50 shadow-[0_0_15px_rgba(168,85,247,0.3)] text-purple-300' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-purple-500/20 hover:border-purple-500/30 text-slate-400'}`}
         >
-          <Palette size={16} className="text-slate-400 group-hover:text-white transition-colors" style={{ color: rgbColor }} />
+          <Palette size={16} className="transition-colors" style={{ color: rgbEnabled ? rgbColor : '#94a3b8' }} />
+          <Tooltip text="Tryb RGB" />
         </motion.button>
         
         <AnimatePresence>
@@ -144,21 +150,36 @@ export const UI = () => {
               initial={{ opacity: 0, y: -10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              className="absolute top-full right-0 mt-2 p-2 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl flex gap-2 z-50"
+              className="absolute top-full right-0 mt-2 p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl flex gap-2 z-50 items-center"
             >
+              <button
+                onClick={() => {
+                  playSelectSound();
+                  if (rgbEnabled) toggleRgbEnabled();
+                  setShowPalette(false);
+                }}
+                className={`w-8 h-8 rounded-full border-2 transition-transform hover:scale-125 cursor-pointer flex-shrink-0 flex items-center justify-center bg-[#111] ${!rgbEnabled ? 'border-red-500 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]' : 'border-white/10 text-white/50 hover:border-white/30'}`}
+                title="Wyłącz RGB"
+              >
+                <span className="text-[10px] font-bold">OFF</span>
+              </button>
+              
+              <div className="w-px h-6 bg-white/10 mx-1" />
+
               {COLORS.map(c => (
                 <button
                   key={c.hex}
                   onClick={() => {
                     playSelectSound();
                     setRgbColor(c.hex);
+                    if (!rgbEnabled) toggleRgbEnabled();
                     setShowPalette(false);
                   }}
-                  className="w-8 h-8 rounded-full border-2 transition-transform hover:scale-125 cursor-pointer flex-shrink-0"
+                  className={`w-8 h-8 rounded-full border-2 transition-transform hover:scale-125 cursor-pointer flex-shrink-0 ${!rgbEnabled ? 'opacity-50 grayscale' : ''}`}
                   style={{ 
                     backgroundColor: c.hex,
-                    borderColor: rgbColor === c.hex ? 'white' : 'transparent',
-                    boxShadow: rgbColor === c.hex ? `0 0 10px ${c.hex}` : 'none'
+                    borderColor: rgbColor === c.hex && rgbEnabled ? 'white' : 'transparent',
+                    boxShadow: rgbColor === c.hex && rgbEnabled ? `0 0 10px ${c.hex}` : 'none'
                   }}
                   title={c.name}
                 />
@@ -178,10 +199,10 @@ export const UI = () => {
             setShowEnv(!showEnv);
             setShowPalette(false);
           }}
-          title="Otoczenie (HDRi)"
-          className={`group flex items-center justify-center w-9 h-9 backdrop-blur-md border rounded-full transition-all ${showEnv ? 'bg-amber-500/20 border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.3)] text-amber-300' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-amber-500/20 hover:border-amber-500/30'}`}
+          className={`group relative flex items-center justify-center w-9 h-9 backdrop-blur-md border rounded-full transition-all ${showEnv ? 'bg-amber-500/20 border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.3)] text-amber-300' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-amber-500/20 hover:border-amber-500/30'}`}
         >
           <Sun size={16} className={`transition-all duration-500 ${showEnv ? 'text-amber-400 scale-110 rotate-90' : 'text-slate-400 group-hover:text-amber-300'}`} />
+          <Tooltip text="Otoczenie (HDRi)" />
         </motion.button>
         
         <AnimatePresence>
@@ -219,10 +240,10 @@ export const UI = () => {
           playSelectSound();
           toggleLabels();
         }}
-        title="Ukryj/pokaż etykiety"
-        className={`group flex items-center justify-center w-9 h-9 backdrop-blur-md border rounded-full transition-all ${showLabels ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.3)]' : 'bg-[#0a0a0a]/90 border-white/5 text-slate-300 hover:bg-emerald-500/20 hover:border-emerald-500/30 hover:text-white'}`}
+        className={`group relative flex items-center justify-center w-9 h-9 backdrop-blur-md border rounded-full transition-all ${showLabels ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.3)]' : 'bg-[#0a0a0a]/90 border-white/5 text-slate-300 hover:bg-emerald-500/20 hover:border-emerald-500/30 hover:text-white'}`}
       >
         <Tag size={16} className={`transition-all duration-500 ${showLabels ? 'text-emerald-400 scale-110' : 'text-slate-400 group-hover:text-emerald-300'}`} />
+        <Tooltip text="Ukryj/pokaż etykiety" />
       </motion.button>
 
       <motion.button
@@ -233,10 +254,10 @@ export const UI = () => {
           playSelectSound();
           setShowInstructions(true);
         }}
-        title="Instrukcja obsługi"
-        className="group flex items-center justify-center w-9 h-9 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/5 rounded-full text-slate-300 transition-all hover:bg-white/10 hover:border-white/30 hover:text-white"
+        className="group relative flex items-center justify-center w-9 h-9 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/5 rounded-full text-slate-300 transition-all hover:bg-white/10 hover:border-white/30 hover:text-white"
       >
         <Info size={16} className="text-slate-400 group-hover:text-white" />
+        <Tooltip text="Instrukcja obsługi" />
       </motion.button>
     </motion.div>
 
@@ -291,7 +312,7 @@ export const UI = () => {
                   <MousePointerClick className="text-indigo-400 shrink-0" />
                   <div>
                     <h3 className="text-sm font-semibold text-white mb-1">Nawigacja i Detale</h3>
-                    <p className="text-xs text-slate-400 leading-relaxed">Użyj LPM do obrotu, kółka myszy do przybliżania. Kliknij w dowolny komponent obudowy lub jego pływającą etykietę, by skupić kamerę i otworzyć szczegóły.</p>
+                    <p className="text-xs text-slate-400 leading-relaxed">Użyj LPM do obrotu, kółka myszy do przybliżania. <strong>Użyj PPM (prawy klik) lub strzałek klawiatury, by przesuwać kamerę na boki (Panowanie).</strong> Kliknij w dowolny komponent obudowy lub jego pływającą etykietę, by skupić kamerę i otworzyć szczegóły.</p>
                   </div>
                 </div>
 

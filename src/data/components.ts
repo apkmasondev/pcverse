@@ -197,6 +197,27 @@ export const pcComponents: PCComponent[] = [
     ]
   },
   {
+    id: "side_fan_2",
+    name: "Wentylator Wyciągowy - Exhaust Fan 2",
+    description: "Drugi wentylator wyciągowy pracujący w parze na bocznej ramie.",
+    role: [
+      "Zwiększa strumień odsysanego powietrza",
+      "Redukuje turbulencje na bocznej ścianie",
+      "Uzupełnia obieg dla chłodzenia wodnego"
+    ],
+    funFact: "Podwójne wentylatory pozwalają kręcić się wolniej przy zachowaniu tej samej wydajności, co obniża hałas.",
+    position: [-1.8, 1.4, 0.8],
+    explodedPosition: [-4, 3.5, 0.8],
+    color: "#ffffff",
+    perfImpact: { gaming: 5, ai: 5, productivity: 2 },
+    geometryArgs: [1.2, 1.2, 0.2],
+    imageUrls: [
+      '/images/components/fan.webp',
+      '/images/components/fan_macro.webp',
+      '/images/components/fan_alt.webp'
+    ]
+  },
+  {
     id: "case",
     name: "Obudowa - PC Case",
     description: "Szkielet konstrukcyjny chroniący i organizujący wszystkie komponenty komputera.",

@@ -4,10 +4,21 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 
 ## [Nieopublikowane] - Wdrożenie Poprawek z Audytu (Najnowsze)
 ### Dodane
-- **Atrybuty ARIA**: Dodano `aria-label` do wszystkich przycisków w pasku nawigacyjnym oraz role okna dialogowego (`role="dialog"`, `aria-modal="true"`) do modalu instrukcji, co znacząco poprawia dostępność dla czytników ekranu.
-- **Obraz Open Graph**: Wygenerowano i dodano plik `og-cover.png` do podglądów linków w mediach społecznościowych (Facebook, X, Discord).
+- **Niestandardowy Ekran Ładowania (Custom Loader)**: Zastąpiono domyślny loader z `@react-three/drei` w pełni spersonalizowanym komponentem w technologii Framer Motion z mrocznym motywem glassmorphismu.
+- **Podwójny Wentylator Boczny**: Dodano `side_fan_2` do bazy komponentów i przebudowano logikę wywiewu z tyłu, tak by obudowa dysponowała potężnym podwójnym odciągiem powietrza z bloku CPU.
+- **Optymalizacje Wydajności**: Zredukowano jakość efektu SSAO (N8AO), wyłączono `mipmapBlur` w komponencie Bloom oraz multisampling EffectComposera dla urządzeń mobilnych, zyskując potężny zastrzyk FPS-ów na słabszych urządzeniach.
 
 ### Zmienione
+- **Orientacja i rotacja wentylatorów**: Skorygowano błędy matematyczne z rotacjami w grupie `ComponentMesh`, przez które wentylatory wylotowe (exhaust) miały zły kąt i niepoprawnie wtłaczały powietrze do środka. Teraz wydmuchują je na zewnątrz obudowy (-X).
+- **Zasilacz (PSU)**: Rozszerzono mapowanie tekstur. Boczna etykieta z modelem (AX1600i) jest teraz symetrycznie aplikowana również na tylną, niewidoczną od frontu stronę PSU.
+- **Top Panel Mesh**: Przebudowano CanvasTexture siatki na top panelu, naprawiając skalowanie wycięć (`repeat.set`), dzięki czemu plaster miodu wreszcie jest poprawnie widoczny.
+
+### Zmienione
+- Zastosowano hybrydowe podejście do Płyty Głównej: na płaskie PCB naniesiono fotorealistyczną teksturę o wysokiej rozdzielczości (front i tył), a kluczowe trójwymiarowe elementy (gniazdo CPU, chłodzenie VRM, sloty RAM/PCIe) pozostały w pełni wyrenderowanymi bryłami 3D, generując fizyczne cienie na zdjęciu.
+- Dodano "zaślepkę" gniazda CPU na płycie głównej, aby perfekcyjnie ukryć nadrukowany socket z fotografii i wyeksponować tylko fizyczny model 3D bez artefaktów.
+- Skorygowano pozycje gwintów płyty głównej w obudowie, zachowując perfekcyjne marginesy i unikając nakładania się ich na wielkie wycięcie wentylacyjne pod procesorem (CPU cooler cutout).
+- Procesor (Ryzen AM5) otrzymał fotorealistyczną teksturę połączoną z precyzyjnym `bumpMap` i `bumpScale`, dzięki czemu wycięcia IHS z tekstury fizycznie reagują i odbijają dynamiczne światło 3D obudowy.
+- Usunięto błąd nakładającej się, wiszącej w powietrzu siatki wywiewnej z zasilacza (PSU), uszczelniając jego bryłę.
 - Zoptymalizowano użycie tekstur Canvas w komponencie `CaseGeometry` poprzez dodanie czyszczenia (`.dispose()`), eliminując wycieki pamięci VRAM.
 - Zoptymalizowano działanie efektu `ChromaticAberration` w `Scene3D` wyciągając wektor przesunięcia poza pętlę renderowania.
 - Usunięto niepotrzebne rzucanie i odbieranie cieni (`castShadow`, `receiveShadow`) z setek obiektów typu mesh oraz ze źródeł światła, odzyskując zasoby GPU (cienie i tak nie były renderowane po usunięciu podłogi).
@@ -38,6 +49,7 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 
 ## [Nieopublikowane] - Ostateczne Szlify Estetyczne i Poprawki Układu
 ### Dodane
+- **Włącznik/Wyłącznik Oświetlenia RGB**: Dodano nowy przycisk (z ikoną Power) w menu palety kolorów, który pozwala całkowicie wygasić podświetlenie RGB podzespołów.
 - **Modal Instrukcji**: Dodano przycisk, który otwiera eleganckie, szklane (glassmorphism) nakładki z instrukcjami wyjaśniającymi kluczowe interakcje (nawigacja, demontaż, narzędzia).
 - **Przełącznik Etykiet**: Dodano przycisk umożliwiający łatwe włączanie/wyłączanie trójwymiarowych etykiet HTML dla czystszego widoku modelu.
 - **Klikalne i Interaktywne Etykiety HTML**: Tagi unoszące się nad komponentami są teraz w pełni interaktywne. Najechanie na etykietę aktywuje te same efekty co najechanie na model 3D (dźwięki, podświetlenia), a kliknięcie w nią otwiera Panel Informacyjny.
@@ -46,6 +58,8 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - Wewnętrzne dwukolorowe oświetlenie RGB punktowe wewnątrz obudowy (indygo na górze, różowe na dole) dla dynamicznych podświetleń komponentów.
 
 ### Zmienione
+- Poprawiono teksturę portów I/O karty graficznej na idealnie odwzorowującą układ złączy NVIDIA (3x DisplayPort, 1x HDMI) po dostarczeniu nowej grafiki.
+- Zaktualizowano model zasilacza (PSU) o nową, fotorealistyczną teksturę tylnego panelu (złącza modularne, przełącznik AC i gęsty mesh wentylacyjny), dostarczoną przez użytkownika.
 - **Animacja Dekompozycji**: Przycisk "Rozłóż na Części" wyzwala teraz sekwencyjną animację (`explodeStep`). Boczny szklany panel płynnie cofa się i zanika przed wysunięciem głównych komponentów.
 - Zmieniono UI Panelu Informacyjnego: Zmniejszono wysokość głównego obrazu, dając więcej pionowej przestrzeni na tekst i szczegóły bez konieczności przewijania.
 - Przebudowano od zera model Płyty Głównej (Motherboard), dodając high-endowe detale (chłodzenie VRM, osłony NVMe M.2, modelowane kondensatory, gniazda ATX/EPS/SATA, podświetlaną sekcję audio, baterię CMOS oraz czerwony wyświetlacz POST).

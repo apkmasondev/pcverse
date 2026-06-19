@@ -44,6 +44,33 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
   const _tempDir = useRef(new Vector3());
   const _tempFocal = useRef(new Vector3());
 
+  // Obsługa przesuwania na boki (Pan / Truck) za pomocą strzałek
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!cameraControlsRef.current) return;
+      // Nie blokujemy strzałek, jeśli user pisze w jakimś inpucie
+      if (document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA') return;
+      
+      const speed = 0.5;
+      switch (e.key) {
+        case 'ArrowUp':
+          cameraControlsRef.current.truck(0, -speed, true);
+          break;
+        case 'ArrowDown':
+          cameraControlsRef.current.truck(0, speed, true);
+          break;
+        case 'ArrowLeft':
+          cameraControlsRef.current.truck(-speed, 0, true);
+          break;
+        case 'ArrowRight':
+          cameraControlsRef.current.truck(speed, 0, true);
+          break;
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   // Dynamiczny kolor tła zależny od wybranego środowiska HDRi
   const bgColor = envPreset === 'studio' ? '#13141a' : envPreset === 'city' ? '#0f0a1c' : envPreset === 'apartment' ? '#8492a6' : '#1e1b18';
 
@@ -159,9 +186,9 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
           fadeDistance={30} 
           fadeStrength={1} 
         />
-        <EffectComposer>
-          <Bloom luminanceThreshold={1} mipmapBlur intensity={1.0} />
-          <N8AO aoRadius={0.5} intensity={2.0} distanceFalloff={0.5} quality="medium" halfRes />
+        <EffectComposer multisampling={isMobile ? 0 : 4}>
+          <Bloom luminanceThreshold={1} mipmapBlur={!isMobile} intensity={isMobile ? 0.8 : 1.0} />
+          <N8AO aoRadius={0.5} intensity={2.0} distanceFalloff={0.5} quality={isMobile ? "low" : "medium"} halfRes />
           <Vignette eskil={false} offset={0.2} darkness={0.6} />
           <ChromaticAberration blendFunction={BlendFunction.NORMAL} offset={CHROMA_OFFSET} />
         </EffectComposer>

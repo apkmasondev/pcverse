@@ -4,7 +4,7 @@ import { UI } from './components/UI/UI';
 import { InfoPanel } from './components/InfoPanel/InfoPanel';
 import { PCProvider } from './hooks/usePC';
 import { GlobalErrorBoundary } from './components/ErrorBoundary';
-import { Loader } from '@react-three/drei';
+import { LoadingScreen } from './components/LoadingScreen/LoadingScreen';
 
 const isWebGLAvailable = () => {
   try {
@@ -44,12 +44,7 @@ function App() {
           <Scene3D />
           <UI />
           <InfoPanel />
-          <Loader 
-            containerStyles={{ background: '#0a0a0f' }} 
-            innerStyles={{ width: '300px' }} 
-            barStyles={{ background: '#6366f1', height: '4px' }} 
-            dataInterpolation={(p) => `Wczytywanie PCVerse... ${p.toFixed(0)}%`} 
-          />
+          <LoadingScreen />
         </main>
       </PCProvider>
     </GlobalErrorBoundary>

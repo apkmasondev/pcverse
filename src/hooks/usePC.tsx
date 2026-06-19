@@ -13,6 +13,8 @@ export interface PCContextType {
   toggleXrayMode: () => void;
   rgbColor: string;
   setRgbColor: (color: string) => void;
+  rgbEnabled: boolean;
+  toggleRgbEnabled: () => void;
   showAirflow: boolean;
   toggleAirflow: () => void;
   envPreset: string;
@@ -31,6 +33,7 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
   const [cameraResetTrigger, setCameraResetTrigger] = useState(0);
   const [xrayMode, setXrayMode] = useState(false);
   const [rgbColor, setRgbColor] = useState('#06b6d4'); // Default Cyan
+  const [rgbEnabled, setRgbEnabled] = useState(true);
   const [showAirflow, setShowAirflow] = useState(false);
   const [envPreset, setEnvPreset] = useState('studio');
   const [showLabels, setShowLabels] = useState(true);
@@ -55,6 +58,7 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
   };
   const toggleAirflow = () => setShowAirflow((prev) => !prev);
   const toggleLabels = () => setShowLabels((prev) => !prev);
+  const toggleRgbEnabled = () => setRgbEnabled((prev) => !prev);
 
   return (
     <PCContext.Provider
@@ -69,6 +73,8 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
         toggleXrayMode,
         rgbColor,
         setRgbColor,
+        rgbEnabled,
+        toggleRgbEnabled,
         showAirflow,
         toggleAirflow,
         envPreset,

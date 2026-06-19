@@ -3,11 +3,28 @@ import type { ReactNode } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { Group, Color, Vector3 } from 'three';
-import { Html, useCursor, Bvh } from '@react-three/drei';
+import { Html, useCursor, Bvh, useTexture } from '@react-three/drei';
 import { pcComponents } from '../../data/components';
 import type { PCComponent } from '../../data/components';
 import { usePC } from '../../hooks/usePC';
 import { playHoverSound, playSelectSound } from '../../utils/audio';
+import moboBackUrl from '../../assets/mobo_back_photo.png';
+import cpuSocketUrl from '../../assets/cpu_socket.png';
+import moboChipsetUrl from '../../assets/mobo_chipset.png';
+import psuTopUrl from '../../assets/psu_top.png';
+import psuSideUrl from '../../assets/psu_side.png';
+import psuBackUrl from '../../assets/psu_back.webp';
+import psuFrontUrl from '../../assets/psu_front.webp';
+import gpuBackplateUrl from '../../assets/gpu_backplate.png';
+import gpuFrontUrl from '../../assets/gpu_front.png';
+import ramSideUrl from '../../assets/ram_side.png';
+import hddTopUrl from '../../assets/hdd_top.png';
+import caseFanUrl from '../../assets/case_fan.png';
+import ssdTopUrl from '../../assets/ssd_top.png';
+import cpuTopUrl from '../../assets/cpu_top.png';
+import moboTopUrl from '../../assets/mobo_top.png';
+import moboIoUrl from '../../assets/mobo_io.webp';
+import gpuIoUrl from '../../assets/gpu_io.webp';
 
 // --- Error Boundary ---
 class ErrorBoundary extends Component<{ fallback: ReactNode, children: ReactNode }, { hasError: boolean }> {
@@ -34,41 +51,55 @@ class ErrorBoundary extends Component<{ fallback: ReactNode, children: ReactNode
 
 // --- Procedural Geometries (Premium 3D) ---
 
-const CPUGeometry = () => (
-  <group>
-    {/* Green PCB Base */}
-    <mesh position={[0, 0, -0.02]}>
-      <boxGeometry args={[0.8, 0.8, 0.04]} />
-      <meshStandardMaterial color="#1a4d2e" roughness={0.9} />
-    </mesh>
-    {/* Silver IHS (Heat Spreader) */}
-    <mesh position={[0, 0, 0.04]}>
-      <boxGeometry args={[0.65, 0.65, 0.08]} />
-      <meshStandardMaterial color="#c0c5ce" metalness={0.9} roughness={0.2} />
-    </mesh>
-    {/* IHS Bevel/Indentation */}
-    <mesh position={[0, 0, 0.09]}>
-      <boxGeometry args={[0.55, 0.55, 0.02]} />
-      <meshStandardMaterial color="#d1d5db" metalness={0.8} roughness={0.3} />
-    </mesh>
-    {/* Gold Pins (Bottom/Back) */}
-    <mesh position={[0, 0, -0.041]} rotation={[0, Math.PI, 0]}>
-      <planeGeometry args={[0.7, 0.7]} />
-      <meshStandardMaterial color="#d4af37" metalness={1} roughness={0.4} />
-    </mesh>
-  </group>
-);
+const CPUGeometry = () => {
+  const cpuTexture = useTexture(cpuTopUrl);
+
+  return (
+    <group>
+      {/* Base Substrate Block */}
+      <mesh position={[0, 0, -0.01]}>
+        <boxGeometry args={[0.8, 0.8, 0.06]} />
+        <meshStandardMaterial color="#2a1f1a" roughness={0.9} />
+      </mesh>
+      
+      {/* Photorealistic AM5 CPU Top (With Bump Mapping for 3D effect) */}
+      <mesh position={[0, 0, 0.021]}>
+        <planeGeometry args={[0.8, 0.8]} />
+        <meshStandardMaterial 
+          map={cpuTexture} 
+          bumpMap={cpuTexture} 
+          bumpScale={0.04} 
+          roughness={0.4} 
+          metalness={0.6} 
+        />
+      </mesh>
+
+      {/* Gold Pins (Bottom/Back) */}
+      <mesh position={[0, 0, -0.041]} rotation={[0, Math.PI, 0]}>
+        <planeGeometry args={[0.7, 0.7]} />
+        <meshStandardMaterial color="#d4af37" metalness={1} roughness={0.4} />
+      </mesh>
+    </group>
+  );
+};
 
 const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
   const fanRef1 = useRef<Group>(null);
   const fanRef2 = useRef<Group>(null);
   const fanRef3 = useRef<Group>(null);
+  const gpuBackplateTexture = useTexture(gpuBackplateUrl);
+  const gpuFrontTexture = useTexture(gpuFrontUrl);
+  const gpuIoTexture = useTexture(gpuIoUrl);
+  gpuFrontTexture.wrapS = THREE.RepeatWrapping;
+  gpuFrontTexture.wrapT = THREE.RepeatWrapping;
+  gpuFrontTexture.repeat.set(3, 1);
   
   useFrame((_state, delta) => {
     if (fanRef1.current) fanRef1.current.rotation.y += delta * 20;
     if (fanRef2.current) fanRef2.current.rotation.y += delta * 20;
     if (fanRef3.current) fanRef3.current.rotation.y += delta * 20;
   });
+
 
   return (
     <group>
@@ -83,6 +114,11 @@ const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
         <mesh position={[0, 0, -0.1]}>
           <boxGeometry args={[0.04, 0.4, 1.0]} />
           <meshStandardMaterial color="#888c94" metalness={0.8} roughness={0.4} />
+        </mesh>
+        {/* GPU IO Texture Plane */}
+        <mesh position={[-0.021, 0, -0.1]} rotation={[0, -Math.PI / 2, 0]}>
+          <planeGeometry args={[1.0, 0.4]} />
+          <meshStandardMaterial map={gpuIoTexture} roughness={0.4} metalness={0.6} />
         </mesh>
         {/* HDMI Port (Gold plated) */}
         <mesh position={[-0.02, 0.05, 0.2]}>
@@ -109,6 +145,11 @@ const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
         <boxGeometry args={[3.4, 0.05, 1.2]} />
         <meshStandardMaterial color="#2a2a2a" metalness={0.7} roughness={0.4} />
       </mesh>
+      {/* GPU Backplate Texture */}
+      <mesh position={[0, 0.076, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[3.4, 1.2]} />
+        <meshStandardMaterial map={gpuBackplateTexture} roughness={0.3} metalness={0.7} />
+      </mesh>
       {/* Backplate Accent / Cutout detail */}
       <mesh position={[1.2, 0.06, 0]}>
         <boxGeometry args={[0.6, 0.04, 0.8]} />
@@ -125,6 +166,11 @@ const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
       <mesh position={[0, -0.325, 0]}>
         <boxGeometry args={[3.4, 0.1, 1.2]} />
         <meshStandardMaterial color="#151515" roughness={0.6} />
+      </mesh>
+      {/* GPU Front Texture (Fans Side) */}
+      <mesh position={[0, -0.376, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[3.4, 1.2]} />
+        <meshStandardMaterial map={gpuFrontTexture} roughness={0.3} metalness={0.5} />
       </mesh>
 
       {/* Futuristic Power Connector (12VHPWR style) */}
@@ -152,9 +198,9 @@ const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
         <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={1} toneMapped={false} />
       </mesh>
 
-      {/* Fans */}
+      {/* Physical Fans (Visible inside hologram) */}
       {[-1.1, 0, 1.1].map((x, i) => (
-        <group key={i} position={[x, -0.2, 0]} ref={i === 0 ? fanRef1 : i === 1 ? fanRef2 : fanRef3}>
+        <group key={`phys-fan-${i}`} position={[x, -0.2, 0]} ref={i === 0 ? fanRef1 : i === 1 ? fanRef2 : fanRef3}>
           <mesh>
             <cylinderGeometry args={[0.42, 0.42, 0.05, 32]} />
             <meshStandardMaterial color="#050505" roughness={0.8} />
@@ -167,62 +213,88 @@ const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
             <boxGeometry args={[0.78, 0.05, 0.1]} />
             <meshStandardMaterial color="#1a1a1a" roughness={0.4} />
           </mesh>
-          <group position={[0, -0.85, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-            <LocalAirflowParticles count={30} radius={0.35} length={0.8} speedMult={1.5} color="#38bdf8" />
-          </group>
+        </group>
+      ))}
+
+      {/* GPU Cooling Airflow Particles - 3 streams for 3 fans */}
+      {[-1.1, 0, 1.1].map((x, i) => (
+        <group key={`airflow-${i}`} position={[x, -0.85, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <LocalAirflowParticles count={30} radius={0.35} length={0.8} speedMult={1.5} color="#38bdf8" />
         </group>
       ))}
     </group>
   );
 };
 
-const RAMGeometry = ({ rgbColor }: { color?: Color, rgbColor: string }) => (
-  <group>
-    {/* RAM PCB (Długa na osi Y, wpięta w płytę główną osiami Z) */}
-    <mesh position={[0, 0, 0]}>
-      <boxGeometry args={[0.04, 1.35, 0.35]} />
-      <meshStandardMaterial color="#050505" roughness={0.9} />
-    </mesh>
-    {/* Złote styki (Z tyłu, wchodzące w slot na płycie) */}
-    <mesh position={[0, 0, -0.16]}>
-      <boxGeometry args={[0.045, 1.3, 0.04]} />
-      <meshStandardMaterial color="#d4af37" metalness={1} roughness={0.3} />
-    </mesh>
-    {/* Metaliczny Radiator (Heat Spreader) */}
-    <mesh position={[0, 0, 0.02]}>
-      <boxGeometry args={[0.08, 1.38, 0.32]} />
-      <meshStandardMaterial color="#1f2229" metalness={0.7} roughness={0.4} />
-    </mesh>
-    {/* Gamingowe nakładki radiatora */}
-    <mesh position={[0.045, 0, 0.05]}>
-      <boxGeometry args={[0.02, 1.2, 0.2]} />
-      <meshStandardMaterial color="#3b3e46" metalness={0.9} roughness={0.2} />
-    </mesh>
-    <mesh position={[-0.045, 0, 0.05]}>
-      <boxGeometry args={[0.02, 1.2, 0.2]} />
-      <meshStandardMaterial color="#3b3e46" metalness={0.9} roughness={0.2} />
-    </mesh>
-    {/* Ledowy Dyfuzor RGB (Przód, patrzący na nas) */}
-    <mesh position={[0, 0, 0.18]}>
-      <boxGeometry args={[0.06, 1.36, 0.08]} />
-      <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={2.5} toneMapped={false} />
-    </mesh>
-    {/* Drobne nacięcia na pasku RGB (detal premium) */}
-    {[0.4, 0, -0.4].map((y, i) => (
-      <mesh key={i} position={[0, y, 0.22]}>
-        <boxGeometry args={[0.065, 0.05, 0.02]} />
-        <meshStandardMaterial color="#111" roughness={0.8} />
+const RAMGeometry = ({ rgbColor }: { color?: Color, rgbColor: string }) => {
+  const ramSideTexture = useTexture(ramSideUrl);
+  
+  return (
+    <group>
+      {/* RAM PCB (Długa na osi Y, wpięta w płytę główną osiami Z) */}
+      <mesh position={[0, 0, 0]}>
+        <boxGeometry args={[0.04, 1.35, 0.35]} />
+        <meshStandardMaterial color="#050505" roughness={0.9} />
       </mesh>
-    ))}
-  </group>
-);
+      {/* Złote styki (Z tyłu, wchodzące w slot na płycie) */}
+      <mesh position={[0, 0, -0.16]}>
+        <boxGeometry args={[0.045, 1.3, 0.04]} />
+        <meshStandardMaterial color="#d4af37" metalness={1} roughness={0.3} />
+      </mesh>
+      {/* Metaliczny Radiator (Heat Spreader) */}
+      <mesh position={[0, 0, 0.02]}>
+        <boxGeometry args={[0.08, 1.38, 0.32]} />
+        <meshStandardMaterial color="#1f2229" metalness={0.7} roughness={0.4} />
+      </mesh>
+      
+      {/* RAM Side Textures */}
+      {/* Right side (+X) */}
+      <mesh position={[0.041, 0, 0.02]} rotation={[0, Math.PI / 2, Math.PI / 2]}>
+        <planeGeometry args={[1.38, 0.32]} />
+        <meshStandardMaterial map={ramSideTexture} roughness={0.4} metalness={0.6} />
+      </mesh>
+      {/* Left side (-X) */}
+      <mesh position={[-0.041, 0, 0.02]} rotation={[0, -Math.PI / 2, -Math.PI / 2]}>
+        <planeGeometry args={[1.38, 0.32]} />
+        <meshStandardMaterial map={ramSideTexture} roughness={0.4} metalness={0.6} />
+      </mesh>
 
-const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => (
+      {/* RGB Top Bar */}
+      <mesh position={[0, 0, 0.2]}>
+        <boxGeometry args={[0.06, 1.36, 0.04]} />
+        <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={1.5} toneMapped={false} />
+      </mesh>
+    </group>
+  );
+};
+
+
+const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
+  const backTexture = useTexture(moboBackUrl);
+  const moboTopTexture = useTexture(moboTopUrl);
+  const cpuSocketTexture = useTexture(cpuSocketUrl);
+  const chipsetTexture = useTexture(moboChipsetUrl);
+  const ssdTexture = useTexture(ssdTopUrl);
+  const moboIoTexture = useTexture(moboIoUrl);
+
+  return (
   <group>
     {/* Main PCB */}
     <mesh position={[0, 0, 0]}>
       <boxGeometry args={[3, 4, 0.06]} />
       <meshStandardMaterial color="#111214" roughness={0.9} />
+    </mesh>
+    
+    {/* Motherboard Top Texture (Photorealistic Base) */}
+    <mesh position={[0, 0, 0.031]}>
+      <planeGeometry args={[3, 4]} />
+      <meshStandardMaterial map={moboTopTexture} roughness={0.5} metalness={0.4} />
+    </mesh>
+    
+    {/* Motherboard Backplate Texture */}
+    <mesh position={[0, 0, -0.031]} rotation={[0, Math.PI, 0]}>
+      <planeGeometry args={[3, 4]} />
+      <meshStandardMaterial map={backTexture} roughness={0.4} metalness={0.2} />
     </mesh>
 
     {/* VRM Heatsinks (Massive, angled) */}
@@ -235,15 +307,33 @@ const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => (
       <meshStandardMaterial color="#151515" metalness={0.9} roughness={0.2} />
     </mesh>
 
+    {/* CPU Socket Cover (Grey rectangle to hide the printed socket on texture) */}
+    <mesh position={[0, 0.95, 0.035]}>
+      <boxGeometry args={[1.3, 1.45, 0.02]} />
+      <meshStandardMaterial color="#1f2023" roughness={0.9} />
+    </mesh>
+
     {/* CPU Socket & Mounting Bracket */}
     <mesh position={[0, 1, 0.05]}>
       <boxGeometry args={[1.0, 1.0, 0.08]} />
       <meshStandardMaterial color="#222" roughness={0.8} />
     </mesh>
-    <mesh position={[0, 1, 0.1]}>
-      <boxGeometry args={[0.8, 0.8, 0.02]} />
-      <meshStandardMaterial color="#d4af37" metalness={1} roughness={0.3} />
+    <mesh position={[0, 1, 0.091]}>
+      <planeGeometry args={[0.8, 0.8]} />
+      <meshStandardMaterial map={cpuSocketTexture} metalness={0.8} roughness={0.2} />
     </mesh>
+
+    {/* NVMe M.2 SSD */}
+    <group position={[-0.3, 0.1, 0.05]}>
+      <mesh position={[0, 0, 0]}>
+        <boxGeometry args={[0.8, 0.22, 0.02]} />
+        <meshStandardMaterial color="#0a0a0a" roughness={0.8} />
+      </mesh>
+      <mesh position={[0, 0, 0.011]}>
+        <planeGeometry args={[0.78, 0.2]} />
+        <meshStandardMaterial map={ssdTexture} roughness={0.5} />
+      </mesh>
+    </group>
 
     {/* VRM Capacitors (Silver cylinders near CPU) */}
     {[-1.2, -1.0, -0.8, -0.6, -0.4, -0.2, 0, 0.2].map((y, i) => (
@@ -351,6 +441,11 @@ const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => (
         <boxGeometry args={[1.0, 1.0, 0.15]} />
         <meshStandardMaterial color="#151515" metalness={0.9} roughness={0.2} />
       </mesh>
+      {/* Chipset Texture */}
+      <mesh position={[0, 0, 0.076]}>
+        <planeGeometry args={[1.0, 1.0]} />
+        <meshStandardMaterial map={chipsetTexture} roughness={0.3} metalness={0.6} />
+      </mesh>
       {/* Sci-fi grooves */}
       <mesh position={[-0.2, 0, 0.08]}>
         <boxGeometry args={[0.1, 1.0, 0.02]} />
@@ -375,6 +470,11 @@ const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => (
       <mesh position={[-1.53, 1.2, -1.55]}>
         <boxGeometry args={[0.04, 1.4, 0.65]} />
         <meshStandardMaterial color="#888c94" metalness={0.8} roughness={0.3} />
+      </mesh>
+      {/* Motherboard IO Image Texture Plane */}
+      <mesh position={[-1.551, 1.2, -1.55]} rotation={[0, -Math.PI / 2, 0]}>
+        <planeGeometry args={[0.65, 1.4]} />
+        <meshStandardMaterial map={moboIoTexture} roughness={0.6} metalness={0.4} />
       </mesh>
       {/* Motherboard IO Ports - Professional High-End Layout */}
       {/* BIOS Flashback & Clear CMOS */}
@@ -451,10 +551,15 @@ const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => (
       </mesh>
     </group>
   </group>
-);
+  );
+};
 
 const PSUGeometry = () => {
   const fanRef = useRef<Group>(null);
+  const psuTopTexture = useTexture(psuTopUrl);
+  const psuSideTexture = useTexture(psuSideUrl);
+  const psuBackTexture = useTexture(psuBackUrl);
+  const psuFrontTexture = useTexture(psuFrontUrl);
   
   const backMeshTexture = useMemo(() => {
     const canvas = document.createElement('canvas');
@@ -495,6 +600,21 @@ const PSUGeometry = () => {
         <boxGeometry args={[1.8, 0.8, 1.5]} />
         <meshStandardMaterial color="#111" metalness={0.6} roughness={0.5} />
       </mesh>
+      {/* PSU Top Texture */}
+      <mesh position={[0, 0.401, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[1.8, 1.5]} />
+        <meshStandardMaterial map={psuTopTexture} roughness={0.6} metalness={0.4} />
+      </mesh>
+      {/* PSU Side Texture (Facing Glass) */}
+      <mesh position={[0.901, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
+        <planeGeometry args={[1.5, 0.8]} />
+        <meshStandardMaterial map={psuSideTexture} roughness={0.6} metalness={0.4} />
+      </mesh>
+      {/* PSU Side Texture (Facing Back Panel) */}
+      <mesh position={[-0.901, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
+        <planeGeometry args={[1.5, 0.8]} />
+        <meshStandardMaterial map={psuSideTexture} roughness={0.6} metalness={0.4} />
+      </mesh>
       {/* Bottom Fan Grill - aligned horizontally on Y-axis */}
       <mesh position={[0, -0.401, 0]}>
         <cylinderGeometry args={[0.6, 0.6, 0.01, 32]} />
@@ -515,23 +635,15 @@ const PSUGeometry = () => {
           </mesh>
         ))}
       </group>
-      {/* Back Switch and Plug */}
-      <mesh position={[0, 0, -0.751]}>
-        <boxGeometry args={[1.6, 0.8, 0.02]} />
-        <meshStandardMaterial color="#050505" roughness={0.8} />
+      {/* Back Texture (Exhaust & AC Plug) */}
+      <mesh position={[0, 0, -0.751]} rotation={[0, Math.PI, 0]}>
+        <planeGeometry args={[1.6, 0.8]} />
+        <meshStandardMaterial map={psuBackTexture} roughness={0.8} />
       </mesh>
-      <mesh position={[-0.6, 0.2, -0.762]}>
-        <boxGeometry args={[0.15, 0.2, 0.02]} />
-        <meshStandardMaterial color="#e94560" roughness={0.6} />
-      </mesh>
-      <mesh position={[0.5, 0.2, -0.762]}>
-        <boxGeometry args={[0.3, 0.25, 0.02]} />
-        <meshStandardMaterial color="#111" roughness={0.6} />
-      </mesh>
-      {/* Modular Cable Ports */}
+      {/* Modular Cable Ports Texture (Front of PSU) */}
       <mesh position={[0, 0, 0.751]}>
-        <boxGeometry args={[1.5, 0.7, 0.02]} />
-        <meshStandardMaterial color="#1a1a1a" roughness={0.8} />
+        <planeGeometry args={[1.6, 0.8]} />
+        <meshStandardMaterial map={psuFrontTexture} roughness={0.8} />
       </mesh>
       {/* Airflow Intake (Blue, from bottom into the PSU) */}
       <group position={[0, -1.0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
@@ -542,72 +654,38 @@ const PSUGeometry = () => {
         <LocalAirflowParticles count={30} radius={0.3} length={1.5} speedMult={1.5} color="#ef4444" />
       </group>
 
-      {/* PSU Backplate cutout & switch (Offset by [1.2, 1.9, 1.0] to reverse PSU position logic) */}
-      <group position={[1.2, 1.9, 1.0]}>
-        <mesh position={[-1.98, -1.92, -1.0]}>
-          <boxGeometry args={[0.04, 1.0, 1.8]} />
-          <meshStandardMaterial 
-            color="#1c1d22" 
-            metalness={0.6} 
-            roughness={0.5}
-            alphaMap={backMeshTexture} 
-            transparent={true} 
-            side={THREE.DoubleSide} 
-          />
-        </mesh>
-        <mesh position={[-2.0, -1.72, -0.4]}>
-          <boxGeometry args={[0.02, 0.2, 0.15]} />
-          <meshStandardMaterial color="#ef4444" roughness={0.5} />
-        </mesh>
-        <mesh position={[-2.0, -1.72, -1.5]}>
-          <boxGeometry args={[0.02, 0.25, 0.3]} />
-          <meshStandardMaterial color="#111" roughness={0.7} />
-        </mesh>
-      </group>
     </group>
   );
 };
 
-const SSDGeometry = () => (
-  <group>
-    {/* M.2 PCB */}
-    <mesh position={[0, 0, 0]}>
-      <boxGeometry args={[0.22, 0.8, 0.02]} />
-      <meshStandardMaterial color="#111214" roughness={0.9} />
-    </mesh>
-    {/* Memory Chips */}
-    {[0.2, 0, -0.2].map((y, i) => (
-      <mesh key={i} position={[0, y, 0.015]}>
-        <boxGeometry args={[0.18, 0.15, 0.03]} />
-        <meshStandardMaterial color="#0a0a0a" roughness={0.5} />
+const SSDGeometry = () => {
+  const ssdTexture = useTexture(ssdTopUrl);
+
+  return (
+    <group>
+      {/* M.2 PCB Background */}
+      <mesh position={[0, 0, 0]}>
+        <boxGeometry args={[0.22, 0.8, 0.01]} />
+        <meshStandardMaterial color="#111214" roughness={0.9} />
       </mesh>
-    ))}
-    {/* Controller Chip */}
-    <mesh position={[0, -0.35, 0.015]}>
-      <boxGeometry args={[0.15, 0.1, 0.03]} />
-      <meshStandardMaterial color="#151515" metalness={0.5} roughness={0.4} />
-    </mesh>
-    {/* Sticker Label */}
-    <mesh position={[0, 0, 0.031]}>
-      <planeGeometry args={[0.2, 0.7]} />
-      <meshStandardMaterial color="#e2e8f0" roughness={0.6} />
-    </mesh>
-    {/* Gold Connector */}
-    <mesh position={[0, 0.4, 0]}>
-      <boxGeometry args={[0.22, 0.05, 0.021]} />
-      <meshStandardMaterial color="#d4af37" metalness={1} roughness={0.3} />
-    </mesh>
-  </group>
-);
+      
+      {/* SSD Photorealistic Top */}
+      <mesh position={[0, 0, 0.006]}>
+        <planeGeometry args={[0.22, 0.8]} />
+        <meshStandardMaterial map={ssdTexture} roughness={0.4} metalness={0.2} transparent={true} />
+      </mesh>
+      
+      {/* Gold Connector Edge (Pins are at the bottom: -Y) */}
+      <mesh position={[0, -0.39, 0]}>
+        <boxGeometry args={[0.22, 0.02, 0.011]} />
+        <meshStandardMaterial color="#d4af37" metalness={1} roughness={0.3} />
+      </mesh>
+    </group>
+  );
+};
 
 const FanGeometry = ({ rgbColor, isExhaust = false }: { rgbColor: string, isExhaust?: boolean }) => {
-  const bladeRef = useRef<Group>(null);
-  
-  useFrame((_state, delta) => {
-    if (bladeRef.current) {
-      bladeRef.current.rotation.z += delta * 15;
-    }
-  });
+  const fanTexture = useTexture(caseFanUrl);
 
   return (
     <group>
@@ -616,37 +694,27 @@ const FanGeometry = ({ rgbColor, isExhaust = false }: { rgbColor: string, isExha
         <boxGeometry args={[1, 1, 0.2]} />
         <meshStandardMaterial color="#151515" roughness={0.7} />
       </mesh>
-      {/* Inner Cutout */}
-      <mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.48, 0.48, 0.22, 32]} />
-        <meshStandardMaterial color="#050505" roughness={0.9} side={2} />
+      
+      {/* Front Face Texture */}
+      <mesh position={[0, 0, 0.101]}>
+        <planeGeometry args={[1, 1]} />
+        <meshStandardMaterial map={fanTexture} roughness={0.4} metalness={0.3} transparent={false} alphaTest={0.5} />
       </mesh>
-      {/* Rubber Corners */}
-      {[0.4, -0.4].map(x => 
-        [0.4, -0.4].map(y => (
-          <mesh key={`${x}-${y}`} position={[x, y, 0.11]}>
-            <boxGeometry args={[0.15, 0.15, 0.02]} />
-            <meshStandardMaterial color="#333" roughness={0.9} />
-          </mesh>
-        ))
-      )}
-      {/* Blades */}
-      <group ref={bladeRef}>
-        <mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
-          <cylinderGeometry args={[0.15, 0.15, 0.18, 32]} />
-          <meshStandardMaterial color="#1a1a1a" roughness={0.5} />
-        </mesh>
-        {[0, 1, 2, 3].map(i => (
-          <mesh key={i} position={[0, 0, 0]} rotation={[0, 0, (Math.PI / 2) * i]}>
-            <boxGeometry args={[0.9, 0.1, 0.05]} />
-            <meshStandardMaterial color="#222" roughness={0.4} />
-          </mesh>
-        ))}
-      </group>
-      {/* RGB Ring */}
-      <mesh position={[0, 0, 0.09]}>
-        <torusGeometry args={[0.46, 0.02, 16, 64]} />
-        <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={1} toneMapped={false} />
+      {/* Front RGB LED Ring */}
+      <mesh position={[0, 0, 0.103]}>
+        <torusGeometry args={[0.44, 0.025, 16, 64]} />
+        <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={3} toneMapped={false} />
+      </mesh>
+
+      {/* Back Face Texture */}
+      <mesh position={[0, 0, -0.101]} rotation={[0, Math.PI, 0]}>
+        <planeGeometry args={[1, 1]} />
+        <meshStandardMaterial map={fanTexture} roughness={0.4} metalness={0.3} transparent={false} alphaTest={0.5} />
+      </mesh>
+      {/* Back RGB LED Ring */}
+      <mesh position={[0, 0, -0.103]} rotation={[0, Math.PI, 0]}>
+        <torusGeometry args={[0.44, 0.025, 16, 64]} />
+        <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={3} toneMapped={false} />
       </mesh>
 
       {/* Airflow */}
@@ -694,21 +762,26 @@ const CaseGeometry = () => {
   const sideGlassMatRef = useRef<any>(null);
   const frontGlassRef = useRef<THREE.Group>(null);
   const frontGlassMatRef = useRef<any>(null);
+  const solidSideRef = useRef<THREE.Group>(null);
 
   useFrame((_state, delta) => {
     if (sideGlassRef.current && sideGlassMatRef.current) {
-      const targetX = explodeStep >= 1 ? 9.0 : 1.95; // slide out further to X=9.0
+      const targetX = explodeStep >= 1 ? 25.0 : 1.95; // Fly away off-screen
       const targetOpacity = explodeStep >= 1 ? 0 : 0.25; // fade out
       
-      sideGlassRef.current.position.x = THREE.MathUtils.lerp(sideGlassRef.current.position.x, targetX, delta * 4);
-      sideGlassMatRef.current.opacity = THREE.MathUtils.lerp(sideGlassMatRef.current.opacity, targetOpacity, delta * 4);
+      sideGlassRef.current.position.x = THREE.MathUtils.lerp(sideGlassRef.current.position.x, targetX, delta * 3);
+      sideGlassMatRef.current.opacity = THREE.MathUtils.lerp(sideGlassMatRef.current.opacity, targetOpacity, delta * 3);
     }
     if (frontGlassRef.current && frontGlassMatRef.current) {
-      const targetZ = explodeStep >= 1 ? 9.0 : 1.95;
+      const targetZ = explodeStep >= 1 ? 25.0 : 1.95;
       const targetOpacity = explodeStep >= 1 ? 0 : 0.25;
       
-      frontGlassRef.current.position.z = THREE.MathUtils.lerp(frontGlassRef.current.position.z, targetZ, delta * 4);
-      frontGlassMatRef.current.opacity = THREE.MathUtils.lerp(frontGlassMatRef.current.opacity, targetOpacity, delta * 4);
+      frontGlassRef.current.position.z = THREE.MathUtils.lerp(frontGlassRef.current.position.z, targetZ, delta * 3);
+      frontGlassMatRef.current.opacity = THREE.MathUtils.lerp(frontGlassMatRef.current.opacity, targetOpacity, delta * 3);
+    }
+    if (solidSideRef.current) {
+      const targetX = explodeStep >= 1 ? -25.0 : 0;
+      solidSideRef.current.position.x = THREE.MathUtils.lerp(solidSideRef.current.position.x, targetX, delta * 3);
     }
   });
 
@@ -745,11 +818,11 @@ const CaseGeometry = () => {
     shape.holes.push(pcieHole);
 
     const fanHole = new THREE.Path();
-    fanHole.moveTo(-0.4 - 0.6, 1.4 - 0.6);
-    fanHole.lineTo(-0.4 + 0.6, 1.4 - 0.6);
-    fanHole.lineTo(-0.4 + 0.6, 1.4 + 0.6);
-    fanHole.lineTo(-0.4 - 0.6, 1.4 + 0.6);
-    fanHole.lineTo(-0.4 - 0.6, 1.4 - 0.6);
+    fanHole.moveTo(0.2 - 1.2, 1.4 - 0.6);
+    fanHole.lineTo(0.2 + 1.2, 1.4 - 0.6);
+    fanHole.lineTo(0.2 + 1.2, 1.4 + 0.6);
+    fanHole.lineTo(0.2 - 1.2, 1.4 + 0.6);
+    fanHole.lineTo(0.2 - 1.2, 1.4 - 0.6);
     shape.holes.push(fanHole);
 
     return shape;
@@ -826,12 +899,19 @@ const CaseGeometry = () => {
       {/* Top Panel (Mesh grill) */}
       <mesh position={[0, 2.45, 0]}>
         <boxGeometry args={[4, 0.1, 4]} />
+        <meshStandardMaterial color="#1a1c22" roughness={0.6} metalness={0.5} />
+      </mesh>
+
+      {/* PSU Back panel with honeycomb mesh cutout */}
+      <mesh position={[0, -1.95, -1.99]}>
+        <planeGeometry args={[1.5, 0.9]} />
         <meshStandardMaterial 
           color="#2c2e36" 
           roughness={0.5} 
           metalness={0.9} 
           alphaMap={meshTexture} 
-          transparent={true} 
+          transparent={false} 
+          alphaTest={0.5}
           side={THREE.DoubleSide} 
         />
       </mesh>
@@ -847,7 +927,8 @@ const CaseGeometry = () => {
         <meshStandardMaterial 
           color="#151515" 
           alphaMap={backMeshTexture} 
-          transparent={true} 
+          transparent={false} 
+          alphaTest={0.5}
           side={THREE.DoubleSide} 
         />
       </mesh>
@@ -857,16 +938,45 @@ const CaseGeometry = () => {
         <meshStandardMaterial 
           color="#151515" 
           alphaMap={backMeshTexture} 
-          transparent={true} 
+          transparent={false} 
+          alphaTest={0.5}
           side={THREE.DoubleSide} 
         />
       </mesh>
       
-      {/* Motherboard Tray */}
-      <mesh position={[0, 0, -1.8]}>
-        <boxGeometry args={[3.8, 4.8, 0.05]} />
-        <meshStandardMaterial color="#111" roughness={0.6} />
-      </mesh>
+      {/* Motherboard Tray with Standoffs (Gwinty) and Routing Holes */}
+      <group position={[0, 0, -1.8]}>
+        {/* Main Tray */}
+        <mesh>
+          <boxGeometry args={[3.8, 4.8, 0.05]} />
+          <meshStandardMaterial color="#111" roughness={0.6} />
+        </mesh>
+        
+        {/* Raised Standoffs (Gwinty) for Motherboard */}
+        {[-1.3, -0.45, 0.4].map((x, i) => (
+          [-1.85, 0, 1.85].map((y, j) => (
+            <mesh key={`standoff-${i}-${j}`} position={[x, y, 0.035]} rotation={[Math.PI / 2, 0, 0]}>
+              <cylinderGeometry args={[0.03, 0.03, 0.07, 16]} />
+              <meshStandardMaterial color="#b87333" metalness={0.8} roughness={0.4} />
+            </mesh>
+          ))
+        ))}
+        
+        {/* Cable Routing Rubber Grommets */}
+        {[-1.0, 0, 1.0].map((y, i) => (
+          <mesh key={`grommet-${i}`} position={[1.4, y, 0.03]}>
+            <boxGeometry args={[0.3, 0.6, 0.06]} />
+            <meshStandardMaterial color="#050505" roughness={0.9} />
+          </mesh>
+        ))}
+        {/* Top/Bottom Cable Routing Cutouts */}
+        {[-0.8, 0.5].map((x, i) => (
+          <mesh key={`grommet-top-${i}`} position={[x, 2.1, 0.03]}>
+            <boxGeometry args={[0.6, 0.2, 0.06]} />
+            <meshStandardMaterial color="#050505" roughness={0.9} />
+          </mesh>
+        ))}
+      </group>
 
       {/* CPU Cooler Backplate Mesh Cutout (on the Back Panel, directly behind the CPU) */}
       <mesh position={[-0.45, 1.0, -2.01]}>
@@ -874,7 +984,8 @@ const CaseGeometry = () => {
         <meshStandardMaterial 
           color="#151515" 
           alphaMap={backMeshTexture} 
-          transparent={true} 
+          transparent={false} 
+          alphaTest={0.5}
           side={THREE.DoubleSide} 
         />
       </mesh>
@@ -892,7 +1003,7 @@ const CaseGeometry = () => {
           <meshPhysicalMaterial 
             ref={frontGlassMatRef}
             color="#c7d2fe" metalness={0.1} roughness={0.05} 
-            transmission={1.0} thickness={1.5} transparent opacity={0.25}
+            transmission={1.0} thickness={1.5} transparent={true} opacity={1.0}
             ior={1.5} clearcoat={1.0} clearcoatRoughness={0.05}
           />
         </mesh>
@@ -921,7 +1032,7 @@ const CaseGeometry = () => {
           <meshPhysicalMaterial 
             ref={sideGlassMatRef}
             color="#a5f3fc" metalness={0.1} roughness={0.05} 
-            transmission={1.0} thickness={1.5} transparent opacity={0.25}
+            transmission={1.0} thickness={1.5} transparent={true} opacity={1.0}
             ior={1.5} clearcoat={1.0} clearcoatRoughness={0.05}
           />
         </mesh>
@@ -942,32 +1053,47 @@ const CaseGeometry = () => {
           </mesh>
         ))}
       </group>
+
+      {/* Top Panel (Mesh grill) */}
+      <mesh position={[0, 2.45, 0]}>
+        <boxGeometry args={[4, 0.1, 4]} />
+        <meshStandardMaterial 
+          alphaMap={meshTexture} 
+          transparent={true} 
+          color="#151515"
+          side={THREE.DoubleSide}
+        />
+      </mesh>
       
       {/* Solid Side Panel (Back) - with Honeycomb Mesh pattern for the Exhaust fan area! */}
-      <mesh position={[-1.975, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
-        <extrudeGeometry args={[leftPanelShape, { depth: 0.05, bevelEnabled: false }]} />
-        <meshStandardMaterial color="#22242a" metalness={0.7} roughness={0.4} />
-      </mesh>
-      {/* Side mesh cutout where the side exhaust fan is! (Outside) */}
-      <mesh position={[-1.98, 1.4, -0.4]} rotation={[0, Math.PI / 2, 0]}>
-        <planeGeometry args={[1.2, 1.2]} />
-        <meshStandardMaterial 
-          color="#151515" 
-          alphaMap={backMeshTexture} 
-          transparent={true} 
-          side={THREE.DoubleSide} 
-        />
-      </mesh>
-      {/* Side mesh cutout (Inside view) */}
-      <mesh position={[-1.92, 1.4, -0.4]} rotation={[0, -Math.PI / 2, 0]}>
-        <planeGeometry args={[1.2, 1.2]} />
-        <meshStandardMaterial 
-          color="#151515" 
-          alphaMap={backMeshTexture} 
-          transparent={true} 
-          side={THREE.DoubleSide} 
-        />
-      </mesh>
+      <group ref={solidSideRef as any}>
+        <mesh position={[-1.975, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
+          <extrudeGeometry args={[leftPanelShape, { depth: 0.05, bevelEnabled: false }]} />
+          <meshStandardMaterial color="#22242a" metalness={0.7} roughness={0.4} />
+        </mesh>
+        {/* Side mesh cutout where the side exhaust fans are! (Outside) */}
+        <mesh position={[-1.98, 1.4, 0.2]} rotation={[0, Math.PI / 2, 0]}>
+          <planeGeometry args={[2.4, 1.2]} />
+          <meshStandardMaterial 
+            color="#151515" 
+            alphaMap={backMeshTexture} 
+            transparent={false} 
+            alphaTest={0.5}
+            side={THREE.DoubleSide} 
+          />
+        </mesh>
+        {/* Side mesh cutout (Inside view) */}
+        <mesh position={[-1.92, 1.4, 0.2]} rotation={[0, -Math.PI / 2, 0]}>
+          <planeGeometry args={[2.4, 1.2]} />
+          <meshStandardMaterial 
+            color="#151515" 
+            alphaMap={backMeshTexture} 
+            transparent={false} 
+            alphaTest={0.5}
+            side={THREE.DoubleSide} 
+          />
+        </mesh>
+      </group>
 
       {/* Frame Posts */}
       {[1.95, -1.95].map(x => (
@@ -998,39 +1124,38 @@ const CaseGeometry = () => {
   );
 };
 
-const HDDGeometry = () => (
-  <group>
-    {/* HDD Main Casing */}
-    <mesh position={[0, 0, 0]}>
-      <boxGeometry args={[1.0, 0.25, 1.4]} />
-      <meshStandardMaterial color="#222" roughness={0.7} metalness={0.6} />
-    </mesh>
-    {/* Silver Top Lid */}
-    <mesh position={[0, 0.13, 0]}>
-      <boxGeometry args={[0.96, 0.02, 1.36]} />
-      <meshStandardMaterial color="#e5e7eb" roughness={0.3} metalness={0.9} />
-    </mesh>
-    {/* Black Circle for Motor/Platter */}
-    <mesh position={[0, 0.141, -0.1]}>
-      <cylinderGeometry args={[0.4, 0.4, 0.01, 32]} />
-      <meshStandardMaterial color="#111" roughness={0.5} metalness={0.8} />
-    </mesh>
-    {/* Read/Write Actuator Arm Accent */}
-    <mesh position={[0.3, 0.141, 0.35]} rotation={[0, -Math.PI / 6, 0]}>
-      <boxGeometry args={[0.1, 0.01, 0.4]} />
-      <meshStandardMaterial color="#888" roughness={0.4} metalness={0.9} />
-    </mesh>
-    {/* Connectors (Back) */}
-    <mesh position={[0, -0.05, 0.71]}>
-      <boxGeometry args={[0.6, 0.1, 0.04]} />
-      <meshStandardMaterial color="#050505" roughness={0.9} />
-    </mesh>
-    <mesh position={[-0.2, -0.05, 0.73]}>
-      <boxGeometry args={[0.2, 0.08, 0.02]} />
-      <meshStandardMaterial color="#d4af37" roughness={0.4} metalness={1} />
-    </mesh>
-  </group>
-);
+const HDDGeometry = () => {
+  const hddTopTexture = useTexture(hddTopUrl);
+
+  return (
+    <group>
+      {/* HDD Main Casing */}
+      <mesh position={[0, 0, 0]}>
+        <boxGeometry args={[1.0, 0.25, 1.4]} />
+        <meshStandardMaterial color="#222" roughness={0.7} metalness={0.6} />
+      </mesh>
+      {/* Silver Top Lid */}
+      <mesh position={[0, 0.13, 0]}>
+        <boxGeometry args={[0.96, 0.02, 1.36]} />
+        <meshStandardMaterial color="#e5e7eb" roughness={0.3} metalness={0.9} />
+      </mesh>
+      {/* HDD Top Texture */}
+      <mesh position={[0, 0.141, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[0.96, 1.36]} />
+        <meshStandardMaterial map={hddTopTexture} roughness={0.3} metalness={0.6} />
+      </mesh>
+      {/* Connectors (Back) */}
+      <mesh position={[0, -0.05, 0.71]}>
+        <boxGeometry args={[0.6, 0.1, 0.04]} />
+        <meshStandardMaterial color="#050505" roughness={0.9} />
+      </mesh>
+      <mesh position={[-0.2, -0.05, 0.73]}>
+        <boxGeometry args={[0.2, 0.08, 0.02]} />
+        <meshStandardMaterial color="#d4af37" roughness={0.4} metalness={1} />
+      </mesh>
+    </group>
+  );
+};
 
 const ProceduralGeometry = ({ data, baseColor, rgbColor }: { data: PCComponent, baseColor: Color, rgbColor: string }) => {
   if (data.id.includes('cpu_cooler')) return <CPUCoolerGeometry rgbColor={rgbColor} />;
@@ -1041,7 +1166,10 @@ const ProceduralGeometry = ({ data, baseColor, rgbColor }: { data: PCComponent, 
   if (data.id.includes('ssd')) return <SSDGeometry />;
   if (data.id.includes('storage_hdd')) return <HDDGeometry />;
   if (data.id.includes('psu')) return <PSUGeometry />;
-  if (data.id.includes('fan')) return <FanGeometry rgbColor={rgbColor} isExhaust={data.id === 'rear_fan'} />;
+  if (data.id.includes('fan')) {
+    const isExhaust = data.id === 'rear_fan' || data.id === 'side_fan_2';
+    return <FanGeometry rgbColor={rgbColor} isExhaust={isExhaust} />;
+  }
   if (data.id.includes('case')) return <CaseGeometry />;
   
   return (
@@ -1057,10 +1185,11 @@ const ProceduralGeometry = ({ data, baseColor, rgbColor }: { data: PCComponent, 
 const ComponentMesh = ({ data, isMobile }: { data: PCComponent, isMobile: boolean }) => {
   const groupRef = useRef<Group>(null);
   const [hovered, setHovered] = useState(false);
-  const { selectedComponent, setSelectedComponent, explodeStep, rgbColor, showLabels, showInstructions } = usePC();
-
+  const { selectedComponent, setSelectedComponent, explodeStep, rgbColor, rgbEnabled, showLabels, showInstructions } = usePC();
+  const effectiveRgbColor = rgbEnabled ? rgbColor : '#000000';
+  
   useCursor(hovered && !isMobile);
-
+  
   const isSelected = selectedComponent?.id === data.id;
   const targetPosition = useMemo(() => new Vector3(), []);
   const targetScale3 = useMemo(() => new Vector3(), []);
@@ -1068,7 +1197,6 @@ const ComponentMesh = ({ data, isMobile }: { data: PCComponent, isMobile: boolea
   const timeAccumulator = useRef(0);
 
   const liftOffset = hovered && !isSelected ? 0.1 : 0;
-
   useFrame((_state, delta) => {
     if (!groupRef.current) return;
 
@@ -1097,14 +1225,14 @@ const ComponentMesh = ({ data, isMobile }: { data: PCComponent, isMobile: boolea
     groupRef.current.scale.lerp(targetScale3, delta * 8);
   });
 
-  const visual = useMemo(() => <ProceduralGeometry data={data} baseColor={baseColor} rgbColor={rgbColor} />, [data, baseColor, rgbColor]);
+  const visual = useMemo(() => <ProceduralGeometry data={data} baseColor={baseColor} rgbColor={effectiveRgbColor} />, [data, baseColor, effectiveRgbColor]);
 
   return (
     <group
       ref={groupRef}
       position={data.position}
       rotation={
-        data.id === 'rear_fan' ? [0, Math.PI / 2, 0] : 
+        (data.id === 'rear_fan' || data.id === 'side_fan_2') ? [0, Math.PI / 2, 0] : 
         data.id === 'psu' ? [0, Math.PI / 2, 0] : 
         [0, 0, 0]
       }
@@ -1128,13 +1256,13 @@ const ComponentMesh = ({ data, isMobile }: { data: PCComponent, isMobile: boolea
         setHovered(false);
       }}
     >
-      <ErrorBoundary fallback={visual}>
-        <Suspense fallback={visual}>
+      <ErrorBoundary fallback={<mesh><boxGeometry args={data.geometryArgs} /><meshStandardMaterial color={baseColor} /></mesh>}>
+        <Suspense fallback={<mesh><boxGeometry args={data.geometryArgs} /><meshStandardMaterial color={baseColor} /></mesh>}>
           {visual}
         </Suspense>
       </ErrorBoundary>
       
-      {showLabels && !showInstructions && (hovered || isSelected || explodeStep === 2) && !selectedComponent && !isMobile && (
+      {showLabels && !showInstructions && !selectedComponent && (!isMobile && (hovered || isSelected) || explodeStep === 2) && (
         <Html 
           position={[0, data.geometryArgs[1] / 2 + 0.15, 0]}
           center

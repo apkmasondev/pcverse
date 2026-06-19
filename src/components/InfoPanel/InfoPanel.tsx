@@ -83,6 +83,15 @@ const getImageUrl = (url: string) => {
 export const InfoPanel = () => {
   const { selectedComponent, setSelectedComponent } = usePC();
   const [zoomedImageIndex, setZoomedImageIndex] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.matchMedia('(max-width: 768px)').matches);
+    const mql = window.matchMedia('(max-width: 768px)');
+    const onChange = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mql.addEventListener('change', onChange);
+    return () => mql.removeEventListener('change', onChange);
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -128,11 +137,11 @@ export const InfoPanel = () => {
           initial="hidden"
           animate="visible"
           exit="exit"
-          style={{ rotateX, rotateY, transformPerspective: 1200 }}
+          style={isMobile ? {} : { rotateX, rotateY, transformPerspective: 1200 }}
           className="absolute bottom-0 md:bottom-0 md:top-0 md:right-0 z-20 
                      w-full md:w-[45vw] h-[60vh] md:h-screen overflow-y-auto
                      bg-[#050505]/80 backdrop-blur-3xl border-l border-white/10 
-                     rounded-t-3xl md:rounded-none p-8 md:p-12
+                     rounded-t-3xl md:rounded-none p-6 md:p-12
                      text-slate-200 scrollbar-hide shadow-[-20px_0_50px_-12px_rgba(0,0,0,1)]"
         >
           <button 
