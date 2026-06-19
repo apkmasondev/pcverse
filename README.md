@@ -26,12 +26,3 @@ Interaktywny, edukacyjny przewodnik 3D po komponentach komputera PC, zbudowany p
 ## Wdrożenie i uruchomienie na GitHub Pages
 
 Projekt został skonfigurowany pod kątem automatycznego wdrożenia (CI/CD) przy użyciu **GitHub Actions**.
-
-Aby strona zaczęła działać pod Twoim adresem GitHub Pages:
-
-1. Przejdź do swojego repozytorium na GitHubie: `https://github.com/apkmasondev/pcverse`.
-2. Kliknij zakładkę **Settings** (Ustawienia) w górnym menu.
-3. W menu po lewej stronie wybierz zakładkę **Pages** (w sekcji *Code and automation*).
-4. W sekcji **Build and deployment** (Budowanie i wdrożenie), zmień opcję **Source** (Źródło) z *Deploy from a branch* na **GitHub Actions**.
-5. Wdrożenie rozpocznie się automatycznie. Postęp możesz śledzić w zakładce **Actions** na swoim repozytorium.
-6. Po zakończeniu procesu strona będzie dostępna pod adresem: [https://apkmasondev.github.io/pcverse/](https://apkmasondev.github.io/pcverse/).
