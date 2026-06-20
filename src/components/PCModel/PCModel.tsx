@@ -604,13 +604,15 @@ const PSUGeometry = ({ rgbColor }: { rgbColor: string }) => {
     <group>
       {/* Inner Rotating Fan Blades (Visible in X-Ray mode) */}
       <group position={[0, -0.36, 0]} ref={fanRef}>
+        {/* Hub */}
         <mesh>
-          <cylinderGeometry args={[0.15, 0.15, 0.03, 16]} />
+          <cylinderGeometry args={[0.25, 0.25, 0.03, 32]} />
           <meshStandardMaterial color="#151515" roughness={0.6} />
         </mesh>
-        {[0, 1, 2, 3, 4, 5, 6].map(i => (
-          <mesh key={i} rotation={[0, (Math.PI * 2 / 7) * i, 0]}>
-            <boxGeometry args={[0.6, 0.01, 0.1]} />
+        {/* Blades */}
+        {[0, 1, 2, 3, 4, 5, 6, 7].map(i => (
+          <mesh key={i} rotation={[0, (Math.PI * 2 / 8) * i, 0]}>
+            <boxGeometry args={[1.3, 0.02, 0.2]} />
             <meshStandardMaterial color="#222" roughness={0.5} />
           </mesh>
         ))}
