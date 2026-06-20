@@ -15,6 +15,7 @@ import psuTopUrl from '../../assets/psu_top.png';
 import psuSideUrl from '../../assets/psu_side.png';
 import psuBackUrl from '../../assets/psu_back.webp';
 import psuFrontUrl from '../../assets/psu_front.webp';
+import psuBottomUrl from '../../assets/psu_bottom.webp';
 import aioFanUrl from '../../assets/aio_fan.webp';
 import heatsinkUrl from '../../assets/heatsink.webp';
 import heatsinkSideUrl from '../../assets/heatsink_side.webp';
@@ -558,12 +559,12 @@ const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
   );
 };
 
-const PSUGeometry = () => {
-  const fanRef = useRef<Group>(null);
+const PSUGeometry = ({ rgbColor }: { rgbColor: string }) => {
   const psuTopTexture = useTexture(psuTopUrl);
   const psuSideTexture = useTexture(psuSideUrl);
   const psuBackTexture = useTexture(psuBackUrl);
   const psuFrontTexture = useTexture(psuFrontUrl);
+  const psuBottomTexture = useTexture(psuBottomUrl);
   
   const backMeshTexture = useMemo(() => {
     const canvas = document.createElement('canvas');
@@ -590,12 +591,6 @@ const PSUGeometry = () => {
       backMeshTexture.dispose();
     };
   }, [backMeshTexture]);
-  
-  useFrame((_state, delta) => {
-    if (fanRef.current) {
-      fanRef.current.rotation.y += delta * 15;
-    }
-  });
 
   return (
     <group>
@@ -619,26 +614,21 @@ const PSUGeometry = () => {
         <planeGeometry args={[1.5, 0.8]} />
         <meshStandardMaterial map={psuSideTexture} roughness={0.6} metalness={0.4} />
       </mesh>
-      {/* Bottom Fan Grill - aligned horizontally on Y-axis */}
-      <mesh position={[0, -0.401, 0]}>
-        <cylinderGeometry args={[0.6, 0.6, 0.01, 32]} />
-        <meshStandardMaterial color="#050505" metalness={0.8} roughness={0.2} />
+      {/* PSU Bottom Texture */}
+      <mesh position={[0, -0.401, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[1.8, 1.5]} />
+        <meshStandardMaterial map={psuBottomTexture} roughness={0.6} metalness={0.4} />
       </mesh>
-      {/* Inner Rotating Fan Blades (horizontal XZ plane, rotating around Y-axis) */}
-      <group position={[0, -0.36, 0]} ref={fanRef}>
-        {/* Hub */}
-        <mesh>
-          <cylinderGeometry args={[0.15, 0.15, 0.03, 16]} />
-          <meshStandardMaterial color="#151515" roughness={0.6} />
-        </mesh>
-        {/* Fan Blades */}
-        {[0, 1, 2, 3, 4, 5].map(i => (
-          <mesh key={i} rotation={[0, (Math.PI / 3) * i, 0]}>
-            <boxGeometry args={[0.5, 0.01, 0.1]} />
-            <meshStandardMaterial color="#222" roughness={0.5} />
-          </mesh>
-        ))}
-      </group>
+      {/* RGB Ring over the fan */}
+      <mesh position={[0, -0.402, 0]} rotation={[Math.PI / 2, 0, 0]} scale={[1.8/1.5, 1, 1]}>
+        <torusGeometry args={[0.67, 0.015, 16, 64]} />
+        <meshStandardMaterial 
+          color={rgbColor} 
+          emissive={rgbColor} 
+          emissiveIntensity={2} 
+          toneMapped={false} 
+        />
+      </mesh>
       {/* Back Texture (Exhaust & AC Plug) */}
       <mesh position={[0, 0, -0.751]} rotation={[0, Math.PI, 0]}>
         <planeGeometry args={[1.6, 0.8]} />
@@ -1185,7 +1175,7 @@ const ProceduralGeometry = ({ data, baseColor, rgbColor }: { data: PCComponent, 
   if (data.id.includes('ram')) return <RAMGeometry color={baseColor} rgbColor={rgbColor} />;
   if (data.id.includes('ssd')) return <SSDGeometry />;
   if (data.id.includes('storage_hdd')) return <HDDGeometry />;
-  if (data.id.includes('psu')) return <PSUGeometry />;
+  if (data.id.includes('psu')) return <PSUGeometry rgbColor={rgbColor} />;
   if (data.id.includes('fan')) {
     const isExhaust = data.id === 'rear_fan' || data.id === 'side_fan_2';
     return <FanGeometry rgbColor={rgbColor} isExhaust={isExhaust} />;
