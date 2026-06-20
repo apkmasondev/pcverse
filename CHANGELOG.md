@@ -62,6 +62,7 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - Zaktualizowano model zasilacza (PSU) o nową, fotorealistyczną teksturę tylnego panelu (złącza modularne, przełącznik AC i gęsty mesh wentylacyjny), dostarczoną przez użytkownika.
 - **UI Menu RGB**: Poprawiono wygląd palety kolorów po wyłączeniu RGB. Pola mają teraz szary, wyszarzony kolor i zapalają się z powrotem po wybraniu trybu świecącego.
 - **Mechanika Kamery**: Zmieniono działanie strzałek góra/dół oraz dodano wsparcie dla klawiszy WASD – teraz poruszają kamerą do przodu i tyłu (zbliżanie/oddalanie) podobnie do poruszania się w grach FPS (First-Person Shooter).
+- **Widok Hologramu (X-Ray)**: Przywrócono widoczność wewnętrznych, fizycznie kręcących się wirników we wszystkich wentylatorach (obudowy, chłodzenia CPU oraz zasilacza). Są one teraz ponownie widoczne, gdy naklejki/tekstury stają się przeźroczyste w trybie X-Ray.
 - **Zasilacz PSU (Dół)**: Wymieniono generyczny wentylator na fotorealistyczną teksturę dołu zasilacza oraz dodano do niej geometryczny pierścień `torus` z materiałem `emissive`, który świeci i reaguje na zmiany koloru RGB w obudowie.
 - **Dysk SSD (Dół)**: Nałożono nową, pełną detali teksturę ścieżek i układów scalonych na dolną stronę dysku M.2, zachowując przy tym prawidłowe umiejscowienie pinów złącza.
 - **UI Instrukcje**: Zaktualizowano tekst w zakładce "Legenda i Instrukcja", aby poprawnie odzwierciedlał możliwość sterowania za pomocą klawiszy WASD / Strzałek oraz PPM.
