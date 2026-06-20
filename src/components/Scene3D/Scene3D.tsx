@@ -1,7 +1,7 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { CameraControls, Environment, PerspectiveCamera, Sparkles, PerformanceMonitor, Grid } from '@react-three/drei';
-import { EffectComposer, Bloom, N8AO, Vignette, ChromaticAberration } from '@react-three/postprocessing';
+import { EffectComposer, Bloom, N8AO, Vignette, ChromaticAberration, DepthOfField } from '@react-three/postprocessing';
 import { Vector2, Vector3, PointLight } from 'three';
 import { BlendFunction } from 'postprocessing';
 
@@ -43,6 +43,18 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
   const _tempVec = useRef(new Vector3());
   const _tempDir = useRef(new Vector3());
   const _tempFocal = useRef(new Vector3());
+
+  const dofTarget = useMemo(() => new Vector3(), []);
+  const dofEnabled = !!selectedComponent;
+  
+  useEffect(() => {
+    if (selectedComponent) {
+      const posArray = explodeStep === 2 ? selectedComponent.explodedPosition : selectedComponent.position;
+      dofTarget.set(posArray[0], posArray[1], posArray[2]);
+    } else {
+      dofTarget.set(0, 0, 0);
+    }
+  }, [selectedComponent, explodeStep, dofTarget]);
 
   // Obsługa przesuwania na boki (Pan / Truck) za pomocą strzałek
   useEffect(() => {
@@ -195,6 +207,12 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
           fadeStrength={1} 
         />
         <EffectComposer multisampling={isMobile ? 0 : 4}>
+          <DepthOfField 
+            target={dofTarget} 
+            focalLength={dofEnabled ? 0.05 : 0.0} 
+            bokehScale={dofEnabled ? (isMobile ? 4 : 8) : 0} 
+            height={700} 
+          />
           <Bloom luminanceThreshold={1} mipmapBlur={!isMobile} intensity={isMobile ? 0.8 : 1.0} />
           <N8AO aoRadius={0.5} intensity={2.0} distanceFalloff={0.5} quality={isMobile ? "low" : "medium"} halfRes />
           <Vignette eskil={false} offset={0.2} darkness={0.6} />
