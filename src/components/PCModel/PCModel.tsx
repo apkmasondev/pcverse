@@ -566,6 +566,7 @@ const PSUGeometry = ({ rgbColor }: { rgbColor: string }) => {
   const psuBackTexture = useTexture(psuBackUrl);
   const psuFrontTexture = useTexture(psuFrontUrl);
   const psuBottomTexture = useTexture(psuBottomUrl);
+  const fanRef = useRef<Group>(null);
   
   const backMeshTexture = useMemo(() => {
     const canvas = document.createElement('canvas');
@@ -593,8 +594,28 @@ const PSUGeometry = ({ rgbColor }: { rgbColor: string }) => {
     };
   }, [backMeshTexture]);
 
+  useFrame((_state, delta) => {
+    if (fanRef.current) {
+      fanRef.current.rotation.y += delta * 15;
+    }
+  });
+
   return (
     <group>
+      {/* Inner Rotating Fan Blades (Visible in X-Ray mode) */}
+      <group position={[0, -0.36, 0]} ref={fanRef}>
+        <mesh>
+          <cylinderGeometry args={[0.15, 0.15, 0.03, 16]} />
+          <meshStandardMaterial color="#151515" roughness={0.6} />
+        </mesh>
+        {[0, 1, 2, 3, 4, 5, 6].map(i => (
+          <mesh key={i} rotation={[0, (Math.PI * 2 / 7) * i, 0]}>
+            <boxGeometry args={[0.6, 0.01, 0.1]} />
+            <meshStandardMaterial color="#222" roughness={0.5} />
+          </mesh>
+        ))}
+      </group>
+      
       {/* Main Casing */}
       <mesh position={[0, 0, 0]}>
         <boxGeometry args={[1.8, 0.8, 1.5]} />
@@ -688,9 +709,30 @@ const SSDGeometry = () => {
 
 const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbColor: string, isExhaust?: boolean, textureUrl?: string }) => {
   const fanTexture = useTexture(textureUrl || caseFanUrl);
+  const bladesRef = useRef<Group>(null);
+
+  useFrame((_state, delta) => {
+    if (bladesRef.current) {
+      bladesRef.current.rotation.z += delta * 15;
+    }
+  });
 
   return (
     <group>
+      {/* Inner Physical Blades (visible in X-Ray mode) */}
+      <group position={[0, 0, 0]} ref={bladesRef}>
+        <mesh rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.15, 0.15, 0.05, 16]} />
+          <meshStandardMaterial color="#151515" roughness={0.6} />
+        </mesh>
+        {[0, 1, 2, 3, 4, 5, 6].map(i => (
+          <mesh key={i} rotation={[0, 0, (Math.PI * 2 / 7) * i]}>
+            <boxGeometry args={[0.9, 0.15, 0.02]} />
+            <meshStandardMaterial color="#222" roughness={0.5} />
+          </mesh>
+        ))}
+      </group>
+
       {/* Outer Frame */}
       <mesh position={[0, 0, 0]}>
         <boxGeometry args={[1, 1, 0.2]} />
