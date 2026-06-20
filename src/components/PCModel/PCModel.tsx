@@ -752,8 +752,8 @@ const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string }) => {
         <boxGeometry args={[1, 0.8, 0.54]} />
         <meshStandardMaterial attach="material-0" map={heatsinkSideTexture} metalness={0.8} roughness={0.3} />
         <meshStandardMaterial attach="material-1" map={heatsinkSideTexture} metalness={0.8} roughness={0.3} />
-        <meshStandardMaterial attach="material-2" color="#d1d5db" metalness={0.8} roughness={0.3} />
-        <meshStandardMaterial attach="material-3" color="#d1d5db" metalness={0.8} roughness={0.3} />
+        <meshStandardMaterial attach="material-2" map={heatsinkTexture} metalness={0.8} roughness={0.3} />
+        <meshStandardMaterial attach="material-3" map={heatsinkTexture} metalness={0.8} roughness={0.3} />
         <meshStandardMaterial attach="material-4" map={heatsinkTexture} metalness={0.8} roughness={0.3} />
         <meshStandardMaterial attach="material-5" map={heatsinkTexture} metalness={0.8} roughness={0.3} />
       </mesh>
