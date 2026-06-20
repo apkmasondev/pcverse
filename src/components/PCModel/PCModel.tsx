@@ -15,6 +15,7 @@ import psuTopUrl from '../../assets/psu_top.png';
 import psuSideUrl from '../../assets/psu_side.png';
 import psuBackUrl from '../../assets/psu_back.webp';
 import psuFrontUrl from '../../assets/psu_front.webp';
+import aioFanUrl from '../../assets/aio_fan.webp';
 import gpuBackplateUrl from '../../assets/gpu_backplate.png';
 import gpuFrontUrl from '../../assets/gpu_front.png';
 import ramSideUrl from '../../assets/ram_side.png';
@@ -684,8 +685,8 @@ const SSDGeometry = () => {
   );
 };
 
-const FanGeometry = ({ rgbColor, isExhaust = false }: { rgbColor: string, isExhaust?: boolean }) => {
-  const fanTexture = useTexture(caseFanUrl);
+const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbColor: string, isExhaust?: boolean, textureUrl?: string }) => {
+  const fanTexture = useTexture(textureUrl || caseFanUrl);
 
   return (
     <group>
@@ -751,7 +752,7 @@ const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string }) => (
     </mesh>
     {/* Attached Fan */}
     <group position={[0, 0.1, 0.5]}>
-      <FanGeometry rgbColor={rgbColor} />
+      <FanGeometry rgbColor={rgbColor} textureUrl={aioFanUrl} />
     </group>
   </group>
 );
