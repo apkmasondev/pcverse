@@ -12,3 +12,4 @@ processImage("C:/Users/krzyc/.gemini/antigravity-ide/brain/0ad14dac-2af3-4e5c-9e
 processImage("C:/Users/krzyc/.gemini/antigravity-ide/brain/0ad14dac-2af3-4e5c-9e45-1d522b2d6090/media__1781948542376.jpg", "src/assets/aio_fan.webp");
 processImage("C:/Users/krzyc/.gemini/antigravity-ide/brain/0ad14dac-2af3-4e5c-9e45-1d522b2d6090/media__1781949699450.png", "src/assets/heatsink.webp");
 processImage("C:/Users/krzyc/.gemini/antigravity-ide/brain/0ad14dac-2af3-4e5c-9e45-1d522b2d6090/media__1781950062436.jpg", "src/assets/hdd_bottom.webp");
+processImage("C:/Users/krzyc/.gemini/antigravity-ide/brain/0ad14dac-2af3-4e5c-9e45-1d522b2d6090/media__1781950255311.png", "src/assets/heatsink_side.webp");
