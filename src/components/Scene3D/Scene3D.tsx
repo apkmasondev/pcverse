@@ -54,15 +54,23 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
       const speed = 0.5;
       switch (e.key) {
         case 'ArrowUp':
-          cameraControlsRef.current.truck(0, -speed, true);
+        case 'w':
+        case 'W':
+          cameraControlsRef.current.forward(speed, true);
           break;
         case 'ArrowDown':
-          cameraControlsRef.current.truck(0, speed, true);
+        case 's':
+        case 'S':
+          cameraControlsRef.current.forward(-speed, true);
           break;
         case 'ArrowLeft':
+        case 'a':
+        case 'A':
           cameraControlsRef.current.truck(-speed, 0, true);
           break;
         case 'ArrowRight':
+        case 'd':
+        case 'D':
           cameraControlsRef.current.truck(speed, 0, true);
           break;
       }
