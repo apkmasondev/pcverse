@@ -26,6 +26,7 @@ import hddTopUrl from '../../assets/hdd_top.png';
 import hddBottomUrl from '../../assets/hdd_bottom.webp';
 import caseFanUrl from '../../assets/case_fan.png';
 import ssdTopUrl from '../../assets/ssd_top.png';
+import ssdBottomUrl from '../../assets/ssd_bottom.webp';
 import cpuTopUrl from '../../assets/cpu_top.png';
 import moboTopUrl from '../../assets/mobo_top.png';
 import moboIoUrl from '../../assets/mobo_io.webp';
@@ -654,6 +655,7 @@ const PSUGeometry = ({ rgbColor }: { rgbColor: string }) => {
 
 const SSDGeometry = () => {
   const ssdTexture = useTexture(ssdTopUrl);
+  const ssdBottomTexture = useTexture(ssdBottomUrl);
 
   return (
     <group>
@@ -667,6 +669,12 @@ const SSDGeometry = () => {
       <mesh position={[0, 0, 0.006]}>
         <planeGeometry args={[0.22, 0.8]} />
         <meshStandardMaterial map={ssdTexture} roughness={0.4} metalness={0.2} transparent={true} />
+      </mesh>
+      
+      {/* SSD Photorealistic Bottom */}
+      <mesh position={[0, 0, -0.006]} rotation={[0, Math.PI, 0]}>
+        <planeGeometry args={[0.22, 0.8]} />
+        <meshStandardMaterial map={ssdBottomTexture} roughness={0.4} metalness={0.2} transparent={true} />
       </mesh>
       
       {/* Gold Connector Edge (Pins are at the bottom: -Y) */}
