@@ -60,8 +60,11 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 ### Zmienione
 - Poprawiono teksturę portów I/O karty graficznej na idealnie odwzorowującą układ złączy NVIDIA (3x DisplayPort, 1x HDMI) po dostarczeniu nowej grafiki.
 - Zaktualizowano model zasilacza (PSU) o nową, fotorealistyczną teksturę tylnego panelu (złącza modularne, przełącznik AC i gęsty mesh wentylacyjny), dostarczoną przez użytkownika.
-- **UI Menu RGB**: Poprawiono wygląd palety kolorów po wyłączeniu podświetlenia – opcje do wyboru nie są już wyszarzone, by jasno komunikować ich naturalne barwy.
-- **Animacja Dekompozycji**: Przycisk "Rozłóż na Części" wyzwala teraz sekwencyjną animację (`explodeStep`). Boczny szklany panel płynnie cofa się i zanika przed wysunięciem głównych komponentów.
+- **UI Menu RGB**: Poprawiono wygląd palety kolorów po wyłączeniu RGB. Pola mają teraz szary, wyszarzony kolor i zapalają się z powrotem po wybraniu trybu świecącego.
+- **Mechanika Kamery**: Zmieniono działanie strzałek góra/dół oraz dodano wsparcie dla klawiszy WASD – teraz poruszają kamerą do przodu i tyłu (zbliżanie/oddalanie) podobnie do poruszania się w grach FPS (First-Person Shooter).
+- **Zasilacz PSU (Dół)**: Wymieniono generyczny wentylator na fotorealistyczną teksturę dołu zasilacza oraz dodano do niej geometryczny pierścień `torus` z materiałem `emissive`, który świeci i reaguje na zmiany koloru RGB w obudowie.
+- **Dysk SSD (Dół)**: Nałożono nową, pełną detali teksturę ścieżek i układów scalonych na dolną stronę dysku M.2, zachowując przy tym prawidłowe umiejscowienie pinów złącza.
+- **UI Instrukcje**: Zaktualizowano tekst w zakładce "Legenda i Instrukcja", aby poprawnie odzwierciedlał możliwość sterowania za pomocą klawiszy WASD / Strzałek oraz PPM.
 - Zmieniono UI Panelu Informacyjnego: Zmniejszono wysokość głównego obrazu, dając więcej pionowej przestrzeni na tekst i szczegóły bez konieczności przewijania.
 - Przebudowano od zera model Płyty Głównej (Motherboard), dodając high-endowe detale (chłodzenie VRM, osłony NVMe M.2, modelowane kondensatory, gniazda ATX/EPS/SATA, podświetlaną sekcję audio, baterię CMOS oraz czerwony wyświetlacz POST).
 - Dodano do galerii każdego z podzespołów trzeci, profesjonalny i dedykowany obraz wysokiej jakości wygenerowany przez AI (skompresowany do WebP).
