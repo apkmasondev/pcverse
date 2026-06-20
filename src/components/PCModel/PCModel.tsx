@@ -16,6 +16,7 @@ import psuSideUrl from '../../assets/psu_side.png';
 import psuBackUrl from '../../assets/psu_back.webp';
 import psuFrontUrl from '../../assets/psu_front.webp';
 import aioFanUrl from '../../assets/aio_fan.webp';
+import heatsinkUrl from '../../assets/heatsink.webp';
 import gpuBackplateUrl from '../../assets/gpu_backplate.png';
 import gpuFrontUrl from '../../assets/gpu_front.png';
 import ramSideUrl from '../../assets/ram_side.png';
@@ -726,25 +727,28 @@ const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbColor: st
   );
 };
 
-const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string }) => (
-  <group>
-    {/* Base Contact */}
-    <mesh position={[0, 0, -0.25]}>
-      <boxGeometry args={[0.6, 0.6, 0.05]} />
-      <meshStandardMaterial color="#d4af37" metalness={0.9} roughness={0.1} />
-    </mesh>
-    {/* Heatpipes */}
-    {[-0.15, 0, 0.15].map((x, i) => (
-      <mesh key={i} position={[x, 0, -0.1]} rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.03, 0.03, 0.3, 16]} />
-        <meshStandardMaterial color="#b0b5b9" metalness={0.9} roughness={0.2} />
+const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string }) => {
+  const heatsinkTexture = useTexture(heatsinkUrl);
+  
+  return (
+    <group>
+      {/* Base Contact */}
+      <mesh position={[0, 0, -0.25]}>
+        <boxGeometry args={[0.6, 0.6, 0.05]} />
+        <meshStandardMaterial color="#d4af37" metalness={0.9} roughness={0.1} />
       </mesh>
-    ))}
-    {/* Fin Stack - shifted to Z=0.12 and shortened to 0.54 depth to prevent overlapping/smudging with the Fan at Z=0.5 */}
-    <mesh position={[0, 0.1, 0.12]}>
-      <boxGeometry args={[1, 0.8, 0.54]} />
-      <meshStandardMaterial color="#d1d5db" metalness={0.8} roughness={0.3} />
-    </mesh>
+      {/* Heatpipes */}
+      {[-0.15, 0, 0.15].map((x, i) => (
+        <mesh key={i} position={[x, 0, -0.1]} rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.03, 0.03, 0.3, 16]} />
+          <meshStandardMaterial color="#b0b5b9" metalness={0.9} roughness={0.2} />
+        </mesh>
+      ))}
+      {/* Fin Stack - shifted to Z=0.12 and shortened to 0.54 depth to prevent overlapping/smudging with the Fan at Z=0.5 */}
+      <mesh position={[0, 0.1, 0.12]}>
+        <boxGeometry args={[1, 0.8, 0.54]} />
+        <meshStandardMaterial map={heatsinkTexture} metalness={0.8} roughness={0.3} />
+      </mesh>
     {/* Top Cover */}
     <mesh position={[0, 0.51, 0.12]}>
       <boxGeometry args={[1, 0.02, 0.54]} />
@@ -755,7 +759,8 @@ const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string }) => (
       <FanGeometry rgbColor={rgbColor} textureUrl={aioFanUrl} />
     </group>
   </group>
-);
+  );
+};
 
 const CaseGeometry = () => {
   const { explodeStep } = usePC();
