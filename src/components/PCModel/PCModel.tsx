@@ -21,6 +21,7 @@ import gpuBackplateUrl from '../../assets/gpu_backplate.png';
 import gpuFrontUrl from '../../assets/gpu_front.png';
 import ramSideUrl from '../../assets/ram_side.png';
 import hddTopUrl from '../../assets/hdd_top.png';
+import hddBottomUrl from '../../assets/hdd_bottom.webp';
 import caseFanUrl from '../../assets/case_fan.png';
 import ssdTopUrl from '../../assets/ssd_top.png';
 import cpuTopUrl from '../../assets/cpu_top.png';
@@ -749,11 +750,11 @@ const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string }) => {
         <boxGeometry args={[1, 0.8, 0.54]} />
         <meshStandardMaterial map={heatsinkTexture} metalness={0.8} roughness={0.3} />
       </mesh>
-    {/* Top Cover */}
-    <mesh position={[0, 0.51, 0.12]}>
-      <boxGeometry args={[1, 0.02, 0.54]} />
-      <meshStandardMaterial color="#151515" roughness={0.8} />
-    </mesh>
+      {/* Top Cover */}
+      <mesh position={[0, 0.51, 0.12]}>
+        <boxGeometry args={[1, 0.02, 0.54]} />
+        <meshStandardMaterial map={heatsinkTexture} metalness={0.6} roughness={0.4} />
+      </mesh>
     {/* Attached Fan */}
     <group position={[0, 0.1, 0.5]}>
       <FanGeometry rgbColor={rgbColor} textureUrl={aioFanUrl} />
@@ -1132,6 +1133,7 @@ const CaseGeometry = () => {
 
 const HDDGeometry = () => {
   const hddTopTexture = useTexture(hddTopUrl);
+  const hddBottomTexture = useTexture(hddBottomUrl);
 
   return (
     <group>
@@ -1149,6 +1151,11 @@ const HDDGeometry = () => {
       <mesh position={[0, 0.141, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[0.96, 1.36]} />
         <meshStandardMaterial map={hddTopTexture} roughness={0.3} metalness={0.6} />
+      </mesh>
+      {/* HDD Bottom Texture */}
+      <mesh position={[0, -0.126, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[1.0, 1.4]} />
+        <meshStandardMaterial map={hddBottomTexture} roughness={0.6} metalness={0.3} />
       </mesh>
       {/* Connectors (Back) */}
       <mesh position={[0, -0.05, 0.71]}>
