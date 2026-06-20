@@ -312,7 +312,7 @@ export const UI = () => {
                   <MousePointerClick className="text-indigo-400 shrink-0" />
                   <div>
                     <h3 className="text-sm font-semibold text-white mb-1">Nawigacja i Detale</h3>
-                    <p className="text-xs text-slate-400 leading-relaxed">Użyj LPM do obrotu, kółka myszy do przybliżania. <strong>Użyj PPM (prawy klik) lub strzałek klawiatury, by przesuwać kamerę na boki (Panowanie).</strong> Kliknij w dowolny komponent obudowy lub jego pływającą etykietę, by skupić kamerę i otworzyć szczegóły.</p>
+                    <p className="text-xs text-slate-400 leading-relaxed">Użyj LPM do obrotu, kółka myszy do przybliżania. <strong>Użyj klawiszy W, A, S, D lub strzałek, by poruszać kamerą (przód, tył i na boki) podobnie jak w grach. Do przesuwania (Pan) w dowolnym kierunku użyj PPM (prawy klik).</strong> Kliknij w dowolny komponent obudowy, by skupić na nim kamerę i otworzyć szczegóły.</p>
                   </div>
                 </div>
 
