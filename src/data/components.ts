@@ -160,7 +160,7 @@ export const pcComponents: PCComponent[] = [
       "Zasila wszystkie wewnętrzne podzespoły"
     ],
     funFact: "Wydajny zasilacz zamienia mniej prądu w bezużyteczne ciepło, oszczędzając Twoje pieniądze na rachunkach za prąd.",
-    position: [-1.2, -1.92, -1.0],
+    position: [-1.2, -1.92, -0.8],
     explodedPosition: [-3.5, -3.5, 0.5],
     color: "#2a363b",
     perfImpact: { gaming: 0, ai: 0, productivity: 0 },

@@ -7,10 +7,17 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - **Niestandardowy Ekran Ładowania (Custom Loader)**: Zastąpiono domyślny loader z `@react-three/drei` w pełni spersonalizowanym komponentem w technologii Framer Motion z mrocznym motywem glassmorphismu.
 - **Podwójny Wentylator Boczny**: Dodano `side_fan_2` do bazy komponentów i przebudowano logikę wywiewu z tyłu, tak by obudowa dysponowała potężnym podwójnym odciągiem powietrza z bloku CPU.
 - **Optymalizacje Wydajności**: Zredukowano jakość efektu SSAO (N8AO), wyłączono `mipmapBlur` w komponencie Bloom oraz multisampling EffectComposera dla urządzeń mobilnych, zyskując potężny zastrzyk FPS-ów na słabszych urządzeniach.
+- **Siatka Wentylatorów (Front)**: Naprawiono błąd z wektorami otworów przedniego panelu szklanego - wycięcie ramki dla przednich wentylatorów jest teraz w 100% przezroczyste na całej wysokości.
+- **Tekstura Tyłu Obudowy**: Dodano fotorealistyczną teksturę na tylnym, metalowym panelu obudowy (z mapowaniem UV dla całego panelu).
+- **Tekstura Prawego Panelu**: Nałożono wygenerowaną teksturę wentylacji z napisem "COOLING" na boczny, prawy panel (znajdujący się za płytą główną).
+- **Tekstura Spodu i Wnętrza Obudowy**: Zastosowano elegancką, chropowatą powłokę gradientową na spodzie komputera oraz pokryto nią całe wewnętrzne poszycie (ścianę płyty głównej oraz podłogę wnętrza), nadając podstawie jednolity, premium wygląd.
+- **Procesor (Piny)**: Dodano realistyczną teksturę złotych pinów na spodzie procesora (LGA/PGA).
+- **Śledź Karty Graficznej**: Skorygowano proporcje śledzia (bracket) karty graficznej, wydłużając go w osi Z (w bok), by idealnie domykał lukę w tylnym panelu obudowy. Dopasowano również jego kolor do ciemnego odcienia portów.
 
 ### Zmienione
 - **Orientacja i rotacja wentylatorów**: Skorygowano błędy matematyczne z rotacjami w grupie `ComponentMesh`, przez które wentylatory wylotowe (exhaust) miały zły kąt i niepoprawnie wtłaczały powietrze do środka. Teraz wydmuchują je na zewnątrz obudowy (-X).
-- **Zasilacz (PSU)**: Rozszerzono mapowanie tekstur. Boczna etykieta z modelem (AX1600i) jest teraz symetrycznie aplikowana również na tylną, niewidoczną od frontu stronę PSU.
+- **Zasilacz (PSU)**: Rozszerzono mapowanie tekstur. Boczna etykieta z modelem (AX1600i) jest teraz symetrycznie aplikowana również na tylną, niewidoczną od frontu stronę PSU. Rozciągnięto również tylny i przedni płaski panel z teksturami do szerokości 1.8 (wcześniej 1.6), co całkowicie wyeliminowało czarne pasy po bokach obudowy zasilacza.
+- **Ekran Ładowania (Loading Screen)**: Dodano wymuszone pobieranie wszystkich 27 tekstur w tle tuż po uruchomieniu aplikacji (`useTexture.preload()`). Dzięki temu menedżer ładowania nie uznaje procesu za zakończony przedwcześnie, a ekran ładowania znika dopiero, gdy wszystkie tekstury i materiały znajdą się w pamięci karty graficznej.
 - **Top Panel Mesh**: Przebudowano CanvasTexture siatki na top panelu, naprawiając skalowanie wycięć (`repeat.set`), dzięki czemu plaster miodu wreszcie jest poprawnie widoczny.
 
 ### Zmienione
@@ -18,9 +25,11 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - Dodano "zaślepkę" gniazda CPU na płycie głównej, aby perfekcyjnie ukryć nadrukowany socket z fotografii i wyeksponować tylko fizyczny model 3D bez artefaktów.
 - Skorygowano pozycje gwintów płyty głównej w obudowie, zachowując perfekcyjne marginesy i unikając nakładania się ich na wielkie wycięcie wentylacyjne pod procesorem (CPU cooler cutout).
 - Procesor (Ryzen AM5) otrzymał fotorealistyczną teksturę połączoną z precyzyjnym `bumpMap` i `bumpScale`, dzięki czemu wycięcia IHS z tekstury fizycznie reagują i odbijają dynamiczne światło 3D obudowy.
+- Zamieniono lity model tacki na płytę główną na zaawansowaną geometrię `ExtrudeGeometry` wyposażoną w fizyczne, wycięte na wylot otwory dla backplate'u coolera CPU oraz otworu wylotowego zasilacza PSU, w pełni rozwiązując problemy z widocznością siatek.
 - Usunięto błąd nakładającej się, wiszącej w powietrzu siatki wywiewnej z zasilacza (PSU), uszczelniając jego bryłę.
 - Zoptymalizowano użycie tekstur Canvas w komponencie `CaseGeometry` poprzez dodanie czyszczenia (`.dispose()`), eliminując wycieki pamięci VRAM.
 - Zoptymalizowano działanie efektu `ChromaticAberration` w `Scene3D` wyciągając wektor przesunięcia poza pętlę renderowania.
+- Zaimplementowano hybrydową, niestandardową szybę z geometrycznym wycięciem i stalową ramką (pill-shape cutout), za którą osadzono wentylatory wprowadzające powietrze (intake). W ten sposób rozwiązano problem mało realistycznego przepływu powietrza przez lity front. Wewnątrz ramki osadzona jest dedykowana struktura plastra miodu, generująca realistyczne refleksy i głębię obudowy.
 - Usunięto niepotrzebne rzucanie i odbieranie cieni (`castShadow`, `receiveShadow`) z setek obiektów typu mesh oraz ze źródeł światła, odzyskując zasoby GPU (cienie i tak nie były renderowane po usunięciu podłogi).
 - Zastąpiono ręczne modyfikowanie kursora systemowego zoptymalizowanym hookiem `useCursor` od `@react-three/drei`.
 - Zaimplementowano zamykanie modalu instrukcji za pomocą klawisza `Escape`.
