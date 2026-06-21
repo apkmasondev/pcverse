@@ -12,6 +12,10 @@ export interface PCComponent {
     ai: number;
     productivity: number;
   };
+  customStats?: {
+    label: string;
+    value: number;
+  }[];
   geometryArgs: [number, number, number];
   imageUrls: string[];
 }
@@ -31,6 +35,11 @@ export const pcComponents: PCComponent[] = [
     explodedPosition: [-2.95, 0, -7.5],
     color: "#1a1a2e",
     perfImpact: { gaming: 5, ai: 5, productivity: 5 },
+    customStats: [
+      { label: "Przepustowość Magistrali", value: 100 },
+      { label: "Stabilność Zasilania (VRM)", value: 95 },
+      { label: "Możliwości Rozbudowy", value: 85 }
+    ],
     geometryArgs: [3, 4, 0.05],
     imageUrls: ["/images/components/motherboard.webp", "/images/components/motherboard_macro.webp", "/images/components/mb_alt.webp"],
   },
@@ -65,6 +74,11 @@ export const pcComponents: PCComponent[] = [
     explodedPosition: [-0.5, 6.5, 0],
     color: "#a0a0a0",
     perfImpact: { gaming: 5, ai: 5, productivity: 5 },
+    customStats: [
+      { label: "Wydajność Odprowadzania Ciepła", value: 95 },
+      { label: "Kultura Pracy (Głośność)", value: 85 },
+      { label: "Stabilność Temperatury pod Obciążeniem", value: 90 }
+    ],
     geometryArgs: [1, 0.8, 0.8],
     imageUrls: ["/images/components/cooler.webp", "/images/components/cooler_macro.webp", "/images/components/cooler_alt.webp"],
   },
@@ -150,6 +164,11 @@ export const pcComponents: PCComponent[] = [
     explodedPosition: [-3.5, -3.5, 0.5],
     color: "#2a363b",
     perfImpact: { gaming: 0, ai: 0, productivity: 0 },
+    customStats: [
+      { label: "Napięcie i Stabilność", value: 100 },
+      { label: "Efektywność Energetyczna", value: 92 },
+      { label: "Redukcja Szumów", value: 95 }
+    ],
     geometryArgs: [1.8, 1, 1.5],
     imageUrls: ["/images/components/psu.webp", "/images/components/psu_macro.webp", "/images/components/psu_alt.webp"],
   },
@@ -168,6 +187,11 @@ export const pcComponents: PCComponent[] = [
     explodedPosition: [3, -2, 4],
     color: "#ffffff",
     perfImpact: { gaming: 10, ai: 10, productivity: 5 },
+    customStats: [
+      { label: "Przepływ Powietrza (CFM)", value: 85 },
+      { label: "Ciśnienie Statyczne", value: 70 },
+      { label: "Kultura Pracy (Głośność)", value: 90 }
+    ],
     geometryArgs: [1.2, 1.2, 0.2],
     imageUrls: [
       '/images/components/fan.webp',
@@ -189,6 +213,11 @@ export const pcComponents: PCComponent[] = [
     explodedPosition: [-4, 2, -0.4],
     color: "#ffffff",
     perfImpact: { gaming: 10, ai: 10, productivity: 5 },
+    customStats: [
+      { label: "Przepływ Powietrza (CFM)", value: 85 },
+      { label: "Ciśnienie Statyczne", value: 70 },
+      { label: "Kultura Pracy (Głośność)", value: 90 }
+    ],
     geometryArgs: [1.2, 1.2, 0.2],
     imageUrls: [
       '/images/components/fan.webp',
@@ -210,6 +239,11 @@ export const pcComponents: PCComponent[] = [
     explodedPosition: [-4, 3.5, 0.8],
     color: "#ffffff",
     perfImpact: { gaming: 5, ai: 5, productivity: 2 },
+    customStats: [
+      { label: "Przepływ Powietrza (CFM)", value: 85 },
+      { label: "Ciśnienie Statyczne", value: 70 },
+      { label: "Kultura Pracy (Głośność)", value: 90 }
+    ],
     geometryArgs: [1.2, 1.2, 0.2],
     imageUrls: [
       '/images/components/fan.webp',
@@ -231,6 +265,11 @@ export const pcComponents: PCComponent[] = [
     explodedPosition: [0, 0, 0],
     color: "#4a6984",
     perfImpact: { gaming: 0, ai: 0, productivity: 0 },
+    customStats: [
+      { label: "Przepływ Powietrza (Airflow)", value: 90 },
+      { label: "Wyciszenie Wnętrza", value: 75 },
+      { label: "Kultura Pracy", value: 85 }
+    ],
     geometryArgs: [4, 5, 2],
     imageUrls: ["/images/components/case.webp", "/images/components/case_macro.webp", "/images/components/case_alt.webp"],
   },

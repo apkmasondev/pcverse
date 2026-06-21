@@ -13,7 +13,9 @@ import {
   Info,
   Search,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  CheckCircle2,
+  Activity
 } from 'lucide-react';
 
 const getIcon = (id: string) => {
@@ -221,7 +223,7 @@ export const InfoPanel = () => {
             <ul className="space-y-4">
               {selectedComponent.role.map((r, i) => (
                 <li key={i} className="text-[14px] text-slate-300/95 flex items-start gap-3 bg-white/[0.01] hover:bg-white/[0.03] p-4 rounded-xl border border-white/[0.03] transition-all duration-300">
-                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 mt-2 shrink-0 shadow-[0_0_8px_rgba(99,102,241,1)]" />
+                  <CheckCircle2 size={16} className="text-indigo-400 mt-0.5 shrink-0" />
                   <span className="leading-relaxed">{r}</span>
                 </li>
               ))}
@@ -240,10 +242,22 @@ export const InfoPanel = () => {
           </motion.div>
 
           <motion.div variants={itemVariants}>
-            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-6 border-b border-white/10 pb-3">Wpływ na wydajność</h3>
-            <ProgressBar label="Gry Komputerowe" value={selectedComponent.perfImpact.gaming} />
-            <ProgressBar label="Obliczenia AI" value={selectedComponent.perfImpact.ai} />
-            <ProgressBar label="Codzienna Praca" value={selectedComponent.perfImpact.productivity} />
+            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-6 border-b border-white/10 pb-3 flex items-center gap-2">
+              <Activity size={14} />
+              {selectedComponent.customStats ? "Kluczowe Parametry" : "Wpływ na wydajność"}
+            </h3>
+            
+            {selectedComponent.customStats ? (
+              selectedComponent.customStats.map((stat, i) => (
+                <ProgressBar key={i} label={stat.label} value={stat.value} />
+              ))
+            ) : (
+              <>
+                <ProgressBar label="Gry Komputerowe" value={selectedComponent.perfImpact.gaming} />
+                <ProgressBar label="Obliczenia AI" value={selectedComponent.perfImpact.ai} />
+                <ProgressBar label="Codzienna Praca" value={selectedComponent.perfImpact.productivity} />
+              </>
+            )}
           </motion.div>
         </motion.div>
       )}
