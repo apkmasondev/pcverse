@@ -2,6 +2,15 @@
 
 Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 
+## [Nieopublikowane] - Kamień Milowy: Architektura i Płynność (Faza 2)
+### Faza 2 - Wielka Refaktoryzacja Kodowa
+- **Rozbicie Monolitu `PCModel.tsx` (C1)**: Wyodrębniono tysiące linijek kodu z jednego, ogromnego pliku `PCModel.tsx` do modułowej, zorganizowanej struktury w nowym katalogu `geometries/` (m.in. `MotherboardGeometry.tsx`, `CPUGeometry.tsx`, `GPUGeometry.tsx`, `PSUGeometry.tsx`, `CaseGeometry.tsx`). Główny plik pełni teraz wyłącznie rolę deklaratywnego orkiestratora.
+- **Globalny Hook `useIsMobile` (C2)**: Wydzielono logikę nasłuchiwania na rozmiar okna (media query) do reużywalnego hooka `src/hooks/useIsMobile.tsx`, oczyszczając kod i zapobiegając redundantnym event listenerom.
+- **Optymalizacja Draw Calls z `<Instances>` (C9)**: Zrefaktoryzowano skomplikowane i powtarzalne układy zasilania (kondensatory VRM, finy radiatorów VRM) na Płycie Głównej, wykorzystując wysoko zoptymalizowany tag `<Instances>` z `@react-three/drei`. Radykalnie zmniejsza to narzut na procesor graficzny, zwłaszcza w trybie standardowym.
+- **Refaktoryzacja Trybu Prześwietlenia (X-Ray) (C11)**: Całkowicie przebudowano logikę renderowania widoku transparentnego. Zamiast brutalnie iterować i mutować parametry bezpośrednio w oryginalnych materiałach (co blokowało na ułamek sekundy główny wątek i wywoływało wycieki w R3F), komponent teraz elegancko przepina referencje na globalny i stabilny `xrayMaterial` (MeshStandardMaterial). Utrzymuje to współdzielenie materiałów w czystości.
+- **Sloty PCIe w 3D**: Przepisano płaską "teksturową naklejkę" na porty PCIe i obudowano je fizyczną, trójwymiarową ramką, tworząc naturalne zagłębienia, do których karty rozszerzeń "wchodzą" zamiast na nich leżeć.
+- **Poprawki Zgodności i Aparatu (C32)**: Odkryto i usunięto błąd TypeScripcie związany ze starą metodą `rest()` w `CameraControls` na rzecz poprawnego wywołania `reset(true)`.
+
 ## [Nieopublikowane] - Wdrożenie Poprawek z Audytu (Najnowsze)
 ### Faza 1 - Krytyczne Poprawki (Wydajność i Pamięć)
 - **Rozwiązanie wycieku pamięci geometrii**: Wydzielono logikę generowania kabli do zewnętrznego komponentu `CableGeometry.tsx`. Od teraz krzywe modelujące kable są buforowane poprzez `useMemo`, a same kształty (`TubeGeometry`) posiadają mechanizm wymuszający zrzucanie instancji z pamięci VRAM (`dispose()`) przy każdorazowym chowaniu i demontażu komponentu, naprawiając największe "dropy" wydajności.

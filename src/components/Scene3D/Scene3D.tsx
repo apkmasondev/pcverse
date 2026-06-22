@@ -170,6 +170,7 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
         (camera as any).clearViewOffset();
         camera.updateProjectionMatrix();
       }
+      cameraControlsRef.current.reset(true);
       cameraControlsRef.current.setLookAt(
         0, 3, 20,
         0, 0, 0,
@@ -217,18 +218,20 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
           fadeDistance={30} 
           fadeStrength={1} 
         />
-        <EffectComposer multisampling={isMobile ? 0 : 4}>
-          <DepthOfField 
-            target={dofTarget} 
-            focalLength={dofEnabled ? 0.05 : 0.0} 
-            bokehScale={dofEnabled ? (isMobile ? 0 : 8) : 0} 
-            height={700} 
-          />
-          <Bloom luminanceThreshold={1} mipmapBlur={!isMobile} intensity={isMobile ? 0.8 : 1.0} />
-          <N8AO aoRadius={0.5} intensity={2.0} distanceFalloff={0.5} quality={isMobile ? "low" : "medium"} halfRes />
-          <Vignette eskil={false} offset={0.2} darkness={0.6} />
-          <ChromaticAberration blendFunction={BlendFunction.NORMAL} offset={CHROMA_OFFSET} />
-        </EffectComposer>
+        {!isMobile && (
+          <EffectComposer multisampling={4}>
+            <DepthOfField 
+              target={dofTarget} 
+              focalLength={dofEnabled ? 0.05 : 0.0} 
+              bokehScale={dofEnabled ? 8 : 0} 
+              height={700} 
+            />
+            <Bloom luminanceThreshold={1} mipmapBlur={true} intensity={1.0} />
+            <N8AO aoRadius={0.5} intensity={2.0} distanceFalloff={0.5} quality="medium" halfRes />
+            <Vignette eskil={false} offset={0.2} darkness={0.6} />
+            <ChromaticAberration blendFunction={BlendFunction.NORMAL} offset={CHROMA_OFFSET} />
+          </EffectComposer>
+        )}
       </React.Suspense>
       
       <CameraControls 

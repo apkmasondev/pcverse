@@ -1,0 +1,108 @@
+import { useRef, useMemo, useEffect } from 'react';
+import * as THREE from 'three';
+import { useTexture } from '@react-three/drei';
+import cpuTopUrl from '../../../assets/cpu_top.webp';
+import cpuBottomUrl from '../../../assets/cpu_bottom.webp';
+import { extrudeOptsIhs } from '../constants';
+
+export const CPUGeometry = () => {
+  const cpuTexture = useTexture(cpuTopUrl);
+  const cpuBottomTexture = useTexture(cpuBottomUrl);
+  const ihsGeoRef = useRef<THREE.ExtrudeGeometry>(null);
+
+  const ihsShape = useMemo(() => {
+    const shape = new THREE.Shape();
+    shape.moveTo(0.36, 0.36);
+    shape.lineTo(0.22, 0.36);
+    shape.lineTo(0.22, 0.28);
+    shape.lineTo(0.08, 0.28);
+    shape.lineTo(0.08, 0.36);
+    shape.lineTo(-0.08, 0.36);
+    shape.lineTo(-0.08, 0.28);
+    shape.lineTo(-0.22, 0.28);
+    shape.lineTo(-0.22, 0.36);
+    shape.lineTo(-0.36, 0.36);
+
+    shape.lineTo(-0.36, 0.22);
+    shape.lineTo(-0.28, 0.22);
+    shape.lineTo(-0.28, 0.08);
+    shape.lineTo(-0.36, 0.08);
+    shape.lineTo(-0.36, -0.08);
+    shape.lineTo(-0.28, -0.08);
+    shape.lineTo(-0.28, -0.22);
+    shape.lineTo(-0.36, -0.22);
+    shape.lineTo(-0.36, -0.36);
+
+    shape.lineTo(-0.22, -0.36);
+    shape.lineTo(-0.22, -0.28);
+    shape.lineTo(-0.08, -0.28);
+    shape.lineTo(-0.08, -0.36);
+    shape.lineTo(0.08, -0.36);
+    shape.lineTo(0.08, -0.28);
+    shape.lineTo(0.22, -0.28);
+    shape.lineTo(0.22, -0.36);
+    shape.lineTo(0.36, -0.36);
+
+    shape.lineTo(0.36, -0.22);
+    shape.lineTo(0.28, -0.22);
+    shape.lineTo(0.28, -0.08);
+    shape.lineTo(0.36, -0.08);
+    shape.lineTo(0.36, 0.08);
+    shape.lineTo(0.28, 0.08);
+    shape.lineTo(0.28, 0.22);
+    shape.lineTo(0.36, 0.22);
+    shape.lineTo(0.36, 0.36);
+    return shape;
+  }, []);
+
+  useEffect(() => {
+    if (ihsGeoRef.current) {
+      const uv = ihsGeoRef.current.attributes.uv;
+      const pos = ihsGeoRef.current.attributes.position;
+      if (uv && pos) {
+        for (let i = 0; i < uv.count; i++) {
+          const x = pos.getX(i);
+          const y = pos.getY(i);
+          uv.setXY(i, (x + 0.4) / 0.8, (y + 0.4) / 0.8);
+        }
+        uv.needsUpdate = true;
+      }
+    }
+  }, [ihsShape]);
+
+  return (
+    <group>
+      {/* Base Substrate Block */}
+      <mesh position={[0, 0, -0.01]}>
+        <boxGeometry args={[0.8, 0.8, 0.06]} />
+        <meshStandardMaterial color="#2a1f1a" roughness={0.9} />
+      </mesh>
+      
+      {/* Substrate Top Texture Plane (Edges around IHS) */}
+      <mesh position={[0, 0, 0.021]}>
+        <planeGeometry args={[0.8, 0.8]} />
+        <meshStandardMaterial 
+          map={cpuTexture} 
+          roughness={0.9} 
+        />
+      </mesh>
+
+      {/* 3D Raised IHS (Octopus Shape with Bevels) */}
+      <mesh position={[0, 0, 0.021]}>
+        <extrudeGeometry ref={ihsGeoRef as any} args={[ihsShape, extrudeOptsIhs]} />
+        <meshStandardMaterial attach="material-0" map={cpuTexture} roughness={0.4} metalness={0.7} />
+        <meshStandardMaterial attach="material-1" color="#a0a4a8" roughness={0.4} metalness={0.9} />
+      </mesh>
+
+      {/* Photorealistic CPU Bottom (Pins) */}
+      <mesh position={[0, 0, -0.041]} rotation={[0, Math.PI, 0]}>
+        <planeGeometry args={[0.8, 0.8]} />
+        <meshStandardMaterial 
+          map={cpuBottomTexture} 
+          roughness={0.4} 
+          metalness={0.8}
+        />
+      </mesh>
+    </group>
+  );
+};
