@@ -42,8 +42,8 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
           <meshStandardMaterial color="#2a2a2a" metalness={0.6} roughness={0.8} />
         </mesh>
         {/* GPU IO Texture Plane */}
-        <mesh position={[-0.021, 0, -0.1]} rotation={[0, -Math.PI / 2, 0]}>
-          <planeGeometry args={[1.0, 0.4]} />
+        <mesh position={[-0.021, 0, 0.1]} rotation={[0, -Math.PI / 2, 0]}>
+          <planeGeometry args={[1.4, 0.4]} />
           <meshStandardMaterial map={gpuIoTexture} roughness={0.4} metalness={0.6} />
         </mesh>
         {/* HDMI Port (Gold plated) */}
