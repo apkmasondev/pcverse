@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Scene3D } from './components/Scene3D/Scene3D';
+import { useEffect, useState, lazy, Suspense } from 'react';
+const Scene3D = lazy(() => import('./components/Scene3D/Scene3D').then(module => ({ default: module.Scene3D })));
 import { UI } from './components/UI/UI';
 import { InfoPanel } from './components/InfoPanel/InfoPanel';
 import { PCProvider } from './hooks/usePC';
@@ -41,7 +41,9 @@ function App() {
       <PCProvider>
         <main className="relative w-full h-screen overflow-hidden bg-[#0a0a0f]">
           <h1 className="sr-only">PCVerse — Interaktywna Anatomia Komputera 3D</h1>
-          <Scene3D />
+          <Suspense fallback={null}>
+            <Scene3D />
+          </Suspense>
           <UI />
           <InfoPanel />
           <LoadingScreen />

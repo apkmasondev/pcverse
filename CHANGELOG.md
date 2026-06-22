@@ -2,8 +2,15 @@
 
 Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 
+## [Nieopublikowane] - Optymalizacja i Dostępność (Faza 3)
+### Faza 3 - Ostatnie Szlify
+- **Code Splitting (C38)**: Wdrożono dynamiczny import dla głównej sceny 3D (`React.lazy`) w pliku `App.tsx` oraz zdefiniowano `manualChunks` dla silnika Vite, co rozwiązuje problem zbyt dużych paczek przy kompilacji i przyspiesza wstępne ładowanie interfejsu.
+- **Dostępność i Screen Readery (C23-C25)**: Naprawiono problemy z czytelnością dla czytników ekranowych. Dodano etykiety `aria-label` do nawigacji galerii oraz przycisku zamknięcia. Panel informacyjny zyskał `role="dialog"` oraz `aria-live="polite"`, a renderowany element Canvas WebGL został ukryty z drzewa a11y (`aria-hidden="true"`), eliminując dezorientację użytkowników niepełnosprawnych.
+
 ## [Nieopublikowane] - Kamień Milowy: Architektura i Płynność (Faza 2)
+
 ### Faza 2 - Wielka Refaktoryzacja Kodowa
+
 - **Rozbicie Monolitu `PCModel.tsx` (C1)**: Wyodrębniono tysiące linijek kodu z jednego, ogromnego pliku `PCModel.tsx` do modułowej, zorganizowanej struktury w nowym katalogu `geometries/` (m.in. `MotherboardGeometry.tsx`, `CPUGeometry.tsx`, `GPUGeometry.tsx`, `PSUGeometry.tsx`, `CaseGeometry.tsx`). Główny plik pełni teraz wyłącznie rolę deklaratywnego orkiestratora.
 - **Globalny Hook `useIsMobile` (C2)**: Wydzielono logikę nasłuchiwania na rozmiar okna (media query) do reużywalnego hooka `src/hooks/useIsMobile.tsx`, oczyszczając kod i zapobiegając redundantnym event listenerom.
 - **Optymalizacja Draw Calls z `<Instances>` (C9)**: Zrefaktoryzowano skomplikowane i powtarzalne układy zasilania (kondensatory VRM, finy radiatorów VRM) na Płycie Głównej, wykorzystując wysoko zoptymalizowany tag `<Instances>` z `@react-three/drei`. Radykalnie zmniejsza to narzut na procesor graficzny, zwłaszcza w trybie standardowym.
@@ -11,8 +18,10 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - **Sloty PCIe w 3D**: Przepisano płaską "teksturową naklejkę" na porty PCIe i obudowano je fizyczną, trójwymiarową ramką, tworząc naturalne zagłębienia, do których karty rozszerzeń "wchodzą" zamiast na nich leżeć.
 - **Poprawki Zgodności i Aparatu (C32)**: Odkryto i usunięto błąd TypeScripcie związany ze starą metodą `rest()` w `CameraControls` na rzecz poprawnego wywołania `reset(true)`.
 
-## [Nieopublikowane] - Wdrożenie Poprawek z Audytu (Najnowsze)
+## [Nieopublikowane] - Wdrożenie Poprawek z Audytu (Faza 1)
+
 ### Faza 1 - Krytyczne Poprawki (Wydajność i Pamięć)
+
 - **Rozwiązanie wycieku pamięci geometrii**: Wydzielono logikę generowania kabli do zewnętrznego komponentu `CableGeometry.tsx`. Od teraz krzywe modelujące kable są buforowane poprzez `useMemo`, a same kształty (`TubeGeometry`) posiadają mechanizm wymuszający zrzucanie instancji z pamięci VRAM (`dispose()`) przy każdorazowym chowaniu i demontażu komponentu, naprawiając największe "dropy" wydajności.
 - **Bezpieczeństwo animacji**: Dodano bezpiecznik stanu `isAnimating` do logiki widoku rozstrzelonego (Explode View). Zapobiega on zapętlaniu się i de-synchronizacji animacji podczas szybkiego, wielokrotnego klikania przycisku.
 - **Odporność panelu informacyjnego (C32)**: Wdrożono resetowanie indexu w powiększonej galerii zdjęć komponentu przy przełączaniu na inny podzespół (co chroni przed crashami aplikacji).
@@ -28,6 +37,7 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - **Radiator Procesora**: Przywrócono teksturę "żeberek" u dołu radiatora oraz zmieniono kolor wewnętrznego panelu stykowego i tylnej "ścianki" z powrotem na srebrny z miedzianym klockiem bazowym (Base Contact).
 
 ### Zmiany dzisiejsze (Poprawki Obudowy, Optymalizacja i Detale)
+
 - **Poprawki Geometrii Obudowy**: Precyzyjnie przesunięto i wycentrowano wszystkie fizyczne wycięcia na lewym i dolnym panelu obudowy dla zasilacza (PSU), w tym na wentylator oraz port na kabel zasilający. Naprawiono również obrys tylnego panelu.
 - **Kabel Zasilania Procesora (EPS)**: Poprowadzono nowy, 8-pinowy kabel łączący zasilacz (PSU) bezpośrednio z gniazdem CPU na płycie głównej. Kabel przebiega strategicznie wzdłuż samej krawędzi obudowy (całkowicie z tyłu za płytą główną), elegancko omijając kartę graficzną i unikając jakichkolwiek kolizji.
 - **Audyt Wydajnościowy i Kompresja (.webp)**: Przeprowadzono gigantyczne odchudzanie aplikacji! Ogromne pliki `PNG` używane jako tekstury zostały w locie zoptymalizowane nowoczesnym kodekiem (`.webp`), oszczędzając kilkanaście megabajtów (MB) czystego wczytywania, niesamowicie przyspieszając proces ładownia.
@@ -38,12 +48,14 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - **Wycięcie na zasilacz (Spód)**: Wyrównano dolny otwór wentylacyjny pod zasilaczem wraz z siatką Mesh do nowej pozycji zasilacza (Z=-0.8). Powiększono wycięcie w podłodze obudowy tak, aby idealnie odpowiadało rozmiarom pełnego plastra miodu, zapobiegając jego nachodzeniu na lity panel.
 
 ### Zmienione
+
 - **Orientacja i rotacja wentylatorów**: Skorygowano błędy matematyczne z rotacjami w grupie `ComponentMesh`, przez które wentylatory wylotowe (exhaust) miały zły kąt i niepoprawnie wtłaczały powietrze do środka. Teraz wydmuchują je na zewnątrz obudowy (-X).
 - **Zasilacz (PSU)**: Rozszerzono mapowanie tekstur. Boczna etykieta z modelem (AX1600i) jest teraz symetrycznie aplikowana również na tylną, niewidoczną od frontu stronę PSU. Rozciągnięto również tylny i przedni płaski panel z teksturami do szerokości 1.8 (wcześniej 1.6), co całkowicie wyeliminowało czarne pasy po bokach obudowy zasilacza.
 - **Ekran Ładowania (Loading Screen)**: Dodano wymuszone pobieranie wszystkich 27 tekstur w tle tuż po uruchomieniu aplikacji (`useTexture.preload()`). Dzięki temu menedżer ładowania nie uznaje procesu za zakończony przedwcześnie, a ekran ładowania znika dopiero, gdy wszystkie tekstury i materiały znajdą się w pamięci karty graficznej.
 - **Top Panel Mesh**: Przebudowano CanvasTexture siatki na top panelu, naprawiając skalowanie wycięć (`repeat.set`), dzięki czemu plaster miodu wreszcie jest poprawnie widoczny.
 
 ### Zmienione
+
 - Zastosowano hybrydowe podejście do Płyty Głównej: na płaskie PCB naniesiono fotorealistyczną teksturę o wysokiej rozdzielczości (front i tył), a kluczowe trójwymiarowe elementy (gniazdo CPU, chłodzenie VRM, sloty RAM/PCIe) pozostały w pełni wyrenderowanymi bryłami 3D, generując fizyczne cienie na zdjęciu.
 - Dodano "zaślepkę" gniazda CPU na płycie głównej, aby perfekcyjnie ukryć nadrukowany socket z fotografii i wyeksponować tylko fizyczny model 3D bez artefaktów.
 - Skorygowano pozycje gwintów płyty głównej w obudowie, zachowując perfekcyjne marginesy i unikając nakładania się ich na wielkie wycięcie wentylacyjne pod procesorem (CPU cooler cutout).
@@ -63,7 +75,9 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - Animacja eksplozji rozsuwa teraz nie tylko boczny, ale również przedni, szklany panel obudowy. Przednie szkło otrzymało też dopasowaną cienką stalową ramkę.
 
 ## [Nieopublikowane] - Audyt SEO, Bezpieczeństwa i Wydajności
+
 ### Dodane
+
 - Kompleksowa optymalizacja SEO (lang, tagi meta, Open Graph, JSON-LD, ukryty H1 tylko dla czytników ekranu).
 - Nagłówki Content-Security-Policy (CSP) dla zwiększenia bezpieczeństwa.
 - Efekt `N8AO` (Screen Space Ambient Occlusion) dla głębszego i bardziej realistycznego cieniowania obiektów 3D.
@@ -73,6 +87,7 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - Wprowadzająca animacja kinowa kamery przy starcie aplikacji.
 
 ### Zmienione
+
 - Zrefaktoryzowano alokacje wektorów `Vector3` wewnątrz `useFrame` i `useEffect` (użycie `useMemo` i `useRef`), aby wyeliminować mikro-przycięcia powodowane przez Garbage Collector.
 - Dodano płynną interpolację skali (lerp) podczas najeżdżania kursorem na komponenty.
 - Naprawiono brak resetowania `viewOffset` podczas odmontowywania sceny (Scene3D).
@@ -80,7 +95,9 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - Usunięto nieużywany plik `App.css` pochodzący z szablonu.
 
 ## [Nieopublikowane] - Ostateczne Szlify Estetyczne i Poprawki Układu
+
 ### Dodane
+
 - **Włącznik/Wyłącznik Oświetlenia RGB**: Dodano nowy przycisk (z ikoną Power) w menu palety kolorów, który pozwala całkowicie wygasić podświetlenie RGB podzespołów.
 - **Modal Instrukcji**: Dodano przycisk, który otwiera eleganckie, szklane (glassmorphism) nakładki z instrukcjami wyjaśniającymi kluczowe interakcje (nawigacja, demontaż, narzędzia).
 - **Przełącznik Etykiet**: Dodano przycisk umożliwiający łatwe włączanie/wyłączanie trójwymiarowych etykiet HTML dla czystszego widoku modelu.
@@ -90,6 +107,7 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - Wewnętrzne dwukolorowe oświetlenie RGB punktowe wewnątrz obudowy (indygo na górze, różowe na dole) dla dynamicznych podświetleń komponentów.
 
 ### Zmienione
+
 - Poprawiono teksturę portów I/O karty graficznej na idealnie odwzorowującą układ złączy NVIDIA (3x DisplayPort, 1x HDMI) po dostarczeniu nowej grafiki.
 - Zaktualizowano model zasilacza (PSU) o nową, fotorealistyczną teksturę tylnego panelu (złącza modularne, przełącznik AC i gęsty mesh wentylacyjny), dostarczoną przez użytkownika.
 - **UI Menu RGB**: Poprawiono wygląd palety kolorów po wyłączeniu RGB. Pola mają teraz szary, wyszarzony kolor i zapalają się z powrotem po wybraniu trybu świecącego.
@@ -118,7 +136,9 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - Zoptymalizowano Karty Informacyjne - pasek przewijania jest teraz ukryty poprzez dedykowaną klasę CSS, a paski postępu renderowane są wielokolorowymi gradientami.
 
 ## [Nieopublikowane] - Profesjonalna Estetyka i Detale
+
 ### Zmienione
+
 - Usunięto płaskie, dwuwymiarowe modele podzespołów zastępując je w 100% trójwymiarowymi rzeźbami w środowisku 3D.
 - Dodano świecące linie emisji światła (glow) w geometrii układów graficznych i pamięci RAM.
 - Dodano filmowe cząsteczki `Sparkles` unoszące się w tle jako eleganckie dopełnienie sceny.
@@ -135,7 +155,9 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - Naprawiono globalny wektor obudowy (`Z=1`), który powodował wystawanie wszystkich podzespołów poza bryłę ochronną skrzyni komputera.
 
 ## [Nieopublikowane] - Przebudowa UX/UI
+
 ### Zmienione
+
 - Przebudowa geometrii podstawowej. Zamiast prostych boksów, używane są teraz zintegrowane formacje 3D dla procesora (dodano IHS), kratownice dla karty graficznej i układy radiatorowe dla pamięci RAM.
 - Zastąpiono latające teksty 3D o wiele atrakcyjniejszymi powiadomieniami z czystego HTML renderowanego na powierzchni Canvas przez `@react-three/drei`.
 - Zmieniono surowe środowisko `OrbitControls` na profesjonalne przejścia kinematyczne realizowane biblioteką `CameraControls`.
@@ -143,7 +165,9 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - Zreorganizowano pasek nawigacyjny do formy przypominającej nowoczesne aplikacje typu Linear czy Vercel (monochromatyczny design, rozmyte tła, czarne motywy z jedno-pikselowym borderem).
 
 ## [Nieopublikowane] - Inicjalizacja i Podstawowe Funkcje
+
 ### Dodane
+
 - Inicjalna struktura projektu w ekosystemie: React 19, Vite, TypeScript.
 - Integracja i konfiguracja frameworku Tailwind CSS w najnowszej wersji v4.
 - Import rdzeni projektowych: Three.js, React Three Fiber, React Three Drei oraz Framer Motion.

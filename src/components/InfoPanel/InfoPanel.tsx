@@ -136,6 +136,9 @@ export const InfoPanel = () => {
           initial="hidden"
           animate="visible"
           exit="exit"
+          role="dialog"
+          aria-live="polite"
+          aria-label={`Informacje o podzespole: ${selectedComponent.name}`}
           style={isMobile ? {} : { rotateX, rotateY, transformPerspective: 1200 }}
           className="absolute bottom-0 md:bottom-0 md:top-0 md:right-0 z-20 
                      w-full md:w-[35vw] lg:w-[30vw] h-[60vh] md:h-screen overflow-y-auto
@@ -145,6 +148,7 @@ export const InfoPanel = () => {
         >
           <button 
             onClick={() => setSelectedComponent(null)}
+            aria-label="Zamknij panel informacyjny"
             className="absolute top-6 right-6 p-2 hover:bg-white/10 rounded-full transition-all duration-300 hover:scale-110 hover:rotate-90 z-30 bg-black/40 backdrop-blur-md"
           >
             <X size={16} className="text-slate-300" />
@@ -278,6 +282,7 @@ export const InfoPanel = () => {
               e.stopPropagation();
               setZoomedImageIndex((zoomedImageIndex - 1 + selectedComponent.imageUrls.length) % selectedComponent.imageUrls.length);
             }}
+            aria-label="Poprzednie zdjęcie"
           >
             <ChevronLeft size={32} />
           </button>
@@ -301,6 +306,7 @@ export const InfoPanel = () => {
               e.stopPropagation();
               setZoomedImageIndex((zoomedImageIndex + 1) % selectedComponent.imageUrls.length);
             }}
+            aria-label="Następne zdjęcie"
           >
             <ChevronRight size={32} />
           </button>

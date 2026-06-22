@@ -9,4 +9,18 @@ export default defineConfig({
     tailwindcss(),
   ],
   base: '/pcverse/',
+  build: {
+    chunkSizeWarningLimit: 1600,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('three')) return 'vendor-three';
+            if (id.includes('framer-motion')) return 'vendor-motion';
+            return 'vendor';
+          }
+        }
+      }
+    }
+  }
 })

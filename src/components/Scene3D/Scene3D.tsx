@@ -268,7 +268,7 @@ export const Scene3D = () => {
   const { setSelectedComponent } = usePC();
 
   return (
-    <div className="w-full h-[60vh] md:h-screen bg-[#050505]">
+    <div className="w-full h-[60vh] md:h-screen bg-[#050505]" aria-hidden="true">
       <Canvas
         gl={{ antialias: true, logarithmicDepthBuffer: true }}
         dpr={dpr} 
