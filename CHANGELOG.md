@@ -4,6 +4,7 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 
 ## Dzień 9 - Detale i Poprawki Wizualne (Faza 4)
 ### Faza 4 - Perfekcja UI/3D
+- **Całkowita eliminacja Z-fightingu (C9/C15)**: Przebudowano geometrię obudowy (CaseGeometry). Stworzono lity panel górny (Top) oraz zunifikowano dolny. Usunięto zduplikowane listwy boczne szkła i wprowadzono precyzyjne narożniki (0.1x0.1), w które szkło płynnie się zagłębia, co permanentnie rozwiązało problem Z-fightingu. Wszystkie ramy używają teraz jednego globalnego materiału `caseFrameMaterial`, znacząco redukując draw-calls (zgodnie z PCVerse Audit).
 - **Poprawa estetyki GPU i płyty głównej**: Naprawiono błąd tekstury panelu I/O karty graficznej, naciągając siatkę na pełną szerokość złącza. Przesunięto całą "platformę" (płyta główna, CPU, RAM, GPU, SSD, cooler) o `0.1` w osi X w głąb obudowy, by złącza naturalnie chowały się za krawędzią tylnego panelu PC.
 - **Detale M.2 i Baterii CMOS**: Przesunięto baterię CMOS wyżej (z `Y=-1.4` na `Y=-0.9`), aby była widoczna i nie chowała się pod radiatorem. Nałożono nową, dedykowaną teksturę radiatora ("AORUS M.2 SSD HEATSINK") na dolny radiator M.2. Zoptymalizowano oryginalny, bazowy model dysku SSD na płycie głównej (pod CPU), poprawiając obrót i proporcje jego tekstury, dzięki czemu pozbyto się efektu "rozmazanego bluru" po wyjęciu interaktywnego dysku.
 

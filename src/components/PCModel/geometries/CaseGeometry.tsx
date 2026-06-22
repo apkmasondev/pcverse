@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import { usePC } from '../../../hooks/usePC';
 import * as THREE from 'three';
 import { useTexture } from '@react-three/drei';
-import { extrudeOpts01, extrudeOpts005 } from '../constants';
+import { extrudeOpts01, extrudeOpts005, caseFrameMaterial } from '../constants';
 import caseBackUrl from '../../../assets/case_back.webp';
 import caseBehindUrl from '../../../assets/case_behind.webp';
 import caseBottomUrl from '../../../assets/case_bottom.webp';
@@ -74,11 +74,11 @@ export const CaseGeometry = () => {
 
   const leftPanelShape = useMemo(() => {
     const shape = new THREE.Shape();
-    shape.moveTo(-1.95, -2.5);
-    shape.lineTo(1.95, -2.5);
-    shape.lineTo(1.95, 2.5);
-    shape.lineTo(-1.95, 2.5);
-    shape.lineTo(-1.95, -2.5);
+    shape.moveTo(-1.95, -2.4);
+    shape.lineTo(1.945, -2.4);
+    shape.lineTo(1.945, 2.4);
+    shape.lineTo(-1.95, 2.4);
+    shape.lineTo(-1.95, -2.4);
 
     // Motherboard IO Cutout
     const ioHole = new THREE.Path();
@@ -184,11 +184,11 @@ export const CaseGeometry = () => {
   const frontPanelShape = useMemo(() => {
     const shape = new THREE.Shape();
     // Front Glass bounds
-    shape.moveTo(-1.95, -2.45);
-    shape.lineTo(1.95, -2.45);
-    shape.lineTo(1.95, 2.45);
-    shape.lineTo(-1.95, 2.45);
-    shape.lineTo(-1.95, -2.45);
+    shape.moveTo(-1.95, -2.42);
+    shape.lineTo(1.95, -2.42);
+    shape.lineTo(1.95, 2.42);
+    shape.lineTo(-1.95, 2.42);
+    shape.lineTo(-1.95, -2.42);
 
     // Pill-shaped Hole for Fans (Clockwise path)
     const hole = new THREE.Path();
@@ -251,6 +251,27 @@ export const CaseGeometry = () => {
     return shape;
   }, []);
 
+
+    const topFrameShape = useMemo(() => {
+      const shape = new THREE.Shape();
+      // Outer border 4.0 x 4.0
+      shape.moveTo(-2.0, -2.0);
+      shape.lineTo(2.0, -2.0);
+      shape.lineTo(2.0, 2.0);
+      shape.lineTo(-2.0, 2.0);
+      shape.lineTo(-2.0, -2.0);
+
+      // Hole for the mesh (0.2 width on each side)
+      const hole = new THREE.Path();
+      hole.moveTo(-1.8, -1.8);
+      hole.lineTo(-1.8, 1.8);
+      hole.lineTo(1.8, 1.8);
+      hole.lineTo(1.8, -1.8);
+      hole.lineTo(-1.8, -1.8);
+      shape.holes.push(hole);
+
+      return shape;
+    }, []);
 
   const bottomPanelShape = useMemo(() => {
     const shape = new THREE.Shape();
@@ -380,9 +401,14 @@ export const CaseGeometry = () => {
         </group>
       ))}
 
-      {/* Top Panel (Mesh grill) */}
+      {/* Top Panel (Solid Frame) */}
+      <mesh position={[0, 2.50, 0]} rotation={[Math.PI / 2, 0, 0]} material={caseFrameMaterial}>
+        <extrudeGeometry args={[topFrameShape, extrudeOpts01]} />
+      </mesh>
+
+      {/* Top Panel (Mesh grill inside the frame) */}
       <mesh position={[0, 2.45, 0]}>
-        <boxGeometry args={[3.8, 0.1, 3.8]} />
+        <boxGeometry args={[3.6, 0.02, 3.6]} />
         <meshStandardMaterial 
           alphaMap={meshTexture} 
           transparent={true} 
@@ -407,10 +433,9 @@ export const CaseGeometry = () => {
       </mesh>
 
       {/* Bottom Panel with PSU ventilation cutout */}
-      <group position={[0, -2.5, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <mesh>
+      <group position={[0, -2.4, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <mesh material={caseFrameMaterial}>
           <extrudeGeometry args={[bottomPanelShape, extrudeOpts01]} />
-          <meshStandardMaterial color="#4a4d54" roughness={0.3} metalness={0.8} />
         </mesh>
         {/* Bottom Panel Texture (Outside) */}
         <mesh position={[0, 0, -0.001]} rotation={[0, 0, 0]}>
@@ -565,18 +590,10 @@ export const CaseGeometry = () => {
         </mesh>
         
         {/* Glass Frame Elements */}
-        {/* Top/Bottom Frames */}
-        {[-2.45, 2.45].map(y => (
-          <mesh key={`front-h-frame-${y}`} position={[0, y, 0.015]}>
-            <boxGeometry args={[4, 0.1, 0.04]} />
-            <meshStandardMaterial color="#111317" roughness={0.4} metalness={0.8} />
-          </mesh>
-        ))}
-        {/* Left/Right Frames */}
+        {/* Left/Right Frames (Square corner pillars perfectly flush with top/bottom panels) */}
         {[-1.95, 1.95].map(x => (
-          <mesh key={`front-v-frame-${x}`} position={[x, 0, 0.015]}>
-            <boxGeometry args={[0.1, 4.8, 0.04]} />
-            <meshStandardMaterial color="#3a3d42" roughness={0.4} metalness={0.8} />
+          <mesh key={`front-v-frame-${x}`} position={[x, 0, 0]} material={caseFrameMaterial}>
+            <boxGeometry args={[0.1, 4.8, 0.1]} />
           </mesh>
         ))}
       </group>
@@ -584,7 +601,7 @@ export const CaseGeometry = () => {
       {/* Side Panel - Glass with Frame */}
       <group position={[1.95, 0, 0]} ref={sideGlassRef as any}>
         <mesh>
-          <boxGeometry args={[0.02, 5, 3.9]} />
+          <boxGeometry args={[0.02, 4.84, 3.84]} />
           <meshPhysicalMaterial 
             ref={sideGlassMatRef}
             color="#a5f3fc" metalness={0.1} roughness={0.05} 
@@ -594,20 +611,7 @@ export const CaseGeometry = () => {
         </mesh>
         
         {/* Glass Frame Elements */}
-        {/* Top/Bottom Frames */}
-        {[-2.45, 2.45].map(y => (
-          <mesh key={`h-frame-${y}`} position={[0.015, y, 0]}>
-            <boxGeometry args={[0.04, 0.1, 3.8]} />
-            <meshStandardMaterial color="#3a3d42" roughness={0.4} metalness={0.8} />
-          </mesh>
-        ))}
-        {/* Front/Back Frames */}
-        {[-1.9, 1.9].map(z => (
-          <mesh key={`v-frame-${z}`} position={[0.015, 0, z]}>
-            <boxGeometry args={[0.04, 4.8, 0.1]} />
-            <meshStandardMaterial color="#3a3d42" roughness={0.4} metalness={0.8} />
-          </mesh>
-        ))}
+        {/* Frames removed: Corner coverage is handled perfectly by Front Pillars and Back Panel */}
       </group>
 
 
