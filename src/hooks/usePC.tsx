@@ -38,16 +38,26 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
   const [envPreset, setEnvPreset] = useState('studio');
   const [showLabels, setShowLabels] = useState(true);
   const [showInstructions, setShowInstructions] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const toggleExploded = () => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    
     if (explodeStep === 0) {
       // Rozkładanie: Najpierw szkło (1), potem komponenty (2)
       setExplodeStep(1);
-      setTimeout(() => setExplodeStep(2), 800);
+      setTimeout(() => {
+        setExplodeStep(2);
+        setIsAnimating(false);
+      }, 800);
     } else {
       // Składanie: Najpierw komponenty (1), potem szkło wraca (0)
       setExplodeStep(1);
-      setTimeout(() => setExplodeStep(0), 800);
+      setTimeout(() => {
+        setExplodeStep(0);
+        setIsAnimating(false);
+      }, 800);
     }
   };
 

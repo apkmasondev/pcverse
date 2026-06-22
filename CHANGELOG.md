@@ -3,7 +3,10 @@
 Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 
 ## [Nieopublikowane] - Wdrożenie Poprawek z Audytu (Najnowsze)
-### Dodane
+### Faza 1 - Krytyczne Poprawki (Wydajność i Pamięć)
+- **Rozwiązanie wycieku pamięci geometrii**: Wydzielono logikę generowania kabli do zewnętrznego komponentu `CableGeometry.tsx`. Od teraz krzywe modelujące kable są buforowane poprzez `useMemo`, a same kształty (`TubeGeometry`) posiadają mechanizm wymuszający zrzucanie instancji z pamięci VRAM (`dispose()`) przy każdorazowym chowaniu i demontażu komponentu, naprawiając największe "dropy" wydajności.
+- **Bezpieczeństwo animacji**: Dodano bezpiecznik stanu `isAnimating` do logiki widoku rozstrzelonego (Explode View). Zapobiega on zapętlaniu się i de-synchronizacji animacji podczas szybkiego, wielokrotnego klikania przycisku.
+- **Odporność panelu informacyjnego (C32)**: Wdrożono resetowanie indexu w powiększonej galerii zdjęć komponentu przy przełączaniu na inny podzespół (co chroni przed crashami aplikacji).
 - **Niestandardowy Ekran Ładowania (Custom Loader)**: Zastąpiono domyślny loader z `@react-three/drei` w pełni spersonalizowanym komponentem w technologii Framer Motion z mrocznym motywem glassmorphismu.
 - **Podwójny Wentylator Boczny**: Dodano `side_fan_2` do bazy komponentów i przebudowano logikę wywiewu z tyłu, tak by obudowa dysponowała potężnym podwójnym odciągiem powietrza z bloku CPU.
 - **Optymalizacje Wydajności**: Zredukowano jakość efektu SSAO (N8AO), wyłączono `mipmapBlur` w komponencie Bloom oraz multisampling EffectComposera dla urządzeń mobilnych, zyskując potężny zastrzyk FPS-ów na słabszych urządzeniach.

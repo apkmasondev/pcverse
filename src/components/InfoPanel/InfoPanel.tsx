@@ -96,6 +96,10 @@ export const InfoPanel = () => {
   }, []);
 
   useEffect(() => {
+    setZoomedImageIndex(null);
+  }, [selectedComponent?.id]);
+
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && selectedComponent) {
         if (zoomedImageIndex !== null) {
