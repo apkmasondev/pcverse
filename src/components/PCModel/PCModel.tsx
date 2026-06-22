@@ -8,31 +8,33 @@ import { pcComponents } from '../../data/components';
 import type { PCComponent } from '../../data/components';
 import { usePC } from '../../hooks/usePC';
 import { playHoverSound, playSelectSound } from '../../utils/audio';
-import moboBackUrl from '../../assets/mobo_back_photo.png';
-import caseBackUrl from '../../assets/case_back.png';
-import caseBehindUrl from '../../assets/case_behind.png';
-import caseBottomUrl from '../../assets/case_bottom.png';
-import cpuSocketUrl from '../../assets/cpu_socket.png';
-import moboChipsetUrl from '../../assets/mobo_chipset.png';
-import psuTopUrl from '../../assets/psu_top.png';
-import psuSideUrl from '../../assets/psu_side.png';
+import moboBackUrl from '../../assets/mobo_back_photo.webp';
+import caseBackUrl from '../../assets/case_back.webp';
+import caseBehindUrl from '../../assets/case_behind.webp';
+import caseBottomUrl from '../../assets/case_bottom.webp';
+import caseInteriorUrl from '../../assets/case_interior.webp';
+import cpuSocketUrl from '../../assets/cpu_socket.webp';
+import moboChipsetUrl from '../../assets/mobo_chipset.webp';
+import psuTopUrl from '../../assets/psu_top.webp';
+import psuSideUrl from '../../assets/psu_side.webp';
 import psuBackUrl from '../../assets/psu_back.webp';
 import psuFrontUrl from '../../assets/psu_front.webp';
 import psuBottomUrl from '../../assets/psu_bottom.webp';
 import aioFanUrl from '../../assets/aio_fan.webp';
 import heatsinkUrl from '../../assets/heatsink.webp';
 import heatsinkSideUrl from '../../assets/heatsink_side.webp';
-import gpuBackplateUrl from '../../assets/gpu_backplate.png';
-import gpuFrontUrl from '../../assets/gpu_front.png';
-import ramSideUrl from '../../assets/ram_side.png';
-import hddTopUrl from '../../assets/hdd_top.png';
+import gpuBackplateUrl from '../../assets/gpu_backplate.webp';
+import gpuTopUrl from '../../assets/gpu_top.webp';
+import gpuFrontUrl from '../../assets/gpu_front.webp';
+import ramSideUrl from '../../assets/ram_side.webp';
+import hddTopUrl from '../../assets/hdd_top.webp';
 import hddBottomUrl from '../../assets/hdd_bottom.webp';
-import caseFanUrl from '../../assets/case_fan.png';
-import ssdTopUrl from '../../assets/ssd_top.png';
+import caseFanUrl from '../../assets/case_fan.webp';
+import ssdTopUrl from '../../assets/ssd_top.webp';
 import ssdBottomUrl from '../../assets/ssd_bottom.webp';
-import cpuTopUrl from '../../assets/cpu_top.png';
-import cpuBottomUrl from '../../assets/cpu_bottom.png';
-import moboTopUrl from '../../assets/mobo_top.png';
+import cpuTopUrl from '../../assets/cpu_top.webp';
+import cpuBottomUrl from '../../assets/cpu_bottom.webp';
+import moboTopUrl from '../../assets/mobo_top.webp';
 import moboIoUrl from '../../assets/mobo_io.webp';
 import gpuIoUrl from '../../assets/gpu_io.webp';
 
@@ -173,6 +175,7 @@ const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
   const fanRef2 = useRef<Group>(null);
   const fanRef3 = useRef<Group>(null);
   const gpuBackplateTexture = useTexture(gpuBackplateUrl);
+  const gpuTopTexture = useTexture(gpuTopUrl);
   const gpuFrontTexture = useTexture(gpuFrontUrl);
   const gpuIoTexture = useTexture(gpuIoUrl);
   gpuFrontTexture.wrapS = THREE.RepeatWrapping;
@@ -255,6 +258,12 @@ const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
       <mesh position={[0, -0.376, 0]} rotation={[Math.PI / 2, 0, 0]}>
         <planeGeometry args={[3.4, 1.2]} />
         <meshStandardMaterial map={gpuFrontTexture} roughness={0.3} metalness={0.5} />
+      </mesh>
+
+      {/* GPU Top Edge Texture (Facing the glass) */}
+      <mesh position={[0, -0.15, 0.601]} rotation={[0, 0, 0]}>
+        <planeGeometry args={[3.4, 0.45]} />
+        <meshStandardMaterial map={gpuTopTexture} roughness={0.4} metalness={0.6} />
       </mesh>
 
       {/* RGB Edge Lighting - Front Edge Logo */}
@@ -888,6 +897,18 @@ const CaseGeometry = () => {
   const caseBackTexture = useTexture(caseBackUrl);
   const caseBehindTexture = useTexture(caseBehindUrl);
   const caseBottomTexture = useTexture(caseBottomUrl);
+  const caseInteriorTexture = useTexture(caseInteriorUrl);
+
+  useMemo(() => {
+    // Correctly scale caseInteriorTexture for the 3.8 x 4.8 panels
+    caseInteriorTexture.colorSpace = THREE.SRGBColorSpace;
+    caseInteriorTexture.wrapS = THREE.ClampToEdgeWrapping;
+    caseInteriorTexture.wrapT = THREE.ClampToEdgeWrapping;
+    caseInteriorTexture.repeat.set(1 / 3.8, 1 / 4.8);
+    caseInteriorTexture.offset.set(0.5, 0.5);
+    caseInteriorTexture.center.set(0, 0); // Must be 0,0 for offset to work as UV_new = X * repeat + offset
+    caseInteriorTexture.updateMatrix();
+  }, [caseInteriorTexture]);
 
   useMemo(() => {
     caseBackTexture.colorSpace = THREE.SRGBColorSpace;
@@ -932,6 +953,16 @@ const CaseGeometry = () => {
     }
   });
 
+  const topPanelShape = useMemo(() => {
+    const shape = new THREE.Shape();
+    shape.moveTo(-1.97, -1.97);
+    shape.lineTo(1.97, -1.97);
+    shape.lineTo(1.97, 1.97);
+    shape.lineTo(-1.97, 1.97);
+    shape.lineTo(-1.97, -1.97);
+    return shape;
+  }, []);
+
   const leftPanelShape = useMemo(() => {
     const shape = new THREE.Shape();
     shape.moveTo(-1.95, -2.5);
@@ -951,11 +982,11 @@ const CaseGeometry = () => {
 
     // PSU Cutout
     const psuHole = new THREE.Path();
-    psuHole.moveTo(-1.0 - 0.9, -1.92 - 0.5);
-    psuHole.lineTo(-1.0 + 0.9, -1.92 - 0.5);
-    psuHole.lineTo(-1.0 + 0.9, -1.92 + 0.5);
-    psuHole.lineTo(-1.0 - 0.9, -1.92 + 0.5);
-    psuHole.lineTo(-1.0 - 0.9, -1.92 - 0.5);
+    psuHole.moveTo(-0.8 - 0.9, -1.92 - 0.5);
+    psuHole.lineTo(-0.8 + 0.9, -1.92 - 0.5);
+    psuHole.lineTo(-0.8 + 0.9, -1.92 + 0.5);
+    psuHole.lineTo(-0.8 - 0.9, -1.92 + 0.5);
+    psuHole.lineTo(-0.8 - 0.9, -1.92 - 0.5);
     shape.holes.push(psuHole);
 
     // GPU PCIe Brackets Cutout
@@ -982,11 +1013,11 @@ const CaseGeometry = () => {
   const backPanelShape = useMemo(() => {
     const shape = new THREE.Shape();
     // Outer boundary (Counter-clockwise)
-    shape.moveTo(-1.9, -2.4);
-    shape.lineTo(1.9, -2.4);
-    shape.lineTo(1.9, 2.4);
-    shape.lineTo(-1.9, 2.4);
-    shape.lineTo(-1.9, -2.4);
+    shape.moveTo(-1.97, -2.4);
+    shape.lineTo(1.97, -2.4);
+    shape.lineTo(1.97, 2.4);
+    shape.lineTo(-1.97, 2.4);
+    shape.lineTo(-1.97, -2.4);
 
     const addHole = (x1: number, y1: number, x2: number, y2: number) => {
       const hole = new THREE.Path();
@@ -1000,18 +1031,18 @@ const CaseGeometry = () => {
 
     // CPU Backplate Mesh Cutout
     addHole(-1.15, 0.30, 0.25, 1.70);
-    // PSU Back panel Mesh Cutout
+    // IO and PCIe Cutout (Back panel)
     addHole(-0.73, -2.38, 0.73, -1.52);
     return shape;
   }, []);
 
   const moboTrayShape = useMemo(() => {
     const shape = new THREE.Shape();
-    shape.moveTo(-1.9, -2.4);
-    shape.lineTo(1.9, -2.4);
-    shape.lineTo(1.9, 2.4);
-    shape.lineTo(-1.9, 2.4);
-    shape.lineTo(-1.9, -2.4);
+    shape.moveTo(-1.97, -2.4);
+    shape.lineTo(1.97, -2.4);
+    shape.lineTo(1.97, 2.4);
+    shape.lineTo(-1.97, 2.4);
+    shape.lineTo(-1.97, -2.4);
 
     const addHole = (x1: number, y1: number, x2: number, y2: number) => {
       const hole = new THREE.Path();
@@ -1115,13 +1146,13 @@ const CaseGeometry = () => {
   const bottomPanelShape = useMemo(() => {
     const shape = new THREE.Shape();
     // Local Y maps to -Z. Size 3.8 x 3.8.
-    shape.moveTo(-1.9, -1.9);
-    shape.lineTo(1.9, -1.9);
-    shape.lineTo(1.9, 1.9);
-    shape.lineTo(-1.9, 1.9);
-    shape.lineTo(-1.9, -1.9);
+    shape.moveTo(-1.97, -1.97);
+    shape.lineTo(1.97, -1.97);
+    shape.lineTo(1.97, 1.97);
+    shape.lineTo(-1.97, 1.97);
+    shape.lineTo(-1.97, -1.97);
 
-    const addHole = (x1: number, y1: number, x2: number, y2: number) => {
+      const addHole = (x1: number, y1: number, x2: number, y2: number) => {
       const hole = new THREE.Path();
       hole.moveTo(x1, y1);
       hole.lineTo(x1, y2);
@@ -1131,8 +1162,8 @@ const CaseGeometry = () => {
       shape.holes.push(hole);
     };
 
-    // PSU Bottom Ventilation Hole
-    addHole(-1.88, 0.37, -0.42, 1.63);
+    // PSU Bottom Ventilation Hole (centered at X=-1.2, local Y=0.8, size 1.4x1.4)
+    addHole(-1.90, 0.1, -0.5, 1.5);
 
     return shape;
   }, []);
@@ -1223,6 +1254,11 @@ const CaseGeometry = () => {
       <mesh position={[0, 0, -2.001]} rotation={[0, 0, 0]}>
         <shapeGeometry args={[backPanelShape]} />
         <meshStandardMaterial map={caseBehindTexture} metalness={0.4} roughness={0.6} side={THREE.BackSide} />
+      </mesh>
+      {/* Back Panel Texture (Inside, facing Motherboard) */}
+      <mesh position={[0, 0, -1.899]}>
+        <shapeGeometry args={[backPanelShape]} />
+        <meshStandardMaterial map={caseInteriorTexture} metalness={0.5} roughness={0.7} />
       </mesh>
       
       {/* GPU PCIe Brackets at the left wall (Shifted to X = -1.98) */}
@@ -1316,8 +1352,8 @@ const CaseGeometry = () => {
       </group>
 
       {/* PSU Bottom Ventilation Mesh (Visible from below) */}
-      <mesh position={[-1.2, -2.51, -1.0]} rotation={[Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[1.5, 1.8]} />
+      <mesh position={[-1.2, -2.51, -0.8]} rotation={[Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[1.45, 1.45]} />
         <meshStandardMaterial 
           color="#1e1e24"
           roughness={0.3}
@@ -1328,8 +1364,8 @@ const CaseGeometry = () => {
         />
       </mesh>
       {/* PSU Bottom Ventilation Mesh (Visible from inside case) */}
-      <mesh position={[-1.2, -2.39, -1.0]} rotation={[Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[1.5, 1.8]} />
+      <mesh position={[-1.2, -2.39, -0.8]} rotation={[Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[1.45, 1.45]} />
         <meshStandardMaterial 
           color="#151515" 
           alphaMap={backMeshTexture} 
@@ -1348,7 +1384,7 @@ const CaseGeometry = () => {
         {/* Motherboard Tray Texture */}
         <mesh position={[0, 0, 0.051]}>
           <shapeGeometry args={[moboTrayShape]} />
-          <meshStandardMaterial map={caseBottomTexture} metalness={0.5} roughness={0.7} />
+          <meshStandardMaterial map={caseInteriorTexture} metalness={0.5} roughness={0.7} />
         </mesh>
         
         {/* Raised Standoffs (Gwinty) for Motherboard */}
@@ -1482,7 +1518,7 @@ const CaseGeometry = () => {
           {/* Back Panel Texture (Inside) */}
           <mesh position={[0, 0, -0.001]}>
             <shapeGeometry args={[leftPanelShape]} />
-            <meshStandardMaterial map={caseBottomTexture} metalness={0.5} roughness={0.7} side={THREE.BackSide} />
+            <meshStandardMaterial map={caseInteriorTexture} metalness={0.5} roughness={0.7} side={THREE.BackSide} />
           </mesh>
         </group>
         {/* Side mesh cutout where the side exhaust fans are! (Outside) */}
@@ -1809,37 +1845,45 @@ const LocalAirflowParticles = ({ count = 50, radius = 0.4, length = 1.5, speedMu
 const CableGeometry = () => {
   const { explodeStep, xrayMode } = usePC();
   
-  const cables = useMemo(() => {
-    // 24-pin ATX Cable (PSU to Mobo)
-    const curve1 = new THREE.CubicBezierCurve3(
-      new THREE.Vector3(-0.5, -1.8, -0.8), // near PSU (updated Z)
-      new THREE.Vector3(1.7, -1.8, -1.6),  // routed far right to clear the GPU (GPU ends at X=1.5)
-      new THREE.Vector3(1.7, 0.4, -1.6),   // coming straight up on the right side of the GPU
-      new THREE.Vector3(1.3, 0.4, -1.7)    // plug into Motherboard right edge
-    );
-    // 8-pin PCIe Cable (PSU to GPU)
-    const curve2 = new THREE.CubicBezierCurve3(
-      new THREE.Vector3(-0.5, -1.8, -0.8), // near PSU (updated Z)
-      new THREE.Vector3(0.6, -1.8, 0.2),   // routed towards the glass (Z=0.2 is in front of GPU Z=-0.4)
-      new THREE.Vector3(0.6, -0.3, 0.2),   // comes up straight IN FRONT of the GPU
-      new THREE.Vector3(0.4, -0.45, -0.4)  // curves back into the front edge of the GPU
-    );
-    // SATA Data Cable (HDD to Mobo)
-    const curve3 = new THREE.CubicBezierCurve3(
-      new THREE.Vector3(1.3, -2.3, 0.25),  // plug into HDD front connector (facing glass)
-      new THREE.Vector3(1.3, -2.3, 0.6),   // route forward towards glass
-      new THREE.Vector3(1.7, -0.7, -1.7),  // route up the right side behind mobo tray
-      new THREE.Vector3(1.3, -0.7, -1.7)   // plug into bottom right of mobo
-    );
-    // SATA Power Cable (HDD to PSU)
-    const curve4 = new THREE.CubicBezierCurve3(
-      new THREE.Vector3(1.1, -2.3, 0.25),  // plug into HDD front power connector
-      new THREE.Vector3(1.1, -2.3, 0.6),   // route forward towards glass
-      new THREE.Vector3(-0.5, -2.3, -0.4), // route along bottom back to PSU
-      new THREE.Vector3(-0.5, -1.8, -0.8)  // plug into PSU
-    );
-    return [curve1, curve2, curve3, curve4];
-  }, []);
+  // 24-pin ATX Cable (PSU to Mobo)
+  const curve1 = new THREE.CubicBezierCurve3(
+    new THREE.Vector3(-0.5, -1.8, -0.8), // near PSU (updated Z)
+    new THREE.Vector3(1.7, -1.8, -1.6),  // routed far right to clear the GPU (GPU ends at X=1.5)
+    new THREE.Vector3(1.7, 0.4, -1.6),   // coming straight up on the right side of the GPU
+    new THREE.Vector3(1.3, 0.4, -1.7)    // plug into Motherboard right edge
+  );
+  // 8-pin PCIe Cable (PSU to GPU) - Routed exactly to the connector on the texture!
+  const curve2 = new THREE.CubicBezierCurve3(
+    new THREE.Vector3(-0.5, -1.8, -0.8), // near PSU
+    new THREE.Vector3(0.6, -1.8, 0.3),   // routed forward and right
+    new THREE.Vector3(0.6, -0.4, 0.3),   // straight up, standing in front of the GPU
+    new THREE.Vector3(0.6, -0.4, -0.55)  // plugs directly into the GPU side edge horizontally (Z=-0.55)!
+  );
+  // SATA Data Cable (HDD to Mobo)
+  const curve3 = new THREE.CubicBezierCurve3(
+    new THREE.Vector3(1.3, -2.3, 0.25),  // plug into HDD front connector (facing glass)
+    new THREE.Vector3(1.3, -2.3, 0.6),   // route forward towards glass
+    new THREE.Vector3(1.7, -0.7, -1.7),  // route up the right side behind mobo tray
+    new THREE.Vector3(1.3, -0.7, -1.7)   // plug into bottom right of mobo
+  );
+  // SATA Power Cable (HDD to PSU)
+  const curve4 = new THREE.CubicBezierCurve3(
+    new THREE.Vector3(1.1, -2.3, 0.25),  // plug into HDD front power connector
+    new THREE.Vector3(1.1, -2.3, 0.6),   // route forward towards glass
+    new THREE.Vector3(-0.5, -2.3, -0.4), // route along bottom back to PSU
+    new THREE.Vector3(-0.5, -1.8, -0.8)  // plug into PSU
+  );
+  // 8-pin CPU Power Cable (PSU to Mobo Top-Left)
+  const curve5 = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(-0.35, -1.8, -0.8),  // Out of PSU
+    new THREE.Vector3(-0.35, -1.8, -1.85), // Push back behind tray/mobo
+    new THREE.Vector3(-1.4, -1.8, -1.85),  // Traverse left
+    new THREE.Vector3(-1.4, 0.0, -1.85),   // Up midway
+    new THREE.Vector3(-1.4, 1.8, -1.85),   // Up to the top
+    new THREE.Vector3(-1.4, 1.8, -1.75)    // Pop out into Mobo
+  ]);
+
+  const cables = [curve1, curve2, curve3, curve4, curve5];
 
   // Hide cables when exploded for a cleaner view
   if (explodeStep > 0) return null;
@@ -1969,6 +2013,7 @@ useTexture.preload(moboBackUrl);
 useTexture.preload(caseBackUrl);
 useTexture.preload(caseBehindUrl);
 useTexture.preload(caseBottomUrl);
+useTexture.preload(caseInteriorUrl);
 useTexture.preload(cpuSocketUrl);
 useTexture.preload(moboChipsetUrl);
 useTexture.preload(psuTopUrl);
@@ -1980,6 +2025,7 @@ useTexture.preload(aioFanUrl);
 useTexture.preload(heatsinkUrl);
 useTexture.preload(heatsinkSideUrl);
 useTexture.preload(gpuBackplateUrl);
+useTexture.preload(gpuTopUrl);
 useTexture.preload(gpuFrontUrl);
 useTexture.preload(ramSideUrl);
 useTexture.preload(hddTopUrl);

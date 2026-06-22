@@ -5,7 +5,7 @@ export interface PCComponent {
   role: string[];
   funFact: string;
   position: [number, number, number];
-  explodedPosition: [number, number, number];
+  explodedPosition: [NaN, NaN, NaN];
   color: string;
   perfImpact: {
     gaming: number;
@@ -32,7 +32,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Nowoczesne płyty główne mogą mieć ponad 10 warstw włókna szklanego i miedzianych ścieżek.",
     position: [-0.45, 0, -1.75],
-    explodedPosition: [-2.95, 0, -7.5],
+    explodedPosition: [-3.84, 0, -9.75],
     color: "#1a1a2e",
     perfImpact: { gaming: 5, ai: 5, productivity: 5 },
     customStats: [
@@ -54,7 +54,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Współczesny procesor zawiera miliardy mikroskopijnych tranzystorów na powierzchni kilku centymetrów kwadratowych.",
     position: [-0.45, 1, -1.7],
-    explodedPosition: [-1.95, 5, -2],
+    explodedPosition: [-2.54, 6.5, -2.6],
     color: "#e94560",
     perfImpact: { gaming: 25, ai: 20, productivity: 40 },
     geometryArgs: [0.8, 0.8, 0.05],
@@ -71,7 +71,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Woda używana w chłodzeniach cieczą (AIO) potrafi odebrać ciepło z procesora ponad 20 razy szybciej niż powietrze, redukując nagłe skoki temperatur (tzw. spiki).",
     position: [-0.45, 1, -1.35],
-    explodedPosition: [-0.5, 6.5, 0],
+    explodedPosition: [-0.65, 8.45, 0],
     color: "#a0a0a0",
     perfImpact: { gaming: 5, ai: 5, productivity: 5 },
     customStats: [
@@ -93,7 +93,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Współczesne układy graficzne (GPU) są wykorzystywane nie tylko w grach, ale także jako potężne 'mózgi' dla sztucznej inteligencji, ponieważ potrafią przetwarzać tysiące operacji matematycznych jednocześnie.",
     position: [-0.25, -0.1, -1.15],
-    explodedPosition: [-5, 0.5, -2.5],
+    explodedPosition: [-6.5, 0.65, -3.25],
     color: "#6366f1",
     perfImpact: { gaming: 60, ai: 60, productivity: 15 },
     geometryArgs: [2.5, 0.5, 1.2],
@@ -110,7 +110,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Pamięć RAM jest około 100 000 razy szybsza od tradycyjnego dysku twardego HDD.",
     position: [0.35, 1, -1.55],
-    explodedPosition: [1.55, 5.5, -1.5],
+    explodedPosition: [2.02, 7.15, -1.95],
     color: "#00b8a9",
     perfImpact: { gaming: 10, ai: 15, productivity: 20 },
     geometryArgs: [0.1, 1.2, 0.4],
@@ -127,7 +127,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Użycie dwóch kości RAM zamiast jednej dużej może zwiększyć wydajność procesora nawet o 15%.",
     position: [0.75, 1, -1.55],
-    explodedPosition: [3.05, 5.5, -1.5],
+    explodedPosition: [3.96, 7.15, -1.95],
     color: "#00b8a9",
     perfImpact: { gaming: 2, ai: 1, productivity: 5 },
     geometryArgs: [0.1, 1.2, 0.4],
@@ -144,7 +144,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Najnowsze dyski NVMe (w standardzie PCIe 5.0) osiągają oszałamiającą prędkość odczytu na poziomie przekraczającym 14 000 MB/s!",
     position: [-0.45, 0.35, -1.7],
-    explodedPosition: [4.5, 0.5, -2],
+    explodedPosition: [5.85, 0.65, -2.6],
     color: "#f8b500",
     perfImpact: { gaming: 10, ai: 5, productivity: 15 },
     geometryArgs: [0.2, 0.8, 0.05],
@@ -161,7 +161,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Wydajny zasilacz zamienia mniej prądu w bezużyteczne ciepło, oszczędzając Twoje pieniądze na rachunkach za prąd.",
     position: [-1.2, -1.92, -0.8],
-    explodedPosition: [-3.5, -3.5, 0.5],
+    explodedPosition: [-4.55, -4.55, 0.65],
     color: "#2a363b",
     perfImpact: { gaming: 0, ai: 0, productivity: 0 },
     customStats: [
@@ -184,7 +184,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Wentylatory RGB potrafią synchronizować się tworząc niesamowite, płynne pokazy świetlne wewnątrz obudowy.",
     position: [0, -0.4, 1.8],
-    explodedPosition: [3, -2, 4],
+    explodedPosition: [3.9, -2.6, 5.2],
     color: "#ffffff",
     perfImpact: { gaming: 10, ai: 10, productivity: 5 },
     customStats: [
@@ -210,7 +210,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Wyciąg ciepłego powietrza z tyłu jest kluczowy – gorące powietrze naturalnie unosi się do góry i gromadzi z tyłu obudowy.",
     position: [-1.8, 1.4, -0.4],
-    explodedPosition: [-4, 2, -0.4],
+    explodedPosition: [-5.2, 2.6, -0.52],
     color: "#ffffff",
     perfImpact: { gaming: 10, ai: 10, productivity: 5 },
     customStats: [
@@ -236,7 +236,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Podwójne wentylatory pozwalają kręcić się wolniej przy zachowaniu tej samej wydajności, co obniża hałas.",
     position: [-1.8, 1.4, 0.8],
-    explodedPosition: [-4, 3.5, 0.8],
+    explodedPosition: [-5.2, 4.55, 1.04],
     color: "#ffffff",
     perfImpact: { gaming: 5, ai: 5, productivity: 2 },
     customStats: [
@@ -284,7 +284,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: 'Talerze w dysku HDD wirują tak szybko, że głowica odczytująca lewituje ledwie 2 nanometry nad nimi! To tak, jakby lecieć Boeingiem 747 milimetr nad ziemią.',
     position: [1.3, -2.27, -0.5],
-    explodedPosition: [6.0, -2.5, 4.0],
+    explodedPosition: [7.8, -3.25, 5.2],
     color: "#4a6984",
     perfImpact: { gaming: 5, ai: 2, productivity: 30 },
     geometryArgs: [1.0, 0.25, 1.4],

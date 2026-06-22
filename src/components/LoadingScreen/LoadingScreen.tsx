@@ -1,12 +1,22 @@
 import { useProgress } from '@react-three/drei';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import { useState, useEffect } from 'react';
+
 export const LoadingScreen = () => {
   const { progress, active } = useProgress();
+  const [show, setShow] = useState(true);
+
+  useEffect(() => {
+    if (!active && progress === 100) {
+      const timer = setTimeout(() => setShow(false), 800); // 800ms delay for shader compilation
+      return () => clearTimeout(timer);
+    }
+  }, [active, progress]);
 
   return (
     <AnimatePresence>
-      {active && (
+      {show && (
         <motion.div
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}

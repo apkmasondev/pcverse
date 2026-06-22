@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { CameraControls, Environment, PerspectiveCamera, Sparkles, PerformanceMonitor, Grid } from '@react-three/drei';
+import { CameraControls, Environment, PerspectiveCamera, Sparkles, PerformanceMonitor, Grid, Stars } from '@react-three/drei';
 import { EffectComposer, Bloom, N8AO, Vignette, ChromaticAberration, DepthOfField } from '@react-three/postprocessing';
 import { Vector2, Vector3, PointLight } from 'three';
 import { BlendFunction } from 'postprocessing';
@@ -110,7 +110,7 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
       const targetVec = _tempVec.current.set(posArray[0], posArray[1], posArray[2]);
       
       // Calculate vector from component to current camera
-      let dir = _tempDir.current.copy(camera.position).sub(targetVec);
+      const dir = _tempDir.current.copy(camera.position).sub(targetVec);
       
       if (dir.lengthSq() < 0.001) {
         dir.set(0, 0.5, 1);
@@ -120,8 +120,9 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
       // Keep focal point exactly on the component so it rotates perfectly around its own center
       const focalPoint = _tempFocal.current.copy(targetVec);
       
-      // Set distance to exactly 4 for a closer, more detailed look
-      const targetPos = targetVec.clone().add(dir.multiplyScalar(4));
+      // Set distance: 4 on desktop, 5.5 on mobile to fit the narrow screen better
+      const dist = isMobile ? 5.5 : 4;
+      const targetPos = targetVec.clone().add(dir.multiplyScalar(dist));
 
       cameraControlsRef.current.setLookAt(
         targetPos.x, targetPos.y, targetPos.z,
@@ -129,10 +130,15 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
         true
       );
 
-      // Epic UI/UX: Shift the entire camera frustum to the left by 25% 
-      // so the component is perfectly visible on the left half of the screen
-      if (!isMobile && 'setViewOffset' in camera) {
-        (camera as any).setViewOffset(window.innerWidth, window.innerHeight, window.innerWidth * 0.25, 0, window.innerWidth, window.innerHeight);
+      // Epic UI/UX: Shift the entire camera frustum so the component avoids UI panels
+      if ('setViewOffset' in camera) {
+        if (isMobile) {
+          // On mobile, UI is at the bottom, so shift the component UP by 25%
+          (camera as any).setViewOffset(window.innerWidth, window.innerHeight, 0, window.innerHeight * 0.25, window.innerWidth, window.innerHeight);
+        } else {
+          // On desktop, UI is on the right, so shift the component LEFT by 25%
+          (camera as any).setViewOffset(window.innerWidth, window.innerHeight, window.innerWidth * 0.25, 0, window.innerWidth, window.innerHeight);
+        }
         camera.updateProjectionMatrix();
       }
     } else if (!selectedComponent) {
@@ -177,6 +183,7 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
       <PerspectiveCamera makeDefault position={[0, 3, 16]} fov={50} near={0.5} far={100} />
       
       <Sparkles count={150} scale={20} size={3} speed={0.3} opacity={0.2} color="#8b5cf6" />
+      <Stars radius={50} depth={50} count={3000} factor={3} saturation={0.5} fade speed={1.5} />
       
       <directionalLight 
         position={[10, 20, 10]} 
@@ -210,7 +217,7 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
           <DepthOfField 
             target={dofTarget} 
             focalLength={dofEnabled ? 0.05 : 0.0} 
-            bokehScale={dofEnabled ? (isMobile ? 4 : 8) : 0} 
+            bokehScale={dofEnabled ? (isMobile ? 0 : 8) : 0} 
             height={700} 
           />
           <Bloom luminanceThreshold={1} mipmapBlur={!isMobile} intensity={isMobile ? 0.8 : 1.0} />
