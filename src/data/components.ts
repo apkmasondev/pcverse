@@ -5,7 +5,7 @@ export interface PCComponent {
   role: string[];
   funFact: string;
   position: [number, number, number];
-  explodedPosition: [NaN, NaN, NaN];
+  explodedPosition: [number, number, number];
   color: string;
   perfImpact: {
     gaming: number;

@@ -386,7 +386,6 @@ const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
       <boxGeometry args={[1.4, 0.35, 0.3]} />
       <meshStandardMaterial color="#151515" metalness={0.9} roughness={0.2} />
     </mesh>
-
     {/* CPU Socket Cover (Grey rectangle to hide the printed socket on texture) */}
     <mesh position={[0, 0.95, 0.035]}>
       <boxGeometry args={[1.3, 1.45, 0.02]} />
@@ -399,7 +398,7 @@ const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
       <meshStandardMaterial color="#222" roughness={0.8} />
     </mesh>
     <mesh position={[0, 1, 0.091]}>
-      <planeGeometry args={[0.8, 0.8]} />
+      <planeGeometry args={[1.0, 1.0]} />
       <meshStandardMaterial map={cpuSocketTexture} metalness={0.8} roughness={0.2} />
     </mesh>
 
@@ -432,7 +431,7 @@ const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
     {/* RAM Slots */}
     {[0.8, 1.0, 1.2, 1.4].map((x, i) => (
       <mesh key={i} position={[x, 1, 0.08]}>
-        <boxGeometry args={[0.1, 1.5, 0.15]} />
+        <boxGeometry args={[0.1, 1.65, 0.15]} />
         <meshStandardMaterial color={i % 2 === 0 ? "#111" : "#2a2a2a"} roughness={0.7} />
       </mesh>
     ))}
@@ -463,13 +462,13 @@ const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
 
     {/* PCIe Slots (Reinforced) */}
     {[-1, -1.8].map((y, i) => (
-      <group key={`pcie-${i}`} position={[-0.2, y, 0.1]}>
+      <group key={`pcie-${i}`} position={[-0.1, y, 0.1]}>
         <mesh>
-          <boxGeometry args={[2.2, 0.15, 0.12]} />
+          <boxGeometry args={[2.8, 0.15, 0.12]} />
           <meshStandardMaterial color={i === 0 ? "#b0b5b9" : "#111"} metalness={i === 0 ? 0.8 : 0} roughness={0.5} />
         </mesh>
         {/* PCIe slot clip */}
-        <mesh position={[1.15, 0, 0]}>
+        <mesh position={[1.45, 0, 0]}>
           <boxGeometry args={[0.1, 0.15, 0.12]} />
           <meshStandardMaterial color="#0a0a0a" />
         </mesh>
@@ -953,15 +952,6 @@ const CaseGeometry = () => {
     }
   });
 
-  const topPanelShape = useMemo(() => {
-    const shape = new THREE.Shape();
-    shape.moveTo(-1.97, -1.97);
-    shape.lineTo(1.97, -1.97);
-    shape.lineTo(1.97, 1.97);
-    shape.lineTo(-1.97, 1.97);
-    shape.lineTo(-1.97, -1.97);
-    return shape;
-  }, []);
 
   const leftPanelShape = useMemo(() => {
     const shape = new THREE.Shape();
