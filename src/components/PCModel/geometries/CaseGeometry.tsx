@@ -91,11 +91,11 @@ export const CaseGeometry = () => {
 
     // PSU Cutout
     const psuHole = new THREE.Path();
-    psuHole.moveTo(-0.8 - 0.9, -1.92 - 0.5);
-    psuHole.lineTo(-0.8 + 0.9, -1.92 - 0.5);
+    psuHole.moveTo(-0.8 - 0.9, -1.92 - 0.45);
+    psuHole.lineTo(-0.8 + 0.9, -1.92 - 0.45);
     psuHole.lineTo(-0.8 + 0.9, -1.92 + 0.5);
     psuHole.lineTo(-0.8 - 0.9, -1.92 + 0.5);
-    psuHole.lineTo(-0.8 - 0.9, -1.92 - 0.5);
+    psuHole.lineTo(-0.8 - 0.9, -1.92 - 0.45);
     shape.holes.push(psuHole);
 
     // GPU PCIe Brackets Cutout
@@ -140,7 +140,7 @@ export const CaseGeometry = () => {
 
     // CPU Backplate Mesh Cutout
     addHole(-1.15, 0.30, 0.25, 1.70);
-    // IO and PCIe Cutout (Back panel)
+    // PSU Cutout (Back panel)
     addHole(-0.73, -2.38, 0.73, -1.52);
     return shape;
   }, []);
