@@ -501,6 +501,19 @@ const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
           <boxGeometry args={[2.8, 0.15, 0.12]} />
           <meshStandardMaterial color={i === 0 ? "#b0b5b9" : "#111"} metalness={i === 0 ? 0.8 : 0} roughness={0.5} />
         </mesh>
+        
+        {/* Inner Groove - Short Segment (Left side) */}
+        <mesh position={[-1.2, 0, 0.061]}>
+          <boxGeometry args={[0.3, 0.04, 0.01]} />
+          <meshStandardMaterial color="#050505" roughness={1} />
+        </mesh>
+
+        {/* Inner Groove - Long Segment (Right side) */}
+        <mesh position={[0.2, 0, 0.061]}>
+          <boxGeometry args={[2.3, 0.04, 0.01]} />
+          <meshStandardMaterial color="#050505" roughness={1} />
+        </mesh>
+
         {/* PCIe slot clip */}
         <mesh position={[1.45, 0, 0]}>
           <boxGeometry args={[0.1, 0.15, 0.12]} />
