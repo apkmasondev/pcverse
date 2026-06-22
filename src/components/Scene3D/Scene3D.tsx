@@ -170,8 +170,6 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
         (camera as any).clearViewOffset();
         camera.updateProjectionMatrix();
       }
-      // Zatrzymaj wszystkie aktywne przejścia przed resetem
-      cameraControlsRef.current.rest();
       cameraControlsRef.current.setLookAt(
         0, 3, 20,
         0, 0, 0,
