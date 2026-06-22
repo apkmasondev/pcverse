@@ -166,13 +166,19 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
 
   useEffect(() => {
     if (cameraControlsRef.current && cameraResetTrigger > 0) {
+      if ('clearViewOffset' in camera) {
+        (camera as any).clearViewOffset();
+        camera.updateProjectionMatrix();
+      }
+      // Zatrzymaj wszystkie aktywne przejścia przed resetem
+      cameraControlsRef.current.rest();
       cameraControlsRef.current.setLookAt(
         0, 3, 20,
         0, 0, 0,
         true
       );
     }
-  }, [cameraResetTrigger]);
+  }, [cameraResetTrigger, camera]);
 
   return (
     <>
@@ -231,7 +237,7 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
         ref={cameraControlsRef}
         makeDefault
         minDistance={6} 
-        maxDistance={20}
+        maxDistance={40}
         minPolarAngle={0.2}
         maxPolarAngle={Math.PI * 0.85}
         dollySpeed={0.5}

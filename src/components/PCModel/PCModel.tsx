@@ -378,7 +378,7 @@ const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
     </mesh>
 
     {/* CPU Socket Cover (Grey rectangle to hide the printed socket on texture) */}
-    <mesh position={[0, 0.95, 0.035]}>
+    <mesh position={[0, 0.95, 0.04]}>
       <boxGeometry args={[1.3, 1.45, 0.02]} />
       <meshStandardMaterial color="#1f2023" roughness={0.9} />
     </mesh>
@@ -388,7 +388,7 @@ const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
       <boxGeometry args={[1.3, 1.45, 0.08]} />
       <meshStandardMaterial color="#222" roughness={0.8} />
     </mesh>
-    <mesh position={[0, 0.95, 0.091]}>
+    <mesh position={[0, 0.95, 0.095]}>
       <planeGeometry args={[1.3, 1.45]} />
       <meshStandardMaterial map={cpuSocketTexture} metalness={0.8} roughness={0.2} />
     </mesh>
