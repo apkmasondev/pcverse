@@ -53,7 +53,7 @@ export const pcComponents: PCComponent[] = [
       "Koordynuje działanie całego systemu, delegując wyspecjalizowane zadania do GPU i RAMu"
     ],
     funFact: "Współczesny procesor zawiera miliardy mikroskopijnych tranzystorów na powierzchni kilku centymetrów kwadratowych.",
-    position: [-0.45, 1, -1.7],
+    position: [-0.45, 0.95, -1.7],
     explodedPosition: [-2.54, 6.5, -2.6],
     color: "#e94560",
     perfImpact: { gaming: 25, ai: 20, productivity: 40 },
@@ -70,7 +70,7 @@ export const pcComponents: PCComponent[] = [
       "Wydmuchuje gorące powietrze za pomocą dedykowanego wentylatora"
     ],
     funFact: "Woda używana w chłodzeniach cieczą (AIO) potrafi odebrać ciepło z procesora ponad 20 razy szybciej niż powietrze, redukując nagłe skoki temperatur (tzw. spiki).",
-    position: [-0.45, 1, -1.35],
+    position: [-0.45, 0.95, -1.35],
     explodedPosition: [-0.65, 8.45, 0],
     color: "#a0a0a0",
     perfImpact: { gaming: 5, ai: 5, productivity: 5 },
