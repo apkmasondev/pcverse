@@ -46,6 +46,8 @@ import cpuBottomUrl from '../../assets/cpu_bottom.webp';
 import moboTopUrl from '../../assets/mobo_top.webp';
 import moboIoUrl from '../../assets/mobo_io.webp';
 import gpuIoUrl from '../../assets/gpu_io.webp';
+import cmosBatteryUrl from '../../assets/cmos_battery.webp';
+import m2HeatsinkUrl from '../../assets/m2_heatsink.webp';
 
 // --- R3F Extrude Options (extracted to prevent memory leak/geometry recreation) ---
 
@@ -341,4 +343,6 @@ useTexture.preload(cpuBottomUrl);
 useTexture.preload(moboTopUrl);
 useTexture.preload(moboIoUrl);
 useTexture.preload(gpuIoUrl);
+useTexture.preload(cmosBatteryUrl);
+useTexture.preload(m2HeatsinkUrl);
 

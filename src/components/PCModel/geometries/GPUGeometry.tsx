@@ -37,13 +37,13 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
       </mesh>
       {/* GPU IO Ports (HDMI & 3x DisplayPort) at Left Edge */}
       <group position={[-1.7, -0.15, 0]}>
-        <mesh position={[0, 0, 0.1]}>
-          <boxGeometry args={[0.04, 0.4, 1.4]} />
+        <mesh position={[0, 0, -0.05]}>
+          <boxGeometry args={[0.04, 0.4, 1.1]} />
           <meshStandardMaterial color="#2a2a2a" metalness={0.6} roughness={0.8} />
         </mesh>
         {/* GPU IO Texture Plane */}
-        <mesh position={[-0.021, 0, 0.1]} rotation={[0, -Math.PI / 2, 0]}>
-          <planeGeometry args={[1.4, 0.4]} />
+        <mesh position={[-0.021, 0, -0.05]} rotation={[0, -Math.PI / 2, 0]}>
+          <planeGeometry args={[1.1, 0.4]} />
           <meshStandardMaterial map={gpuIoTexture} roughness={0.4} metalness={0.6} />
         </mesh>
         {/* HDMI Port (Gold plated) */}

@@ -2,16 +2,17 @@
 
 Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 
-## [Nieopublikowane] - Detale i Poprawki Wizualne (Faza 4)
+## Dzień 9 - Detale i Poprawki Wizualne (Faza 4)
 ### Faza 4 - Perfekcja UI/3D
 - **Poprawa estetyki GPU i płyty głównej**: Naprawiono błąd tekstury panelu I/O karty graficznej, naciągając siatkę na pełną szerokość złącza. Przesunięto całą "platformę" (płyta główna, CPU, RAM, GPU, SSD, cooler) o `0.1` w osi X w głąb obudowy, by złącza naturalnie chowały się za krawędzią tylnego panelu PC.
+- **Detale M.2 i Baterii CMOS**: Przesunięto baterię CMOS wyżej (z `Y=-1.4` na `Y=-0.9`), aby była widoczna i nie chowała się pod radiatorem. Nałożono nową, dedykowaną teksturę radiatora ("AORUS M.2 SSD HEATSINK") na dolny radiator M.2. Zoptymalizowano oryginalny, bazowy model dysku SSD na płycie głównej (pod CPU), poprawiając obrót i proporcje jego tekstury, dzięki czemu pozbyto się efektu "rozmazanego bluru" po wyjęciu interaktywnego dysku.
 
-## [Nieopublikowane] - Optymalizacja i Dostępność (Faza 3)
+## Dzień 8 - Optymalizacja i Dostępność (Faza 3)
 ### Faza 3 - Ostatnie Szlify
 - **Code Splitting (C38)**: Wdrożono dynamiczny import dla głównej sceny 3D (`React.lazy`) w pliku `App.tsx` oraz zdefiniowano `manualChunks` dla silnika Vite, co rozwiązuje problem zbyt dużych paczek przy kompilacji i przyspiesza wstępne ładowanie interfejsu.
 - **Dostępność i Screen Readery (C23-C25)**: Naprawiono problemy z czytelnością dla czytników ekranowych. Dodano etykiety `aria-label` do nawigacji galerii oraz przycisku zamknięcia. Panel informacyjny zyskał `role="dialog"` oraz `aria-live="polite"`, a renderowany element Canvas WebGL został ukryty z drzewa a11y (`aria-hidden="true"`), eliminując dezorientację użytkowników niepełnosprawnych.
 
-## [Nieopublikowane] - Kamień Milowy: Architektura i Płynność (Faza 2)
+## Dzień 7 - Kamień Milowy: Architektura i Płynność (Faza 2)
 
 ### Faza 2 - Wielka Refaktoryzacja Kodowa
 
@@ -22,7 +23,7 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - **Sloty PCIe w 3D**: Przepisano płaską "teksturową naklejkę" na porty PCIe i obudowano je fizyczną, trójwymiarową ramką, tworząc naturalne zagłębienia, do których karty rozszerzeń "wchodzą" zamiast na nich leżeć.
 - **Poprawki Zgodności i Aparatu (C32)**: Odkryto i usunięto błąd TypeScripcie związany ze starą metodą `rest()` w `CameraControls` na rzecz poprawnego wywołania `reset(true)`.
 
-## [Nieopublikowane] - Wdrożenie Poprawek z Audytu (Faza 1)
+## Dzień 6 - Wdrożenie Poprawek z Audytu (Faza 1)
 
 ### Faza 1 - Krytyczne Poprawki (Wydajność i Pamięć)
 
@@ -78,7 +79,7 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - Materiał tylnej siatki wylotowej zasilacza nakłada teraz kanał przezroczystości (alphaMap) bezpośrednio na strukturę siatki, dzięki czemu przewiewny plaster miodu widać naturalnie zarówno z wnętrza, jak i zewnątrz budy PC.
 - Animacja eksplozji rozsuwa teraz nie tylko boczny, ale również przedni, szklany panel obudowy. Przednie szkło otrzymało też dopasowaną cienką stalową ramkę.
 
-## [Nieopublikowane] - Audyt SEO, Bezpieczeństwa i Wydajności
+## Dzień 5 - Audyt SEO, Bezpieczeństwa i Wydajności
 
 ### Dodane
 
@@ -98,7 +99,7 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - Ukryto techniczne stosy wywołań w `ErrorBoundary` w środowisku produkcyjnym.
 - Usunięto nieużywany plik `App.css` pochodzący z szablonu.
 
-## [Nieopublikowane] - Ostateczne Szlify Estetyczne i Poprawki Układu
+## Dzień 4 - Ostateczne Szlify Estetyczne i Poprawki Układu
 
 ### Dodane
 
@@ -139,7 +140,7 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - Wentylator na zasilaczu działa poprawnie, a wektory obrotu ringów RGB na wentylatorach zostały perfekcyjnie zsynchronizowane z ich łopatkami.
 - Zoptymalizowano Karty Informacyjne - pasek przewijania jest teraz ukryty poprzez dedykowaną klasę CSS, a paski postępu renderowane są wielokolorowymi gradientami.
 
-## [Nieopublikowane] - Profesjonalna Estetyka i Detale
+## Dzień 3 - Profesjonalna Estetyka i Detale
 
 ### Zmienione
 
@@ -158,7 +159,7 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - Modele SSD, Pamięci RAM i Procesora idealnie przylegają teraz do szyny (tacy) płyty głównej.
 - Naprawiono globalny wektor obudowy (`Z=1`), który powodował wystawanie wszystkich podzespołów poza bryłę ochronną skrzyni komputera.
 
-## [Nieopublikowane] - Przebudowa UX/UI
+## Dzień 2 - Przebudowa UX/UI
 
 ### Zmienione
 
@@ -168,7 +169,7 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - Płaskie oświetlenie środowiskowe zostało zmienione w predefiniowany profil studia HDRI (`Environment preset=studio`).
 - Zreorganizowano pasek nawigacyjny do formy przypominającej nowoczesne aplikacje typu Linear czy Vercel (monochromatyczny design, rozmyte tła, czarne motywy z jedno-pikselowym borderem).
 
-## [Nieopublikowane] - Inicjalizacja i Podstawowe Funkcje
+## Dzień 1 - Inicjalizacja i Podstawowe Funkcje
 
 ### Dodane
 

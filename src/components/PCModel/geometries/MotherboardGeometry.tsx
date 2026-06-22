@@ -5,6 +5,8 @@ import moboChipsetUrl from '../../../assets/mobo_chipset.webp';
 import moboIoUrl from '../../../assets/mobo_io.webp';
 import cpuSocketUrl from '../../../assets/cpu_socket.webp';
 import ssdTopUrl from '../../../assets/ssd_top.webp';
+import cmosBatteryUrl from '../../../assets/cmos_battery.webp';
+import m2HeatsinkUrl from '../../../assets/m2_heatsink.webp';
 
 export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
   const backTexture = useTexture(moboBackUrl);
@@ -13,6 +15,8 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
   const chipsetTexture = useTexture(moboChipsetUrl);
   const ssdTexture = useTexture(ssdTopUrl);
   const moboIoTexture = useTexture(moboIoUrl);
+  const cmosBatteryTexture = useTexture(cmosBatteryUrl);
+  const m2HeatsinkTexture = useTexture(m2HeatsinkUrl);
 
   return (
   <group>
@@ -56,8 +60,8 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
         <boxGeometry args={[0.8, 0.22, 0.02]} />
         <meshStandardMaterial color="#0a0a0a" roughness={0.8} />
       </mesh>
-      <mesh position={[0, 0, 0.011]}>
-        <planeGeometry args={[0.78, 0.2]} />
+      <mesh position={[0, 0, 0.011]} rotation={[0, 0, -Math.PI / 2]}>
+        <planeGeometry args={[0.2, 0.78]} />
         <meshStandardMaterial map={ssdTexture} roughness={0.5} />
       </mesh>
     </group>
@@ -223,20 +227,42 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
     ))}
 
     {/* M.2 NVMe Armor / Heatsinks */}
-    <mesh position={[-0.2, -0.4, 0.08]}>
-      <boxGeometry args={[1.8, 0.3, 0.1]} />
-      <meshStandardMaterial color="#1a1a1a" metalness={0.7} roughness={0.3} />
-    </mesh>
-    <mesh position={[-0.2, -1.4, 0.08]}>
-      <boxGeometry args={[1.8, 0.3, 0.1]} />
-      <meshStandardMaterial color="#1a1a1a" metalness={0.7} roughness={0.3} />
-    </mesh>
+    <group position={[-0.2, -0.4, 0.08]}>
+      <mesh>
+        <boxGeometry args={[1.8, 0.3, 0.1]} />
+        <meshStandardMaterial color="#111" metalness={0.7} roughness={0.3} />
+      </mesh>
+    </group>
+    <group position={[-0.2, -1.4, 0.08]}>
+      <mesh>
+        <boxGeometry args={[1.8, 0.3, 0.1]} />
+        <meshStandardMaterial color="#111" metalness={0.7} roughness={0.3} />
+      </mesh>
+      {/* Top face with AORUS texture */}
+      <mesh position={[0, 0, 0.051]}>
+        <planeGeometry args={[1.8, 0.3]} />
+        <meshStandardMaterial map={m2HeatsinkTexture} roughness={0.4} metalness={0.6} />
+      </mesh>
+    </group>
 
-    {/* CMOS Battery */}
-    <mesh position={[-1.0, -1.4, 0.05]} rotation={[0, 0, 0]}>
-      <cylinderGeometry args={[0.15, 0.15, 0.04, 32]} />
-      <meshStandardMaterial color="#e0e0e0" metalness={1} roughness={0.2} />
-    </mesh>
+    {/* Bateria CMOS (CR2032) */}
+    <group position={[-1.0, -0.9, 0.05]}>
+      {/* Battery Holder / Socket */}
+      <mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.18, 0.18, 0.04, 32]} />
+        <meshStandardMaterial color="#111" roughness={0.9} />
+      </mesh>
+      {/* The shiny CR2032 Battery */}
+      <mesh position={[0, 0, 0.03]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.15, 0.15, 0.02, 32]} />
+        <meshStandardMaterial color="#ffffff" map={cmosBatteryTexture} metalness={0.7} roughness={0.3} />
+      </mesh>
+      {/* Metal clip securing the battery */}
+      <mesh position={[0, 0.1, 0.04]}>
+        <boxGeometry args={[0.08, 0.08, 0.02]} />
+        <meshStandardMaterial color="#d4af37" metalness={0.8} roughness={0.4} />
+      </mesh>
+    </group>
 
     {/* Audio Section with RGB Trace */}
     <mesh position={[-1.2, -1.5, 0.04]}>
