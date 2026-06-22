@@ -377,15 +377,6 @@ const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
       <meshStandardMaterial map={backTexture} roughness={0.4} metalness={0.2} />
     </mesh>
 
-    {/* VRM Heatsinks (Massive, angled) */}
-    <mesh position={[-1.2, 1.5, 0.15]}>
-      <boxGeometry args={[0.5, 0.9, 0.3]} />
-      <meshStandardMaterial color="#151515" metalness={0.9} roughness={0.2} />
-    </mesh>
-    <mesh position={[-0.1, 1.85, 0.15]}>
-      <boxGeometry args={[1.4, 0.35, 0.3]} />
-      <meshStandardMaterial color="#151515" metalness={0.9} roughness={0.2} />
-    </mesh>
     {/* CPU Socket Cover (Grey rectangle to hide the printed socket on texture) */}
     <mesh position={[0, 0.95, 0.035]}>
       <boxGeometry args={[1.3, 1.45, 0.02]} />
@@ -393,12 +384,12 @@ const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
     </mesh>
 
     {/* CPU Socket & Mounting Bracket */}
-    <mesh position={[0, 1, 0.05]}>
-      <boxGeometry args={[1.0, 1.0, 0.08]} />
+    <mesh position={[0, 0.95, 0.05]}>
+      <boxGeometry args={[1.3, 1.45, 0.08]} />
       <meshStandardMaterial color="#222" roughness={0.8} />
     </mesh>
-    <mesh position={[0, 1, 0.091]}>
-      <planeGeometry args={[1.0, 1.0]} />
+    <mesh position={[0, 0.95, 0.091]}>
+      <planeGeometry args={[1.3, 1.45]} />
       <meshStandardMaterial map={cpuSocketTexture} metalness={0.8} roughness={0.2} />
     </mesh>
 
@@ -415,25 +406,68 @@ const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
     </group>
 
     {/* VRM Capacitors (Silver cylinders near CPU) */}
-    {[-1.2, -1.0, -0.8, -0.6, -0.4, -0.2, 0, 0.2].map((y, i) => (
-      <mesh key={`cap-top-${i}`} position={[y, 1.6, 0.1]} rotation={[Math.PI / 2, 0, 0]}>
+    {[-0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6].map((x, i) => (
+      <mesh key={`cap-top-${i}`} position={[x, 1.7, 0.1]} rotation={[Math.PI / 2, 0, 0]}>
         <cylinderGeometry args={[0.04, 0.04, 0.1, 16]} />
-        <meshStandardMaterial color="#c0c0c0" metalness={0.9} roughness={0.1} />
+        <meshStandardMaterial color="#silver" metalness={0.9} roughness={0.2} />
       </mesh>
     ))}
-    {[0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4].map((x, i) => (
-      <mesh key={`cap-left-${i}`} position={[-0.8, x, 0.1]} rotation={[Math.PI / 2, 0, 0]}>
+    {[1.2, 1.0, 0.8, 0.6, 0.4].map((y, i) => (
+      <mesh key={`cap-left-${i}`} position={[-0.7, y, 0.1]} rotation={[Math.PI / 2, 0, 0]}>
         <cylinderGeometry args={[0.04, 0.04, 0.1, 16]} />
-        <meshStandardMaterial color="#c0c0c0" metalness={0.9} roughness={0.1} />
+        <meshStandardMaterial color="#silver" metalness={0.9} roughness={0.2} />
       </mesh>
     ))}
 
-    {/* RAM Slots */}
-    {[0.8, 1.0, 1.2, 1.4].map((x, i) => (
-      <mesh key={i} position={[x, 1, 0.08]}>
-        <boxGeometry args={[0.1, 1.65, 0.15]} />
-        <meshStandardMaterial color={i % 2 === 0 ? "#111" : "#2a2a2a"} roughness={0.7} />
+    {/* VRM Heatsinks (Detailed with ribs/fins) */}
+    <group position={[-1.2, 1.5, 0.15]}>
+      {/* Base */}
+      <mesh position={[0, 0, -0.05]}>
+        <boxGeometry args={[0.5, 0.9, 0.2]} />
+        <meshStandardMaterial color="#151515" metalness={0.9} roughness={0.2} />
       </mesh>
+      {/* Fins */}
+      {[-0.35, -0.2, -0.05, 0.1, 0.25, 0.4].map((fy, i) => (
+        <mesh key={`vrm-left-fin-${i}`} position={[0, fy, 0.1]}>
+          <boxGeometry args={[0.5, 0.05, 0.1]} />
+          <meshStandardMaterial color="#111" metalness={0.8} roughness={0.4} />
+        </mesh>
+      ))}
+    </group>
+    
+    <group position={[0, 1.85, 0.15]} rotation={[0, 0, -Math.PI / 2]}>
+      {/* Base */}
+      <mesh position={[0, 0, -0.05]}>
+        <boxGeometry args={[0.5, 1.5, 0.2]} />
+        <meshStandardMaterial color="#151515" metalness={0.9} roughness={0.2} />
+      </mesh>
+      {/* Fins */}
+      {[-0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6].map((fy, i) => (
+        <mesh key={`vrm-top-fin-${i}`} position={[0, fy, 0.1]}>
+          <boxGeometry args={[0.5, 0.05, 0.1]} />
+          <meshStandardMaterial color="#111" metalness={0.8} roughness={0.4} />
+        </mesh>
+      ))}
+    </group>
+
+    {/* RAM Slots with Clips */}
+    {[0.8, 1.0, 1.2, 1.4].map((x, i) => (
+      <group key={i} position={[x, 0.85, 0.08]}>
+        <mesh>
+          <boxGeometry args={[0.1, 1.8, 0.15]} />
+          <meshStandardMaterial color={i % 2 === 0 ? "#111" : "#2a2a2a"} roughness={0.7} />
+        </mesh>
+        {/* Top clip */}
+        <mesh position={[0, 0.95, 0]}>
+          <boxGeometry args={[0.12, 0.15, 0.12]} />
+          <meshStandardMaterial color="#b0b5b9" roughness={0.5} metalness={0.8} />
+        </mesh>
+        {/* Bottom clip */}
+        <mesh position={[0, -0.95, 0]}>
+          <boxGeometry args={[0.12, 0.15, 0.12]} />
+          <meshStandardMaterial color="#b0b5b9" roughness={0.5} metalness={0.8} />
+        </mesh>
+      </group>
     ))}
 
     {/* 24-Pin ATX Power Connector */}
@@ -461,7 +495,7 @@ const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
     </group>
 
     {/* PCIe Slots (Reinforced) */}
-    {[-1, -1.8].map((y, i) => (
+    {[-0.4, -1.8].map((y, i) => (
       <group key={`pcie-${i}`} position={[-0.1, y, 0.1]}>
         <mesh>
           <boxGeometry args={[2.8, 0.15, 0.12]} />
