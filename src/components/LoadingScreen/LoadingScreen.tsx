@@ -29,7 +29,7 @@ export const LoadingScreen = () => {
               PCVERSE
             </h1>
             <p className="text-sm text-slate-400 tracking-widest uppercase mb-8">
-              Initializing Experience
+              Inicjalizacja środowiska
             </p>
 
             {/* Progress Bar Container */}
@@ -45,7 +45,7 @@ export const LoadingScreen = () => {
 
             {/* Progress Percentage */}
             <div className="mt-4 flex justify-between w-full text-xs text-indigo-300 font-mono">
-              <span>LOADING ASSETS</span>
+              <span>ŁADOWANIE ZASOBÓW</span>
               <span>{Math.round(progress)}%</span>
             </div>
             

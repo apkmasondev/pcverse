@@ -124,7 +124,9 @@ const ComponentMesh = ({ data, isMobile }: { data: PCComponent, isMobile: boolea
   const baseColor = useMemo(() => new Color(data.color || '#333333'), [data.color]);
   const timeAccumulator = useRef(0);
 
-  const liftOffset = hovered && !isSelected ? 0.1 : 0;
+  const baseLift = data.geometryArgs ? Math.max(0.05, data.geometryArgs[1] * 0.03) : 0.1;
+  const liftOffset = hovered && !isSelected ? baseLift : 0;
+  
   useFrame((_state, delta) => {
     if (!groupRef.current) return;
 
@@ -138,10 +140,9 @@ const ComponentMesh = ({ data, isMobile }: { data: PCComponent, isMobile: boolea
     const posArray = explodeStep === 2 ? data.explodedPosition : data.position;
     
     // Add a gentle, premium out-of-phase floating effect in the exploded view
-    // (using component's id length as a consistent "random" seed so each component floats uniquely)
     let floatOffset = 0;
     if (explodeStep === 2) {
-      const phase = data.id.charCodeAt(0) * 10;
+      const phase = data.id.split('').reduce((acc, char) => acc + char.charCodeAt(0) * 17, 0);
       floatOffset = Math.sin(_state.clock.getElapsedTime() * 1.2 + phase) * 0.08;
     }
 

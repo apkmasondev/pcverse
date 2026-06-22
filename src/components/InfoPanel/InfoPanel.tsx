@@ -115,13 +115,13 @@ export const InfoPanel = () => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const rotateX = useSpring(useTransform(mouseY, [-window.innerHeight / 2, window.innerHeight / 2], [4, -4]), { stiffness: 150, damping: 30 });
-  const rotateY = useSpring(useTransform(mouseX, [-window.innerWidth / 2, window.innerWidth / 2], [-4, 4]), { stiffness: 150, damping: 30 });
+  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [4, -4]), { stiffness: 150, damping: 30 });
+  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-4, 4]), { stiffness: 150, damping: 30 });
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      mouseX.set(e.clientX - window.innerWidth / 2);
-      mouseY.set(e.clientY - window.innerHeight / 2);
+      mouseX.set((e.clientX / window.innerWidth) - 0.5);
+      mouseY.set((e.clientY / window.innerHeight) - 0.5);
     };
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);

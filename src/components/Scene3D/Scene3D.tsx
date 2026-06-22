@@ -100,7 +100,7 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
       cameraControlsRef.current.setLookAt(0, 12, 35, 0, 0, 0, false);
       setTimeout(() => {
         cameraControlsRef.current?.setLookAt(0, 3, 20, 0, 0, 0, true);
-      }, 300);
+      }, 50);
     }
   }, []);
 
@@ -252,6 +252,7 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
 export const Scene3D = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [dpr, setDpr] = useState<number | [number, number]>(1);
+  const [hasInteracted, setHasInteracted] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -268,11 +269,22 @@ export const Scene3D = () => {
   const { setSelectedComponent } = usePC();
 
   return (
-    <div className="w-full h-[60vh] md:h-screen bg-[#050505]" aria-hidden="true">
+    <div 
+      className="w-full h-[60vh] md:h-screen bg-[#050505] relative" 
+      aria-hidden="true"
+      onPointerDown={() => setHasInteracted(true)}
+      onTouchStart={() => setHasInteracted(true)}
+    >
+      {isMobile && !hasInteracted && (
+        <div className="absolute inset-0 z-10 pointer-events-none flex items-center justify-center">
+          <div className="bg-black/50 backdrop-blur-sm px-6 py-3 rounded-full text-white/90 text-sm font-medium border border-white/10 shadow-xl animate-pulse flex items-center gap-2">
+            <span>👆</span> Dotknij i przesuń, aby obrócić
+          </div>
+        </div>
+      )}
       <Canvas
-        gl={{ antialias: true, logarithmicDepthBuffer: true }}
+        gl={{ antialias: true }}
         dpr={dpr} 
-        shadows
         onPointerMissed={() => setSelectedComponent(null)}
       >
         <PerformanceMonitor onDecline={() => setDpr(1)} onIncline={() => setDpr(isMobile ? 1 : [1, 2])}>
