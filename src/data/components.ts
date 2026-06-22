@@ -114,7 +114,7 @@ export const pcComponents: PCComponent[] = [
       "Traci wszystkie dane w momencie odłączenia zasilania"
     ],
     funFact: "Pamięć RAM jest około 100 000 razy szybsza od tradycyjnego dysku twardego HDD.",
-    position: [0.35, 1, -1.55],
+    position: [0.35, 0.95, -1.55],
     explodedPosition: [2.02, 7.15, -1.95],
     color: "#00b8a9",
     perfImpact: { gaming: 10, ai: 15, productivity: 20 },
@@ -131,7 +131,7 @@ export const pcComponents: PCComponent[] = [
       "Redukuje zacinanie się w nowoczesnych grach"
     ],
     funFact: "Użycie dwóch kości RAM zamiast jednej dużej może zwiększyć wydajność procesora nawet o 15%.",
-    position: [0.75, 1, -1.55],
+    position: [0.75, 0.95, -1.55],
     explodedPosition: [3.96, 7.15, -1.95],
     color: "#00b8a9",
     perfImpact: { gaming: 2, ai: 1, productivity: 5 },

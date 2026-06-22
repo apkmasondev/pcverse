@@ -113,8 +113,31 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
     {/* RAM Slots with Clips */}
     {[0.8, 1.0, 1.2, 1.4].map((x, i) => (
       <group key={i} position={[x, 0.85, 0.08]}>
-        <mesh>
-          <boxGeometry args={[0.1, 1.8, 0.15]} />
+        {/* Base Block */}
+        <mesh position={[0, 0, -0.02]}>
+          <boxGeometry args={[0.1, 1.8, 0.11]} />
+          <meshStandardMaterial color={i % 2 === 0 ? "#111" : "#2a2a2a"} roughness={0.7} />
+        </mesh>
+        
+        {/* Left/Right Walls to create the groove */}
+        <mesh position={[-0.035, 0, 0.05]}>
+          <boxGeometry args={[0.03, 1.8, 0.05]} />
+          <meshStandardMaterial color={i % 2 === 0 ? "#111" : "#2a2a2a"} roughness={0.7} />
+        </mesh>
+        <mesh position={[0.035, 0, 0.05]}>
+          <boxGeometry args={[0.03, 1.8, 0.05]} />
+          <meshStandardMaterial color={i % 2 === 0 ? "#111" : "#2a2a2a"} roughness={0.7} />
+        </mesh>
+
+        {/* Groove floor (dark) */}
+        <mesh position={[0, 0, 0.025]}>
+          <boxGeometry args={[0.04, 1.8, 0.01]} />
+          <meshStandardMaterial color="#020202" roughness={1} />
+        </mesh>
+
+        {/* The RAM Notch (wcięcie / klucz na środku) */}
+        <mesh position={[0, -0.15, 0.05]}>
+          <boxGeometry args={[0.04, 0.06, 0.05]} />
           <meshStandardMaterial color={i % 2 === 0 ? "#111" : "#2a2a2a"} roughness={0.7} />
         </mesh>
         {/* Top clip */}
