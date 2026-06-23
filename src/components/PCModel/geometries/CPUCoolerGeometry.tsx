@@ -90,7 +90,7 @@ export const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string }) => {
   const heatsinkSideTexture = useTexture(heatsinkSideUrl);
   
   return (
-    <group>
+    <group scale={1.15} position={[0, 0, 0.0375]}>
       {/* Base Contact */}
       <mesh position={[0, 0, -0.25]} material={xrayMode ? xrayMaterial : undefined}>
         <boxGeometry args={[0.6, 0.6, 0.05]} />

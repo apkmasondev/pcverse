@@ -89,6 +89,10 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - **Estetyka sekcji zasilania**: Usunięto zduplikowane, niewidoczne bryły złączy 8-pin EPS i 24-pin ATX, które zakłócały wizualną czystość układu i kolidowały z radiatorem sekcji VRM.
 - **Stylizacja RGB Chipsetu**: Wymieniono generyczny, lity kwadrat świetlny na radiatorze na zmodernizowany, powiększony (0.8x0.8) obrys (pusty w środku kontur) uformowany z czterech osobnych pasów LED, eksponujący znajdujące się pod nim tekstury.
 - **Realizm gniazd pamięci RAM**: Znacznie zredukowano odstępy między czterema slotami pamięci, pakując je ciaśniej i wyrównując do lewej krawędzi (bliżej gniazda CPU). Precyzyjnie zsynchronizowano także koordynaty samych kości RAM z ich nowymi, węższymi wejściami (w trybie dual-channel).
+- **Masywne Chłodzenie CPU**: Przeskalowano całą grupę geometrii chłodzenia procesora o 15% we wszystkich osiach, zachowując bezkolizyjność z RAM-em oraz idealne przyleganie podstawy miedzianej do bloku CPU.
+- **Nowy układ wyświetlacza POST**: Bryła wyświetlacza diagnostycznego została zminiaturyzowana, obrócona o 90 stopni do pionu i wkomponowana w prawą krawędź laminatu (obok slotów RAM), zapobiegając zasłanianiu jej przez chłodzenie CPU i układ GPU.
+- **Fizyczne Złącze PCIe 3D**: Wyeliminowano zduplikowane, płaskie naklejki i przenikające się bryły M.2 na korzyść autentycznie wyrzeźbionego rowka PCIe. Wycięcie zyskało fizyczną, trójwymiarową głębię, mostek (notch divider) dzielący piny oraz wewnętrzny, złoty grzebień styków (Gold Pins) schowany głęboko we wzmacnianej stalowej ramie.
+- **Pozycjonowanie VRM**: Zoptymalizowano parametryczny rozkład kondensatorów VRM (zbliżono i opuszczono lewy oraz górny rząd), dając miejsce dla masywniejszego chłodzenia i zapewniając czystszy wygląd sekcji zasilania.
 
 ### Zmienione
 
