@@ -25,17 +25,17 @@ export const CableGeometry = () => {
 
   // SATA Data Cable (HDD to Mobo)
   const curve3 = useMemo(() => new THREE.CubicBezierCurve3(
-    new THREE.Vector3(1.3, -2.3, 0.25),  // plug into HDD front connector (facing glass)
-    new THREE.Vector3(1.3, -2.3, 0.6),   // route forward towards glass
+    new THREE.Vector3(1.3, -2.18, 0.25),  // plug into HDD front connector (facing glass)
+    new THREE.Vector3(1.3, -2.18, 0.6),   // route forward towards glass
     new THREE.Vector3(1.7, -0.7, -1.7),  // route up the right side behind mobo tray
     new THREE.Vector3(1.3, -0.7, -1.7)   // plug into bottom right of mobo
   ), []);
 
   // SATA Power Cable (HDD to PSU)
   const curve4 = useMemo(() => new THREE.CubicBezierCurve3(
-    new THREE.Vector3(1.1, -2.3, 0.25),  // plug into HDD front power connector
-    new THREE.Vector3(1.1, -2.3, 0.6),   // route forward towards glass
-    new THREE.Vector3(-0.5, -2.3, -0.4), // route along bottom back to PSU
+    new THREE.Vector3(1.1, -2.18, 0.25),  // plug into HDD front power connector
+    new THREE.Vector3(1.1, -2.18, 0.6),   // route forward towards glass
+    new THREE.Vector3(-0.5, -2.18, -0.4), // route along bottom back to PSU
     new THREE.Vector3(-0.5, -1.8, -0.8)  // plug into PSU
   ), []);
 
