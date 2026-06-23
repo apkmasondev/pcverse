@@ -78,5 +78,30 @@ Z powodu złożoności materiałowej we Frameworku Three.js i R3F, unikaj inwazy
 
 Rozwiązaniem poprawnym jest wstrzykiwanie flagi boolowskiej za pomocą kontekstu (`usePCSettings().xrayMode`) i wariantowe przepinanie podanego materiału bezpośrednio w strukturze JSX dla każdej siatki z osobna. Zawsze stosuj globalnie zdefiniowany `xrayMaterial` (wyeksportowany z `materials.ts`).
 
+## 6. Zapobieganie Wyciekom Pamięci (Garbage Collection)
+**Problem:** Złożone geometrie proceduralne generowane w locie (jak `ExtrudeGeometry`, `TubeGeometry` dla kabli, czy `ShapeGeometry`) nie są automatycznie usuwane z pamięci VRAM (pamięci karty graficznej) po odmontowaniu komponentu w React Three Fiber. Prowadzi to do potężnych wycieków pamięci i crashy na urządzeniach mobilnych (Zgłoszenie z audytu: C7).
+
+**Rozwiązanie:** 
+Zawsze przypinaj `ref` do ciężkich geometrii proceduralnych i wywołuj na nich metodę `dispose()` w bloku czyszczącym (cleanup) hooka `useEffect`:
+
+```tsx
+const geometryRef = useRef<ExtrudeGeometry>(null);
+
+useEffect(() => {
+  // Funkcja czyszcząca wywoływana przy Unmount
+  return () => {
+    if (geometryRef.current) {
+      geometryRef.current.dispose();
+    }
+  };
+}, []);
+
+return (
+  <mesh>
+    <extrudeGeometry ref={geometryRef} args={[shape, extrudeSettings]} />
+  </mesh>
+)
+```
+
 ---
-Dbając o powyższe 5 filarów zagwarantujesz, że renderowana scena 3D pozostanie wolna od błędów wizualnych (glitchy) oraz zachowa wydajność powyżej optymalnych 60 FPS na każdym urządzeniu. 
+Dbając o powyższe 6 filarów zagwarantujesz, że renderowana scena 3D pozostanie wolna od błędów wizualnych (glitchy) oraz zachowa stabilność pamięci i wydajność powyżej optymalnych 60 FPS na każdym urządzeniu.
