@@ -2,16 +2,18 @@
 
 Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 
-## Dzień 12 - Wdrożenie Ostatnich Szlifów Audytu (Backlog)
+## Dzień 12 - Wdrożenie Ostatnich Szlifów Audytu - Faza 7(Backlog)
+
 - **Środowisko HDRi (S2)**: Pliki środowiska .hdr zostały pobrane do katalogu lokalnego \`public/environments/\` i zaimportowane do mapy w \`Scene3D.tsx\`. Gwarantuje to ominięcie problemów z Content Security Policy (CSP), które blokowały zasoby dostarczane przez zewnętrzne CDN.
 - **Moduł Audio (S5, S6)**: Poprawiono bezpieczeństwo modułu - "puste" bloki wyjątków logują powiadomienia, a funkcja tworzenia dźwięku sferycznego precyzyjniej wygasza oscylatory przy drastycznie szybkich kliknięciach.
-- **Dostępność i Tłumaczenia (U1, U3, U4, U5)**: 
-  - Przyciski nawigacyjne w \`Toolbar\` osiągnęły standardowe 44x44px. 
+- **Dostępność i Tłumaczenia (U1, U3, U4, U5)**:
+  - Przyciski nawigacyjne w \`Toolbar\` osiągnęły standardowe 44x44px.
   - Dodano niewidoczną "matę powrotu" na ekrany telefonów - zamykanie otwartych menu Palety Kolorów odbywa się poprzez dotknięcie tła za modelem 3D.
   - Komunikaty techniczne zostały spolszczone (np. "Brak obsługi WebGL").
   - Pierwsza instruktażowa podpowiedź ukazuje się aż do 15 sekund w trakcie pierwszego kontaktu z UI.
 
-## Dzień 11 - Zakończenie Audytu - Faza 4 (Wydajność i Kamery)
+## Dzień 11 - Zakończenie Audytu - Faza 6 (Wydajność i Kamery)
+
 - **Warunkowe renderowanie materiałów szkła**: Obudowa zachowuje flagowy wygląd na komputerach stacjonarnych (\`MeshPhysicalMaterial\`), jednak na urządzeniach mobilnych korzysta ze zoptymalizowanego \`MeshStandardMaterial\` z przeźroczystością, zapewniając ogromny wzrost klatek (rozwiązany błąd P5).
 - **Czyszczenie tła i shaderów (P3, P7, P8)**:
   - Systemy cząsteczek tła (\`Stars\`, \`Sparkles\`) całkowicie deaktywowane na smartfonach.
@@ -19,8 +21,10 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
   - Grid renderowany pod sceną został odpowiednio wywindowany w górę.
 - **Uniezależnienie płynności od platformy**: Animacje \`CursorLight\` i ujęcia \`camera.LookAt()\` działają idealnie dzięki użyciu delta-time zamiast sztucznego timeoutu. Usunięto niepotrzebny frame limiter w pętli dla urządzeń mobilnych.
 
-## Dzień 10 - Stabilność Architektury i Pamięć (Faza 3)
+## Dzień 10 - Stabilność Architektury i Pamięć (Faza 5)
+
 ### Faza 3 - Pamięć i Geometria
+
 - **Refaktoryzacja stanu i hooków**: Rozdzielono masywny hook `usePC` na dedykowane mniejsze hooki (`usePCSelection` i `usePCSettings`), ograniczając niepotrzebne re-rendery i przeliczanie parametrów obudowy przez komponenty, które ich nie potrzebowały.
 - **Zarządzanie Pamięcią i Canvas**: Wprowadzono rygorystyczne czyszczenie pamięci tekstur (VRAM). Po wygenerowaniu dynamicznej siatki obudowy (mesh grill) za pomocą API Canvas, kod natychmiast zwalnia pamięć operacyjną wywołując `canvas.width = 0; canvas.height = 0;`.
 - **Zarządzanie Lifecycle Geometrii**: Dodano bezpieczniki czyszczące (`dispose()`) podpięte pod hooki `useEffect` (poprzez kolekcję `geoRefs`) dla ciężkich obiektów typu `ExtrudeGeometry` i `ShapeGeometry`, zapobiegając gigantycznym wyciekom pamięci podczas przeładowywania drzewa DOM w React Three Fiber.
@@ -28,13 +32,17 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - **Korekty Geometrii**: Wdrożono nowy tryb X-Ray (prześwietlenia), oparty na wstrzykiwaniu materiałów przez kontekst z wykorzystaniem React, pozbywając się inwazyjnego polecenia `scene.traverse()` (które zamrażało wątek przeglądarki). Zastąpiono instrukcje warunkowe `if-else` mapowaniem ze słownika `GEOMETRY_MAP` w `PCModel.tsx`.
 
 ## Dzień 9 - Detale i Poprawki Wizualne (Faza 4)
+
 ### Faza 4 - Perfekcja UI/3D
+
 - **Całkowita eliminacja Z-fightingu (C9/C15)**: Przebudowano geometrię obudowy (CaseGeometry). Stworzono lity panel górny (Top) oraz zunifikowano dolny. Usunięto zduplikowane listwy boczne szkła i wprowadzono precyzyjne narożniki (0.1x0.1), w które szkło płynnie się zagłębia, co permanentnie rozwiązało problem Z-fightingu. Wszystkie ramy używają teraz jednego globalnego materiału `caseFrameMaterial`, znacząco redukując draw-calls (zgodnie z PCVerse Audit).
 - **Poprawa estetyki GPU i płyty głównej**: Naprawiono błąd tekstury panelu I/O karty graficznej, naciągając siatkę na pełną szerokość złącza. Przesunięto całą "platformę" (płyta główna, CPU, RAM, GPU, SSD, cooler) o `0.1` w osi X w głąb obudowy, by złącza naturalnie chowały się za krawędzią tylnego panelu PC.
 - **Detale M.2 i Baterii CMOS**: Przesunięto baterię CMOS wyżej (z `Y=-1.4` na `Y=-0.9`), aby była widoczna i nie chowała się pod radiatorem. Nałożono nową, dedykowaną teksturę radiatora ("AORUS M.2 SSD HEATSINK") na dolny radiator M.2. Zoptymalizowano oryginalny, bazowy model dysku SSD na płycie głównej (pod CPU), poprawiając obrót i proporcje jego tekstury, dzięki czemu pozbyto się efektu "rozmazanego bluru" po wyjęciu interaktywnego dysku.
 
 ## Dzień 8 - Optymalizacja i Dostępność (Faza 3)
+
 ### Faza 3 - Ostatnie Szlify
+
 - **Code Splitting (C38)**: Wdrożono dynamiczny import dla głównej sceny 3D (`React.lazy`) w pliku `App.tsx` oraz zdefiniowano `manualChunks` dla silnika Vite, co rozwiązuje problem zbyt dużych paczek przy kompilacji i przyspiesza wstępne ładowanie interfejsu.
 - **Dostępność i Screen Readery (C23-C25)**: Naprawiono problemy z czytelnością dla czytników ekranowych. Dodano etykiety `aria-label` do nawigacji galerii oraz przycisku zamknięcia. Panel informacyjny zyskał `role="dialog"` oraz `aria-live="polite"`, a renderowany element Canvas WebGL został ukryty z drzewa a11y (`aria-hidden="true"`), eliminując dezorientację użytkowników niepełnosprawnych.
 
