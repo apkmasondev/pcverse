@@ -41,7 +41,7 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
   const [rgbColor, setRgbColor] = useState('#06b6d4'); // Default Cyan
   const [rgbEnabled, setRgbEnabled] = useState(true);
   const [showAirflow, setShowAirflow] = useState(false);
-  const [envPreset, setEnvPreset] = useState('studio');
+  const [envPreset, setEnvPreset] = useState('city');
   const [showLabels, setShowLabels] = useState(true);
   const [showInstructions, setShowInstructions] = useState(false);
 

@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import { usePCSelection, usePCSettings } from '../../../hooks/usePC';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import * as THREE from 'three';
-import { useTexture } from '@react-three/drei';
+import { useTexture, Instances, Instance } from '@react-three/drei';
 import { extrudeOpts01, extrudeOpts005, caseFrameMaterial } from '../constants';
 import { xrayMaterial } from '../materials';
 import caseBackUrl from '../../../assets/case_back.webp';
@@ -414,15 +414,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
         <meshStandardMaterial map={caseInteriorTexture} metalness={0.5} roughness={0.7} />
       </Mesh>
       
-      {/* GPU PCIe Brackets at the left wall (Shifted to X = -1.98) */}
-      {[-0.55, -0.7, -0.85, -1.0, -1.15, -1.3].map((y, i) => (
-        <group key={i}>
-          <Mesh position={[-1.97, y, -1.15]}>
-            <boxGeometry args={[0.04, 0.14, 1.2]} />
-            <meshStandardMaterial color="#2a2c30" metalness={0.9} roughness={0.3} />
-          </Mesh>
-        </group>
-      ))}
+
 
       {/* Top Panel (Solid Frame) */}
       <Mesh position={[0, 2.50, 0]} rotation={[Math.PI / 2, 0, 0]} material={caseFrameMaterial}>
@@ -653,6 +645,18 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
       
       {/* Solid Side Panel (Back) - Motherboard tray with correct IO/GPU/PSU cutouts */}
       <group ref={solidSideRef as any}>
+        {/* GPU PCIe Brackets at the left wall - Moved here to fly away with the side panel */}
+        <Instances limit={6}>
+          <boxGeometry args={[0.04, 0.14, 1.2]} />
+          {xrayMode ? (
+            <primitive object={xrayMaterial} attach="material" />
+          ) : (
+            <meshStandardMaterial color="#2a2c30" metalness={0.9} roughness={0.3} />
+          )}
+          {[-0.55, -0.7, -0.85, -1.0, -1.15, -1.3].map((y, i) => (
+            <Instance key={i} position={[-1.97, y, -1.15]} />
+          ))}
+        </Instances>
         <group position={[-1.975, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
           <Mesh>
             <extrudeGeometry args={[leftPanelShape, extrudeOpts005]} />
