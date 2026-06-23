@@ -81,8 +81,13 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
       const targetX = explodeStep >= 1 ? FLY_DIST : 1.95; // Fly away off-screen
       const targetOpacity = explodeStep >= 1 ? 0 : 0.25; // fade out
       
-      sideGlassRef.current.position.x = THREE.MathUtils.lerp(sideGlassRef.current.position.x, targetX, delta * 2.5);
-      sideGlassMatRef.current.opacity = THREE.MathUtils.lerp(sideGlassMatRef.current.opacity, targetOpacity, delta * 2.5);
+      if (Math.abs(sideGlassRef.current.position.x - targetX) < 0.005) {
+        sideGlassRef.current.position.x = targetX;
+        sideGlassMatRef.current.opacity = targetOpacity;
+      } else {
+        sideGlassRef.current.position.x = THREE.MathUtils.lerp(sideGlassRef.current.position.x, targetX, delta * 2.5);
+        sideGlassMatRef.current.opacity = THREE.MathUtils.lerp(sideGlassMatRef.current.opacity, targetOpacity, delta * 2.5);
+      }
       
       // Ukryj panel gdy jest dostatecznie daleko (tylko w trakcie wybuchu)
       sideGlassRef.current.visible = !(explodeStep >= 1 && sideGlassRef.current.position.x > HIDE_THRESHOLD);
@@ -91,14 +96,23 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
       const targetZ = explodeStep >= 1 ? FLY_DIST : 1.95;
       const targetOpacity = explodeStep >= 1 ? 0 : 0.25;
       
-      frontGlassRef.current.position.z = THREE.MathUtils.lerp(frontGlassRef.current.position.z, targetZ, delta * 2.5);
-      frontGlassMatRef.current.opacity = THREE.MathUtils.lerp(frontGlassMatRef.current.opacity, targetOpacity, delta * 2.5);
+      if (Math.abs(frontGlassRef.current.position.z - targetZ) < 0.005) {
+        frontGlassRef.current.position.z = targetZ;
+        frontGlassMatRef.current.opacity = targetOpacity;
+      } else {
+        frontGlassRef.current.position.z = THREE.MathUtils.lerp(frontGlassRef.current.position.z, targetZ, delta * 2.5);
+        frontGlassMatRef.current.opacity = THREE.MathUtils.lerp(frontGlassMatRef.current.opacity, targetOpacity, delta * 2.5);
+      }
 
       frontGlassRef.current.visible = !(explodeStep >= 1 && frontGlassRef.current.position.z > HIDE_THRESHOLD);
     }
     if (solidSideRef.current) {
       const targetX = explodeStep >= 1 ? -FLY_DIST : 0;
-      solidSideRef.current.position.x = THREE.MathUtils.lerp(solidSideRef.current.position.x, targetX, delta * 2.5);
+      if (Math.abs(solidSideRef.current.position.x - targetX) < 0.005) {
+        solidSideRef.current.position.x = targetX;
+      } else {
+        solidSideRef.current.position.x = THREE.MathUtils.lerp(solidSideRef.current.position.x, targetX, delta * 2.5);
+      }
 
       solidSideRef.current.visible = !(explodeStep >= 1 && solidSideRef.current.position.x < -HIDE_THRESHOLD);
     }

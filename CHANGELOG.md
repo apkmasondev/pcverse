@@ -4,6 +4,9 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 
 ## Dzień 12 - Wdrożenie Ostatnich Szlifów Audytu - Faza 7 (Backlog)
 
+- **Wyeliminowanie migotania (Flickeringu) Animacji**: Wdrożono system "zatrzasku" (Snap-to-Grid) na samą końcówkę krzywej animacji `lerp` dla rozsuwanych paneli szklanych i blaszanych (Exploded View). Skrypt ucina asympotyczną funkcję gdy margines błędu spadnie poniżej 0.005, drastycznie pomagając silnikowi WebGL z sortowaniem głębi i zapobiegając kilkusekundowemu migotaniu nakładających się warstw szkła.
+
+
 - **Hover Effect (Inteligenty Z-Offset)**: Skalowanie unoszenia się komponentów po najechaniu kursorem (hover) odbywa się teraz proporcjonalnie w dół względem rozmiaru komponentu. Ogromna obudowa drga minimalnie, a mały dysk SSD dynamicznie odskakuje.
 - **Wyeliminowanie Z-fightingu obudowy**: Skrócono w dół płaszczyzny lewego panelu, tacki płyty głównej i tylnego panelu w `CaseGeometry.tsx` o grubość podłogi (Y z `-2.4` na `-2.3`), eliminując brutalne przenikanie się brył.
 - **Śrubki Szklanych Paneli**: Zgodnie z zasadami oszczędzania Draw Calls, zastosowano system `<Instances>` dodający po 4 fizyczne śrubki montażowe w rogach dwóch szklanych paneli (przednim i prawym bocznym).
