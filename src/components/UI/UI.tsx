@@ -327,53 +327,66 @@ export const UI = () => {
                 <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
                   <MousePointerClick className="text-indigo-400 shrink-0" />
                   <div>
-                    <h3 className="text-sm font-semibold text-white mb-1">Nawigacja i Detale</h3>
-                    <p className="text-xs text-slate-400 leading-relaxed">Użyj LPM do obrotu, kółka myszy do przybliżania. <strong>Użyj klawiszy W, A, S, D lub strzałek, by poruszać kamerą (przód, tył i na boki) podobnie jak w grach. Do przesuwania (Pan) w dowolnym kierunku użyj PPM (prawy klik).</strong> Kliknij w dowolny komponent obudowy, by skupić na nim kamerę i otworzyć szczegóły.</p>
+                    <h3 className="text-base font-semibold text-white mb-2">Kamera i Interakcja</h3>
+                    <p className="text-sm text-slate-300 leading-relaxed">
+                      • <strong>Obrót:</strong> Lewy Przycisk Myszy (LPM).<br/>
+                      • <strong>Ruch postacią:</strong> Klawisze W, A, S, D.<br/>
+                      • <strong>Przesuwanie (Pan):</strong> Prawy Przycisk Myszy (PPM).<br/>
+                      Kliknij w dany komponent z bliska, by wyświetlić jego detale.
+                    </p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
                   <Layers className="text-indigo-400 shrink-0" />
                   <div>
-                    <h3 className="text-sm font-semibold text-white mb-1">Rozkładanie (Teardown)</h3>
-                    <p className="text-xs text-slate-400 leading-relaxed">Przycisk "Rozłóż na Części" aktywuje wybuchową animację rozsunięcia całego sprzętu. Rozkładanie zachodzi dwuetapowo: najpierw szkło, potem środek.</p>
+                    <h3 className="text-base font-semibold text-white mb-2">Eksplozja (Teardown)</h3>
+                    <p className="text-sm text-slate-300 leading-relaxed">
+                      Przycisk <strong>"Rozłóż na Części"</strong> uruchamia wybuchową animację rozsunięcia całego PC. Pozwala na zbadanie budowy sprzętu od środka!
+                    </p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
                     <Focus className="text-indigo-400 shrink-0" />
-                    <span className="text-xs text-slate-300"><strong>Zresetuj:</strong> Przywróć domyślną kamerę.</span>
+                    <span className="text-sm text-slate-300"><strong>Zresetuj:</strong> Domyślna kamera.</span>
                   </div>
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
                     <Scan className="text-cyan-400 shrink-0" />
-                    <span className="text-xs text-slate-300"><strong>Hologram:</strong> Prześwietlenie X-Ray.</span>
+                    <span className="text-sm text-slate-300"><strong>Hologram:</strong> X-Ray obudowy.</span>
                   </div>
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
                     <Wind className="text-blue-400 shrink-0" />
-                    <span className="text-xs text-slate-300"><strong>Airflow:</strong> Symulacja cyrkulacji powietrza.</span>
+                    <span className="text-sm text-slate-300"><strong>Airflow:</strong> Cyrkulacja wiatru.</span>
                   </div>
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
                     <Sun className="text-amber-400 shrink-0" />
-                    <span className="text-xs text-slate-300"><strong>Otoczenie:</strong> Zmiana tła i światła (HDRi).</span>
+                    <span className="text-sm text-slate-300"><strong>Otoczenie:</strong> Zmiana tła (HDRi).</span>
                   </div>
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
                     <Palette className="text-purple-400 shrink-0" />
-                    <span className="text-xs text-slate-300"><strong>RGB:</strong> Zmiana koloru podświetlenia.</span>
+                    <span className="text-sm text-slate-300"><strong>RGB:</strong> Zmiana koloru.</span>
                   </div>
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
                     <Tag className="text-emerald-400 shrink-0" />
-                    <span className="text-xs text-slate-300"><strong>Etykiety:</strong> Ukryj/pokaż nazwy w 3D.</span>
+                    <span className="text-sm text-slate-300"><strong>Etykiety:</strong> Ukryj/pokaż text.</span>
                   </div>
                 </div>
               </div>
               
               <button 
                 onClick={() => setShowInstructions(false)}
-                className="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl font-bold text-white transition-colors"
+                className="w-full py-3 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 rounded-xl font-bold text-indigo-300 transition-colors shadow-[0_0_15px_rgba(99,102,241,0.1)] hover:shadow-[0_0_20px_rgba(99,102,241,0.3)]"
               >
                 Zrozumiałem
               </button>
+              
+              <div className="mt-5 text-center">
+                <p className="text-xs text-slate-500/70 font-medium tracking-wide">
+                  Designed by <span className="text-indigo-400 font-bold drop-shadow-[0_0_8px_rgba(99,102,241,0.5)] tracking-widest">apkmasondev</span>
+                </p>
+              </div>
             </motion.div>
           </motion.div>
         )}

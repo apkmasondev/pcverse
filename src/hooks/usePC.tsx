@@ -48,6 +48,7 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
   const toggleExploded = () => {
     if (isAnimating) return;
     setIsAnimating(true);
+    setSelectedComponent(null); // Ukryj kartę szczegółów przy składaniu/rozkładaniu
     
     if (explodeStep === 0) {
       setExplodeStep(1);
