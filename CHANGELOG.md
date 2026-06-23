@@ -12,6 +12,7 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
   - Komunikaty techniczne zostały spolszczone (np. "Brak obsługi WebGL").
   - Pierwsza instruktażowa podpowiedź ukazuje się aż do 15 sekund w trakcie pierwszego kontaktu z UI.
 - **Karta Graficzna (GPU)**: Dodano statyczne, świecące pierścienie RGB na wentylatorach karty graficznej, dopasowane do nowej tekstury frontu.
+- **Refaktoryzacja Trybu X-Ray (S3.3)**: Zastąpiono imperatywne przeszukiwanie sceny (`traverse`) w pełni deklaratywną obsługą `xrayMaterial` w JSX komponentów geometrii. Zapobiega to gubieniu tekstur na radiatorach płyty głównej przy zmianie stanu RGB i eliminuje race condition z Reactem. Ukryto szklane panele i wewnętrzne podświetlenie w trybie X-Ray, co znacząco poprawia widoczność wireframe'ów.
 
 ## Dzień 11 - Zakończenie Audytu - Faza 6 (Wydajność i Kamery)
 
@@ -81,6 +82,13 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - **Optymalizacja Kadrowania (Mobile)**: Naprawiono błąd z ucinaniem i nadmiernym rozmywaniem obiektów po ich kliknięciu na urządzeniach mobilnych. Zwiększono dystans kamery z 4 do 8 jednostek, rekompensując wąski kąt widzenia na pionowych ekranach, oraz zmniejszono siłę efektu `DepthOfField` (bokehScale z 4 do 0), aby zapobiec zamazywaniu detali.
 - **Tylny Panel i Wycięcie Zasilacza**: Rozszerzono geometrię tylnego panelu i tacki płyty głównej do granic obudowy (X=1.97). Poprawiono pozycję okna wyciętego na panel I/O zasilacza przesuwając go dokładnie na środek osi (X=-1.2) i poszerzając jego krawędź. Wtyczka kabla zasilającego na zasilaczu jest teraz widoczna w 100%.
 - **Wycięcie na zasilacz (Spód)**: Wyrównano dolny otwór wentylacyjny pod zasilaczem wraz z siatką Mesh do nowej pozycji zasilacza (Z=-0.8). Powiększono wycięcie w podłodze obudowy tak, aby idealnie odpowiadało rozmiarom pełnego plastra miodu, zapobiegając jego nachodzeniu na lity panel.
+
+### Zmiany na Płycie Głównej
+
+- **Z-fighting i rendering tekstur**: Zastosowano parametr `polygonOffset` na głównych płaszczyznach tekstur (front, tył, panel I/O) w celu całkowitego wyeliminowania migotania (z-fighting) w kontakcie z bryłami 3D. Skorygowano również położenie bloku panelu wejść/wyjść, aby opierał się o laminat płyty głównej zamiast w niego przenikać.
+- **Estetyka sekcji zasilania**: Usunięto zduplikowane, niewidoczne bryły złączy 8-pin EPS i 24-pin ATX, które zakłócały wizualną czystość układu i kolidowały z radiatorem sekcji VRM.
+- **Stylizacja RGB Chipsetu**: Wymieniono generyczny, lity kwadrat świetlny na radiatorze na zmodernizowany, powiększony (0.8x0.8) obrys (pusty w środku kontur) uformowany z czterech osobnych pasów LED, eksponujący znajdujące się pod nim tekstury.
+- **Realizm gniazd pamięci RAM**: Znacznie zredukowano odstępy między czterema slotami pamięci, pakując je ciaśniej i wyrównując do lewej krawędzi (bliżej gniazda CPU). Precyzyjnie zsynchronizowano także koordynaty samych kości RAM z ich nowymi, węższymi wejściami (w trybie dual-channel).
 
 ### Zmienione
 

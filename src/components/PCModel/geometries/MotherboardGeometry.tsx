@@ -1,3 +1,6 @@
+import React from 'react';
+import { usePCSettings } from '../../../hooks/usePC';
+import { xrayMaterial } from '../materials';
 import { materials } from '../materials';
 import { useTexture, Instances, Instance } from '@react-three/drei';
 import moboBackUrl from '../../../assets/mobo_back_photo.webp';
@@ -8,6 +11,42 @@ import cpuSocketUrl from '../../../assets/cpu_socket.webp';
 import ssdTopUrl from '../../../assets/ssd_top.webp';
 import cmosBatteryUrl from '../../../assets/cmos_battery.webp';
 import m2HeatsinkUrl from '../../../assets/m2_heatsink.webp';
+
+const Mesh = ({ children, material, ...props }: any) => {
+  const { xrayMode } = usePCSettings();
+  const filteredChildren = React.Children.map(children, (child) => {
+    if (!child) return null;
+    if (xrayMode) {
+      if (child.type === 'meshStandardMaterial' || child.type === 'meshPhysicalMaterial' || child.type === 'primitive') {
+        return null;
+      }
+    }
+    return child;
+  });
+  return (
+    <mesh material={xrayMode ? xrayMaterial : material} {...props}>
+      {filteredChildren}
+    </mesh>
+  );
+};
+
+const XInstances = ({ children, material, ...props }: any) => {
+  const { xrayMode } = usePCSettings();
+  const filteredChildren = React.Children.map(children, (child) => {
+    if (!child) return null;
+    if (xrayMode) {
+      if (child.type === 'meshStandardMaterial' || child.type === 'meshPhysicalMaterial' || child.type === 'primitive') {
+        return null;
+      }
+    }
+    return child;
+  });
+  return (
+    <Instances material={xrayMode ? xrayMaterial : material} {...props}>
+      {filteredChildren}
+    </Instances>
+  );
+};
 
 export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
   const backTexture = useTexture(moboBackUrl);
@@ -22,386 +61,396 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
   return (
   <group>
     {/* Main PCB */}
-    <mesh position={[0, 0, 0]}>
+    <Mesh position={[0, 0, 0]}>
       <boxGeometry args={[3, 4, 0.06]} />
       <meshStandardMaterial color="#111214" roughness={0.9} />
-    </mesh>
+    </Mesh>
     
     {/* Motherboard Top Texture (Photorealistic Base) */}
-    <mesh position={[0, 0, 0.031]}>
+    <Mesh position={[0, 0, 0.031]}>
       <planeGeometry args={[3, 4]} />
-      <meshStandardMaterial map={moboTopTexture} roughness={0.5} metalness={0.4} />
-    </mesh>
+      <meshStandardMaterial map={moboTopTexture} roughness={0.5} metalness={0.4} polygonOffset={true} polygonOffsetFactor={-1} polygonOffsetUnits={-1} />
+    </Mesh>
     
     {/* Motherboard Backplate Texture */}
-    <mesh position={[0, 0, -0.031]} rotation={[0, Math.PI, 0]}>
+    <Mesh position={[0, 0, -0.031]} rotation={[0, Math.PI, 0]}>
       <planeGeometry args={[3, 4]} />
-      <meshStandardMaterial map={backTexture} roughness={0.4} metalness={0.2} />
-    </mesh>
+      <meshStandardMaterial map={backTexture} roughness={0.4} metalness={0.2} polygonOffset={true} polygonOffsetFactor={-1} polygonOffsetUnits={-1} />
+    </Mesh>
 
     {/* CPU Socket Cover (Grey rectangle to hide the printed socket on texture) */}
-    <mesh position={[0, 0.95, 0.04]}>
+    <Mesh position={[0, 0.95, 0.04]}>
       <boxGeometry args={[1.3, 1.45, 0.02]} />
       <meshStandardMaterial color="#1f2023" roughness={0.9} />
-    </mesh>
+    </Mesh>
 
     {/* CPU Socket & Mounting Bracket */}
-    <mesh position={[0, 0.95, 0.05]}>
+    <Mesh position={[0, 0.95, 0.05]}>
       <boxGeometry args={[1.3, 1.45, 0.08]} />
       <meshStandardMaterial color="#222" roughness={0.8} />
-    </mesh>
-    <mesh position={[0, 0.95, 0.095]}>
+    </Mesh>
+    <Mesh position={[0, 0.95, 0.095]}>
       <planeGeometry args={[1.3, 1.45]} />
       <meshStandardMaterial map={cpuSocketTexture} metalness={0.8} roughness={0.2} />
-    </mesh>
+    </Mesh>
 
     {/* NVMe M.2 SSD */}
     <group position={[-0.3, 0.1, 0.05]}>
-      <mesh position={[0, 0, 0]}>
+      <Mesh position={[0, 0, 0]}>
         <boxGeometry args={[0.8, 0.22, 0.02]} />
         <primitive object={materials.blackPlastic} attach="material" />
-      </mesh>
-      <mesh position={[0, 0, 0.011]} rotation={[0, 0, -Math.PI / 2]}>
+      </Mesh>
+      <Mesh position={[0, 0, 0.011]} rotation={[0, 0, -Math.PI / 2]}>
         <planeGeometry args={[0.2, 0.78]} />
         <meshStandardMaterial map={ssdTexture} roughness={0.5} />
-      </mesh>
+      </Mesh>
     </group>
 
     {/* VRM Capacitors (Silver cylinders near CPU) */}
     {[-0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6].map((x, i) => (
-      <mesh key={`cap-top-${i}`} position={[x, 1.7, 0.1]} rotation={[Math.PI / 2, 0, 0]}>
+      <Mesh key={`cap-top-${i}`} position={[x, 1.7, 0.1]} rotation={[Math.PI / 2, 0, 0]}>
         <cylinderGeometry args={[0.04, 0.04, 0.1, 16]} />
         <primitive object={materials.silverMetal} attach="material" />
-      </mesh>
+      </Mesh>
     ))}
-    <Instances>
+    <XInstances>
       <cylinderGeometry args={[0.04, 0.04, 0.1, 16]} />
       <primitive object={materials.silverMetal} attach="material" />
       {[1.2, 1.0, 0.8, 0.6, 0.4].map((y, i) => (
         <Instance key={`cap-left-${i}`} position={[-0.7, y, 0.1]} rotation={[Math.PI / 2, 0, 0]} />
       ))}
-    </Instances>
+    </XInstances>
 
     {/* VRM Heatsinks (Detailed with ribs/fins) */}
     <group position={[-1.2, 1.5, 0.15]}>
       {/* Base */}
-      <mesh position={[0, 0, -0.05]}>
+      <Mesh position={[0, 0, -0.05]}>
         <boxGeometry args={[0.5, 0.9, 0.2]} />
         <primitive object={materials.darkMetal} attach="material" />
-      </mesh>
+      </Mesh>
       {/* Fins */}
-      <Instances>
+      <XInstances>
           <boxGeometry args={[0.5, 0.05, 0.1]} />
           <primitive object={materials.darkMetal} attach="material" />
           {[-0.35, -0.2, -0.05, 0.1, 0.25, 0.4].map((fy, i) => (
             <Instance key={`vrm-left-fin-${i}`} position={[0, fy, 0.1]} />
           ))}
-        </Instances>
+        </XInstances>
     </group>
     
     <group position={[0, 1.85, 0.15]} rotation={[0, 0, -Math.PI / 2]}>
       {/* Base */}
-      <mesh position={[0, 0, -0.05]}>
+      <Mesh position={[0, 0, -0.05]}>
         <boxGeometry args={[0.5, 1.5, 0.2]} />
         <primitive object={materials.darkMetal} attach="material" />
-      </mesh>
+      </Mesh>
       {/* Fins */}
-      <Instances>
+      <XInstances>
           <boxGeometry args={[0.5, 0.05, 0.1]} />
           <primitive object={materials.darkMetal} attach="material" />
           {[-0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6].map((fy, i) => (
             <Instance key={`vrm-top-fin-${i}`} position={[0, fy, 0.1]} />
           ))}
-        </Instances>
+        </XInstances>
     </group>
 
     {/* RAM Slots with Clips */}
-    {[0.8, 1.0, 1.2, 1.4].map((x, i) => (
+    {[0.8, 0.94, 1.08, 1.22].map((x, i) => (
       <group key={i} position={[x, 0.85, 0.08]}>
         {/* Base Block */}
-        <mesh position={[0, 0, -0.02]}>
+        <Mesh position={[0, 0, -0.02]}>
           <boxGeometry args={[0.1, 1.8, 0.11]} />
           <meshStandardMaterial color={i % 2 === 0 ? "#111" : "#2a2a2a"} roughness={0.7} />
-        </mesh>
+        </Mesh>
         
         {/* Left/Right Walls to create the groove */}
-        <mesh position={[-0.035, 0, 0.05]}>
+        <Mesh position={[-0.035, 0, 0.05]}>
           <boxGeometry args={[0.03, 1.8, 0.05]} />
           <meshStandardMaterial color={i % 2 === 0 ? "#111" : "#2a2a2a"} roughness={0.7} />
-        </mesh>
-        <mesh position={[0.035, 0, 0.05]}>
+        </Mesh>
+        <Mesh position={[0.035, 0, 0.05]}>
           <boxGeometry args={[0.03, 1.8, 0.05]} />
           <meshStandardMaterial color={i % 2 === 0 ? "#111" : "#2a2a2a"} roughness={0.7} />
-        </mesh>
+        </Mesh>
 
         {/* Groove floor (dark) */}
-        <mesh position={[0, 0, 0.025]}>
+        <Mesh position={[0, 0, 0.025]}>
           <boxGeometry args={[0.04, 1.8, 0.01]} />
           <meshStandardMaterial color="#020202" roughness={1} />
-        </mesh>
+        </Mesh>
 
         {/* The RAM Notch (wcięcie / klucz na środku) */}
-        <mesh position={[0, -0.15, 0.05]}>
+        <Mesh position={[0, -0.15, 0.05]}>
           <boxGeometry args={[0.04, 0.06, 0.05]} />
           <meshStandardMaterial color={i % 2 === 0 ? "#111" : "#2a2a2a"} roughness={0.7} />
-        </mesh>
+        </Mesh>
         {/* Top clip */}
-        <mesh position={[0, 0.95, 0]}>
+        <Mesh position={[0, 0.95, 0]}>
           <boxGeometry args={[0.12, 0.15, 0.12]} />
           <meshStandardMaterial color="#b0b5b9" roughness={0.5} metalness={0.8} />
-        </mesh>
+        </Mesh>
         {/* Bottom clip */}
-        <mesh position={[0, -0.95, 0]}>
+        <Mesh position={[0, -0.95, 0]}>
           <boxGeometry args={[0.12, 0.15, 0.12]} />
           <meshStandardMaterial color="#b0b5b9" roughness={0.5} metalness={0.8} />
-        </mesh>
+        </Mesh>
       </group>
     ))}
 
-    {/* 24-Pin ATX Power Connector */}
-    <mesh position={[1.3, 0.5, 0.1]}>
-      <boxGeometry args={[0.2, 0.8, 0.2]} />
-      <meshStandardMaterial color="#0a0a0a" roughness={0.9} />
-    </mesh>
+    {/* 24-Pin ATX Power Connector (Removed) */}
 
-    {/* 8-Pin EPS Power Connectors */}
-    <mesh position={[-1.2, 1.9, 0.1]}>
-      <boxGeometry args={[0.4, 0.15, 0.2]} />
-      <meshStandardMaterial color="#0a0a0a" roughness={0.9} />
-    </mesh>
+    {/* 8-Pin EPS Power Connectors (Removed due to Z-fighting and lack of visibility) */}
 
     {/* POST Code Display (Diagnostic LED) */}
     <group position={[1.2, 1.8, 0.05]}>
-      <mesh>
+      <Mesh>
         <boxGeometry args={[0.3, 0.2, 0.1]} />
         <primitive object={materials.blackPlastic} attach="material" />
-      </mesh>
-      <mesh position={[0, 0, 0.06]}>
+      </Mesh>
+      <Mesh position={[0, 0, 0.06]}>
         <boxGeometry args={[0.2, 0.1, 0.01]} />
         <meshStandardMaterial color="#ff0000" emissive="#ff0000" emissiveIntensity={2} />
-      </mesh>
+      </Mesh>
     </group>
 
     {/* PCIe Slots (Reinforced) */}
     {[-0.4, -1.8].map((y, i) => (
       <group key={`pcie-${i}`} position={[-0.1, y, 0.1]}>
         {/* Base Block */}
-        <mesh position={[0, 0, -0.02]}>
+        <Mesh position={[0, 0, -0.02]}>
           <boxGeometry args={[2.8, 0.15, 0.08]} />
           <meshStandardMaterial color={i === 0 ? "#b0b5b9" : "#111"} metalness={i === 0 ? 0.8 : 0} roughness={0.5} />
-        </mesh>
+        </Mesh>
         
         {/* Top/Bottom Walls to create the groove */}
-        <mesh position={[0, 0.055, 0.04]}>
+        <Mesh position={[0, 0.055, 0.04]}>
           <boxGeometry args={[2.8, 0.04, 0.04]} />
           <meshStandardMaterial color={i === 0 ? "#b0b5b9" : "#111"} metalness={i === 0 ? 0.8 : 0} roughness={0.5} />
-        </mesh>
-        <mesh position={[0, -0.055, 0.04]}>
+        </Mesh>
+        <Mesh position={[0, -0.055, 0.04]}>
           <boxGeometry args={[2.8, 0.04, 0.04]} />
           <meshStandardMaterial color={i === 0 ? "#b0b5b9" : "#111"} metalness={i === 0 ? 0.8 : 0} roughness={0.5} />
-        </mesh>
+        </Mesh>
 
         {/* Groove floor (dark) */}
-        <mesh position={[0, 0, 0.02]}>
+        <Mesh position={[0, 0, 0.02]}>
           <boxGeometry args={[2.8, 0.07, 0.01]} />
           <meshStandardMaterial color="#020202" roughness={1} />
-        </mesh>
+        </Mesh>
         
         {/* Inner Groove - Short Segment (Left side) */}
-        <mesh position={[-1.2, 0, 0.061]}>
+        <Mesh position={[-1.2, 0, 0.061]}>
           <boxGeometry args={[0.3, 0.04, 0.01]} />
           <meshStandardMaterial color="#050505" roughness={1} />
-        </mesh>
+        </Mesh>
 
         {/* Inner Groove - Long Segment (Right side) */}
-        <mesh position={[0.2, 0, 0.061]}>
+        <Mesh position={[0.2, 0, 0.061]}>
           <boxGeometry args={[2.3, 0.04, 0.01]} />
           <meshStandardMaterial color="#050505" roughness={1} />
-        </mesh>
+        </Mesh>
 
         {/* PCIe slot clip */}
-        <mesh position={[1.45, 0, 0]}>
+        <Mesh position={[1.45, 0, 0]}>
           <boxGeometry args={[0.1, 0.15, 0.12]} />
           <meshStandardMaterial color="#0a0a0a" />
-        </mesh>
+        </Mesh>
       </group>
     ))}
 
     {/* M.2 NVMe Armor / Heatsinks */}
     <group position={[-0.2, -0.4, 0.08]}>
-      <mesh>
+      <Mesh>
         <boxGeometry args={[1.8, 0.3, 0.1]} />
         <meshStandardMaterial color="#111" metalness={0.7} roughness={0.3} />
-      </mesh>
+      </Mesh>
     </group>
     <group position={[-0.2, -1.4, 0.08]}>
-      <mesh>
+      <Mesh>
         <boxGeometry args={[1.8, 0.3, 0.1]} />
         <meshStandardMaterial color="#111" metalness={0.7} roughness={0.3} />
-      </mesh>
+      </Mesh>
       {/* Top face with AORUS texture */}
-      <mesh position={[0, 0, 0.051]}>
+      <Mesh position={[0, 0, 0.051]}>
         <planeGeometry args={[1.8, 0.3]} />
         <meshStandardMaterial map={m2HeatsinkTexture} roughness={0.4} metalness={0.6} />
-      </mesh>
+      </Mesh>
     </group>
 
     {/* Bateria CMOS (CR2032) */}
     <group position={[-1.0, -0.9, 0.05]}>
       {/* Battery Holder / Socket */}
-      <mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
+      <Mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
         <cylinderGeometry args={[0.18, 0.18, 0.04, 32]} />
         <meshStandardMaterial color="#111" roughness={0.9} />
-      </mesh>
+      </Mesh>
       {/* The shiny CR2032 Battery */}
-      <mesh position={[0, 0, 0.03]} rotation={[Math.PI / 2, 0, 0]}>
+      <Mesh position={[0, 0, 0.03]} rotation={[Math.PI / 2, 0, 0]}>
         <cylinderGeometry args={[0.15, 0.15, 0.02, 32]} />
         <meshStandardMaterial color="#ffffff" map={cmosBatteryTexture} metalness={0.7} roughness={0.3} />
-      </mesh>
+      </Mesh>
       {/* Metal clip securing the battery */}
-      <mesh position={[0, 0.1, 0.04]}>
+      <Mesh position={[0, 0.1, 0.04]}>
         <boxGeometry args={[0.08, 0.08, 0.02]} />
         <meshStandardMaterial color="#d4af37" metalness={0.8} roughness={0.4} />
-      </mesh>
+      </Mesh>
     </group>
 
     {/* Audio Section with RGB Trace */}
-    <mesh position={[-1.2, -1.5, 0.04]}>
+    <Mesh position={[-1.2, -1.5, 0.04]}>
       <boxGeometry args={[0.4, 0.8, 0.02]} />
       <meshStandardMaterial color="#0f0f0f" roughness={0.9} />
-    </mesh>
-    <mesh position={[-0.95, -1.5, 0.04]}>
+    </Mesh>
+    <Mesh position={[-0.95, -1.5, 0.04]}>
       <boxGeometry args={[0.02, 0.8, 0.01]} />
       <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={1.5} toneMapped={false} />
-    </mesh>
+    </Mesh>
     {/* Audio Capacitors (Gold) */}
     {[-1.2, -1.4, -1.6].map((y, i) => (
-      <mesh key={`audio-cap-${i}`} position={[-1.2, y, 0.08]} rotation={[Math.PI / 2, 0, 0]}>
+      <Mesh key={`audio-cap-${i}`} position={[-1.2, y, 0.08]} rotation={[Math.PI / 2, 0, 0]}>
         <cylinderGeometry args={[0.04, 0.04, 0.12, 16]} />
         <meshStandardMaterial color="#d4af37" metalness={0.8} roughness={0.3} />
-      </mesh>
+      </Mesh>
     ))}
 
     {/* SATA Ports */}
-    <mesh position={[1.4, -1.5, 0.1]}>
+    <Mesh position={[1.4, -1.5, 0.1]}>
       <boxGeometry args={[0.15, 0.6, 0.15]} />
       <primitive object={materials.blackPlastic} attach="material" />
-    </mesh>
+    </Mesh>
 
     {/* Chipset Heatsink (Massive with RGB Logo) */}
     <group position={[0.8, -1.2, 0.1]}>
-      <mesh>
+      <Mesh>
         <boxGeometry args={[1.0, 1.0, 0.15]} />
         <primitive object={materials.darkMetal} attach="material" />
-      </mesh>
+      </Mesh>
       {/* Chipset Texture */}
-      <mesh position={[0, 0, 0.076]}>
+      <Mesh position={[0, 0, 0.076]}>
         <planeGeometry args={[1.0, 1.0]} />
         <meshStandardMaterial map={chipsetTexture} roughness={0.3} metalness={0.6} />
-      </mesh>
+      </Mesh>
       {/* Sci-fi grooves */}
-      <mesh position={[-0.2, 0, 0.08]}>
+      <Mesh position={[-0.2, 0, 0.08]}>
         <boxGeometry args={[0.1, 1.0, 0.02]} />
         <meshStandardMaterial color="#0a0a0a" />
-      </mesh>
-      {/* RGB Accent */}
-      <mesh position={[0, 0, 0.08]}>
-        <planeGeometry args={[0.6, 0.6]} />
-        <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={1} />
-      </mesh>
+      </Mesh>
+      {/* RGB Accent - Hollow Square Outline */}
+      <group position={[0, 0, 0.091]}>
+        {/* Top */}
+        <Mesh position={[0, 0.38, 0]}>
+          <planeGeometry args={[0.8, 0.04]} />
+          <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={1.5} toneMapped={false} />
+        </Mesh>
+        {/* Bottom */}
+        <Mesh position={[0, -0.38, 0]}>
+          <planeGeometry args={[0.8, 0.04]} />
+          <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={1.5} toneMapped={false} />
+        </Mesh>
+        {/* Left */}
+        <Mesh position={[-0.38, 0, 0]}>
+          <planeGeometry args={[0.04, 0.72]} />
+          <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={1.5} toneMapped={false} />
+        </Mesh>
+        {/* Right */}
+        <Mesh position={[0.38, 0, 0]}>
+          <planeGeometry args={[0.04, 0.72]} />
+          <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={1.5} toneMapped={false} />
+        </Mesh>
+      </group>
     </group>
 
     {/* Rear IO Shield Block */}
-    <mesh position={[-1.4, 1.2, 0.2]}>
+    <Mesh position={[-1.4, 1.2, 0.255]}>
       <boxGeometry args={[0.2, 1.6, 0.45]} />
       <meshStandardMaterial color="#111" metalness={0.8} roughness={0.3} />
-    </mesh>
+    </Mesh>
 
     {/* IO Ports Area (moved from CaseGeometry to stay attached when exploded) */}
     <group position={[0, 0, 1.75]}>
       {/* Motherboard IO Panel Accent (Shifted to X = -1.53 to sit on the outside of the left panel) */}
-      <mesh position={[-1.53, 1.2, -1.55]}>
+      <Mesh position={[-1.53, 1.2, -1.55]}>
         <boxGeometry args={[0.04, 1.4, 0.65]} />
         <meshStandardMaterial color="#888c94" metalness={0.8} roughness={0.3} />
-      </mesh>
+      </Mesh>
       {/* Motherboard IO Image Texture Plane */}
-      <mesh position={[-1.551, 1.2, -1.55]} rotation={[0, -Math.PI / 2, 0]}>
+      <Mesh position={[-1.551, 1.2, -1.55]} rotation={[0, -Math.PI / 2, 0]}>
         <planeGeometry args={[0.65, 1.4]} />
-        <meshStandardMaterial map={moboIoTexture} roughness={0.6} metalness={0.4} />
-      </mesh>
+        <meshStandardMaterial map={moboIoTexture} roughness={0.6} metalness={0.4} polygonOffset={true} polygonOffsetFactor={-1} polygonOffsetUnits={-1} />
+      </Mesh>
       {/* Motherboard IO Ports - Professional High-End Layout */}
       {/* BIOS Flashback & Clear CMOS */}
-      <mesh position={[-1.55, 1.75, -1.65]}>
+      <Mesh position={[-1.55, 1.75, -1.65]}>
         <boxGeometry args={[0.02, 0.06, 0.06]} />
         <meshStandardMaterial color="#111" roughness={0.8} />
-      </mesh>
-      <mesh position={[-1.55, 1.75, -1.45]} rotation={[0, 0, Math.PI/2]}>
+      </Mesh>
+      <Mesh position={[-1.55, 1.75, -1.45]} rotation={[0, 0, Math.PI/2]}>
         <cylinderGeometry args={[0.02, 0.02, 0.02, 16]} />
         <meshStandardMaterial color="#444" metalness={0.5} />
-      </mesh>
+      </Mesh>
 
       {/* Wi-Fi Antenna Connectors (Gold) */}
       {[-1.65, -1.45].map(z => (
-        <mesh key={`wifi-${z}`} position={[-1.55, 1.6, z]} rotation={[0, 0, Math.PI/2]}>
+        <Mesh key={`wifi-${z}`} position={[-1.55, 1.6, z]} rotation={[0, 0, Math.PI/2]}>
           <cylinderGeometry args={[0.03, 0.03, 0.04, 16]} />
           <meshStandardMaterial color="#d4af37" metalness={1} roughness={0.2} />
-        </mesh>
+        </Mesh>
       ))}
 
       {/* USB 2.0 (Black) */}
       {[-1.65, -1.45].map(z => (
-        <mesh key={`usb2-${z}`} position={[-1.55, 1.45, z]}>
+        <Mesh key={`usb2-${z}`} position={[-1.55, 1.45, z]}>
           <boxGeometry args={[0.02, 0.04, 0.1]} />
           <meshStandardMaterial color="#111" roughness={0.9} />
-        </mesh>
+        </Mesh>
       ))}
 
       {/* USB 3.2 Gen 1 (Blue) */}
       {[-1.65, -1.45].map(z => (
-        <mesh key={`usb3-${z}`} position={[-1.55, 1.3, z]}>
+        <Mesh key={`usb3-${z}`} position={[-1.55, 1.3, z]}>
           <boxGeometry args={[0.02, 0.04, 0.1]} />
           <meshStandardMaterial color="#1e3a8a" roughness={0.6} />
-        </mesh>
+        </Mesh>
       ))}
 
       {/* 2.5G Ethernet & USB 3.2 Gen 2 (Red) */}
-      <mesh position={[-1.55, 1.15, -1.65]}>
+      <Mesh position={[-1.55, 1.15, -1.65]}>
         <boxGeometry args={[0.02, 0.08, 0.12]} />
         <meshStandardMaterial color="#1f2937" metalness={0.6} />
-      </mesh>
-      <mesh position={[-1.55, 1.15, -1.45]}>
+      </Mesh>
+      <Mesh position={[-1.55, 1.15, -1.45]}>
         <boxGeometry args={[0.02, 0.04, 0.1]} />
         <meshStandardMaterial color="#991b1b" roughness={0.6} />
-      </mesh>
+      </Mesh>
 
       {/* USB-C & USB 3.2 Gen 2 (Red) */}
-      <mesh position={[-1.55, 1.0, -1.65]}>
+      <Mesh position={[-1.55, 1.0, -1.65]}>
         <boxGeometry args={[0.02, 0.025, 0.08]} />
         <meshStandardMaterial color="#111" roughness={0.7} />
-      </mesh>
-      <mesh position={[-1.55, 1.0, -1.45]}>
+      </Mesh>
+      <Mesh position={[-1.55, 1.0, -1.45]}>
         <boxGeometry args={[0.02, 0.04, 0.1]} />
         <meshStandardMaterial color="#991b1b" roughness={0.6} />
-      </mesh>
+      </Mesh>
 
       {/* High-End Audio Stack (Gold Plated) */}
       {[-1.65, -1.55, -1.45].map((z, i) => (
-        <mesh key={`audio-top-${i}`} position={[-1.55, 0.85, z]} rotation={[0, 0, Math.PI/2]}>
+        <Mesh key={`audio-top-${i}`} position={[-1.55, 0.85, z]} rotation={[0, 0, Math.PI/2]}>
           <cylinderGeometry args={[0.025, 0.025, 0.03, 16]} />
           <meshStandardMaterial color="#d4af37" metalness={0.9} roughness={0.2} />
-        </mesh>
+        </Mesh>
       ))}
       {[-1.65, -1.55].map((z, i) => (
-        <mesh key={`audio-bot-${i}`} position={[-1.55, 0.75, z]} rotation={[0, 0, Math.PI/2]}>
+        <Mesh key={`audio-bot-${i}`} position={[-1.55, 0.75, z]} rotation={[0, 0, Math.PI/2]}>
           <cylinderGeometry args={[0.025, 0.025, 0.03, 16]} />
           <meshStandardMaterial color="#d4af37" metalness={0.9} roughness={0.2} />
-        </mesh>
+        </Mesh>
       ))}
       {/* SPDIF Optical out */}
-      <mesh position={[-1.55, 0.75, -1.45]}>
+      <Mesh position={[-1.55, 0.75, -1.45]}>
         <boxGeometry args={[0.02, 0.04, 0.04]} />
         <meshStandardMaterial color="#111" />
-      </mesh>
+      </Mesh>
     </group>
   </group>
   );

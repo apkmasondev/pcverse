@@ -131,8 +131,8 @@ export const pcComponents: PCComponent[] = [
       "Redukuje zacinanie się w nowoczesnych grach"
     ],
     funFact: "Użycie dwóch kości RAM zamiast jednej dużej może zwiększyć wydajność procesora nawet o 15%.",
-    position: [0.75, 0.95, -1.55],
-    explodedPosition: [3.96, 7.15, -1.95],
+    position: [0.63, 0.95, -1.55],
+    explodedPosition: [3.38, 7.15, -1.95],
     color: "#00b8a9",
     perfImpact: { gaming: 2, ai: 1, productivity: 5 },
     geometryArgs: [0.1, 1.2, 0.4],
