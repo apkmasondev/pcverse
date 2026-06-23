@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { Group } from 'three';
 import { useFrame } from '@react-three/fiber';
 import { useTexture } from '@react-three/drei';
@@ -89,6 +89,16 @@ export const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string }) => {
   const heatsinkTexture = useTexture(heatsinkUrl);
   const heatsinkSideTexture = useTexture(heatsinkSideUrl);
   
+  useEffect(() => {
+    heatsinkTexture.rotation = Math.PI / 2;
+    heatsinkTexture.center.set(0.5, 0.5);
+    heatsinkTexture.needsUpdate = true;
+    
+    heatsinkSideTexture.rotation = Math.PI / 2;
+    heatsinkSideTexture.center.set(0.5, 0.5);
+    heatsinkSideTexture.needsUpdate = true;
+  }, [heatsinkTexture, heatsinkSideTexture]);
+
   return (
     <group scale={1.15} position={[0, 0, 0.0375]}>
       {/* Base Contact */}

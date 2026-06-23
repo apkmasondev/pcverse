@@ -21,7 +21,7 @@ const COLORS = [
 ];
 
 const Tooltip = ({ text }: { text: string }) => (
-  <span className="absolute top-full mt-3 hidden md:block opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none bg-[#0a0a0a]/95 backdrop-blur-xl border border-white/10 text-slate-300 text-[11px] px-3 py-1.5 rounded-lg whitespace-nowrap shadow-[0_10px_25px_rgba(0,0,0,0.8)] z-50 font-medium tracking-wide">
+  <span className="absolute top-full mt-3 hidden md:block opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none bg-[#0a0a0a]/95 backdrop-blur-xl border border-white/10 text-slate-300 text-[13px] px-3 py-1.5 rounded-lg whitespace-nowrap shadow-[0_10px_25px_rgba(0,0,0,0.8)] z-50 font-medium tracking-wide">
     {text}
   </span>
 );

@@ -4,11 +4,20 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 
 ## Dzień 12 - Wdrożenie Ostatnich Szlifów Audytu - Faza 7 (Backlog)
 
+- **Culling paneli bocznych**: Obudowa automatycznie wyłącza renderowanie paneli (właściwość `visible = false`), gdy oddalą się poza zasięg wzroku kamery, odciążając kartę graficzną i zmniejszając liczbę Draw Calls.
+- **Wznawianie ekranu ładowania**: Skrypt `LoadingScreen.tsx` został zaktualizowany, aby automatycznie powracał i maskował chrupnięcia podczas asynchronicznego pobierania nowych map środowiskowych (HDRI).
+- **Grubsze RGB Chipsetu**: Podwojono grubość obrysu LED (z 0.04 do 0.08) na układzie chłodzącym Chipset na płycie głównej.
+- **Złote piny w gniazdach RAM**: Dodano nowe, realistyczne, fizyczne złącza stykowe do środka wszystkich 4 slotów pamięci na płycie głównej.
+- **Obrót tekstury radiatora CPU**: Poprawiono mapowanie UV na wieży chłodzącej procesora, obracając tekstury bocznego i górnego finu o 90 stopni.
+- **Rozdział portów SATA dysku HDD**: Zastąpiono pojedyncze, szerokie gniazdo na dysku twardym prawidłowymi, osobnymi złączami zasilania oraz przesyłu danych, pokrytymi realistycznym materiałem `materials.goldMetal`.
+
+
 - **Kolizja Zasilacza z obudową**: Podniesiono globalne współrzędne zasilacza (PSU) wewnątrz obudowy (oś Y skorygowana z `-1.92` na `-1.86`), dzięki czemu wystający w dół pierścień podświetlenia RGB wentylatora opiera się elegancko na metalowej podłodze zamiast przez nią brutalnie przenikać.
 - **Śledzie PCIe w Exploded View**: Śledzie (zaślepki) portów PCIe obudowy zostały zintegrowane z grupą odlatującego, lewego panelu bocznego, dzięki czemu przestają nienaturalnie "lewitować" w powietrzu po rozłożeniu komputera. Zoptymalizowano je również za pomocą tagu `<Instances>`, redukując ilość zapytań Draw Calls.
 - **Środowisko Domyślne**: Zmieniono domyślny preset oświetleniowy z "Studio" na "Cyberpunk" (`city`), zgodnie z preferencjami dla bardziej dynamicznego wyglądu. Dodatkowo zaktualizowano bazowe kolory tła w całej aplikacji (np. `App.tsx` i `index.css`), by zniwelować skoki (flash) jasności przy pierwszym ładowaniu.
 - **Interfejs (UI)**: Zwiększono rozmiar ikon w panelu nawigacyjnym dla lepszej czytelności i prezencji, a preset środowiska "Cyberpunk" przeniesiono na pierwszą pozycję w liście.
 - **Karta Instrukcji (Legenda)**: Przeprojektowano okno z instrukcją obsługi – powiększono fonty (dla lepszej czytelności na desktopach), zastosowano wyraźniejsze wypunktowania i skrócono opisy nawigacji dla szybszego przyswajania. Dodano również subtelną stopkę "Designed by apkmasondev" z efektem poświaty oraz odświeżono główny przycisk "Zrozumiałem".
+- **Dymki (Tooltips)**: Delikatnie powiększono font w dymkach z podpowiedziami z `11px` do `13px` w celu lepszej czytelności na monitorach o wysokiej rozdzielczości.
 - **Realistyczne Zdjęcia Komponentów**: Wygenerowano przy pomocy AI zestaw 10 dodatkowych, wysoce fotorealistycznych zdjęć sprzętu w środowisku warsztatowym. Skonwertowano je do wydajnego formatu `.webp` i podpięto jako ostatnie zdjęcie w galerii na kartach szczegółów poszczególnych komponentów.
 - **Karta Szczegółów (UI Bugfix)**: Od teraz kliknięcie przycisku "Złóż Komputer" / "Rozłóż na Części" automatycznie ukrywa panel detali aktywnego komponentu (jeśli był otwarty) i gładko resetuje kamerę, rozwiązując problem zacinającej się i "skaczącej" do dawnej pozycji kamery.
 - **Odległość wentylatorów GPU**: Zwiększono rozstaw pierścieni RGB na karcie graficznej (odstęp z 1.1 na 1.15), dopasowując pod nie również pozycje fizycznych wiatraków i cząsteczek powietrza.

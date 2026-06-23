@@ -8,7 +8,9 @@ export const LoadingScreen = () => {
   const [show, setShow] = useState(true);
 
   useEffect(() => {
-    if (!active && progress === 100) {
+    if (active) {
+      setShow(true);
+    } else if (!active && progress === 100) {
       const timer = setTimeout(() => setShow(false), 800); // 800ms delay for shader compilation
       return () => clearTimeout(timer);
     }

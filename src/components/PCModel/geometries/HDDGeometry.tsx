@@ -45,9 +45,16 @@ export const HDDGeometry = () => {
         {!xrayMode && <primitive object={materials.blackPlastic} attach="material" />}
       </mesh>
       
-      <mesh position={[-0.2, -0.05, 0.73]} material={xrayMode ? xrayMaterial : undefined}>
+      {/* SATA Power Connector */}
+      <mesh position={[-0.15, -0.05, 0.73]} material={xrayMode ? xrayMaterial : undefined}>
         <boxGeometry args={[0.2, 0.08, 0.02]} />
-        {!xrayMode && <meshStandardMaterial color="#d4af37" roughness={0.4} metalness={1} />}
+        {!xrayMode && <primitive object={materials.goldMetal} attach="material" />}
+      </mesh>
+
+      {/* SATA Data Connector */}
+      <mesh position={[0.1, -0.05, 0.73]} material={xrayMode ? xrayMaterial : undefined}>
+        <boxGeometry args={[0.1, 0.08, 0.02]} />
+        {!xrayMode && <primitive object={materials.goldMetal} attach="material" />}
       </mesh>
     </group>
   );

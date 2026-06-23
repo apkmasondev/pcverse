@@ -178,6 +178,17 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
             <boxGeometry args={[0.04, 1.8, 0.01]} />
             <meshStandardMaterial color="#020202" roughness={1} />
           </Mesh>
+            
+          {/* Złote styki wewnątrz slotu (Górna część) */}
+          <Mesh position={[0, 0.39, 0.04]}>
+            <boxGeometry args={[0.035, 1.02, 0.02]} />
+            <primitive object={materials.goldMetal} attach="material" />
+          </Mesh>
+          {/* Złote styki wewnątrz slotu (Dolna część) */}
+          <Mesh position={[0, -0.54, 0.04]}>
+            <boxGeometry args={[0.035, 0.72, 0.02]} />
+            <primitive object={materials.goldMetal} attach="material" />
+          </Mesh>
 
           {/* The RAM Notch (wcięcie / klucz na środku) */}
           <Mesh position={[0, -0.15, 0.05]}>
@@ -338,23 +349,23 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
         {/* RGB Accent - Hollow Square Outline */}
         <group position={[0, 0, 0.091]}>
           {/* Top */}
-          <Mesh position={[0, 0.38, 0]}>
-            <planeGeometry args={[0.8, 0.04]} />
+          <Mesh position={[0, 0.36, 0]}>
+            <planeGeometry args={[0.8, 0.08]} />
             <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={1.5} toneMapped={false} />
           </Mesh>
           {/* Bottom */}
-          <Mesh position={[0, -0.38, 0]}>
-            <planeGeometry args={[0.8, 0.04]} />
+          <Mesh position={[0, -0.36, 0]}>
+            <planeGeometry args={[0.8, 0.08]} />
             <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={1.5} toneMapped={false} />
           </Mesh>
           {/* Left */}
-          <Mesh position={[-0.38, 0, 0]}>
-            <planeGeometry args={[0.04, 0.72]} />
+          <Mesh position={[-0.36, 0, 0]}>
+            <planeGeometry args={[0.08, 0.64]} />
             <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={1.5} toneMapped={false} />
           </Mesh>
           {/* Right */}
-          <Mesh position={[0.38, 0, 0]}>
-            <planeGeometry args={[0.04, 0.72]} />
+          <Mesh position={[0.36, 0, 0]}>
+            <planeGeometry args={[0.08, 0.64]} />
             <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={1.5} toneMapped={false} />
           </Mesh>
         </group>
