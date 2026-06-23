@@ -140,6 +140,14 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
         </group>
       ))}
 
+      {/* Static RGB Rings on the Front Texture */}
+      {[-1.1, 0, 1.1].map((x, i) => (
+        <mesh key={`rgb-ring-${i}`} position={[x, -0.385, 0]} rotation={[Math.PI / 2, 0, 0]}>
+          <torusGeometry args={[0.49, 0.015, 16, 32]} />
+          <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={2.0} toneMapped={false} />
+        </mesh>
+      ))}
+
       {/* GPU Cooling Airflow Particles - 3 streams for 3 fans */}
       {[-1.1, 0, 1.1].map((x, i) => (
         <group key={`airflow-${i}`} position={[x, -0.85, 0]} rotation={[-Math.PI / 2, 0, 0]}>

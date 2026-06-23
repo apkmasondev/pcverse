@@ -11,6 +11,7 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
   - Dodano niewidoczną "matę powrotu" na ekrany telefonów - zamykanie otwartych menu Palety Kolorów odbywa się poprzez dotknięcie tła za modelem 3D.
   - Komunikaty techniczne zostały spolszczone (np. "Brak obsługi WebGL").
   - Pierwsza instruktażowa podpowiedź ukazuje się aż do 15 sekund w trakcie pierwszego kontaktu z UI.
+- **Karta Graficzna (GPU)**: Dodano statyczne, świecące pierścienie RGB na wentylatorach karty graficznej, dopasowane do nowej tekstury frontu.
 
 ## Dzień 11 - Zakończenie Audytu - Faza 6 (Wydajność i Kamery)
 
