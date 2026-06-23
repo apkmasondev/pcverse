@@ -4,6 +4,7 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 
 ## Dzień 12 - Wdrożenie Ostatnich Szlifów Audytu - Faza 7 (Backlog)
 
+- **Kolizja Zasilacza z obudową**: Podniesiono globalne współrzędne zasilacza (PSU) wewnątrz obudowy (oś Y skorygowana z `-1.92` na `-1.86`), dzięki czemu wystający w dół pierścień podświetlenia RGB wentylatora opiera się elegancko na metalowej podłodze zamiast przez nią brutalnie przenikać.
 - **Tekstura GPU (Backplate)**: Usunięto starą, niewidzialną bryłę geometryczną, która przenikała i zasłaniała część nowoczesnej, fotorealistycznej tekstury na tylnej płycie (backplate) karty graficznej.
 - **Kolizje z siatką podłogi**: Podniesiono współrzędne `explodedPosition` dla Zasilacza (PSU) oraz Dysku HDD w konfiguracji. Zapobiega to ich nierealistycznemu wpadaniu pod "podłogę" (siatkę GridHelper) po rozłożeniu wirtualnego komputera na części (Exploded View).
 - **Środowisko HDRi (S2)**: Pliki środowiska .hdr zostały pobrane do katalogu lokalnego \`public/environments/\` i zaimportowane do mapy w \`Scene3D.tsx\`. Gwarantuje to ominięcie problemów z Content Security Policy (CSP), które blokowały zasoby dostarczane przez zewnętrzne CDN.
