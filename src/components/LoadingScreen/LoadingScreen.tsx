@@ -23,7 +23,7 @@ export const LoadingScreen = () => {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8, ease: 'easeInOut' }}
-          className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#050505] backdrop-blur-3xl text-white"
+          className="absolute inset-0 z-[9999] flex flex-col items-center justify-center bg-[#050505] backdrop-blur-3xl text-white"
         >
           <div className="relative w-80 max-w-[80vw] flex flex-col items-center">
             {/* Logo or Title */}
