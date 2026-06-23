@@ -13,3 +13,12 @@ export const materials = {
   pcbGreen: new MeshStandardMaterial({ color: '#003300', roughness: 0.8 }),
   pcbBlack: new MeshStandardMaterial({ color: '#111111', roughness: 0.6 }),
 };
+
+export const xrayMaterial = new MeshStandardMaterial({
+  color: 0x111111,
+  emissive: 0x00ffff,
+  emissiveIntensity: 0.5,
+  wireframe: true,
+  transparent: true,
+  opacity: 0.3
+});

@@ -8,10 +8,11 @@ import { PSUGeometry } from './geometries/PSUGeometry';
 import { CaseGeometry } from './geometries/CaseGeometry';
 import { CPUCoolerGeometry, FanGeometry } from './geometries/CPUCoolerGeometry';
 import { CableGeometry } from './CableGeometry';
-import { useRef, useState, useMemo, useEffect, Suspense } from 'react';
+import { useRef, useState, useMemo, Suspense } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Group, Color, Vector3, MeshStandardMaterial } from 'three';
+import { Group, Color, Vector3 } from 'three';
 import { Html, useCursor, Bvh, useTexture } from '@react-three/drei';
+import { xrayMaterial } from './materials';
 import { pcComponents } from '../../data/components';
 import type { PCComponent } from '../../data/components';
 import { usePCSelection, usePCSettings } from '../../hooks/usePC';
@@ -42,6 +43,7 @@ import gpuFrontUrl from '../../assets/gpu_front.webp';
 
 
 const ProceduralGeometry = ({ data, baseColor, rgbColor }: { data: PCComponent, baseColor: Color, rgbColor: string }) => {
+  const { xrayMode } = usePCSettings();
   if (data.id.includes('cpu_cooler')) return <CPUCoolerGeometry rgbColor={rgbColor} />;
   if (data.id.includes('cpu')) return <CPUGeometry />;
   if (data.id.includes('gpu')) return <GPUGeometry rgbColor={rgbColor} />;
@@ -57,9 +59,9 @@ const ProceduralGeometry = ({ data, baseColor, rgbColor }: { data: PCComponent, 
   if (data.id.includes('case')) return <CaseGeometry rgbColor={rgbColor} rgbEnabled={true} />;
   
   return (
-    <mesh>
+    <mesh material={xrayMode ? xrayMaterial : undefined}>
       <boxGeometry args={data.geometryArgs} />
-      <meshStandardMaterial color={baseColor} roughness={0.7} metalness={0.3} />
+      {!xrayMode && <meshStandardMaterial color={baseColor} roughness={0.7} metalness={0.3} />}
     </mesh>
   );
 };
@@ -70,7 +72,7 @@ const ComponentMesh = ({ data, isMobile }: { data: PCComponent, isMobile: boolea
   const groupRef = useRef<Group>(null);
   const [hovered, setHovered] = useState(false);
   const { selectedComponent, setSelectedComponent, explodeStep } = usePCSelection();
-  const { rgbColor, rgbEnabled, showLabels, showInstructions } = usePCSettings();
+  const { xrayMode, rgbColor, rgbEnabled, showLabels, showInstructions } = usePCSettings();
   const effectiveRgbColor = rgbEnabled ? rgbColor : '#000000';
   
   useCursor(hovered && !isMobile);
@@ -80,6 +82,7 @@ const ComponentMesh = ({ data, isMobile }: { data: PCComponent, isMobile: boolea
   const targetScale3 = useMemo(() => new Vector3(), []);
   const baseColor = useMemo(() => new Color(data.color || '#333333'), [data.color]);
   
+ 
 
   const baseLift = data.geometryArgs ? Math.max(0.05, data.geometryArgs[1] * 0.03) : 0.1;
   const liftOffset = hovered && !isSelected ? baseLift : 0;
@@ -138,8 +141,8 @@ const ComponentMesh = ({ data, isMobile }: { data: PCComponent, isMobile: boolea
         setHovered(false);
       }}
     >
-      <ErrorBoundary fallback={<mesh><boxGeometry args={data.geometryArgs} /><meshStandardMaterial color={baseColor} /></mesh>}>
-        <Suspense fallback={<mesh><boxGeometry args={data.geometryArgs} /><meshStandardMaterial color={baseColor} /></mesh>}>
+      <ErrorBoundary fallback={<mesh material={xrayMode ? xrayMaterial : undefined}><boxGeometry args={data.geometryArgs} />{!xrayMode && <meshStandardMaterial color={baseColor} />}</mesh>}>
+        <Suspense fallback={<mesh material={xrayMode ? xrayMaterial : undefined}><boxGeometry args={data.geometryArgs} />{!xrayMode && <meshStandardMaterial color={baseColor} />}</mesh>}>
           {visual}
         </Suspense>
       </ErrorBoundary>
@@ -199,40 +202,7 @@ const ComponentMesh = ({ data, isMobile }: { data: PCComponent, isMobile: boolea
 
 export const PCModel = () => {
   const isMobile = useIsMobile();
-  const { xrayMode } = usePCSettings();
   const groupRef = useRef<Group>(null);
-
-  const xrayMaterial = useMemo(() => new MeshStandardMaterial({
-    color: 0x111111,
-    emissive: 0x00ffff,
-    emissiveIntensity: 0.5,
-    wireframe: true,
-    transparent: true,
-    opacity: 0.3
-  }), []);
-
-  useEffect(() => {
-    if (groupRef.current) {
-      groupRef.current.traverse((child: any) => {
-        if (child.isMesh && child.material) {
-          // Store original material reference
-          if (!child.userData.originalMaterial) {
-            child.userData.originalMaterial = child.material;
-          }
-
-          if (xrayMode) {
-            if (Array.isArray(child.userData.originalMaterial)) {
-              child.material = child.userData.originalMaterial.map(() => xrayMaterial);
-            } else {
-              child.material = xrayMaterial;
-            }
-          } else {
-            child.material = child.userData.originalMaterial;
-          }
-        }
-      });
-    }
-  }, [xrayMode, xrayMaterial]);
 
   return (
     <group position={[0, isMobile ? -0.5 : -1, 0]} scale={isMobile ? 0.7 : 1} ref={groupRef}>

@@ -1,16 +1,37 @@
-import { useMemo, useRef, useEffect } from 'react';
+import React, { useMemo, useRef, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { usePCSelection } from '../../../hooks/usePC';
+import { usePCSelection, usePCSettings } from '../../../hooks/usePC';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import * as THREE from 'three';
 import { useTexture } from '@react-three/drei';
 import { extrudeOpts01, extrudeOpts005, caseFrameMaterial } from '../constants';
+import { xrayMaterial } from '../materials';
 import caseBackUrl from '../../../assets/case_back.webp';
 import caseBehindUrl from '../../../assets/case_behind.webp';
 import caseBottomUrl from '../../../assets/case_bottom.webp';
 import caseInteriorUrl from '../../../assets/case_interior.webp';
 
+
+const Mesh = ({ children, material, ...props }: any) => {
+  const { xrayMode } = usePCSettings();
+  const filteredChildren = React.Children.map(children, (child) => {
+    if (!child) return null;
+    if (xrayMode) {
+      if (child.type === 'meshStandardMaterial' || child.type === 'meshPhysicalMaterial' || child.type === 'primitive') {
+        return null;
+      }
+    }
+    return child;
+  });
+  return (
+    <mesh material={xrayMode ? xrayMaterial : material} {...props}>
+      {filteredChildren}
+    </mesh>
+  );
+};
+
 export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEnabled: boolean }) => {
+  const { xrayMode } = usePCSettings();
   const { explodeStep } = usePCSelection();
   const isMobile = useIsMobile();
   const effectiveRgbColor = rgbEnabled ? rgbColor : '#000000';
@@ -378,38 +399,38 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
   return (
     <group>
       {/* Back Panel (Solid metal frame with Motherboard/PSU cutout locations) */}
-      <mesh position={[0, 0, -2.0]}>
+      <Mesh position={[0, 0, -2.0]}>
         <extrudeGeometry args={[backPanelShape, extrudeOpts01]} />
         <meshStandardMaterial color="#4a4d54" metalness={0.85} roughness={0.3} />
-      </mesh>
+      </Mesh>
       {/* Back Panel Texture */}
-      <mesh position={[0, 0, -2.001]} rotation={[0, 0, 0]}>
+      <Mesh position={[0, 0, -2.001]} rotation={[0, 0, 0]}>
         <shapeGeometry args={[backPanelShape]} />
         <meshStandardMaterial map={caseBehindTexture} metalness={0.4} roughness={0.6} side={THREE.BackSide} />
-      </mesh>
+      </Mesh>
       {/* Back Panel Texture (Inside, facing Motherboard) */}
-      <mesh position={[0, 0, -1.899]}>
+      <Mesh position={[0, 0, -1.899]}>
         <shapeGeometry args={[backPanelShape]} />
         <meshStandardMaterial map={caseInteriorTexture} metalness={0.5} roughness={0.7} />
-      </mesh>
+      </Mesh>
       
       {/* GPU PCIe Brackets at the left wall (Shifted to X = -1.98) */}
       {[-0.55, -0.7, -0.85, -1.0, -1.15, -1.3].map((y, i) => (
         <group key={i}>
-          <mesh position={[-1.97, y, -1.15]}>
+          <Mesh position={[-1.97, y, -1.15]}>
             <boxGeometry args={[0.04, 0.14, 1.2]} />
             <meshStandardMaterial color="#2a2c30" metalness={0.9} roughness={0.3} />
-          </mesh>
+          </Mesh>
         </group>
       ))}
 
       {/* Top Panel (Solid Frame) */}
-      <mesh position={[0, 2.50, 0]} rotation={[Math.PI / 2, 0, 0]} material={caseFrameMaterial}>
+      <Mesh position={[0, 2.50, 0]} rotation={[Math.PI / 2, 0, 0]} material={caseFrameMaterial}>
         <extrudeGeometry args={[topFrameShape, extrudeOpts01]} />
-      </mesh>
+      </Mesh>
 
       {/* Top Panel (Mesh grill inside the frame) */}
-      <mesh position={[0, 2.45, 0]}>
+      <Mesh position={[0, 2.45, 0]}>
         <boxGeometry args={[3.6, 0.02, 3.6]} />
         <meshStandardMaterial 
           alphaMap={meshTexture} 
@@ -419,10 +440,10 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
           roughness={0.3}
           side={THREE.DoubleSide}
         />
-      </mesh>
+      </Mesh>
 
       {/* PSU Back panel with honeycomb mesh cutout */}
-      <mesh position={[0, -1.95, -2.01]}>
+      <Mesh position={[0, -1.95, -2.01]}>
         <planeGeometry args={[1.5, 0.9]} />
         <meshStandardMaterial 
           color="#4a4d54" 
@@ -432,63 +453,63 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
           transparent={true} 
           side={THREE.DoubleSide} 
         />
-      </mesh>
+      </Mesh>
 
       {/* Bottom Panel with PSU ventilation cutout */}
       <group position={[0, -2.4, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <mesh material={caseFrameMaterial}>
+        <Mesh material={caseFrameMaterial}>
           <extrudeGeometry args={[bottomPanelShape, extrudeOpts01]} />
-        </mesh>
+        </Mesh>
         {/* Bottom Panel Texture (Outside) */}
-        <mesh position={[0, 0, -0.001]} rotation={[0, 0, 0]}>
+        <Mesh position={[0, 0, -0.001]} rotation={[0, 0, 0]}>
           <shapeGeometry args={[bottomPanelShape]} />
           <meshStandardMaterial map={caseBottomTexture} metalness={0.5} roughness={0.7} side={THREE.BackSide} />
-        </mesh>
+        </Mesh>
         {/* Bottom Panel Texture (Inside) */}
-        <mesh position={[0, 0, 0.101]} rotation={[0, 0, 0]}>
+        <Mesh position={[0, 0, 0.101]} rotation={[0, 0, 0]}>
           <shapeGeometry args={[bottomPanelShape]} />
           <meshStandardMaterial map={caseBottomTexture} metalness={0.5} roughness={0.7} />
-        </mesh>
+        </Mesh>
       </group>
       {/* Case Feet (Rubberized) */}
       {[-1.8, 1.8].map(x => (
         [-1.8, 1.8].map(z => (
-          <mesh key={`foot-${x}-${z}`} position={[x, -2.52, z]}>
+          <Mesh key={`foot-${x}-${z}`} position={[x, -2.52, z]}>
             <cylinderGeometry args={[0.08, 0.06, 0.04, 16]} />
             <meshStandardMaterial color="#111" roughness={0.9} metalness={0.1} />
-          </mesh>
+          </Mesh>
         ))
       ))}
 
       {/* Front IO / Power Button */}
       <group position={[1.6, 2.51, 1.7]}>
         {/* Power Button Base */}
-        <mesh position={[0, 0, 0]}>
+        <Mesh position={[0, 0, 0]}>
           <cylinderGeometry args={[0.08, 0.08, 0.02, 32]} />
           <meshStandardMaterial color="#2a2c30" metalness={0.9} roughness={0.2} />
-        </mesh>
+        </Mesh>
         {/* Power Button RGB Ring */}
-        <mesh position={[0, 0.011, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <Mesh position={[0, 0.011, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <torusGeometry args={[0.06, 0.005, 16, 32]} />
           <meshStandardMaterial color={effectiveRgbColor} emissive={effectiveRgbColor} emissiveIntensity={2} toneMapped={false} />
-        </mesh>
+        </Mesh>
         {/* Power Button Inner */}
-        <mesh position={[0, 0.012, 0]}>
+        <Mesh position={[0, 0.012, 0]}>
           <cylinderGeometry args={[0.05, 0.05, 0.01, 32]} />
           <meshStandardMaterial color="#1a1c22" metalness={0.8} roughness={0.4} />
-        </mesh>
+        </Mesh>
         
         {/* USB Ports */}
         {[-0.2, -0.4].map(xOffset => (
-          <mesh key={`usb-${xOffset}`} position={[xOffset, -0.005, 0]}>
+          <Mesh key={`usb-${xOffset}`} position={[xOffset, -0.005, 0]}>
             <boxGeometry args={[0.04, 0.01, 0.12]} />
             <meshStandardMaterial color="#111" roughness={0.8} />
-          </mesh>
+          </Mesh>
         ))}
       </group>
 
       {/* PSU Bottom Ventilation Mesh (Visible from below) */}
-      <mesh position={[-1.2, -2.51, -0.8]} rotation={[Math.PI / 2, 0, 0]}>
+      <Mesh position={[-1.2, -2.51, -0.8]} rotation={[Math.PI / 2, 0, 0]}>
         <planeGeometry args={[1.45, 1.45]} />
         <meshStandardMaterial 
           color="#1e1e24"
@@ -498,9 +519,9 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
           transparent={true} 
           side={THREE.DoubleSide} 
         />
-      </mesh>
+      </Mesh>
       {/* PSU Bottom Ventilation Mesh (Visible from inside case) */}
-      <mesh position={[-1.2, -2.39, -0.8]} rotation={[Math.PI / 2, 0, 0]}>
+      <Mesh position={[-1.2, -2.39, -0.8]} rotation={[Math.PI / 2, 0, 0]}>
         <planeGeometry args={[1.45, 1.45]} />
         <meshStandardMaterial 
           color="#151515" 
@@ -508,49 +529,49 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
           transparent={true} 
           side={THREE.DoubleSide} 
         />
-      </mesh>
+      </Mesh>
       
       {/* Motherboard Tray with Standoffs (Gwinty) and Routing Holes */}
       <group position={[0, 0, -1.825]}>
         {/* Main Tray */}
-        <mesh>
+        <Mesh>
           <extrudeGeometry args={[moboTrayShape, extrudeOpts005]} />
           <meshStandardMaterial color="#111" roughness={0.6} />
-        </mesh>
+        </Mesh>
         {/* Motherboard Tray Texture */}
-        <mesh position={[0, 0, 0.051]}>
+        <Mesh position={[0, 0, 0.051]}>
           <shapeGeometry args={[moboTrayShape]} />
           <meshStandardMaterial map={caseInteriorTexture} metalness={0.5} roughness={0.7} />
-        </mesh>
+        </Mesh>
         
         {/* Raised Standoffs (Gwinty) for Motherboard */}
         {[-1.3, -0.45, 0.4].map((x, i) => (
           [-1.85, 0, 1.85].map((y, j) => (
-            <mesh key={`standoff-${i}-${j}`} position={[x, y, 0.035]} rotation={[Math.PI / 2, 0, 0]}>
+            <Mesh key={`standoff-${i}-${j}`} position={[x, y, 0.035]} rotation={[Math.PI / 2, 0, 0]}>
               <cylinderGeometry args={[0.03, 0.03, 0.07, 16]} />
               <meshStandardMaterial color="#b87333" metalness={0.8} roughness={0.4} />
-            </mesh>
+            </Mesh>
           ))
         ))}
         
         {/* Cable Routing Rubber Grommets */}
         {[-1.0, 0, 1.0].map((y, i) => (
-          <mesh key={`grommet-${i}`} position={[1.4, y, 0.03]}>
+          <Mesh key={`grommet-${i}`} position={[1.4, y, 0.03]}>
             <boxGeometry args={[0.3, 0.6, 0.06]} />
             <meshStandardMaterial color="#050505" roughness={0.9} />
-          </mesh>
+          </Mesh>
         ))}
         {/* Top/Bottom Cable Routing Cutouts */}
         {[-0.8, 0.5].map((x, i) => (
-          <mesh key={`grommet-top-${i}`} position={[x, 2.1, 0.03]}>
+          <Mesh key={`grommet-top-${i}`} position={[x, 2.1, 0.03]}>
             <boxGeometry args={[0.6, 0.2, 0.06]} />
             <meshStandardMaterial color="#050505" roughness={0.9} />
-          </mesh>
+          </Mesh>
         ))}
       </group>
 
       {/* CPU Cooler Backplate Mesh Cutout (on the Back Panel, directly behind the CPU) */}
-      <mesh position={[-0.45, 1.0, -2.01]}>
+      <Mesh position={[-0.45, 1.0, -2.01]}>
         <planeGeometry args={[1.4, 1.4]} />
         <meshStandardMaterial 
           color="#151515" 
@@ -558,11 +579,12 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
           transparent={true} 
           side={THREE.DoubleSide} 
         />
-      </mesh>
+      </Mesh>
 
-      {/* Front Panel - Glass with Frame */}
+      {/* Front Panel - Glass with Frame - hide in X-Ray mode */}
+      {!xrayMode && (
       <group position={[0, 0, 1.95]} ref={frontGlassRef as any}>
-        <mesh position={[0, 0, -0.01]}>
+        <Mesh position={[0, 0, -0.01]}>
           <extrudeGeometry args={[frontPanelShape, { depth: 0.02, bevelEnabled: false }]} />
           {isMobile ? (
             <meshStandardMaterial ref={frontGlassMatRef} color="#c7d2fe" transparent={true} opacity={0.3} roughness={0.1} metalness={0.5} />
@@ -574,16 +596,16 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
               ior={1.5} clearcoat={1.0} clearcoatRoughness={0.05}
             />
           )}
-        </mesh>
+        </Mesh>
         
         {/* Metal Frame for Fans */}
-        <mesh position={[0, 0, -0.015]}>
+        <Mesh position={[0, 0, -0.015]}>
           <extrudeGeometry args={[frontFrameShape, { depth: 0.03, bevelEnabled: false }]} />
           <meshStandardMaterial color="#2a2c30" metalness={0.9} roughness={0.2} />
-        </mesh>
+        </Mesh>
 
         {/* Mesh Filter inside Frame */}
-        <mesh position={[0, 0, 0]}>
+        <Mesh position={[0, 0, 0]}>
           <shapeGeometry args={[frontMeshShape]} />
           <meshStandardMaterial 
             color="#151515" 
@@ -593,20 +615,22 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
             metalness={0.8}
             roughness={0.3}
           />
-        </mesh>
+        </Mesh>
         
         {/* Glass Frame Elements */}
         {/* Left/Right Frames (Square corner pillars perfectly flush with top/bottom panels) */}
         {[-1.95, 1.95].map(x => (
-          <mesh key={`front-v-frame-${x}`} position={[x, 0, 0]} material={caseFrameMaterial}>
+          <Mesh key={`front-v-frame-${x}`} position={[x, 0, 0]} material={caseFrameMaterial}>
             <boxGeometry args={[0.1, 4.8, 0.1]} />
-          </mesh>
+          </Mesh>
         ))}
       </group>
+      )}
       
-      {/* Side Panel - Glass with Frame */}
+      {/* Side Panel - Glass with Frame - hide in X-Ray mode */}
+      {!xrayMode && (
       <group position={[1.95, 0, 0]} ref={sideGlassRef as any}>
-        <mesh>
+        <Mesh>
           <boxGeometry args={[0.02, 4.84, 3.84]} />
           {isMobile ? (
             <meshStandardMaterial ref={sideGlassMatRef} color="#a5f3fc" transparent={true} opacity={0.3} roughness={0.1} metalness={0.5} />
@@ -618,34 +642,35 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
               ior={1.5} clearcoat={1.0} clearcoatRoughness={0.05}
             />
           )}
-        </mesh>
+        </Mesh>
         
         {/* Glass Frame Elements */}
         {/* Frames removed: Corner coverage is handled perfectly by Front Pillars and Back Panel */}
       </group>
+      )}
 
 
       
       {/* Solid Side Panel (Back) - Motherboard tray with correct IO/GPU/PSU cutouts */}
       <group ref={solidSideRef as any}>
         <group position={[-1.975, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
-          <mesh>
+          <Mesh>
             <extrudeGeometry args={[leftPanelShape, extrudeOpts005]} />
             <meshStandardMaterial color="#4a4d54" metalness={0.85} roughness={0.3} />
-          </mesh>
+          </Mesh>
           {/* Back Panel Texture (Outside) */}
-          <mesh position={[0, 0, 0.051]}>
+          <Mesh position={[0, 0, 0.051]}>
             <shapeGeometry args={[leftPanelShape]} />
             <meshStandardMaterial map={caseBackTexture} metalness={0.4} roughness={0.6} />
-          </mesh>
+          </Mesh>
           {/* Back Panel Texture (Inside) */}
-          <mesh position={[0, 0, -0.001]}>
+          <Mesh position={[0, 0, -0.001]}>
             <shapeGeometry args={[leftPanelShape]} />
             <meshStandardMaterial map={caseInteriorTexture} metalness={0.5} roughness={0.7} side={THREE.BackSide} />
-          </mesh>
+          </Mesh>
         </group>
         {/* Side mesh cutout where the side exhaust fans are! (Outside) */}
-        <mesh position={[-1.98, 1.4, 0.2]} rotation={[0, Math.PI / 2, 0]}>
+        <Mesh position={[-1.98, 1.4, 0.2]} rotation={[0, Math.PI / 2, 0]}>
           <planeGeometry args={[2.4, 1.2]} />
           <meshStandardMaterial 
             color="#151515" 
@@ -653,9 +678,9 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
             transparent={true} 
             side={THREE.DoubleSide} 
           />
-        </mesh>
+        </Mesh>
         {/* Side mesh cutout (Inside view) */}
-        <mesh position={[-1.92, 1.4, 0.2]} rotation={[0, -Math.PI / 2, 0]}>
+        <Mesh position={[-1.92, 1.4, 0.2]} rotation={[0, -Math.PI / 2, 0]}>
           <planeGeometry args={[2.4, 1.2]} />
           <meshStandardMaterial 
             color="#151515" 
@@ -663,34 +688,38 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
             transparent={true} 
             side={THREE.DoubleSide} 
           />
-        </mesh>
+        </Mesh>
       </group>
 
       {/* Frame Posts */}
       {[1.95, -1.95].map(x => (
         [1.95, -1.95].map(z => (
-          <mesh key={`${x}-${z}`} position={[x, 0, z]}>
+          <Mesh key={`${x}-${z}`} position={[x, 0, z]}>
             <boxGeometry args={[0.1, 4.8, 0.1]} />
             <meshStandardMaterial color="#3a3d42" metalness={0.8} roughness={0.3} />
-          </mesh>
+          </Mesh>
         ))
       ))}
       
-      {/* Internal Premium RGB Ambient Lighting */}
-      <pointLight 
-        position={[0, 1.2, -0.8]} 
-        intensity={3.0} 
-        distance={6} 
-        color="#6366f1" 
-        decay={1.8}
-      />
-      <pointLight 
-        position={[0, -0.8, -0.6]} 
-        intensity={2.5} 
-        distance={5} 
-        color="#ec4899" 
-        decay={1.8}
-      />
+      {/* Internal Premium RGB Ambient Lighting - hide in X-Ray mode */}
+      {!xrayMode && (
+        <>
+          <pointLight 
+            position={[0, 1.2, -0.8]} 
+            intensity={3.0} 
+            distance={6} 
+            color="#6366f1" 
+            decay={1.8}
+          />
+          <pointLight 
+            position={[0, -0.8, -0.6]} 
+            intensity={2.5} 
+            distance={5} 
+            color="#ec4899" 
+            decay={1.8}
+          />
+        </>
+      )}
     </group>
   );
 };

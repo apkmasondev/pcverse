@@ -4,8 +4,11 @@ import { useTexture } from '@react-three/drei';
 import cpuTopUrl from '../../../assets/cpu_top.webp';
 import cpuBottomUrl from '../../../assets/cpu_bottom.webp';
 import { extrudeOptsIhs } from '../constants';
+import { usePCSettings } from '../../../hooks/usePC';
+import { xrayMaterial } from '../materials';
 
 export const CPUGeometry = () => {
+  const { xrayMode } = usePCSettings();
   const cpuTexture = useTexture(cpuTopUrl);
   const cpuBottomTexture = useTexture(cpuBottomUrl);
   const ihsGeoRef = useRef<THREE.ExtrudeGeometry>(null);
@@ -73,35 +76,32 @@ export const CPUGeometry = () => {
   return (
     <group>
       {/* Base Substrate Block */}
-      <mesh position={[0, 0, -0.01]}>
+      <mesh position={[0, 0, -0.01]} material={xrayMode ? xrayMaterial : undefined}>
         <boxGeometry args={[0.8, 0.8, 0.06]} />
-        <meshStandardMaterial color="#2a1f1a" roughness={0.9} />
+        {!xrayMode && <meshStandardMaterial color="#2a1f1a" roughness={0.9} />}
       </mesh>
       
       {/* Substrate Top Texture Plane (Edges around IHS) */}
-      <mesh position={[0, 0, 0.021]}>
+      <mesh position={[0, 0, 0.021]} material={xrayMode ? xrayMaterial : undefined}>
         <planeGeometry args={[0.8, 0.8]} />
-        <meshStandardMaterial 
-          map={cpuTexture} 
-          roughness={0.9} 
-        />
+        {!xrayMode && <meshStandardMaterial map={cpuTexture} roughness={0.9} />}
       </mesh>
 
       {/* 3D Raised IHS (Octopus Shape with Bevels) */}
-      <mesh position={[0, 0, 0.021]}>
+      <mesh position={[0, 0, 0.021]} material={xrayMode ? xrayMaterial : undefined}>
         <extrudeGeometry ref={ihsGeoRef as any} args={[ihsShape, extrudeOptsIhs]} />
-        <meshStandardMaterial attach="material-0" map={cpuTexture} roughness={0.4} metalness={0.7} />
-        <meshStandardMaterial attach="material-1" color="#a0a4a8" roughness={0.4} metalness={0.9} />
+        {!xrayMode && (
+          <>
+            <meshStandardMaterial attach="material-0" map={cpuTexture} roughness={0.4} metalness={0.7} />
+            <meshStandardMaterial attach="material-1" color="#a0a4a8" roughness={0.4} metalness={0.9} />
+          </>
+        )}
       </mesh>
 
       {/* Photorealistic CPU Bottom (Pins) */}
-      <mesh position={[0, 0, -0.041]} rotation={[0, Math.PI, 0]}>
+      <mesh position={[0, 0, -0.041]} rotation={[0, Math.PI, 0]} material={xrayMode ? xrayMaterial : undefined}>
         <planeGeometry args={[0.8, 0.8]} />
-        <meshStandardMaterial 
-          map={cpuBottomTexture} 
-          roughness={0.4} 
-          metalness={0.8}
-        />
+        {!xrayMode && <meshStandardMaterial map={cpuBottomTexture} roughness={0.4} metalness={0.8} />}
       </mesh>
     </group>
   );
