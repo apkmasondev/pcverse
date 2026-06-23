@@ -87,11 +87,7 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
           <meshStandardMaterial map={gpuBackplateTexture} roughness={0.3} metalness={0.7} />
         </mesh>
       )}
-      {/* Backplate Accent / Cutout detail */}
-      <mesh position={[1.2, 0.06, 0]} material={xrayMode ? xrayMaterial : undefined}>
-        <boxGeometry args={[0.6, 0.04, 0.8]} />
-        {!xrayMode && <meshStandardMaterial color="#151515" metalness={0.5} roughness={0.6} />}
-      </mesh>
+      {/* Backplate Accent / Cutout detail (Removed to expose texture) */}
 
       {/* Heatsink Block */}
       <mesh position={[0, -0.15, 0]} material={xrayMode ? xrayMaterial : undefined}>

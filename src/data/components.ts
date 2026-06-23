@@ -166,7 +166,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Wydajny zasilacz zamienia mniej prądu w bezużyteczne ciepło, oszczędzając Twoje pieniądze na rachunkach za prąd.",
     position: [-1.2, -1.92, -0.8],
-    explodedPosition: [-4.55, -4.55, 0.65],
+    explodedPosition: [-4.55, -2.55, 0.65],
     color: "#2a363b",
     perfImpact: { gaming: 0, ai: 0, productivity: 0 },
     customStats: [
@@ -314,7 +314,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: 'Talerze w dysku HDD wirują tak szybko, że głowica odczytująca lewituje ledwie 2 nanometry nad nimi! To tak, jakby lecieć Boeingiem 747 milimetr nad ziemią.',
     position: [1.3, -2.18, -0.5],
-    explodedPosition: [7.8, -3.25, 5.2],
+    explodedPosition: [7.8, -1.5, 5.2],
     color: "#4a6984",
     perfImpact: { gaming: 5, ai: 2, productivity: 30 },
     geometryArgs: [1.0, 0.25, 1.4],
