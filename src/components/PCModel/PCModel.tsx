@@ -84,7 +84,8 @@ const ComponentMesh = ({ data, isMobile }: { data: PCComponent, isMobile: boolea
   
  
 
-  const baseLift = data.geometryArgs ? Math.max(0.05, data.geometryArgs[1] * 0.03) : 0.1;
+  const maxDim = data.geometryArgs ? Math.max(...data.geometryArgs) : 1;
+  const baseLift = Math.max(0.02, Math.min(0.15, 0.1 / maxDim));
   const liftOffset = hovered && !isSelected ? baseLift : 0;
   
   useFrame((_state, delta) => {

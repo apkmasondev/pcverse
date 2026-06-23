@@ -107,11 +107,11 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
 
   const leftPanelShape = useMemo(() => {
     const shape = new THREE.Shape();
-    shape.moveTo(-1.95, -2.4);
-    shape.lineTo(1.945, -2.4);
+    shape.moveTo(-1.95, -2.3);
+    shape.lineTo(1.945, -2.3);
     shape.lineTo(1.945, 2.4);
     shape.lineTo(-1.95, 2.4);
-    shape.lineTo(-1.95, -2.4);
+    shape.lineTo(-1.95, -2.3);
 
     // Motherboard IO Cutout
     const ioHole = new THREE.Path();
@@ -124,11 +124,11 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
 
     // PSU Cutout
     const psuHole = new THREE.Path();
-    psuHole.moveTo(-0.8 - 0.9, -1.92 - 0.45);
-    psuHole.lineTo(-0.8 + 0.9, -1.92 - 0.45);
+    psuHole.moveTo(-0.8 - 0.9, -2.3);
+    psuHole.lineTo(-0.8 + 0.9, -2.3);
     psuHole.lineTo(-0.8 + 0.9, -1.92 + 0.5);
     psuHole.lineTo(-0.8 - 0.9, -1.92 + 0.5);
-    psuHole.lineTo(-0.8 - 0.9, -1.92 - 0.45);
+    psuHole.lineTo(-0.8 - 0.9, -2.3);
     shape.holes.push(psuHole);
 
     // GPU PCIe Brackets Cutout
@@ -155,11 +155,11 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
   const backPanelShape = useMemo(() => {
     const shape = new THREE.Shape();
     // Outer boundary (Counter-clockwise)
-    shape.moveTo(-1.97, -2.4);
-    shape.lineTo(1.97, -2.4);
+    shape.moveTo(-1.97, -2.3);
+    shape.lineTo(1.97, -2.3);
     shape.lineTo(1.97, 2.4);
     shape.lineTo(-1.97, 2.4);
-    shape.lineTo(-1.97, -2.4);
+    shape.lineTo(-1.97, -2.3);
 
     const addHole = (x1: number, y1: number, x2: number, y2: number) => {
       const hole = new THREE.Path();
@@ -174,17 +174,17 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
     // CPU Backplate Mesh Cutout
     addHole(-1.15, 0.30, 0.25, 1.70);
     // PSU Cutout (Back panel)
-    addHole(-0.73, -2.38, 0.73, -1.52);
+    addHole(-0.73, -2.3, 0.73, -1.52);
     return shape;
   }, []);
 
   const moboTrayShape = useMemo(() => {
     const shape = new THREE.Shape();
-    shape.moveTo(-1.97, -2.4);
-    shape.lineTo(1.97, -2.4);
+    shape.moveTo(-1.97, -2.3);
+    shape.lineTo(1.97, -2.3);
     shape.lineTo(1.97, 2.4);
     shape.lineTo(-1.97, 2.4);
-    shape.lineTo(-1.97, -2.4);
+    shape.lineTo(-1.97, -2.3);
 
     const addHole = (x1: number, y1: number, x2: number, y2: number) => {
       const hole = new THREE.Path();
@@ -200,7 +200,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
     addHole(-1.15, 0.30, 0.25, 1.70);
 
     // Real hole for PSU Back panel (allows transparency from inside)
-    addHole(-0.73, -2.38, 0.73, -1.52);
+    addHole(-0.73, -2.3, 0.73, -1.52);
 
     // Real holes for side cable routing
     addHole(1.25, -1.3, 1.55, -0.7);
@@ -626,6 +626,17 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
             <boxGeometry args={[0.1, 4.8, 0.1]} />
           </Mesh>
         ))}
+
+        {/* Thumbscrews for Front Glass */}
+        <Instances limit={4}>
+          <cylinderGeometry args={[0.05, 0.05, 0.04, 16]} />
+          <meshStandardMaterial color="#1a1c20" metalness={0.9} roughness={0.3} />
+          {[-1.85, 1.85].map((x, i) => (
+            [-2.3, 2.3].map((y, j) => (
+              <Instance key={`front-screw-${i}-${j}`} position={[x, y, 0.02]} rotation={[Math.PI / 2, 0, 0]} />
+            ))
+          ))}
+        </Instances>
       </group>
       )}
       
@@ -646,8 +657,16 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
           )}
         </Mesh>
         
-        {/* Glass Frame Elements */}
-        {/* Frames removed: Corner coverage is handled perfectly by Front Pillars and Back Panel */}
+        {/* Thumbscrews for Side Glass */}
+        <Instances limit={4}>
+          <cylinderGeometry args={[0.05, 0.05, 0.04, 16]} />
+          <meshStandardMaterial color="#1a1c20" metalness={0.9} roughness={0.3} />
+          {[-2.3, 2.3].map((y, i) => (
+            [-1.8, 1.8].map((z, j) => (
+              <Instance key={`side-screw-${i}-${j}`} position={[0.02, y, z]} rotation={[0, 0, Math.PI / 2]} />
+            ))
+          ))}
+        </Instances>
       </group>
       )}
 
