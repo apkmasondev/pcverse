@@ -103,5 +103,22 @@ return (
 )
 ```
 
+## 7. Współdzielenie Materiałów (Unikanie Inline Materials)
+**Problem:** Deklarowanie materiałów bezpośrednio w JSX (np. `<meshStandardMaterial color="#151515" roughness={0.6} />`) sprawia, że React Three Fiber przy każdym użyciu tworzy nową, unikalną instancję materiału w pamięci karty graficznej (Zgłoszenie z audytu v2: P1). Setki takich samych materiałów drastycznie zwiększają zużycie VRAM i ilość Draw Calls.
+
+**Rozwiązanie:** 
+Zawsze staraj się korzystać z predefiniowanych, wyeksportowanych instancji materiałów (np. ze słownika `materials.ts`). W JSX przypinaj je za pomocą tagu `<primitive>`:
+
+```tsx
+import { materials } from '../materials';
+
+{/* PRAWIDŁOWY SPOSÓB: Współdzielenie 1 instancji materiału */}
+<mesh>
+  <boxGeometry args={[1, 1, 1]} />
+  <primitive object={materials.darkMetal} attach="material" />
+</mesh>
+```
+W ostateczności, w przypadku proceduralnych kolorów, deklaruj materiały po za komponentem lub używaj hooka `useMemo`.
+
 ---
-Dbając o powyższe 6 filarów zagwarantujesz, że renderowana scena 3D pozostanie wolna od błędów wizualnych (glitchy) oraz zachowa stabilność pamięci i wydajność powyżej optymalnych 60 FPS na każdym urządzeniu.
+Dbając o powyższe 7 filarów zagwarantujesz, że renderowana scena 3D pozostanie wolna od błędów wizualnych (glitchy) oraz zachowa stabilność pamięci i wydajność powyżej optymalnych 60 FPS na każdym urządzeniu.
