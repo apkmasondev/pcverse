@@ -5,8 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { playExplodeSound, playSelectSound, playAmbientSound, stopAmbientSound } from '../../utils/audio';
 
 const PRESETS = [
-  { id: 'studio', name: 'Studio', desc: 'Neutralne światło' },
   { id: 'city', name: 'Cyberpunk', desc: 'Nocne miasto' },
+  { id: 'studio', name: 'Studio', desc: 'Neutralne światło' },
   { id: 'dawn', name: 'Świt', desc: 'Ciepłe poranne' },
   { id: 'apartment', name: 'Jasny Pokój', desc: 'Bardzo jasne wnętrze' }
 ];
@@ -98,7 +98,7 @@ export const UI = () => {
         }}
         className="group relative flex items-center justify-center w-11 h-11 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/5 rounded-full transition-all hover:bg-indigo-500/20 hover:border-indigo-500/30"
       >
-        <Layers size={16} className={`transition-transform duration-500 ${explodeStep > 0 ? 'rotate-180 text-indigo-400' : 'text-slate-400 group-hover:text-indigo-300'}`} />
+        <Layers size={20} className={`transition-transform duration-500 ${explodeStep > 0 ? 'rotate-180 text-indigo-400' : 'text-slate-400 group-hover:text-indigo-300'}`} />
         <Tooltip text={explodeStep === 2 ? 'Złóż Komputer' : explodeStep === 1 ? 'Sekwencja...' : 'Rozłóż na Części'} />
       </motion.button>
       
@@ -112,7 +112,7 @@ export const UI = () => {
         }}
         className="group relative flex items-center justify-center w-11 h-11 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/5 rounded-full transition-all hover:bg-indigo-500/20 hover:border-indigo-500/30"
       >
-        <Focus size={16} className="text-slate-400 group-hover:text-indigo-300" />
+        <Focus size={20} className="text-slate-400 group-hover:text-indigo-300" />
         <Tooltip text="Zresetuj Widok" />
       </motion.button>
 
@@ -126,7 +126,7 @@ export const UI = () => {
         }}
         className={`group relative flex items-center justify-center w-11 h-11 backdrop-blur-md border rounded-full transition-all ${xrayMode ? 'bg-cyan-500/20 border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.3)]' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-cyan-500/20 hover:border-cyan-500/30'}`}
       >
-        <Scan size={16} className={`transition-all duration-500 ${xrayMode ? 'text-cyan-400 scale-110' : 'text-slate-400 group-hover:text-cyan-300'}`} />
+        <Scan size={20} className={`transition-all duration-500 ${xrayMode ? 'text-cyan-400 scale-110' : 'text-slate-400 group-hover:text-cyan-300'}`} />
         <Tooltip text="Hologram (X-Ray)" />
       </motion.button>
 
@@ -140,7 +140,7 @@ export const UI = () => {
         }}
         className={`group relative flex items-center justify-center w-11 h-11 backdrop-blur-md border rounded-full transition-all ${showAirflow ? 'bg-blue-500/20 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-blue-500/20 hover:border-blue-500/30'}`}
       >
-        <Wind size={16} className={`transition-all duration-500 ${showAirflow ? 'text-blue-400 scale-110' : 'text-slate-400 group-hover:text-blue-300'}`} />
+        <Wind size={20} className={`transition-all duration-500 ${showAirflow ? 'text-blue-400 scale-110' : 'text-slate-400 group-hover:text-blue-300'}`} />
         <Tooltip text="Symulacja Airflow" />
       </motion.button>
 
@@ -156,7 +156,7 @@ export const UI = () => {
           }}
           className={`group relative flex items-center justify-center w-11 h-11 backdrop-blur-md border rounded-full transition-all ${showPalette || rgbEnabled ? 'bg-purple-500/20 border-purple-500/50 shadow-[0_0_15px_rgba(168,85,247,0.3)] text-purple-300' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-purple-500/20 hover:border-purple-500/30 text-slate-400'}`}
         >
-          <Palette size={16} className="transition-colors" style={{ color: rgbEnabled ? rgbColor : '#94a3b8' }} />
+          <Palette size={20} className="transition-colors" style={{ color: rgbEnabled ? rgbColor : '#94a3b8' }} />
           <Tooltip text="Tryb RGB" />
         </motion.button>
         
@@ -217,7 +217,7 @@ export const UI = () => {
           }}
           className={`group relative flex items-center justify-center w-11 h-11 backdrop-blur-md border rounded-full transition-all ${showEnv ? 'bg-amber-500/20 border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.3)] text-amber-300' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-amber-500/20 hover:border-amber-500/30'}`}
         >
-          <Sun size={16} className={`transition-all duration-500 ${showEnv ? 'text-amber-400 scale-110 rotate-90' : 'text-slate-400 group-hover:text-amber-300'}`} />
+          <Sun size={20} className={`transition-all duration-500 ${showEnv ? 'text-amber-400 scale-110 rotate-90' : 'text-slate-400 group-hover:text-amber-300'}`} />
           <Tooltip text="Otoczenie (HDRi)" />
         </motion.button>
         
@@ -258,7 +258,7 @@ export const UI = () => {
         }}
         className={`group relative flex items-center justify-center w-11 h-11 backdrop-blur-md border rounded-full transition-all ${showLabels ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.3)]' : 'bg-[#0a0a0a]/90 border-white/5 text-slate-300 hover:bg-emerald-500/20 hover:border-emerald-500/30 hover:text-white'}`}
       >
-        <Tag size={16} className={`transition-all duration-500 ${showLabels ? 'text-emerald-400 scale-110' : 'text-slate-400 group-hover:text-emerald-300'}`} />
+        <Tag size={20} className={`transition-all duration-500 ${showLabels ? 'text-emerald-400 scale-110' : 'text-slate-400 group-hover:text-emerald-300'}`} />
         <Tooltip text="Ukryj/pokaż etykiety" />
       </motion.button>
 
@@ -272,7 +272,7 @@ export const UI = () => {
         }}
         className="group relative flex items-center justify-center w-11 h-11 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/5 rounded-full text-slate-300 transition-all hover:bg-white/10 hover:border-white/30 hover:text-white"
       >
-        <Info size={16} className="text-slate-400 group-hover:text-white" />
+        <Info size={20} className="text-slate-400 group-hover:text-white" />
         <Tooltip text="Instrukcja obsługi" />
       </motion.button>
     </motion.div>

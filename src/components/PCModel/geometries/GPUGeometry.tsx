@@ -27,7 +27,7 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
     gpuFrontTexture.wrapT = THREE.RepeatWrapping;
     gpuFrontTexture.repeat.set(3, 1);
   }, [gpuFrontTexture]);
-  
+
   useFrame((_state, delta) => {
     if (fanRef1.current) fanRef1.current.rotation.y += delta * 20;
     if (fanRef2.current) fanRef2.current.rotation.y += delta * 20;
@@ -37,10 +37,15 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
 
   return (
     <group>
-      {/* PCIe Connector */}
-      <mesh position={[0, 0.05, -0.6]} material={xrayMode ? xrayMaterial : undefined}>
-        <boxGeometry args={[1.6, 0.08, 0.05]} />
-        {!xrayMode && <meshStandardMaterial color="#d4af37" metalness={0.9} roughness={0.3} />}
+      {/* PCIe Connector - Short Segment (Front) */}
+      <mesh position={[-1.45, 0.05, -0.6]} material={xrayMode ? xrayMaterial : undefined}>
+        <boxGeometry args={[0.3, 0.08, 0.05]} />
+        {!xrayMode && <primitive object={materials.goldMetal} attach="material" />}
+      </mesh>
+      {/* PCIe Connector - Long Segment */}
+      <mesh position={[-0.35, 0.05, -0.6]} material={xrayMode ? xrayMaterial : undefined}>
+        <boxGeometry args={[1.8, 0.08, 0.05]} />
+        {!xrayMode && <primitive object={materials.goldMetal} attach="material" />}
       </mesh>
       {/* GPU IO Ports (HDMI & 3x DisplayPort) at Left Edge */}
       <group position={[-1.7, -0.15, 0]}>
@@ -123,7 +128,7 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
           <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={1.5} toneMapped={false} />
         </mesh>
       )}
-      
+
       {/* RGB Edge Lighting - Side */}
       {!xrayMode && (
         <mesh position={[1.68, -0.15, 0]}>
@@ -133,7 +138,7 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
       )}
 
       {/* Physical Fans (Visible inside hologram) */}
-      {[-1.1, 0, 1.1].map((x, i) => (
+      {[-1.15, 0, 1.15].map((x, i) => (
         <group key={`phys-fan-${i}`} position={[x, -0.2, 0]} ref={i === 0 ? fanRef1 : i === 1 ? fanRef2 : fanRef3}>
           <mesh material={xrayMode ? xrayMaterial : undefined}>
             <cylinderGeometry args={[0.42, 0.42, 0.05, 32]} />
@@ -151,7 +156,7 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
       ))}
 
       {/* Static RGB Rings on the Front Texture - hide when xrayMode is active */}
-      {!xrayMode && [-1.1, 0, 1.1].map((x, i) => (
+      {!xrayMode && [-1.15, 0, 1.15].map((x, i) => (
         <mesh key={`rgb-ring-${i}`} position={[x, -0.385, 0]} rotation={[Math.PI / 2, 0, 0]}>
           <torusGeometry args={[0.49, 0.015, 16, 32]} />
           <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={2.0} toneMapped={false} />
@@ -159,7 +164,7 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
       ))}
 
       {/* GPU Cooling Airflow Particles - 3 streams for 3 fans */}
-      {[-1.1, 0, 1.1].map((x, i) => (
+      {[-1.15, 0, 1.15].map((x, i) => (
         <group key={`airflow-${i}`} position={[x, -0.85, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <LocalAirflowParticles count={30} radius={0.35} length={0.8} speedMult={1.5} color="#38bdf8" />
         </group>
