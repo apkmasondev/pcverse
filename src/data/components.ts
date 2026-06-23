@@ -41,7 +41,7 @@ export const pcComponents: PCComponent[] = [
       { label: "Możliwości Rozbudowy", value: 85 }
     ],
     geometryArgs: [3, 4, 0.05],
-    imageUrls: ["/images/components/motherboard.webp", "/images/components/motherboard_macro.webp", "/images/components/mb_alt.webp"],
+    imageUrls: ["/images/components/motherboard.webp", "/images/components/motherboard_macro.webp", "/images/components/mb_alt.webp", "/images/components/motherboard_real.webp"],
   },
   {
     id: "cpu",
@@ -63,7 +63,7 @@ export const pcComponents: PCComponent[] = [
       { label: "Rozmiar Pamięci Cache", value: 85 }
     ],
     geometryArgs: [0.8, 0.8, 0.05],
-    imageUrls: ["/images/components/cpu.webp", "/images/components/cpu_macro.webp", "/images/components/cpu_alt.webp"],
+    imageUrls: ["/images/components/cpu.webp", "/images/components/cpu_macro.webp", "/images/components/cpu_alt.webp", "/images/components/cpu_real.webp"],
   },
   {
     id: "cpu_cooler",
@@ -85,7 +85,7 @@ export const pcComponents: PCComponent[] = [
       { label: "Stabilność Temperatury pod Obciążeniem", value: 90 }
     ],
     geometryArgs: [1, 0.8, 0.8],
-    imageUrls: ["/images/components/cooler.webp", "/images/components/cooler_macro.webp", "/images/components/cooler_alt.webp"],
+    imageUrls: ["/images/components/cooler.webp", "/images/components/cooler_macro.webp", "/images/components/cooler_alt.webp", "/images/components/cooler_real.webp"],
   },
   {
     id: "gpu",
@@ -102,7 +102,7 @@ export const pcComponents: PCComponent[] = [
     color: "#6366f1",
     perfImpact: { gaming: 60, ai: 60, productivity: 15 },
     geometryArgs: [2.5, 0.5, 1.2],
-    imageUrls: ["/images/components/gpu.webp", "/images/components/gpu_macro.webp", "/images/components/gpu_alt.webp"],
+    imageUrls: ["/images/components/gpu.webp", "/images/components/gpu_macro.webp", "/images/components/gpu_alt.webp", "/images/components/gpu_real.webp"],
   },
   {
     id: "ram_1",
@@ -119,7 +119,7 @@ export const pcComponents: PCComponent[] = [
     color: "#00b8a9",
     perfImpact: { gaming: 10, ai: 15, productivity: 20 },
     geometryArgs: [0.1, 1.2, 0.4],
-    imageUrls: ["/images/components/ram.webp", "/images/components/ram_macro.webp", "/images/components/ram_alt.webp"],
+    imageUrls: ["/images/components/ram.webp", "/images/components/ram_macro.webp", "/images/components/ram_alt.webp", "/images/components/ram_real.webp"],
   },
   {
     id: "ram_2",
@@ -136,7 +136,7 @@ export const pcComponents: PCComponent[] = [
     color: "#00b8a9",
     perfImpact: { gaming: 2, ai: 1, productivity: 5 },
     geometryArgs: [0.1, 1.2, 0.4],
-    imageUrls: ["/images/components/ram.webp", "/images/components/ram_macro.webp", "/images/components/ram_alt.webp"],
+    imageUrls: ["/images/components/ram.webp", "/images/components/ram_macro.webp", "/images/components/ram_alt.webp", "/images/components/ram_real.webp"],
   },
   {
     id: "ssd",
@@ -153,7 +153,7 @@ export const pcComponents: PCComponent[] = [
     color: "#f8b500",
     perfImpact: { gaming: 10, ai: 5, productivity: 15 },
     geometryArgs: [0.2, 0.8, 0.05],
-    imageUrls: ["/images/components/ssd.webp", "/images/components/ssd_macro.webp", "/images/components/ssd_alt.webp"],
+    imageUrls: ["/images/components/ssd.webp", "/images/components/ssd_macro.webp", "/images/components/ssd_alt.webp", "/images/components/ssd_real.webp"],
   },
   {
     id: "psu",
@@ -175,7 +175,7 @@ export const pcComponents: PCComponent[] = [
       { label: "Redukcja Szumów", value: 95 }
     ],
     geometryArgs: [1.8, 1, 1.5],
-    imageUrls: ["/images/components/psu.webp", "/images/components/psu_macro.webp", "/images/components/psu_alt.webp"],
+    imageUrls: ["/images/components/psu.webp", "/images/components/psu_macro.webp", "/images/components/psu_alt.webp", "/images/components/psu_real.webp"],
   },
 
   {
@@ -201,7 +201,8 @@ export const pcComponents: PCComponent[] = [
     imageUrls: [
       '/images/components/fan.webp',
       '/images/components/fan_macro.webp',
-      '/images/components/fan_alt.webp'
+      '/images/components/fan_alt.webp',
+      '/images/components/fan_real.webp'
     ]
   },
   {
@@ -226,7 +227,8 @@ export const pcComponents: PCComponent[] = [
     imageUrls: [
       '/images/components/fan.webp',
       '/images/components/fan_macro.webp',
-      '/images/components/fan_alt.webp'
+      '/images/components/fan_alt.webp',
+      '/images/components/fan_real.webp'
     ]
   },
   {
@@ -252,7 +254,8 @@ export const pcComponents: PCComponent[] = [
     imageUrls: [
       '/images/components/fan.webp',
       '/images/components/fan_macro.webp',
-      '/images/components/fan_alt.webp'
+      '/images/components/fan_alt.webp',
+      '/images/components/fan_real.webp'
     ]
   },
   {
@@ -278,7 +281,8 @@ export const pcComponents: PCComponent[] = [
     imageUrls: [
       '/images/components/fan.webp',
       '/images/components/fan_macro.webp',
-      '/images/components/fan_alt.webp'
+      '/images/components/fan_alt.webp',
+      '/images/components/fan_real.webp'
     ]
   },
   {
@@ -301,7 +305,7 @@ export const pcComponents: PCComponent[] = [
       { label: "Kultura Pracy", value: 85 }
     ],
     geometryArgs: [4, 5, 2],
-    imageUrls: ["/images/components/case.webp", "/images/components/case_macro.webp", "/images/components/case_alt.webp"],
+    imageUrls: ["/images/components/case.webp", "/images/components/case_macro.webp", "/images/components/case_alt.webp", "/images/components/case_real.webp"],
   },
   {
     id: 'storage_hdd',
@@ -320,7 +324,8 @@ export const pcComponents: PCComponent[] = [
     geometryArgs: [1.0, 0.25, 1.4],
     imageUrls: [
       '/images/components/hdd_macro.webp',
-      '/images/components/hdd_alt.webp'
+      '/images/components/hdd_alt.webp',
+      '/images/components/hdd_real.webp'
     ]
   }
 ];
