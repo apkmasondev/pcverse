@@ -1,13 +1,25 @@
 import { materials, xrayMaterial } from '../materials';
+import * as THREE from 'three';
+import { useMemo } from 'react';
 import { useTexture } from '@react-three/drei';
 import hddTopUrl from '../../../assets/hdd_top.webp';
 import hddBottomUrl from '../../../assets/hdd_bottom.webp';
+import hddSideUrl from '../../../assets/hdd_side.webp';
 import { usePCSettings } from '../../../hooks/usePC';
 
 export const HDDGeometry = () => {
   const { xrayMode } = usePCSettings();
   const hddTopTexture = useTexture(hddTopUrl);
   const hddBottomTexture = useTexture(hddBottomUrl);
+  const hddSideTexture = useTexture(hddSideUrl);
+  
+  const hddSideTextureMirrored = useMemo(() => {
+    const tex = hddSideTexture.clone();
+    tex.wrapS = THREE.RepeatWrapping;
+    tex.repeat.x = -1;
+    tex.needsUpdate = true;
+    return tex;
+  }, [hddSideTexture]);
 
   return (
     <group>
@@ -36,6 +48,22 @@ export const HDDGeometry = () => {
         <mesh position={[0, -0.126, 0]} rotation={[Math.PI / 2, 0, 0]}>
           <planeGeometry args={[1.0, 1.4]} />
           <meshStandardMaterial map={hddBottomTexture} roughness={0.6} metalness={0.3} />
+        </mesh>
+      )}
+
+      {/* HDD Right Side Texture */}
+      {!xrayMode && (
+        <mesh position={[0.501, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
+          <planeGeometry args={[1.4, 0.25]} />
+          <meshStandardMaterial map={hddSideTextureMirrored} roughness={0.5} metalness={0.5} />
+        </mesh>
+      )}
+
+            {/* HDD Left Side Texture */}
+      {!xrayMode && (
+        <mesh position={[-0.501, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
+          <planeGeometry args={[1.4, 0.25]} />
+          <meshStandardMaterial map={hddSideTexture} roughness={0.5} metalness={0.5} />
         </mesh>
       )}
       

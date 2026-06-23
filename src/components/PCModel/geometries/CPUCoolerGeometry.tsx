@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
 import { Group } from 'three';
 import { useFrame } from '@react-three/fiber';
 import { useTexture } from '@react-three/drei';
@@ -6,6 +6,7 @@ import heatsinkUrl from '../../../assets/heatsink.webp';
 import heatsinkSideUrl from '../../../assets/heatsink_side.webp';
 import aioFanUrl from '../../../assets/aio_fan.webp';
 import caseFanUrl from '../../../assets/case_fan.webp';
+import fanSideUrl from '../../../assets/fan_side.webp';
 import { usePCSettings } from '../../../hooks/usePC';
 import { LocalAirflowParticles } from './LocalAirflowParticles';
 import { xrayMaterial } from '../materials';
@@ -13,6 +14,15 @@ import { xrayMaterial } from '../materials';
 export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbColor: string, isExhaust?: boolean, textureUrl?: string }) => {
   const { xrayMode } = usePCSettings();
   const fanTexture = useTexture(textureUrl || caseFanUrl);
+  const fanSideTexture = useTexture(fanSideUrl);
+  
+  const fanSideTextureRotated = useMemo(() => {
+    const tex = fanSideTexture.clone();
+    tex.rotation = Math.PI / 2;
+    tex.center.set(0.5, 0.5);
+    tex.needsUpdate = true;
+    return tex;
+  }, [fanSideTexture]);
   const bladesRef = useRef<Group>(null);
 
   useFrame((_state, delta) => {
@@ -40,7 +50,16 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
       {/* Outer Frame */}
       <mesh position={[0, 0, 0]} material={xrayMode ? xrayMaterial : undefined}>
         <boxGeometry args={[1, 1, 0.2]} />
-        {!xrayMode && <meshStandardMaterial color="#151515" roughness={0.7} />}
+        {!xrayMode && (
+          <>
+            <meshStandardMaterial attach="material-0" map={fanSideTextureRotated} roughness={0.6} />
+            <meshStandardMaterial attach="material-1" map={fanSideTextureRotated} roughness={0.6} />
+            <meshStandardMaterial attach="material-2" map={fanSideTexture} roughness={0.6} />
+            <meshStandardMaterial attach="material-3" map={fanSideTexture} roughness={0.6} />
+            <meshStandardMaterial attach="material-4" color="#151515" roughness={0.7} />
+            <meshStandardMaterial attach="material-5" color="#151515" roughness={0.7} />
+          </>
+        )}
       </mesh>
       
       {/* Front Face Texture */}
