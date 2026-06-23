@@ -2,6 +2,14 @@
 
 Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 
+## Dzień 10 - Stabilność Architektury i Pamięć (Faza 3)
+### Faza 3 - Pamięć i Geometria
+- **Refaktoryzacja stanu i hooków**: Rozdzielono masywny hook `usePC` na dedykowane mniejsze hooki (`usePCSelection` i `usePCSettings`), ograniczając niepotrzebne re-rendery i przeliczanie parametrów obudowy przez komponenty, które ich nie potrzebowały.
+- **Zarządzanie Pamięcią i Canvas**: Wprowadzono rygorystyczne czyszczenie pamięci tekstur (VRAM). Po wygenerowaniu dynamicznej siatki obudowy (mesh grill) za pomocą API Canvas, kod natychmiast zwalnia pamięć operacyjną wywołując `canvas.width = 0; canvas.height = 0;`.
+- **Zarządzanie Lifecycle Geometrii**: Dodano bezpieczniki czyszczące (`dispose()`) podpięte pod hooki `useEffect` (poprzez kolekcję `geoRefs`) dla ciężkich obiektów typu `ExtrudeGeometry` i `ShapeGeometry`, zapobiegając gigantycznym wyciekom pamięci podczas przeładowywania drzewa DOM w React Three Fiber.
+- **Optymalizacja Materiałów**: Utworzono scentralizowany słownik materiałów `materials.ts`, drastycznie ograniczając instancjonowanie setek identycznych materiałów `MeshStandardMaterial` rozsianych wewnątrz plików geometrii. Wszystkie modele współdzielą od teraz predefiniowane referencje materiałów.
+- **Korekty Geometrii**: Wdrożono nowy tryb X-Ray (prześwietlenia), oparty na wstrzykiwaniu materiałów przez kontekst z wykorzystaniem React, pozbywając się inwazyjnego polecenia `scene.traverse()` (które zamrażało wątek przeglądarki). Zastąpiono instrukcje warunkowe `if-else` mapowaniem ze słownika `GEOMETRY_MAP` w `PCModel.tsx`.
+
 ## Dzień 9 - Detale i Poprawki Wizualne (Faza 4)
 ### Faza 4 - Perfekcja UI/3D
 - **Całkowita eliminacja Z-fightingu (C9/C15)**: Przebudowano geometrię obudowy (CaseGeometry). Stworzono lity panel górny (Top) oraz zunifikowano dolny. Usunięto zduplikowane listwy boczne szkła i wprowadzono precyzyjne narożniki (0.1x0.1), w które szkło płynnie się zagłębia, co permanentnie rozwiązało problem Z-fightingu. Wszystkie ramy używają teraz jednego globalnego materiału `caseFrameMaterial`, znacząco redukując draw-calls (zgodnie z PCVerse Audit).

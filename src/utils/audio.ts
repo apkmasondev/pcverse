@@ -29,7 +29,7 @@ export const playHoverSound = () => {
     
     osc.start(ctx.currentTime);
     osc.stop(ctx.currentTime + 0.1);
-  } catch(e) {}
+  } catch (e) { console.warn('Audio warning:', e); }
 };
 
 export const playSelectSound = () => {
@@ -51,7 +51,7 @@ export const playSelectSound = () => {
     
     osc.start(ctx.currentTime);
     osc.stop(ctx.currentTime + 0.2);
-  } catch(e) {}
+  } catch (e) { console.warn('Audio warning:', e); }
 };
 
 export const playExplodeSound = () => {
@@ -74,7 +74,7 @@ export const playExplodeSound = () => {
     
     osc.start(ctx.currentTime);
     osc.stop(ctx.currentTime + 0.6);
-  } catch(e) {}
+  } catch (e) { console.warn('Audio warning:', e); }
 };
 
 let ambientOsc: OscillatorNode | null = null;
@@ -110,13 +110,15 @@ export const playAmbientSound = () => {
     
     // Attach whineOsc to ambientOsc so we can stop it together (hacky but works if we just store whine in custom property or stop it directly)
     (ambientOsc as any).whine = whineOsc;
-  } catch(e) {}
+  } catch (e) { console.warn('Audio warning:', e); }
 };
 
 export const stopAmbientSound = () => {
   try {
     if (ambientGain && ambientOsc) {
       const ctx = getContext();
+      ambientGain.gain.cancelScheduledValues(ctx.currentTime);
+      ambientGain.gain.setValueAtTime(ambientGain.gain.value, ctx.currentTime);
       ambientGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1);
       ambientOsc.stop(ctx.currentTime + 1.1);
       if ((ambientOsc as any).whine) {
@@ -125,5 +127,5 @@ export const stopAmbientSound = () => {
       ambientOsc = null;
       ambientGain = null;
     }
-  } catch(e) {}
+  } catch (e) { console.warn('Audio warning:', e); }
 };

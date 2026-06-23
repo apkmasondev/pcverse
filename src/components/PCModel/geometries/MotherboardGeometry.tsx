@@ -1,3 +1,4 @@
+import { materials } from '../materials';
 import { useTexture, Instances, Instance } from '@react-three/drei';
 import moboBackUrl from '../../../assets/mobo_back_photo.webp';
 import moboTopUrl from '../../../assets/mobo_top.webp';
@@ -58,7 +59,7 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
     <group position={[-0.3, 0.1, 0.05]}>
       <mesh position={[0, 0, 0]}>
         <boxGeometry args={[0.8, 0.22, 0.02]} />
-        <meshStandardMaterial color="#0a0a0a" roughness={0.8} />
+        <primitive object={materials.blackPlastic} attach="material" />
       </mesh>
       <mesh position={[0, 0, 0.011]} rotation={[0, 0, -Math.PI / 2]}>
         <planeGeometry args={[0.2, 0.78]} />
@@ -70,12 +71,12 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
     {[-0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6].map((x, i) => (
       <mesh key={`cap-top-${i}`} position={[x, 1.7, 0.1]} rotation={[Math.PI / 2, 0, 0]}>
         <cylinderGeometry args={[0.04, 0.04, 0.1, 16]} />
-        <meshStandardMaterial color="#silver" metalness={0.9} roughness={0.2} />
+        <primitive object={materials.silverMetal} attach="material" />
       </mesh>
     ))}
     <Instances>
       <cylinderGeometry args={[0.04, 0.04, 0.1, 16]} />
-      <meshStandardMaterial color="#silver" metalness={0.9} roughness={0.2} />
+      <primitive object={materials.silverMetal} attach="material" />
       {[1.2, 1.0, 0.8, 0.6, 0.4].map((y, i) => (
         <Instance key={`cap-left-${i}`} position={[-0.7, y, 0.1]} rotation={[Math.PI / 2, 0, 0]} />
       ))}
@@ -86,12 +87,12 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {/* Base */}
       <mesh position={[0, 0, -0.05]}>
         <boxGeometry args={[0.5, 0.9, 0.2]} />
-        <meshStandardMaterial color="#151515" metalness={0.9} roughness={0.2} />
+        <primitive object={materials.darkMetal} attach="material" />
       </mesh>
       {/* Fins */}
       <Instances>
           <boxGeometry args={[0.5, 0.05, 0.1]} />
-          <meshStandardMaterial color="#111" metalness={0.8} roughness={0.4} />
+          <primitive object={materials.darkMetal} attach="material" />
           {[-0.35, -0.2, -0.05, 0.1, 0.25, 0.4].map((fy, i) => (
             <Instance key={`vrm-left-fin-${i}`} position={[0, fy, 0.1]} />
           ))}
@@ -102,12 +103,12 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {/* Base */}
       <mesh position={[0, 0, -0.05]}>
         <boxGeometry args={[0.5, 1.5, 0.2]} />
-        <meshStandardMaterial color="#151515" metalness={0.9} roughness={0.2} />
+        <primitive object={materials.darkMetal} attach="material" />
       </mesh>
       {/* Fins */}
       <Instances>
           <boxGeometry args={[0.5, 0.05, 0.1]} />
-          <meshStandardMaterial color="#111" metalness={0.8} roughness={0.4} />
+          <primitive object={materials.darkMetal} attach="material" />
           {[-0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6].map((fy, i) => (
             <Instance key={`vrm-top-fin-${i}`} position={[0, fy, 0.1]} />
           ))}
@@ -173,7 +174,7 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
     <group position={[1.2, 1.8, 0.05]}>
       <mesh>
         <boxGeometry args={[0.3, 0.2, 0.1]} />
-        <meshStandardMaterial color="#050505" roughness={0.9} />
+        <primitive object={materials.blackPlastic} attach="material" />
       </mesh>
       <mesh position={[0, 0, 0.06]}>
         <boxGeometry args={[0.2, 0.1, 0.01]} />
@@ -284,14 +285,14 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
     {/* SATA Ports */}
     <mesh position={[1.4, -1.5, 0.1]}>
       <boxGeometry args={[0.15, 0.6, 0.15]} />
-      <meshStandardMaterial color="#0a0a0a" roughness={0.8} />
+      <primitive object={materials.blackPlastic} attach="material" />
     </mesh>
 
     {/* Chipset Heatsink (Massive with RGB Logo) */}
     <group position={[0.8, -1.2, 0.1]}>
       <mesh>
         <boxGeometry args={[1.0, 1.0, 0.15]} />
-        <meshStandardMaterial color="#151515" metalness={0.9} roughness={0.2} />
+        <primitive object={materials.darkMetal} attach="material" />
       </mesh>
       {/* Chipset Texture */}
       <mesh position={[0, 0, 0.076]}>

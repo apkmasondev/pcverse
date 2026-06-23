@@ -1,10 +1,10 @@
 import { useRef, useMemo } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
-import { usePC } from '../../../hooks/usePC';
+import { usePCSettings } from '../../../hooks/usePC';
 
 export const LocalAirflowParticles = ({ count = 50, radius = 0.4, length = 1.5, speedMult = 1, color = "#38bdf8" }: { count?: number, radius?: number, length?: number, speedMult?: number, color?: string }) => {
-  const { showAirflow } = usePC();
+  const { showAirflow } = usePCSettings();
   const meshRef = useRef<THREE.InstancedMesh>(null);
   
   const dummy = useMemo(() => new THREE.Object3D(), []);

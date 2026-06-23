@@ -179,17 +179,42 @@ export const pcComponents: PCComponent[] = [
   },
 
   {
-    id: "case_fan",
-    name: "Wentylatory Obudowy - Intake Fans",
-    description: "Wentylatory wtłaczające chłodne powietrze do wnętrza obudowy, tworzące nadciśnienie.",
+    id: "case_fan_1",
+    name: "Wentylator Obudowy - Intake Fan 1",
+    description: "Wentylator wtłaczający chłodne powietrze do wnętrza obudowy, tworzący nadciśnienie.",
     role: [
       "Kieruje świeże powietrze prosto na kartę graficzną i procesor",
       "Pomaga utrzymać nadciśnienie, chroniąc przed kurzem",
       "Działa w tandemie z systemem wyciągowym"
     ],
     funFact: "Wentylatory RGB potrafią synchronizować się tworząc niesamowite, płynne pokazy świetlne wewnątrz obudowy.",
-    position: [0, -0.4, 1.8],
-    explodedPosition: [3.9, -2.6, 5.2],
+    position: [0.8, -0.8, 1.75],
+    explodedPosition: [4, -2.5, 5],
+    color: "#ffffff",
+    perfImpact: { gaming: 10, ai: 10, productivity: 5 },
+    customStats: [
+      { label: "Przepływ Powietrza (CFM)", value: 85 },
+      { label: "Ciśnienie Statyczne", value: 70 },
+      { label: "Kultura Pracy (Głośność)", value: 90 }
+    ],
+    geometryArgs: [1.2, 1.2, 0.2],
+    imageUrls: [
+      '/images/components/fan.webp',
+      '/images/components/fan_macro.webp',
+      '/images/components/fan_alt.webp'
+    ]
+  },
+  {
+    id: "case_fan_2",
+    name: "Wentylator Obudowy - Intake Fan 2",
+    description: "Drugi wentylator wtłaczający chłodne powietrze do wnętrza obudowy.",
+    role: [
+      "Kieruje świeże powietrze prosto na kartę graficzną",
+      "Działa w tandemie z systemem wyciągowym"
+    ],
+    funFact: "Dwa wentylatory z przodu pozwalają uzyskać pożądany przepływ przy niższych i cichszych obrotach.",
+    position: [0.8, 0.8, 1.75],
+    explodedPosition: [4, 2.5, 5],
     color: "#ffffff",
     perfImpact: { gaming: 10, ai: 10, productivity: 5 },
     customStats: [

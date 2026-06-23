@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { usePC } from '../../hooks/usePC';
+import { usePCSelection, usePCSettings } from '../../hooks/usePC';
 import { Layers, Focus, MousePointerClick, Scan, Wind, Palette, Sun, Tag, Info, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { playExplodeSound, playSelectSound, playAmbientSound, stopAmbientSound } from '../../utils/audio';
@@ -27,13 +27,14 @@ const Tooltip = ({ text }: { text: string }) => (
 );
 
 export const UI = () => {
-  const { explodeStep, toggleExploded, triggerCameraReset, xrayMode, toggleXrayMode, rgbColor, setRgbColor, rgbEnabled, toggleRgbEnabled, showAirflow, toggleAirflow, envPreset, setEnvPreset, showLabels, toggleLabels, showInstructions, setShowInstructions } = usePC();
+  const { explodeStep, toggleExploded, triggerCameraReset } = usePCSelection();
+  const { xrayMode, toggleXrayMode, rgbColor, setRgbColor, rgbEnabled, toggleRgbEnabled, showAirflow, toggleAirflow, envPreset, setEnvPreset, showLabels, toggleLabels, showInstructions, setShowInstructions } = usePCSettings();
   const [showHint, setShowHint] = useState(true);
   const [showPalette, setShowPalette] = useState(false);
   const [showEnv, setShowEnv] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowHint(false), 8000);
+    const timer = setTimeout(() => setShowHint(false), 15000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -57,6 +58,21 @@ export const UI = () => {
 
   return (
     <>
+
+      <AnimatePresence>
+        {(showPalette || showEnv) && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-0"
+            onClick={() => {
+              setShowPalette(false);
+              setShowEnv(false);
+            }}
+          />
+        )}
+      </AnimatePresence>
       <motion.div 
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -80,7 +96,7 @@ export const UI = () => {
           else playSelectSound();
           toggleExploded();
         }}
-        className="group relative flex items-center justify-center w-9 h-9 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/5 rounded-full transition-all hover:bg-indigo-500/20 hover:border-indigo-500/30"
+        className="group relative flex items-center justify-center w-11 h-11 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/5 rounded-full transition-all hover:bg-indigo-500/20 hover:border-indigo-500/30"
       >
         <Layers size={16} className={`transition-transform duration-500 ${explodeStep > 0 ? 'rotate-180 text-indigo-400' : 'text-slate-400 group-hover:text-indigo-300'}`} />
         <Tooltip text={explodeStep === 2 ? 'Złóż Komputer' : explodeStep === 1 ? 'Sekwencja...' : 'Rozłóż na Części'} />
@@ -94,7 +110,7 @@ export const UI = () => {
           playSelectSound();
           triggerCameraReset();
         }}
-        className="group relative flex items-center justify-center w-9 h-9 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/5 rounded-full transition-all hover:bg-indigo-500/20 hover:border-indigo-500/30"
+        className="group relative flex items-center justify-center w-11 h-11 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/5 rounded-full transition-all hover:bg-indigo-500/20 hover:border-indigo-500/30"
       >
         <Focus size={16} className="text-slate-400 group-hover:text-indigo-300" />
         <Tooltip text="Zresetuj Widok" />
@@ -108,7 +124,7 @@ export const UI = () => {
           playSelectSound();
           toggleXrayMode();
         }}
-        className={`group relative flex items-center justify-center w-9 h-9 backdrop-blur-md border rounded-full transition-all ${xrayMode ? 'bg-cyan-500/20 border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.3)]' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-cyan-500/20 hover:border-cyan-500/30'}`}
+        className={`group relative flex items-center justify-center w-11 h-11 backdrop-blur-md border rounded-full transition-all ${xrayMode ? 'bg-cyan-500/20 border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.3)]' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-cyan-500/20 hover:border-cyan-500/30'}`}
       >
         <Scan size={16} className={`transition-all duration-500 ${xrayMode ? 'text-cyan-400 scale-110' : 'text-slate-400 group-hover:text-cyan-300'}`} />
         <Tooltip text="Hologram (X-Ray)" />
@@ -122,7 +138,7 @@ export const UI = () => {
           playSelectSound();
           toggleAirflow();
         }}
-        className={`group relative flex items-center justify-center w-9 h-9 backdrop-blur-md border rounded-full transition-all ${showAirflow ? 'bg-blue-500/20 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-blue-500/20 hover:border-blue-500/30'}`}
+        className={`group relative flex items-center justify-center w-11 h-11 backdrop-blur-md border rounded-full transition-all ${showAirflow ? 'bg-blue-500/20 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-blue-500/20 hover:border-blue-500/30'}`}
       >
         <Wind size={16} className={`transition-all duration-500 ${showAirflow ? 'text-blue-400 scale-110' : 'text-slate-400 group-hover:text-blue-300'}`} />
         <Tooltip text="Symulacja Airflow" />
@@ -138,7 +154,7 @@ export const UI = () => {
             setShowPalette(!showPalette);
             setShowEnv(false);
           }}
-          className={`group relative flex items-center justify-center w-9 h-9 backdrop-blur-md border rounded-full transition-all ${showPalette || rgbEnabled ? 'bg-purple-500/20 border-purple-500/50 shadow-[0_0_15px_rgba(168,85,247,0.3)] text-purple-300' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-purple-500/20 hover:border-purple-500/30 text-slate-400'}`}
+          className={`group relative flex items-center justify-center w-11 h-11 backdrop-blur-md border rounded-full transition-all ${showPalette || rgbEnabled ? 'bg-purple-500/20 border-purple-500/50 shadow-[0_0_15px_rgba(168,85,247,0.3)] text-purple-300' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-purple-500/20 hover:border-purple-500/30 text-slate-400'}`}
         >
           <Palette size={16} className="transition-colors" style={{ color: rgbEnabled ? rgbColor : '#94a3b8' }} />
           <Tooltip text="Tryb RGB" />
@@ -158,7 +174,7 @@ export const UI = () => {
                   if (rgbEnabled) toggleRgbEnabled();
                   setShowPalette(false);
                 }}
-                className={`w-8 h-8 rounded-full border-2 transition-transform hover:scale-125 cursor-pointer flex-shrink-0 flex items-center justify-center bg-[#111] ${!rgbEnabled ? 'border-red-500 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]' : 'border-white/10 text-white/50 hover:border-white/30'}`}
+                className={`w-10 h-10 rounded-full border-2 transition-transform hover:scale-125 cursor-pointer flex-shrink-0 flex items-center justify-center bg-[#111] ${!rgbEnabled ? 'border-red-500 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]' : 'border-white/10 text-white/50 hover:border-white/30'}`}
                 title="Wyłącz RGB"
               >
                 <span className="text-[10px] font-bold">OFF</span>
@@ -175,7 +191,7 @@ export const UI = () => {
                     if (!rgbEnabled) toggleRgbEnabled();
                     setShowPalette(false);
                   }}
-                  className="w-8 h-8 rounded-full border-2 transition-transform hover:scale-125 cursor-pointer flex-shrink-0"
+                  className="w-10 h-10 rounded-full border-2 transition-transform hover:scale-125 cursor-pointer flex-shrink-0"
                   style={{ 
                     backgroundColor: c.hex,
                     borderColor: rgbColor === c.hex && rgbEnabled ? 'white' : 'transparent',
@@ -199,7 +215,7 @@ export const UI = () => {
             setShowEnv(!showEnv);
             setShowPalette(false);
           }}
-          className={`group relative flex items-center justify-center w-9 h-9 backdrop-blur-md border rounded-full transition-all ${showEnv ? 'bg-amber-500/20 border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.3)] text-amber-300' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-amber-500/20 hover:border-amber-500/30'}`}
+          className={`group relative flex items-center justify-center w-11 h-11 backdrop-blur-md border rounded-full transition-all ${showEnv ? 'bg-amber-500/20 border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.3)] text-amber-300' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-amber-500/20 hover:border-amber-500/30'}`}
         >
           <Sun size={16} className={`transition-all duration-500 ${showEnv ? 'text-amber-400 scale-110 rotate-90' : 'text-slate-400 group-hover:text-amber-300'}`} />
           <Tooltip text="Otoczenie (HDRi)" />
@@ -240,7 +256,7 @@ export const UI = () => {
           playSelectSound();
           toggleLabels();
         }}
-        className={`group relative flex items-center justify-center w-9 h-9 backdrop-blur-md border rounded-full transition-all ${showLabels ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.3)]' : 'bg-[#0a0a0a]/90 border-white/5 text-slate-300 hover:bg-emerald-500/20 hover:border-emerald-500/30 hover:text-white'}`}
+        className={`group relative flex items-center justify-center w-11 h-11 backdrop-blur-md border rounded-full transition-all ${showLabels ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.3)]' : 'bg-[#0a0a0a]/90 border-white/5 text-slate-300 hover:bg-emerald-500/20 hover:border-emerald-500/30 hover:text-white'}`}
       >
         <Tag size={16} className={`transition-all duration-500 ${showLabels ? 'text-emerald-400 scale-110' : 'text-slate-400 group-hover:text-emerald-300'}`} />
         <Tooltip text="Ukryj/pokaż etykiety" />
@@ -254,7 +270,7 @@ export const UI = () => {
           playSelectSound();
           setShowInstructions(true);
         }}
-        className="group relative flex items-center justify-center w-9 h-9 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/5 rounded-full text-slate-300 transition-all hover:bg-white/10 hover:border-white/30 hover:text-white"
+        className="group relative flex items-center justify-center w-11 h-11 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/5 rounded-full text-slate-300 transition-all hover:bg-white/10 hover:border-white/30 hover:text-white"
       >
         <Info size={16} className="text-slate-400 group-hover:text-white" />
         <Tooltip text="Instrukcja obsługi" />

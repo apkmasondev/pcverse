@@ -1,4 +1,5 @@
-import { useRef } from 'react';
+import { useRef, useMemo } from 'react';
+import { materials } from '../materials';
 import * as THREE from 'three';
 import { Group } from 'three';
 import { useFrame } from '@react-three/fiber';
@@ -17,9 +18,13 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
   const gpuTopTexture = useTexture(gpuTopUrl);
   const gpuFrontTexture = useTexture(gpuFrontUrl);
   const gpuIoTexture = useTexture(gpuIoUrl);
-  gpuFrontTexture.wrapS = THREE.RepeatWrapping;
-  gpuFrontTexture.wrapT = THREE.RepeatWrapping;
-  gpuFrontTexture.repeat.set(3, 1);
+
+  useMemo(() => {
+    gpuFrontTexture.colorSpace = THREE.SRGBColorSpace;
+    gpuFrontTexture.wrapS = THREE.RepeatWrapping;
+    gpuFrontTexture.wrapT = THREE.RepeatWrapping;
+    gpuFrontTexture.repeat.set(3, 1);
+  }, [gpuFrontTexture]);
   
   useFrame((_state, delta) => {
     if (fanRef1.current) fanRef1.current.rotation.y += delta * 20;
@@ -55,7 +60,7 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
         {[-0.05, -0.25, -0.45].map((z, i) => (
           <mesh key={`dp-${i}`} position={[-0.02, 0.05, z]}>
             <boxGeometry args={[0.05, 0.08, 0.15]} />
-            <meshStandardMaterial color="#111" metalness={0.8} roughness={0.4} />
+            <primitive object={materials.darkMetal} attach="material" />
           </mesh>
         ))}
       </group>

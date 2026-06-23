@@ -1,8 +1,8 @@
+import { materials } from '../materials';
 import { useTexture } from '@react-three/drei';
-import { Color } from 'three';
 import ramSideUrl from '../../../assets/ram_side.webp';
 
-export const RAMGeometry = ({ rgbColor }: { color?: Color, rgbColor: string }) => {
+export const RAMGeometry = ({ rgbColor }: { rgbColor: string }) => {
   const ramSideTexture = useTexture(ramSideUrl);
   
   return (
@@ -10,7 +10,7 @@ export const RAMGeometry = ({ rgbColor }: { color?: Color, rgbColor: string }) =
       {/* RAM PCB (Długa na osi Y, wpięta w płytę główną osiami Z) */}
       <mesh position={[0, 0, 0]}>
         <boxGeometry args={[0.04, 1.7, 0.35]} />
-        <meshStandardMaterial color="#050505" roughness={0.9} />
+        <primitive object={materials.blackPlastic} attach="material" />
       </mesh>
       {/* Złote styki (Z tyłu, wchodzące w slot na płycie) */}
       <mesh position={[0, 0, -0.16]}>

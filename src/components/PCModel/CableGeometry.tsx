@@ -1,9 +1,10 @@
 import { useMemo, useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { usePC } from '../../hooks/usePC';
+import { usePCSelection, usePCSettings } from '../../hooks/usePC';
 
 export const CableGeometry = () => {
-  const { explodeStep, xrayMode } = usePC();
+  const { explodeStep } = usePCSelection();
+  const { xrayMode } = usePCSettings();
   const tubeRefs = useRef<(THREE.TubeGeometry | null)[]>([]);
 
   // 24-pin ATX Cable (PSU to Mobo)

@@ -1,6 +1,7 @@
 import { useMemo, useRef, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { usePC } from '../../../hooks/usePC';
+import { usePCSelection } from '../../../hooks/usePC';
+import { useIsMobile } from '../../../hooks/useIsMobile';
 import * as THREE from 'three';
 import { useTexture } from '@react-three/drei';
 import { extrudeOpts01, extrudeOpts005, caseFrameMaterial } from '../constants';
@@ -9,8 +10,9 @@ import caseBehindUrl from '../../../assets/case_behind.webp';
 import caseBottomUrl from '../../../assets/case_bottom.webp';
 import caseInteriorUrl from '../../../assets/case_interior.webp';
 
-export const CaseGeometry = () => {
-  const { explodeStep, rgbColor, rgbEnabled } = usePC();
+export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEnabled: boolean }) => {
+  const { explodeStep } = usePCSelection();
+  const isMobile = useIsMobile();
   const effectiveRgbColor = rgbEnabled ? rgbColor : '#000000';
   const caseBackTexture = useTexture(caseBackUrl);
   const caseBehindTexture = useTexture(caseBehindUrl);
@@ -562,12 +564,16 @@ export const CaseGeometry = () => {
       <group position={[0, 0, 1.95]} ref={frontGlassRef as any}>
         <mesh position={[0, 0, -0.01]}>
           <extrudeGeometry args={[frontPanelShape, { depth: 0.02, bevelEnabled: false }]} />
-          <meshPhysicalMaterial 
-            ref={frontGlassMatRef}
-            color="#c7d2fe" metalness={0.1} roughness={0.05} 
-            transmission={1.0} thickness={1.5} transparent={true} opacity={1.0}
-            ior={1.5} clearcoat={1.0} clearcoatRoughness={0.05}
-          />
+          {isMobile ? (
+            <meshStandardMaterial ref={frontGlassMatRef} color="#c7d2fe" transparent={true} opacity={0.3} roughness={0.1} metalness={0.5} />
+          ) : (
+            <meshPhysicalMaterial 
+              ref={frontGlassMatRef}
+              color="#c7d2fe" metalness={0.1} roughness={0.05} 
+              transmission={1.0} thickness={1.5} transparent={true} opacity={1.0}
+              ior={1.5} clearcoat={1.0} clearcoatRoughness={0.05}
+            />
+          )}
         </mesh>
         
         {/* Metal Frame for Fans */}
@@ -602,12 +608,16 @@ export const CaseGeometry = () => {
       <group position={[1.95, 0, 0]} ref={sideGlassRef as any}>
         <mesh>
           <boxGeometry args={[0.02, 4.84, 3.84]} />
-          <meshPhysicalMaterial 
-            ref={sideGlassMatRef}
-            color="#a5f3fc" metalness={0.1} roughness={0.05} 
-            transmission={1.0} thickness={1.5} transparent={true} opacity={1.0}
-            ior={1.5} clearcoat={1.0} clearcoatRoughness={0.05}
-          />
+          {isMobile ? (
+            <meshStandardMaterial ref={sideGlassMatRef} color="#a5f3fc" transparent={true} opacity={0.3} roughness={0.1} metalness={0.5} />
+          ) : (
+            <meshPhysicalMaterial 
+              ref={sideGlassMatRef}
+              color="#a5f3fc" metalness={0.1} roughness={0.05} 
+              transmission={1.0} thickness={1.5} transparent={true} opacity={1.0}
+              ior={1.5} clearcoat={1.0} clearcoatRoughness={0.05}
+            />
+          )}
         </mesh>
         
         {/* Glass Frame Elements */}

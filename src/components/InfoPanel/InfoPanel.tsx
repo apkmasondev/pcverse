@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { usePC } from '../../hooks/usePC';
+import { usePCSelection } from '../../hooks/usePC';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { 
   Cpu, 
@@ -84,7 +84,7 @@ const getImageUrl = (url: string) => {
 };
 
 export const InfoPanel = () => {
-  const { selectedComponent, setSelectedComponent } = usePC();
+  const { selectedComponent, setSelectedComponent } = usePCSelection();
   const [zoomedImageIndex, setZoomedImageIndex] = useState<number | null>(null);
   const isMobile = useIsMobile();
 

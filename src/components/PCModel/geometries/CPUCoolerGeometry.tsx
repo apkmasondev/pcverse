@@ -6,11 +6,11 @@ import heatsinkUrl from '../../../assets/heatsink.webp';
 import heatsinkSideUrl from '../../../assets/heatsink_side.webp';
 import aioFanUrl from '../../../assets/aio_fan.webp';
 import caseFanUrl from '../../../assets/case_fan.webp';
-import { usePC } from '../../../hooks/usePC';
+import { usePCSettings } from '../../../hooks/usePC';
 import { LocalAirflowParticles } from './LocalAirflowParticles';
 
 export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbColor: string, isExhaust?: boolean, textureUrl?: string }) => {
-  const { xrayMode } = usePC();
+  const { xrayMode } = usePCSettings();
   const fanTexture = useTexture(textureUrl || caseFanUrl);
   const bladesRef = useRef<Group>(null);
 

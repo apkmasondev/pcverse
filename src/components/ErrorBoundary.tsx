@@ -23,7 +23,7 @@ export class GlobalErrorBoundary extends Component<{ fallback: ReactNode, childr
       return (
         <div className="absolute inset-0 flex items-center justify-center bg-black text-red-500 font-mono text-sm p-4 z-50">
           <div className="bg-[#111] p-6 rounded-lg border border-red-900/50 max-w-2xl w-full">
-            <h2 className="text-xl font-bold mb-4">Application Error</h2>
+            <h2 className="text-xl font-bold mb-4">Błąd Aplikacji</h2>
             <pre className="whitespace-pre-wrap overflow-x-auto text-red-400">
               {import.meta.env.DEV 
                 ? String(this.state.error?.stack || this.state.error) 

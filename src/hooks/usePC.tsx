@@ -2,14 +2,17 @@ import { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { PCComponent } from '../data/components';
 
-export interface PCContextType {
+export interface PCSelectionContextType {
   selectedComponent: PCComponent | null;
   explodeStep: number;
   cameraResetTrigger: number;
-  xrayMode: boolean;
   setSelectedComponent: (component: PCComponent | null) => void;
   toggleExploded: () => void;
   triggerCameraReset: () => void;
+}
+
+export interface PCSettingsContextType {
+  xrayMode: boolean;
   toggleXrayMode: () => void;
   rgbColor: string;
   setRgbColor: (color: string) => void;
@@ -25,12 +28,15 @@ export interface PCContextType {
   setShowInstructions: (show: boolean) => void;
 }
 
-const PCContext = createContext<PCContextType | undefined>(undefined);
+const PCSelectionContext = createContext<PCSelectionContextType | undefined>(undefined);
+const PCSettingsContext = createContext<PCSettingsContextType | undefined>(undefined);
 
 export const PCProvider = ({ children }: { children: ReactNode }) => {
   const [selectedComponent, setSelectedComponent] = useState<PCComponent | null>(null);
   const [explodeStep, setExplodeStep] = useState(0); // 0: closed, 1: glass removed, 2: fully exploded
   const [cameraResetTrigger, setCameraResetTrigger] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+
   const [xrayMode, setXrayMode] = useState(false);
   const [rgbColor, setRgbColor] = useState('#06b6d4'); // Default Cyan
   const [rgbEnabled, setRgbEnabled] = useState(true);
@@ -38,21 +44,18 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
   const [envPreset, setEnvPreset] = useState('studio');
   const [showLabels, setShowLabels] = useState(true);
   const [showInstructions, setShowInstructions] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
 
   const toggleExploded = () => {
     if (isAnimating) return;
     setIsAnimating(true);
     
     if (explodeStep === 0) {
-      // Rozkładanie: Najpierw szkło (1), potem komponenty (2)
       setExplodeStep(1);
       setTimeout(() => {
         setExplodeStep(2);
         setIsAnimating(false);
       }, 800);
     } else {
-      // Składanie: Najpierw komponenty (1), potem szkło wraca (0)
       setExplodeStep(1);
       setTimeout(() => {
         setExplodeStep(0);
@@ -61,25 +64,20 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const toggleXrayMode = () => setXrayMode((prev) => !prev);
   const triggerCameraReset = () => {
     setCameraResetTrigger((prev) => prev + 1);
     setSelectedComponent(null);
   };
+
+  const toggleXrayMode = () => setXrayMode((prev) => !prev);
   const toggleAirflow = () => setShowAirflow((prev) => !prev);
   const toggleLabels = () => setShowLabels((prev) => !prev);
   const toggleRgbEnabled = () => setRgbEnabled((prev) => !prev);
 
   return (
-    <PCContext.Provider
+    <PCSettingsContext.Provider
       value={{
-        selectedComponent,
-        explodeStep,
-        cameraResetTrigger,
         xrayMode,
-        setSelectedComponent,
-        toggleExploded,
-        triggerCameraReset,
         toggleXrayMode,
         rgbColor,
         setRgbColor,
@@ -95,15 +93,41 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
         setShowInstructions,
       }}
     >
-      {children}
-    </PCContext.Provider>
+      <PCSelectionContext.Provider
+        value={{
+          selectedComponent,
+          explodeStep,
+          cameraResetTrigger,
+          setSelectedComponent,
+          toggleExploded,
+          triggerCameraReset,
+        }}
+      >
+        {children}
+      </PCSelectionContext.Provider>
+    </PCSettingsContext.Provider>
   );
 };
 
-export const usePC = () => {
-  const context = useContext(PCContext);
+export const usePCSelection = () => {
+  const context = useContext(PCSelectionContext);
   if (context === undefined) {
-    throw new Error('usePC must be used within a PCProvider');
+    throw new Error('usePCSelection must be used within a PCProvider');
   }
   return context;
+};
+
+export const usePCSettings = () => {
+  const context = useContext(PCSettingsContext);
+  if (context === undefined) {
+    throw new Error('usePCSettings must be used within a PCProvider');
+  }
+  return context;
+};
+
+// Legacy hook dla kompatybilności wstecznej - uzywac ostroznie!
+export const usePC = () => {
+  const selection = usePCSelection();
+  const settings = usePCSettings();
+  return { ...selection, ...settings };
 };

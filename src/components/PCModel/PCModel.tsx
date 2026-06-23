@@ -8,71 +8,25 @@ import { PSUGeometry } from './geometries/PSUGeometry';
 import { CaseGeometry } from './geometries/CaseGeometry';
 import { CPUCoolerGeometry, FanGeometry } from './geometries/CPUCoolerGeometry';
 import { CableGeometry } from './CableGeometry';
-import { useRef, useState, useMemo, useEffect, Suspense, Component } from 'react';
-import type { ReactNode } from 'react';
+import { useRef, useState, useMemo, useEffect, Suspense } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Group, Color, Vector3, MeshStandardMaterial } from 'three';
 import { Html, useCursor, Bvh, useTexture } from '@react-three/drei';
 import { pcComponents } from '../../data/components';
 import type { PCComponent } from '../../data/components';
-import { usePC } from '../../hooks/usePC';
+import { usePCSelection, usePCSettings } from '../../hooks/usePC';
+import { useIsMobile } from '../../hooks/useIsMobile';
+import { GlobalErrorBoundary as ErrorBoundary } from '../ErrorBoundary';
 import { playHoverSound, playSelectSound } from '../../utils/audio';
 import moboBackUrl from '../../assets/mobo_back_photo.webp';
 import caseBackUrl from '../../assets/case_back.webp';
 import caseBehindUrl from '../../assets/case_behind.webp';
-import caseBottomUrl from '../../assets/case_bottom.webp';
 import caseInteriorUrl from '../../assets/case_interior.webp';
-import cpuSocketUrl from '../../assets/cpu_socket.webp';
-import moboChipsetUrl from '../../assets/mobo_chipset.webp';
-import psuTopUrl from '../../assets/psu_top.webp';
-import psuSideUrl from '../../assets/psu_side.webp';
-import psuBackUrl from '../../assets/psu_back.webp';
-import psuFrontUrl from '../../assets/psu_front.webp';
-import psuBottomUrl from '../../assets/psu_bottom.webp';
-import aioFanUrl from '../../assets/aio_fan.webp';
-import heatsinkUrl from '../../assets/heatsink.webp';
-import heatsinkSideUrl from '../../assets/heatsink_side.webp';
-import gpuBackplateUrl from '../../assets/gpu_backplate.webp';
+import moboTopUrl from '../../assets/mobo_top.webp';
 import gpuTopUrl from '../../assets/gpu_top.webp';
 import gpuFrontUrl from '../../assets/gpu_front.webp';
-import ramSideUrl from '../../assets/ram_side.webp';
-import hddTopUrl from '../../assets/hdd_top.webp';
-import hddBottomUrl from '../../assets/hdd_bottom.webp';
-import caseFanUrl from '../../assets/case_fan.webp';
-import ssdTopUrl from '../../assets/ssd_top.webp';
-import ssdBottomUrl from '../../assets/ssd_bottom.webp';
-import cpuTopUrl from '../../assets/cpu_top.webp';
-import cpuBottomUrl from '../../assets/cpu_bottom.webp';
-import moboTopUrl from '../../assets/mobo_top.webp';
-import moboIoUrl from '../../assets/mobo_io.webp';
-import gpuIoUrl from '../../assets/gpu_io.webp';
-import cmosBatteryUrl from '../../assets/cmos_battery.webp';
-import m2HeatsinkUrl from '../../assets/m2_heatsink.webp';
 
 // --- R3F Extrude Options (extracted to prevent memory leak/geometry recreation) ---
-
-// --- Error Boundary ---
-class ErrorBoundary extends Component<{ fallback: ReactNode, children: ReactNode }, { hasError: boolean }> {
-  constructor(props: { fallback: ReactNode, children: ReactNode }) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError(_error: any) {
-    return { hasError: true };
-  }
-
-  componentDidCatch(error: any, errorInfo: any) {
-    console.error("Geometry error:", error, errorInfo);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return this.props.fallback;
-    }
-    return this.props.children;
-  }
-}
 
 // --- Procedural Geometries (Premium 3D) ---
 
@@ -92,7 +46,7 @@ const ProceduralGeometry = ({ data, baseColor, rgbColor }: { data: PCComponent, 
   if (data.id.includes('cpu')) return <CPUGeometry />;
   if (data.id.includes('gpu')) return <GPUGeometry rgbColor={rgbColor} />;
   if (data.id.includes('motherboard')) return <MotherboardGeometry rgbColor={rgbColor} />;
-  if (data.id.includes('ram')) return <RAMGeometry color={baseColor} rgbColor={rgbColor} />;
+  if (data.id.includes('ram')) return <RAMGeometry rgbColor={rgbColor} />;
   if (data.id.includes('ssd')) return <SSDGeometry />;
   if (data.id.includes('storage_hdd')) return <HDDGeometry />;
   if (data.id.includes('psu')) return <PSUGeometry rgbColor={rgbColor} />;
@@ -100,7 +54,7 @@ const ProceduralGeometry = ({ data, baseColor, rgbColor }: { data: PCComponent, 
     const isExhaust = data.id === 'rear_fan' || data.id === 'side_fan_2';
     return <FanGeometry rgbColor={rgbColor} isExhaust={isExhaust} />;
   }
-  if (data.id.includes('case')) return <CaseGeometry />;
+  if (data.id.includes('case')) return <CaseGeometry rgbColor={rgbColor} rgbEnabled={true} />;
   
   return (
     <mesh>
@@ -115,7 +69,8 @@ const ProceduralGeometry = ({ data, baseColor, rgbColor }: { data: PCComponent, 
 const ComponentMesh = ({ data, isMobile }: { data: PCComponent, isMobile: boolean }) => {
   const groupRef = useRef<Group>(null);
   const [hovered, setHovered] = useState(false);
-  const { selectedComponent, setSelectedComponent, explodeStep, rgbColor, rgbEnabled, showLabels, showInstructions } = usePC();
+  const { selectedComponent, setSelectedComponent, explodeStep } = usePCSelection();
+  const { rgbColor, rgbEnabled, showLabels, showInstructions } = usePCSettings();
   const effectiveRgbColor = rgbEnabled ? rgbColor : '#000000';
   
   useCursor(hovered && !isMobile);
@@ -124,7 +79,7 @@ const ComponentMesh = ({ data, isMobile }: { data: PCComponent, isMobile: boolea
   const targetPosition = useMemo(() => new Vector3(), []);
   const targetScale3 = useMemo(() => new Vector3(), []);
   const baseColor = useMemo(() => new Color(data.color || '#333333'), [data.color]);
-  const timeAccumulator = useRef(0);
+  
 
   const baseLift = data.geometryArgs ? Math.max(0.05, data.geometryArgs[1] * 0.03) : 0.1;
   const liftOffset = hovered && !isSelected ? baseLift : 0;
@@ -132,12 +87,7 @@ const ComponentMesh = ({ data, isMobile }: { data: PCComponent, isMobile: boolea
   useFrame((_state, delta) => {
     if (!groupRef.current) return;
 
-    if (isMobile) {
-      timeAccumulator.current += delta;
-      if (timeAccumulator.current < 1/30) return;
-      delta = timeAccumulator.current;
-      timeAccumulator.current = 0;
-    }
+
 
     const posArray = explodeStep === 2 ? data.explodedPosition : data.position;
     
@@ -248,18 +198,9 @@ const ComponentMesh = ({ data, isMobile }: { data: PCComponent, isMobile: boolea
 
 
 export const PCModel = () => {
-  const [isMobile, setIsMobile] = useState(false);
-  const { xrayMode } = usePC();
+  const isMobile = useIsMobile();
+  const { xrayMode } = usePCSettings();
   const groupRef = useRef<Group>(null);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.matchMedia('(max-width: 768px)').matches);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   const xrayMaterial = useMemo(() => new MeshStandardMaterial({
     color: 0x111111,
@@ -297,14 +238,6 @@ export const PCModel = () => {
     <group position={[0, isMobile ? -0.5 : -1, 0]} scale={isMobile ? 0.7 : 1} ref={groupRef}>
       <Bvh firstHitOnly>
         {pcComponents.map((comp) => {
-          if (comp.id === 'case_fan') {
-            return (
-              <group key="case_fans_group">
-                <ComponentMesh data={{ ...comp, id: 'case_fan_1', position: [0.8, -0.8, 1.75], explodedPosition: [4, -2.5, 5] }} isMobile={isMobile} />
-                <ComponentMesh data={{ ...comp, id: 'case_fan_2', position: [0.8, 0.8, 1.75], explodedPosition: [4, 2.5, 5] }} isMobile={isMobile} />
-              </group>
-            );
-          }
           return <ComponentMesh key={comp.id} data={comp} isMobile={isMobile} />;
         })}
         <CableGeometry />
@@ -313,36 +246,12 @@ export const PCModel = () => {
   );
 };
 
-// Preload all textures to ensure the loading screen stays active until everything is ready
+// Preload critical textures to ensure the loading screen stays active until main model is ready
 useTexture.preload(moboBackUrl);
 useTexture.preload(caseBackUrl);
 useTexture.preload(caseBehindUrl);
-useTexture.preload(caseBottomUrl);
 useTexture.preload(caseInteriorUrl);
-useTexture.preload(cpuSocketUrl);
-useTexture.preload(moboChipsetUrl);
-useTexture.preload(psuTopUrl);
-useTexture.preload(psuSideUrl);
-useTexture.preload(psuBackUrl);
-useTexture.preload(psuFrontUrl);
-useTexture.preload(psuBottomUrl);
-useTexture.preload(aioFanUrl);
-useTexture.preload(heatsinkUrl);
-useTexture.preload(heatsinkSideUrl);
-useTexture.preload(gpuBackplateUrl);
+useTexture.preload(moboTopUrl);
 useTexture.preload(gpuTopUrl);
 useTexture.preload(gpuFrontUrl);
-useTexture.preload(ramSideUrl);
-useTexture.preload(hddTopUrl);
-useTexture.preload(hddBottomUrl);
-useTexture.preload(caseFanUrl);
-useTexture.preload(ssdTopUrl);
-useTexture.preload(ssdBottomUrl);
-useTexture.preload(cpuTopUrl);
-useTexture.preload(cpuBottomUrl);
-useTexture.preload(moboTopUrl);
-useTexture.preload(moboIoUrl);
-useTexture.preload(gpuIoUrl);
-useTexture.preload(cmosBatteryUrl);
-useTexture.preload(m2HeatsinkUrl);
 

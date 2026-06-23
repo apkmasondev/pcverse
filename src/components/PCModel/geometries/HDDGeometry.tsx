@@ -1,3 +1,4 @@
+import { materials } from '../materials';
 import { useTexture } from '@react-three/drei';
 import hddTopUrl from '../../../assets/hdd_top.webp';
 import hddBottomUrl from '../../../assets/hdd_bottom.webp';
@@ -31,7 +32,7 @@ export const HDDGeometry = () => {
       {/* Connectors (Back) */}
       <mesh position={[0, -0.05, 0.71]}>
         <boxGeometry args={[0.6, 0.1, 0.04]} />
-        <meshStandardMaterial color="#050505" roughness={0.9} />
+        <primitive object={materials.blackPlastic} attach="material" />
       </mesh>
       <mesh position={[-0.2, -0.05, 0.73]}>
         <boxGeometry args={[0.2, 0.08, 0.02]} />

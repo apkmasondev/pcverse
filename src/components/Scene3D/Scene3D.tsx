@@ -7,19 +7,20 @@ import { BlendFunction } from 'postprocessing';
 
 const CHROMA_OFFSET = new Vector2(0.0005, 0.0005);
 import { PCModel } from '../PCModel/PCModel';
-import { usePC } from '../../hooks/usePC';
+import { usePCSelection, usePCSettings } from '../../hooks/usePC';
+import { useIsMobile } from '../../hooks/useIsMobile';
 import { GlobalErrorBoundary as ErrorBoundary } from '../ErrorBoundary';
 
 const CursorLight = () => {
   const lightRef = useRef<PointLight>(null);
   const _vec = useRef(new Vector3());
 
-  useFrame(({ raycaster, camera }) => {
+  useFrame(({ raycaster, camera }, delta) => {
     if (lightRef.current) {
       // Place light slightly in front of the object the user is pointing at
       const distance = camera.position.length() * 0.6; 
       raycaster.ray.at(distance, _vec.current);
-      lightRef.current.position.lerp(_vec.current, 0.1);
+      lightRef.current.position.lerp(_vec.current, 1 - Math.exp(-10 * delta)); // Make lerp frame-rate independent roughly
     }
   });
 
@@ -35,7 +36,8 @@ const CursorLight = () => {
 };
 
 const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
-  const { selectedComponent, cameraResetTrigger, explodeStep, envPreset } = usePC();
+  const { selectedComponent, cameraResetTrigger, explodeStep } = usePCSelection();
+  const { envPreset } = usePCSettings();
   const cameraControlsRef = useRef<CameraControls>(null);
   const { camera } = useThree();
 
@@ -98,9 +100,11 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
     if (cameraControlsRef.current && !hasInitialized.current) {
       hasInitialized.current = true;
       cameraControlsRef.current.setLookAt(0, 12, 35, 0, 0, 0, false);
-      setTimeout(() => {
-        cameraControlsRef.current?.setLookAt(0, 3, 20, 0, 0, 0, true);
-      }, 50);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          cameraControlsRef.current?.setLookAt(0, 3, 20, 0, 0, 0, true);
+        });
+      });
     }
   }, []);
 
@@ -187,8 +191,12 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
       
       <PerspectiveCamera makeDefault position={[0, 3, 16]} fov={50} near={0.5} far={100} />
       
-      <Sparkles count={150} scale={20} size={3} speed={0.3} opacity={0.2} color="#8b5cf6" />
-      <Stars radius={50} depth={50} count={3000} factor={3} saturation={0.5} fade speed={1.5} />
+      {!isMobile && (
+        <>
+          <Sparkles count={150} scale={20} size={3} speed={0.3} opacity={0.2} color="#8b5cf6" />
+          <Stars radius={50} depth={50} count={3000} factor={3} saturation={0.5} fade speed={1.5} />
+        </>
+      )}
       
       <directionalLight 
         position={[10, 20, 10]} 
@@ -204,10 +212,10 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
       <React.Suspense fallback={null}>
         <PCModel />
         <ErrorBoundary fallback={null}>
-          <Environment preset={envPreset as any} environmentIntensity={1.5} />
+          <Environment files={envMap[envPreset] || envMap.studio} environmentIntensity={1.5} />
         </ErrorBoundary>
         <Grid 
-          position={[0, -6.1, 0]} 
+          position={[0, -4.1, 0]} 
           args={[40, 40]} 
           cellSize={1} 
           cellThickness={1} 
@@ -215,17 +223,12 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
           sectionSize={5} 
           sectionThickness={1.5} 
           sectionColor="#6b7280" 
-          fadeDistance={30} 
+          fadeDistance={60} 
           fadeStrength={1} 
         />
         {!isMobile && (
           <EffectComposer multisampling={4}>
-            <DepthOfField 
-              target={dofTarget} 
-              focalLength={dofEnabled ? 0.05 : 0.0} 
-              bokehScale={dofEnabled ? 8 : 0} 
-              height={700} 
-            />
+            {dofEnabled ? <DepthOfField target={dofTarget} focalLength={0.05} bokehScale={8} height={700} /> : <group /> as any}
             <Bloom luminanceThreshold={1} mipmapBlur={true} intensity={1.0} />
             <N8AO aoRadius={0.5} intensity={2.0} distanceFalloff={0.5} quality="medium" halfRes />
             <Vignette eskil={false} offset={0.2} darkness={0.6} />
@@ -249,24 +252,19 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
   );
 };
 
+
+  const envMap: Record<string, string> = {
+    studio: import.meta.env.BASE_URL + 'environments/studio_small_03_1k.hdr',
+    city: import.meta.env.BASE_URL + 'environments/potsdamer_platz_1k.hdr',
+    dawn: import.meta.env.BASE_URL + 'environments/kiara_1_dawn_1k.hdr',
+    apartment: import.meta.env.BASE_URL + 'environments/lebombo_1k.hdr'
+  };
+
 export const Scene3D = () => {
-  const [isMobile, setIsMobile] = useState(false);
-  const [dpr, setDpr] = useState<number | [number, number]>(1);
+  const isMobile = useIsMobile();
+  const { setSelectedComponent } = usePCSelection();
   const [hasInteracted, setHasInteracted] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      const mobile = window.matchMedia('(max-width: 768px)').matches;
-      setIsMobile(mobile);
-      setDpr(mobile ? 1 : [1, 2]);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const { setSelectedComponent } = usePC();
+  const [dpr, setDpr] = useState<number | [number, number]>(isMobile ? 1 : [1, 2]);
 
   return (
     <div 
