@@ -2,6 +2,23 @@
 
 Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 
+## Dzień 12 - Wdrożenie Ostatnich Szlifów Audytu (Backlog)
+- **Środowisko HDRi (S2)**: Pliki środowiska .hdr zostały pobrane do katalogu lokalnego \`public/environments/\` i zaimportowane do mapy w \`Scene3D.tsx\`. Gwarantuje to ominięcie problemów z Content Security Policy (CSP), które blokowały zasoby dostarczane przez zewnętrzne CDN.
+- **Moduł Audio (S5, S6)**: Poprawiono bezpieczeństwo modułu - "puste" bloki wyjątków logują powiadomienia, a funkcja tworzenia dźwięku sferycznego precyzyjniej wygasza oscylatory przy drastycznie szybkich kliknięciach.
+- **Dostępność i Tłumaczenia (U1, U3, U4, U5)**: 
+  - Przyciski nawigacyjne w \`Toolbar\` osiągnęły standardowe 44x44px. 
+  - Dodano niewidoczną "matę powrotu" na ekrany telefonów - zamykanie otwartych menu Palety Kolorów odbywa się poprzez dotknięcie tła za modelem 3D.
+  - Komunikaty techniczne zostały spolszczone (np. "Brak obsługi WebGL").
+  - Pierwsza instruktażowa podpowiedź ukazuje się aż do 15 sekund w trakcie pierwszego kontaktu z UI.
+
+## Dzień 11 - Zakończenie Audytu - Faza 4 (Wydajność i Kamery)
+- **Warunkowe renderowanie materiałów szkła**: Obudowa zachowuje flagowy wygląd na komputerach stacjonarnych (\`MeshPhysicalMaterial\`), jednak na urządzeniach mobilnych korzysta ze zoptymalizowanego \`MeshStandardMaterial\` z przeźroczystością, zapewniając ogromny wzrost klatek (rozwiązany błąd P5).
+- **Czyszczenie tła i shaderów (P3, P7, P8)**:
+  - Systemy cząsteczek tła (\`Stars\`, \`Sparkles\`) całkowicie deaktywowane na smartfonach.
+  - \`EffectComposer\` (Depth Of Field) otrzymał owijanie logiką bool, eliminując koszty "pustych przebiegów".
+  - Grid renderowany pod sceną został odpowiednio wywindowany w górę.
+- **Uniezależnienie płynności od platformy**: Animacje \`CursorLight\` i ujęcia \`camera.LookAt()\` działają idealnie dzięki użyciu delta-time zamiast sztucznego timeoutu. Usunięto niepotrzebny frame limiter w pętli dla urządzeń mobilnych.
+
 ## Dzień 10 - Stabilność Architektury i Pamięć (Faza 3)
 ### Faza 3 - Pamięć i Geometria
 - **Refaktoryzacja stanu i hooków**: Rozdzielono masywny hook `usePC` na dedykowane mniejsze hooki (`usePCSelection` i `usePCSettings`), ograniczając niepotrzebne re-rendery i przeliczanie parametrów obudowy przez komponenty, które ich nie potrzebowały.
