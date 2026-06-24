@@ -28,8 +28,8 @@ function App() {
         <div className="max-w-md bg-red-500/10 border border-red-500/30 p-6 rounded-2xl">
           <h1 className="text-2xl font-bold text-red-400 mb-4">Brak Obsługi WebGL</h1>
           <p className="text-slate-300">
-            Your browser or device does not support WebGL, which is required to view the 3D PCVerse experience.
-            Please try using a different browser or updating your graphics drivers.
+            Twoja przeglądarka lub urządzenie nie obsługuje WebGL, który jest wymagany do uruchomienia aplikacji PCVerse.
+            Spróbuj zaktualizować sterowniki karty graficznej lub użyć innej przeglądarki.
           </p>
         </div>
       </div>
@@ -41,6 +41,19 @@ function App() {
       <PCProvider>
         <main className="relative w-full h-screen overflow-hidden bg-[#0f0a1c]">
           <h1 className="sr-only">PCVerse — Interaktywna Anatomia Komputera 3D</h1>
+          <nav aria-label="Szybka nawigacja po podzespołach" className="sr-only">
+            <ul>
+              <li><a href="#component-case">Obudowa (Case)</a></li>
+              <li><a href="#component-mobo">Płyta główna (Motherboard)</a></li>
+              <li><a href="#component-gpu">Karta graficzna (GPU)</a></li>
+              <li><a href="#component-cpu">Procesor (CPU)</a></li>
+              <li><a href="#component-cooler">Chłodzenie (Cooler)</a></li>
+              <li><a href="#component-ram">Pamięć RAM</a></li>
+              <li><a href="#component-ssd">Dysk SSD</a></li>
+              <li><a href="#component-hdd">Dysk HDD</a></li>
+              <li><a href="#component-psu">Zasilacz (PSU)</a></li>
+            </ul>
+          </nav>
           <Suspense fallback={null}>
             <Scene3D />
           </Suspense>

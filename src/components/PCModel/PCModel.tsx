@@ -1,3 +1,4 @@
+import { fanBladesRefsZ, fanBladesRefsY } from './FanManager';
 import { CPUGeometry } from './geometries/CPUGeometry';
 import { GPUGeometry } from './geometries/GPUGeometry';
 import { SSDGeometry } from './geometries/SSDGeometry';
@@ -12,6 +13,7 @@ import { useRef, useState, useMemo, Suspense } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Group, Color, Vector3 } from 'three';
 import { Html, useCursor, Bvh, useTexture } from '@react-three/drei';
+import { motion } from 'framer-motion';
 import { xrayMaterial } from './materials';
 import { pcComponents } from '../../data/components';
 import type { PCComponent } from '../../data/components';
@@ -36,27 +38,41 @@ import gpuFrontUrl from '../../assets/gpu_front.webp';
 
 
 
-
-
-
-
-
+const GEOMETRY_REGISTRY: Record<string, React.FC<any>> = {
+  cpu_cooler: CPUCoolerGeometry,
+  cpu: CPUGeometry,
+  gpu: GPUGeometry,
+  motherboard: MotherboardGeometry,
+  ram: RAMGeometry,
+  ssd: SSDGeometry,
+  storage_hdd: HDDGeometry,
+  psu: PSUGeometry,
+  fan: FanGeometry,
+  case: CaseGeometry,
+};
 
 const ProceduralGeometry = ({ data, baseColor, rgbColor }: { data: PCComponent, baseColor: Color, rgbColor: string }) => {
   const { xrayMode } = usePCSettings();
-  if (data.id.includes('cpu_cooler')) return <CPUCoolerGeometry rgbColor={rgbColor} />;
-  if (data.id.includes('cpu')) return <CPUGeometry />;
-  if (data.id.includes('gpu')) return <GPUGeometry rgbColor={rgbColor} />;
-  if (data.id.includes('motherboard')) return <MotherboardGeometry rgbColor={rgbColor} />;
-  if (data.id.includes('ram')) return <RAMGeometry rgbColor={rgbColor} />;
-  if (data.id.includes('ssd')) return <SSDGeometry />;
-  if (data.id.includes('storage_hdd')) return <HDDGeometry />;
-  if (data.id.includes('psu')) return <PSUGeometry rgbColor={rgbColor} />;
-  if (data.id.includes('fan')) {
-    const isExhaust = data.id === 'rear_fan' || data.id === 'side_fan_2';
-    return <FanGeometry rgbColor={rgbColor} isExhaust={isExhaust} />;
+  
+  // Find matching component in registry by checking if data.id includes the key
+  const match = Object.keys(GEOMETRY_REGISTRY).find(key => data.id.includes(key));
+  
+  if (match) {
+    const Component = GEOMETRY_REGISTRY[match];
+    
+    // Special handling for fans
+    if (match === 'fan') {
+      const isExhaust = data.id === 'rear_fan' || data.id === 'side_fan_2';
+      return <Component rgbColor={rgbColor} isExhaust={isExhaust} />;
+    }
+    
+    // Special handling for case
+    if (match === 'case') {
+      return <Component rgbColor={rgbColor} rgbEnabled={true} />;
+    }
+
+    return <Component rgbColor={rgbColor} />;
   }
-  if (data.id.includes('case')) return <CaseGeometry rgbColor={rgbColor} rgbEnabled={true} />;
   
   return (
     <mesh material={xrayMode ? xrayMaterial : undefined}>
@@ -155,8 +171,11 @@ const ComponentMesh = ({ data, isMobile }: { data: PCComponent, isMobile: boolea
           distanceFactor={12}
           zIndexRange={[100, 0]}
         >
-          <div 
-            className="flex flex-col items-center pointer-events-auto cursor-pointer opacity-100 transition-all duration-300 transform scale-100"
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            className="flex flex-col items-center pointer-events-auto cursor-pointer opacity-100"
             onPointerEnter={(e) => {
               if (isMobile) return;
               e.stopPropagation();
@@ -213,7 +232,7 @@ const ComponentMesh = ({ data, isMobile }: { data: PCComponent, isMobile: boolea
                 } : undefined}
               />
             </div>
-          </div>
+          </motion.div>
         </Html>
       )}
     </group>
@@ -224,6 +243,15 @@ const ComponentMesh = ({ data, isMobile }: { data: PCComponent, isMobile: boolea
 export const PCModel = () => {
   const isMobile = useIsMobile();
   const groupRef = useRef<Group>(null);
+
+  useFrame((_, delta) => {
+    fanBladesRefsZ.forEach(ref => {
+      ref.rotation.z += delta * 15;
+    });
+    fanBladesRefsY.forEach(ref => {
+      ref.rotation.y += delta * 15;
+    });
+  });
 
   return (
     <group position={[0, isMobile ? -0.5 : -1, 0]} scale={isMobile ? 0.7 : 1} ref={groupRef}>

@@ -1,6 +1,7 @@
 import { MeshStandardMaterial } from 'three';
 
 export const materials = {
+  // Existing materials
   darkMetal: new MeshStandardMaterial({ color: '#151515', roughness: 0.6 }),
   goldMetal: new MeshStandardMaterial({ color: '#d4af37', metalness: 1, roughness: 0.3 }),
   blackPlastic: new MeshStandardMaterial({ color: '#0a0a0a', roughness: 0.9 }),
@@ -12,6 +13,24 @@ export const materials = {
   copper: new MeshStandardMaterial({ color: '#b87333', metalness: 0.8, roughness: 0.4 }),
   pcbGreen: new MeshStandardMaterial({ color: '#003300', roughness: 0.8 }),
   pcbBlack: new MeshStandardMaterial({ color: '#111111', roughness: 0.6 }),
+
+  // Newly extracted materials (N8)
+  darkGrayPlastic: new MeshStandardMaterial({ color: '#111214', roughness: 0.9 }),
+  mediumGrayPlastic: new MeshStandardMaterial({ color: '#1f2023', roughness: 0.9 }),
+  darkCharcoal: new MeshStandardMaterial({ color: '#222222', roughness: 0.8 }),
+  deepBlack: new MeshStandardMaterial({ color: '#020202', roughness: 1 }),
+  redLED: new MeshStandardMaterial({ color: '#ff0000', emissive: '#ff0000', emissiveIntensity: 2 }),
+  darkShinyMetal: new MeshStandardMaterial({ color: '#111111', metalness: 0.7, roughness: 0.3 }),
+  veryDarkGray: new MeshStandardMaterial({ color: '#0f0f0f', roughness: 0.9 }),
+  steelMetal: new MeshStandardMaterial({ color: '#888c94', metalness: 0.8, roughness: 0.3 }),
+  midGrayMetal: new MeshStandardMaterial({ color: '#444444', metalness: 0.5 }),
+  bluePlastic: new MeshStandardMaterial({ color: '#1e3a8a', roughness: 0.6 }),
+  slateMetal: new MeshStandardMaterial({ color: '#1f2937', metalness: 0.6 }),
+  darkRedPlastic: new MeshStandardMaterial({ color: '#991b1b', roughness: 0.6 }),
+  roughDarkMetal: new MeshStandardMaterial({ color: '#2a2a2a', metalness: 0.6, roughness: 0.8 }),
+  almostBlack: new MeshStandardMaterial({ color: '#050505', roughness: 0.8 }),
+  lightSilver: new MeshStandardMaterial({ color: '#e5e7eb', metalness: 0.9, roughness: 0.3 }),
+  ioShieldMetal: new MeshStandardMaterial({ color: '#e5e7eb', metalness: 0.9, roughness: 0.3 }),
 };
 
 export const xrayMaterial = new MeshStandardMaterial({

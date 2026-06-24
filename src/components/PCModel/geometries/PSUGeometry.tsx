@@ -1,10 +1,8 @@
-import React from 'react';
+import { fanBladesRefsY } from '../FanManager';
+import { materials } from '../materials';
 import { usePCSettings } from '../../../hooks/usePC';
-import { xrayMaterial } from '../materials';
-import { useRef, useMemo, useEffect } from 'react';
-import * as THREE from 'three';
+import { useRef, useEffect } from 'react';
 import { Group } from 'three';
-import { useFrame } from '@react-three/fiber';
 import { useTexture } from '@react-three/drei';
 import psuSideUrl from '../../../assets/psu_side.webp';
 import psuTopUrl from '../../../assets/psu_top.webp';
@@ -14,23 +12,7 @@ import psuFrontUrl from '../../../assets/psu_front.webp';
 import { LocalAirflowParticles } from './LocalAirflowParticles';
 
 
-const Mesh = ({ children, material, ...props }: any) => {
-  const { xrayMode } = usePCSettings();
-  const filteredChildren = React.Children.map(children, (child) => {
-    if (!child) return null;
-    if (xrayMode) {
-      if (child.type === 'meshStandardMaterial' || child.type === 'meshPhysicalMaterial' || child.type === 'primitive') {
-        return null;
-      }
-    }
-    return child;
-  });
-  return (
-    <mesh material={xrayMode ? xrayMaterial : material} {...props}>
-      {filteredChildren}
-    </mesh>
-  );
-};
+import { XMesh as Mesh } from './XMesh';
 
 export const PSUGeometry = ({ rgbColor }: { rgbColor: string }) => {
   const { xrayMode } = usePCSettings();
@@ -40,53 +22,29 @@ export const PSUGeometry = ({ rgbColor }: { rgbColor: string }) => {
   const psuFrontTexture = useTexture(psuFrontUrl);
   const psuBottomTexture = useTexture(psuBottomUrl);
   const fanRef = useRef<Group>(null);
-  
-  const backMeshTexture = useMemo(() => {
-    const canvas = document.createElement('canvas');
-    canvas.width = 16;
-    canvas.height = 16;
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, 16, 16);
-      ctx.fillStyle = '#000000';
-      ctx.beginPath();
-      ctx.arc(8, 8, 4.5, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(12, 12);
-    return texture;
-  }, []);
 
   useEffect(() => {
-    return () => {
-      backMeshTexture.dispose();
-    };
-  }, [backMeshTexture]);
-
-  useFrame((_state, delta) => {
     if (fanRef.current) {
-      fanRef.current.rotation.y += delta * 15;
+      fanBladesRefsY.add(fanRef.current);
+      const currentRef = fanRef.current;
+      return () => { fanBladesRefsY.delete(currentRef); };
     }
-  });
+  }, []);
 
   return (
     <group>
       {/* Inner Rotating Fan Blades (Visible in X-Ray mode) */}
-      <group position={[0, -0.36, 0]} ref={fanRef}>
+      <group position={[0, -0.36, 0]} ref={fanRef} userData={{ axis: 'y' }}>
         {/* Hub */}
         <Mesh>
           <cylinderGeometry args={[0.35, 0.35, 0.03, 32]} />
-          <meshStandardMaterial color="#151515" roughness={0.6} />
+          <primitive object={materials.darkMetal} attach="material" />
         </Mesh>
         {/* Blades */}
         {[0, 1, 2, 3, 4, 5, 6, 7].map(i => (
           <Mesh key={i} rotation={[0, (Math.PI * 2 / 8) * i, 0]}>
             <boxGeometry args={[1.45, 0.02, 0.25]} />
-            <meshStandardMaterial color="#222" roughness={0.5} />
+            <primitive object={materials.darkCharcoal} attach="material" />
           </Mesh>
         ))}
       </group>
@@ -94,7 +52,7 @@ export const PSUGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {/* Main Casing */}
       <Mesh position={[0, 0, 0]}>
         <boxGeometry args={[1.8, 0.8, 1.5]} />
-        <meshStandardMaterial color="#111" metalness={0.6} roughness={0.5} />
+        <primitive object={materials.darkShinyMetal} attach="material" />
       </Mesh>
       {/* PSU Top Texture */}
       <Mesh position={[0, 0.401, 0]} rotation={[-Math.PI / 2, 0, 0]}>

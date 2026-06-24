@@ -11,6 +11,13 @@ import { usePCSelection, usePCSettings } from '../../hooks/usePC';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { GlobalErrorBoundary as ErrorBoundary } from '../ErrorBoundary';
 
+const envMap: Record<string, string> = {
+  studio: import.meta.env.BASE_URL + 'environments/studio_small_03_1k.hdr',
+  city: import.meta.env.BASE_URL + 'environments/potsdamer_platz_1k.hdr',
+  dawn: import.meta.env.BASE_URL + 'environments/kiara_1_dawn_1k.hdr',
+  apartment: import.meta.env.BASE_URL + 'environments/lebombo_1k.hdr'
+};
+
 const CursorLight = () => {
   const lightRef = useRef<PointLight>(null);
   const _vec = useRef(new Vector3());
@@ -35,7 +42,7 @@ const CursorLight = () => {
   );
 };
 
-const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
+const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disableEffects?: boolean }) => {
   const { selectedComponent, cameraResetTrigger, explodeStep } = usePCSelection();
   const { envPreset } = usePCSettings();
   const cameraControlsRef = useRef<CameraControls>(null);
@@ -191,7 +198,7 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
       
       <PerspectiveCamera makeDefault position={[0, 3, 16]} fov={50} near={0.5} far={100} />
       
-      {!isMobile && (
+      {!isMobile && !disableEffects && (
         <>
           <Sparkles count={150} scale={20} size={3} speed={0.3} opacity={0.2} color="#8b5cf6" />
           <Stars radius={50} depth={50} count={3000} factor={3} saturation={0.5} fade speed={1.5} />
@@ -207,7 +214,7 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
       <rectAreaLight position={[0, 3, 0]} width={5} height={5} intensity={5.0} color="#e0e7ff" rotation={[-Math.PI / 2, 0, 0]} />
       <pointLight position={[0, 0, 6]} intensity={15.0} color="#ffffff" distance={30} decay={2} />
       
-      {!isMobile && <CursorLight />}
+      {!isMobile && !disableEffects && <CursorLight />}
       
       <React.Suspense fallback={null}>
         <PCModel />
@@ -226,7 +233,7 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
           fadeDistance={60} 
           fadeStrength={1} 
         />
-        {!isMobile && (
+        {!isMobile && !disableEffects && (
           <EffectComposer multisampling={4}>
             {dofEnabled ? <DepthOfField target={dofTarget} focalLength={0.05} bokehScale={8} height={700} /> : <group /> as any}
             <Bloom luminanceThreshold={1} mipmapBlur={true} intensity={1.0} />
@@ -253,18 +260,14 @@ const SceneContent = ({ isMobile }: { isMobile: boolean }) => {
 };
 
 
-  const envMap: Record<string, string> = {
-    studio: import.meta.env.BASE_URL + 'environments/studio_small_03_1k.hdr',
-    city: import.meta.env.BASE_URL + 'environments/potsdamer_platz_1k.hdr',
-    dawn: import.meta.env.BASE_URL + 'environments/kiara_1_dawn_1k.hdr',
-    apartment: import.meta.env.BASE_URL + 'environments/lebombo_1k.hdr'
-  };
+
 
 export const Scene3D = () => {
   const isMobile = useIsMobile();
   const { setSelectedComponent } = usePCSelection();
   const [hasInteracted, setHasInteracted] = useState(false);
   const [dpr, setDpr] = useState<number | [number, number]>(isMobile ? 1 : [1, 2]);
+  const [disableEffects, setDisableEffects] = useState(false);
 
   return (
     <div 
@@ -285,8 +288,17 @@ export const Scene3D = () => {
         dpr={dpr} 
         onPointerMissed={() => setSelectedComponent(null)}
       >
-        <PerformanceMonitor onDecline={() => setDpr(1)} onIncline={() => setDpr(isMobile ? 1 : [1, 2])}>
-          <SceneContent isMobile={isMobile} />
+        <PerformanceMonitor 
+          onDecline={() => {
+            setDpr(1);
+            setDisableEffects(true);
+          }} 
+          onIncline={() => {
+            setDpr(isMobile ? 1 : [1, 2]);
+            setDisableEffects(false);
+          }}
+        >
+          <SceneContent isMobile={isMobile} disableEffects={disableEffects} />
         </PerformanceMonitor>
       </Canvas>
     </div>

@@ -30,13 +30,13 @@ export const HDDGeometry = () => {
       {/* HDD Main Casing */}
       <mesh position={[0, 0, 0]} material={xrayMode ? xrayMaterial : undefined}>
         <boxGeometry args={[1.0, 0.25, 1.4]} />
-        {!xrayMode && <meshStandardMaterial color="#222" roughness={0.7} metalness={0.6} />}
+        {!xrayMode && <primitive object={materials.darkShinyMetal} attach="material" />}
       </mesh>
 
       {/* Silver Top Lid */}
       <mesh position={[0, 0.13, 0]} material={xrayMode ? xrayMaterial : undefined}>
         <boxGeometry args={[0.96, 0.02, 1.36]} />
-        {!xrayMode && <meshStandardMaterial color="#e5e7eb" roughness={0.3} metalness={0.9} />}
+        {!xrayMode && <primitive object={materials.lightSilver} attach="material" />}
       </mesh>
 
       {/* HDD Top Texture */}

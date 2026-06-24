@@ -1,8 +1,8 @@
-import { useRef, useMemo } from 'react';
+import { fanBladesRefsY } from '../FanManager';
 import { materials, xrayMaterial } from '../materials';
+import { useRef, useMemo, useEffect } from 'react';
 import * as THREE from 'three';
 import { Group } from 'three';
-import { useFrame } from '@react-three/fiber';
 import { useTexture } from '@react-three/drei';
 import gpuBottomUrl from '../../../assets/gpu_bottom.webp';
 import gpuTopUrl from '../../../assets/gpu_top.webp';
@@ -30,11 +30,17 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
     gpuFrontTexture.repeat.set(3, 1);
   }, [gpuFrontTexture]);
 
-  useFrame((_state, delta) => {
-    if (fanRef1.current) fanRef1.current.rotation.y += delta * 20;
-    if (fanRef2.current) fanRef2.current.rotation.y += delta * 20;
-    if (fanRef3.current) fanRef3.current.rotation.y += delta * 20;
-  });
+  useEffect(() => {
+    const refs = [fanRef1, fanRef2, fanRef3];
+    refs.forEach(ref => {
+      if (ref.current) fanBladesRefsY.add(ref.current);
+    });
+    return () => {
+      refs.forEach(ref => {
+        if (ref.current) fanBladesRefsY.delete(ref.current);
+      });
+    };
+  }, []);
 
 
   return (
@@ -53,7 +59,7 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
       <group position={[-1.7, -0.15, 0]}>
         <mesh position={[0, 0, -0.05]} material={xrayMode ? xrayMaterial : undefined}>
           <boxGeometry args={[0.04, 0.4, 1.1]} />
-          {!xrayMode && <meshStandardMaterial color="#2a2a2a" metalness={0.6} roughness={0.8} />}
+          {!xrayMode && <primitive object={materials.roughDarkMetal} attach="material" />}
         </mesh>
         {/* GPU IO Texture Plane */}
         {!xrayMode && (
@@ -65,7 +71,7 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
         {/* HDMI Port (Gold plated) */}
         <mesh position={[-0.02, 0.05, 0.2]} material={xrayMode ? xrayMaterial : undefined}>
           <boxGeometry args={[0.05, 0.08, 0.15]} />
-          {!xrayMode && <meshStandardMaterial color="#d4af37" metalness={1} roughness={0.2} />}
+          {!xrayMode && <primitive object={materials.goldMetal} attach="material" />}
         </mesh>
         {/* 3x DisplayPort */}
         {[-0.05, -0.25, -0.45].map((z, i) => (
@@ -79,13 +85,13 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {/* Main PCB */}
       <mesh position={[0, 0, 0]} material={xrayMode ? xrayMaterial : undefined}>
         <boxGeometry args={[3.4, 0.05, 1.2]} />
-        {!xrayMode && <meshStandardMaterial color="#111" roughness={0.8} />}
+        {!xrayMode && <primitive object={materials.veryDarkGray} attach="material" />}
       </mesh>
 
       {/* Backplate with modern sci-fi cutouts */}
       <mesh position={[0, 0.05, 0]} material={xrayMode ? xrayMaterial : undefined}>
         <boxGeometry args={[3.4, 0.05, 1.2]} />
-        {!xrayMode && <meshStandardMaterial color="#2a2a2a" metalness={0.7} roughness={0.4} />}
+        {!xrayMode && <primitive object={materials.darkGrayMetal} attach="material" />}
       </mesh>
       {/* GPU Backplate Texture */}
       {!xrayMode && (
@@ -99,13 +105,13 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {/* Heatsink Block */}
       <mesh position={[0, -0.15, 0]} material={xrayMode ? xrayMaterial : undefined}>
         <boxGeometry args={[3.3, 0.25, 1.15]} />
-        {!xrayMode && <meshStandardMaterial color="#b0b5b9" metalness={0.8} roughness={0.2} />}
+        {!xrayMode && <primitive object={materials.chromeMetal} attach="material" />}
       </mesh>
 
       {/* Fan Shroud */}
       <mesh position={[0, -0.325, 0]} material={xrayMode ? xrayMaterial : undefined}>
         <boxGeometry args={[3.4, 0.1, 1.2]} />
-        {!xrayMode && <meshStandardMaterial color="#151515" roughness={0.6} />}
+        {!xrayMode && <primitive object={materials.darkMetal} attach="material" />}
       </mesh>
       {/* GPU Front Texture (Fans Side) */}
       {!xrayMode && (
@@ -149,10 +155,10 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
 
       {/* Physical Fans (Visible inside hologram) */}
       {[-1.15, 0, 1.15].map((x, i) => (
-        <group key={`phys-fan-${i}`} position={[x, -0.2, 0]} ref={i === 0 ? fanRef1 : i === 1 ? fanRef2 : fanRef3}>
+        <group key={`phys-fan-${i}`} position={[x, -0.2, 0]} ref={i === 0 ? fanRef1 : i === 1 ? fanRef2 : fanRef3} userData={{ axis: 'y' }}>
           <mesh material={xrayMode ? xrayMaterial : undefined}>
             <cylinderGeometry args={[0.42, 0.42, 0.05, 32]} />
-            {!xrayMode && <meshStandardMaterial color="#050505" roughness={0.8} />}
+            {!xrayMode && <primitive object={materials.almostBlack} attach="material" />}
           </mesh>
           <mesh material={xrayMode ? xrayMaterial : undefined}>
             <boxGeometry args={[0.78, 0.05, 0.1]} />

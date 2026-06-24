@@ -4,8 +4,8 @@ import { useTexture } from '@react-three/drei';
 import cpuTopUrl from '../../../assets/cpu_top.webp';
 import cpuBottomUrl from '../../../assets/cpu_bottom.webp';
 import { extrudeOptsIhs } from '../constants';
-import { usePCSettings } from '../../../hooks/usePC';
 import { xrayMaterial } from '../materials';
+import { usePCSettings } from '../../../hooks/usePC';
 
 export const CPUGeometry = () => {
   const { xrayMode } = usePCSettings();

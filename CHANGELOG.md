@@ -1,5 +1,14 @@
 # Dziennik Zmian (Changelog)
 
+## Dzień 15 - Audyt Optymalizacji, UX i Fizyki
+
+### Dodane / Poprawione
+- **Fizyka obrotu wentylatorów**: Zoptymalizowano system obrotu wirtualnych śmigieł. Wyeliminowano problem nieprawidłowej osi obrotu zasilacza (PSU) oraz karty graficznej (GPU) po restrukturyzacji pętli `useFrame`. Stworzono dedykowane sety `fanBladesRefsY` oraz `fanBladesRefsZ` dla uniknięcia opóźnień asynchronicznych w React Three Fiber.
+- **Optymalizacja renderowania środowiska**: Zoptymalizowano proces przypisywania mapy otoczenia (`envMap`) poprzez jej pre-kalkulację przed renderowaniem głównego drzewa komponentów, stabilizując pętlę renderowania.
+- **Dostępność i SEO (WCAG)**: Dodano unikalne i deskryptywne atrybuty `aria-label` do wszystkich przycisków interfejsu (m.in. nawigacji, zamykania instrukcji). Zwiększono kontrast kolorystyczny podrzędnych tekstów w interfejsie.
+- **Responsywność mobilna**: Skorygowano nachodzące na siebie warstwy interfejsu na bardzo wąskich ekranach smartfonów (zmiana pozycji wysuwanego menu z `left-12` na `left-14`), zapobiegając ucięciu interfejsu.
+- **Stabilność etykiet 3D**: Rozwiązano problem niespodziewanie znikających dymków (tooltips) z nazwami komponentów podczas swobodnego obracania kamerą po rozłożeniu komputera na części pierwsze.
+
 ## Dzień 14 - Detale konstrukcyjne (Złącza i krawędzie)
 
 ### Dodane

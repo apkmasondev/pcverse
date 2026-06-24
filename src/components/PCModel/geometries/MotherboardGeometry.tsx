@@ -1,7 +1,6 @@
 import React from 'react';
+import { materials, xrayMaterial } from '../materials';
 import { usePCSettings } from '../../../hooks/usePC';
-import { xrayMaterial } from '../materials';
-import { materials } from '../materials';
 import { useTexture, Instances, Instance } from '@react-three/drei';
 import moboBackUrl from '../../../assets/mobo_back_photo.webp';
 import moboTopUrl from '../../../assets/mobo_top.webp';
@@ -12,23 +11,7 @@ import ssdTopUrl from '../../../assets/ssd_top.webp';
 import cmosBatteryUrl from '../../../assets/cmos_battery.webp';
 import m2HeatsinkUrl from '../../../assets/m2_heatsink.webp';
 
-const Mesh = ({ children, material, ...props }: any) => {
-  const { xrayMode } = usePCSettings();
-  const filteredChildren = React.Children.map(children, (child) => {
-    if (!child) return null;
-    if (xrayMode) {
-      if (child.type === 'meshStandardMaterial' || child.type === 'meshPhysicalMaterial' || child.type === 'primitive') {
-        return null;
-      }
-    }
-    return child;
-  });
-  return (
-    <mesh material={xrayMode ? xrayMaterial : material} {...props}>
-      {filteredChildren}
-    </mesh>
-  );
-};
+import { XMesh as Mesh } from './XMesh';
 
 const XInstances = ({ children, material, ...props }: any) => {
   const { xrayMode } = usePCSettings();
@@ -63,7 +46,7 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {/* Main PCB */}
       <Mesh position={[0, 0, 0]}>
         <boxGeometry args={[3, 4, 0.06]} />
-        <meshStandardMaterial color="#111214" roughness={0.9} />
+        <primitive object={materials.darkGrayPlastic} attach="material" />
       </Mesh>
 
       {/* Motherboard Top Texture (Photorealistic Base) */}
@@ -81,13 +64,13 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {/* CPU Socket Cover (Grey rectangle to hide the printed socket on texture) */}
       <Mesh position={[0, 0.95, 0.04]}>
         <boxGeometry args={[1.3, 1.45, 0.02]} />
-        <meshStandardMaterial color="#1f2023" roughness={0.9} />
+        <primitive object={materials.mediumGrayPlastic} attach="material" />
       </Mesh>
 
       {/* CPU Socket & Mounting Bracket */}
       <Mesh position={[0, 0.95, 0.05]}>
         <boxGeometry args={[1.3, 1.45, 0.08]} />
-        <meshStandardMaterial color="#222" roughness={0.8} />
+        <primitive object={materials.darkCharcoal} attach="material" />
       </Mesh>
       <Mesh position={[0, 0.95, 0.095]}>
         <planeGeometry args={[1.3, 1.45]} />
@@ -176,7 +159,7 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
           {/* Groove floor (dark) */}
           <Mesh position={[0, 0, 0.025]}>
             <boxGeometry args={[0.04, 1.8, 0.01]} />
-            <meshStandardMaterial color="#020202" roughness={1} />
+            <primitive object={materials.deepBlack} attach="material" />
           </Mesh>
             
           {/* Złote styki wewnątrz slotu (Górna część) */}
@@ -198,12 +181,12 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
           {/* Top clip */}
           <Mesh position={[0, 0.95, 0]}>
             <boxGeometry args={[0.12, 0.15, 0.12]} />
-            <meshStandardMaterial color="#b0b5b9" roughness={0.5} metalness={0.8} />
+            <primitive object={materials.chromeMetal} attach="material" />
           </Mesh>
           {/* Bottom clip */}
           <Mesh position={[0, -0.95, 0]}>
             <boxGeometry args={[0.12, 0.15, 0.12]} />
-            <meshStandardMaterial color="#b0b5b9" roughness={0.5} metalness={0.8} />
+            <primitive object={materials.chromeMetal} attach="material" />
           </Mesh>
         </group>
       ))}
@@ -220,7 +203,7 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
         </Mesh>
         <Mesh position={[0, 0, 0.06]}>
           <boxGeometry args={[0.1, 0.18, 0.01]} />
-          <meshStandardMaterial color="#ff0000" emissive="#ff0000" emissiveIntensity={2} />
+          <primitive object={materials.redLED} attach="material" />
         </Mesh>
       </group>
 
@@ -246,7 +229,7 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
           {/* Groove floor (dark) */}
           <Mesh position={[0, 0, 0.02]}>
             <boxGeometry args={[2.8, 0.07, 0.01]} />
-            <meshStandardMaterial color="#020202" roughness={1} />
+            <primitive object={materials.deepBlack} attach="material" />
           </Mesh>
 
           {/* PCIe slot Notch / Key Divider */}
@@ -258,19 +241,19 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
           {/* Gold Pins - Short Segment */}
           <Mesh position={[-1.19, 0, 0.025]}>
             <boxGeometry args={[0.3, 0.02, 0.01]} />
-            <meshStandardMaterial color="#d4af37" metalness={0.9} roughness={0.3} />
+            <primitive object={materials.goldMetal} attach="material" />
           </Mesh>
 
           {/* Gold Pins - Long Segment */}
           <Mesh position={[0.19, 0, 0.025]}>
             <boxGeometry args={[2.3, 0.02, 0.01]} />
-            <meshStandardMaterial color="#d4af37" metalness={0.9} roughness={0.3} />
+            <primitive object={materials.goldMetal} attach="material" />
           </Mesh>
 
           {/* PCIe slot clip */}
           <Mesh position={[1.45, 0, 0]}>
             <boxGeometry args={[0.1, 0.15, 0.12]} />
-            <meshStandardMaterial color="#0a0a0a" />
+            <primitive object={materials.blackPlastic} attach="material" />
           </Mesh>
         </group>
       ))}
@@ -279,7 +262,7 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
       <group position={[-0.2, -1.4, 0.08]}>
         <Mesh>
           <boxGeometry args={[1.8, 0.3, 0.1]} />
-          <meshStandardMaterial color="#111" metalness={0.7} roughness={0.3} />
+          <primitive object={materials.darkShinyMetal} attach="material" />
         </Mesh>
         {/* Top face with AORUS texture */}
         <Mesh position={[0, 0, 0.051]}>
@@ -293,7 +276,7 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
         {/* Battery Holder / Socket */}
         <Mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
           <cylinderGeometry args={[0.18, 0.18, 0.04, 32]} />
-          <meshStandardMaterial color="#111" roughness={0.9} />
+          <primitive object={materials.veryDarkGray} attach="material" />
         </Mesh>
         {/* The shiny CR2032 Battery */}
         <Mesh position={[0, 0, 0.03]} rotation={[Math.PI / 2, 0, 0]}>
@@ -310,7 +293,7 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {/* Audio Section with RGB Trace */}
       <Mesh position={[-1.2, -1.5, 0.04]}>
         <boxGeometry args={[0.4, 0.8, 0.02]} />
-        <meshStandardMaterial color="#0f0f0f" roughness={0.9} />
+        <primitive object={materials.veryDarkGray} attach="material" />
       </Mesh>
       <Mesh position={[-0.95, -1.5, 0.04]}>
         <boxGeometry args={[0.02, 0.8, 0.01]} />
@@ -344,7 +327,7 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
         {/* Sci-fi grooves */}
         <Mesh position={[-0.2, 0, 0.08]}>
           <boxGeometry args={[0.1, 1.0, 0.02]} />
-          <meshStandardMaterial color="#0a0a0a" />
+          <primitive object={materials.blackPlastic} attach="material" />
         </Mesh>
         {/* RGB Accent - Hollow Square Outline */}
         <group position={[0, 0, 0.091]}>
@@ -374,7 +357,7 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {/* Rear IO Shield Block */}
       <Mesh position={[-1.4, 1.2, 0.255]}>
         <boxGeometry args={[0.2, 1.6, 0.45]} />
-        <meshStandardMaterial color="#111" metalness={0.8} roughness={0.3} />
+        <primitive object={materials.darkShinyMetal} attach="material" />
       </Mesh>
 
       {/* IO Ports Area (moved from CaseGeometry to stay attached when exploded) */}
@@ -382,7 +365,7 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
         {/* Motherboard IO Panel Accent (Shifted to X = -1.53 to sit on the outside of the left panel) */}
         <Mesh position={[-1.53, 1.2, -1.55]}>
           <boxGeometry args={[0.04, 1.4, 0.65]} />
-          <meshStandardMaterial color="#888c94" metalness={0.8} roughness={0.3} />
+          <primitive object={materials.steelMetal} attach="material" />
         </Mesh>
         {/* Motherboard IO Image Texture Plane */}
         <Mesh position={[-1.551, 1.2, -1.55]} rotation={[0, -Math.PI / 2, 0]}>
@@ -393,18 +376,18 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
         {/* BIOS Flashback & Clear CMOS */}
         <Mesh position={[-1.55, 1.75, -1.65]}>
           <boxGeometry args={[0.02, 0.06, 0.06]} />
-          <meshStandardMaterial color="#111" roughness={0.8} />
+          <primitive object={materials.veryDarkGray} attach="material" />
         </Mesh>
         <Mesh position={[-1.55, 1.75, -1.45]} rotation={[0, 0, Math.PI / 2]}>
           <cylinderGeometry args={[0.02, 0.02, 0.02, 16]} />
-          <meshStandardMaterial color="#444" metalness={0.5} />
+          <primitive object={materials.midGrayMetal} attach="material" />
         </Mesh>
 
         {/* Wi-Fi Antenna Connectors (Gold) */}
         {[-1.65, -1.45].map(z => (
           <Mesh key={`wifi-${z}`} position={[-1.55, 1.6, z]} rotation={[0, 0, Math.PI / 2]}>
             <cylinderGeometry args={[0.03, 0.03, 0.04, 16]} />
-            <meshStandardMaterial color="#d4af37" metalness={1} roughness={0.2} />
+            <primitive object={materials.goldMetal} attach="material" />
           </Mesh>
         ))}
 
@@ -412,7 +395,7 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
         {[-1.65, -1.45].map(z => (
           <Mesh key={`usb2-${z}`} position={[-1.55, 1.45, z]}>
             <boxGeometry args={[0.02, 0.04, 0.1]} />
-            <meshStandardMaterial color="#111" roughness={0.9} />
+            <primitive object={materials.veryDarkGray} attach="material" />
           </Mesh>
         ))}
 
@@ -420,28 +403,28 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
         {[-1.65, -1.45].map(z => (
           <Mesh key={`usb3-${z}`} position={[-1.55, 1.3, z]}>
             <boxGeometry args={[0.02, 0.04, 0.1]} />
-            <meshStandardMaterial color="#1e3a8a" roughness={0.6} />
+            <primitive object={materials.bluePlastic} attach="material" />
           </Mesh>
         ))}
 
         {/* 2.5G Ethernet & USB 3.2 Gen 2 (Red) */}
         <Mesh position={[-1.55, 1.15, -1.65]}>
           <boxGeometry args={[0.02, 0.08, 0.12]} />
-          <meshStandardMaterial color="#1f2937" metalness={0.6} />
+          <primitive object={materials.slateMetal} attach="material" />
         </Mesh>
         <Mesh position={[-1.55, 1.15, -1.45]}>
           <boxGeometry args={[0.02, 0.04, 0.1]} />
-          <meshStandardMaterial color="#991b1b" roughness={0.6} />
+          <primitive object={materials.darkRedPlastic} attach="material" />
         </Mesh>
 
         {/* USB-C & USB 3.2 Gen 2 (Red) */}
         <Mesh position={[-1.55, 1.0, -1.65]}>
           <boxGeometry args={[0.02, 0.025, 0.08]} />
-          <meshStandardMaterial color="#111" roughness={0.7} />
+          <primitive object={materials.darkCharcoal} attach="material" />
         </Mesh>
         <Mesh position={[-1.55, 1.0, -1.45]}>
           <boxGeometry args={[0.02, 0.04, 0.1]} />
-          <meshStandardMaterial color="#991b1b" roughness={0.6} />
+          <primitive object={materials.darkRedPlastic} attach="material" />
         </Mesh>
 
         {/* High-End Audio Stack (Gold Plated) */}

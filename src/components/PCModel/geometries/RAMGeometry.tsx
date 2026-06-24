@@ -1,7 +1,6 @@
 import React from 'react';
+import { materials, xrayMaterial } from '../materials';
 import { usePCSettings } from '../../../hooks/usePC';
-import { xrayMaterial } from '../materials';
-import { materials } from '../materials';
 import { useTexture } from '@react-three/drei';
 import ramSideUrl from '../../../assets/ram_side.webp';
 
@@ -38,7 +37,7 @@ export const RAMGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {/* Złote styki (Z tyłu, wchodzące w slot na płycie) */}
       <Mesh position={[0, 0, -0.16]}>
         <boxGeometry args={[0.045, 1.65, 0.04]} />
-        <meshStandardMaterial color="#d4af37" metalness={1} roughness={0.3} />
+        <primitive object={materials.goldMetal} attach="material" />
       </Mesh>
       {/* Metaliczny Radiator (Heat Spreader) */}
       <Mesh position={[0, 0, 0.02]}>

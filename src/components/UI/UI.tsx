@@ -98,7 +98,7 @@ export const UI = () => {
         }}
         className="group relative flex items-center justify-center w-11 h-11 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/5 rounded-full transition-all hover:bg-indigo-500/20 hover:border-indigo-500/30"
       >
-        <Layers size={20} className={`transition-transform duration-500 ${explodeStep > 0 ? 'rotate-180 text-indigo-400' : 'text-slate-400 group-hover:text-indigo-300'}`} />
+        <Layers aria-hidden="true" size={20} className={`transition-transform duration-500 ${explodeStep > 0 ? 'rotate-180 text-indigo-400' : 'text-slate-300 group-hover:text-indigo-300'}`} />
         <Tooltip text={explodeStep === 2 ? 'Złóż Komputer' : explodeStep === 1 ? 'Sekwencja...' : 'Rozłóż na Części'} />
       </motion.button>
       
@@ -112,7 +112,7 @@ export const UI = () => {
         }}
         className="group relative flex items-center justify-center w-11 h-11 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/5 rounded-full transition-all hover:bg-indigo-500/20 hover:border-indigo-500/30"
       >
-        <Focus size={20} className="text-slate-400 group-hover:text-indigo-300" />
+        <Focus aria-hidden="true" size={20} className="text-slate-300 group-hover:text-indigo-300" />
         <Tooltip text="Zresetuj Widok" />
       </motion.button>
 
@@ -126,7 +126,7 @@ export const UI = () => {
         }}
         className={`group relative flex items-center justify-center w-11 h-11 backdrop-blur-md border rounded-full transition-all ${xrayMode ? 'bg-cyan-500/20 border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.3)]' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-cyan-500/20 hover:border-cyan-500/30'}`}
       >
-        <Scan size={20} className={`transition-all duration-500 ${xrayMode ? 'text-cyan-400 scale-110' : 'text-slate-400 group-hover:text-cyan-300'}`} />
+        <Scan aria-hidden="true" size={20} className={`transition-all duration-500 ${xrayMode ? 'text-cyan-400 scale-110' : 'text-slate-300 group-hover:text-cyan-300'}`} />
         <Tooltip text="Hologram (X-Ray)" />
       </motion.button>
 
@@ -140,7 +140,7 @@ export const UI = () => {
         }}
         className={`group relative flex items-center justify-center w-11 h-11 backdrop-blur-md border rounded-full transition-all ${showAirflow ? 'bg-blue-500/20 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-blue-500/20 hover:border-blue-500/30'}`}
       >
-        <Wind size={20} className={`transition-all duration-500 ${showAirflow ? 'text-blue-400 scale-110' : 'text-slate-400 group-hover:text-blue-300'}`} />
+        <Wind aria-hidden="true" size={20} className={`transition-all duration-500 ${showAirflow ? 'text-blue-400 scale-110' : 'text-slate-300 group-hover:text-blue-300'}`} />
         <Tooltip text="Symulacja Airflow" />
       </motion.button>
 
@@ -154,9 +154,9 @@ export const UI = () => {
             setShowPalette(!showPalette);
             setShowEnv(false);
           }}
-          className={`group relative flex items-center justify-center w-11 h-11 backdrop-blur-md border rounded-full transition-all ${showPalette || rgbEnabled ? 'bg-purple-500/20 border-purple-500/50 shadow-[0_0_15px_rgba(168,85,247,0.3)] text-purple-300' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-purple-500/20 hover:border-purple-500/30 text-slate-400'}`}
+          className={`group relative flex items-center justify-center w-11 h-11 backdrop-blur-md border rounded-full transition-all ${showPalette || rgbEnabled ? 'bg-purple-500/20 border-purple-500/50 shadow-[0_0_15px_rgba(168,85,247,0.3)] text-purple-300' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-purple-500/20 hover:border-purple-500/30 text-slate-300'}`}
         >
-          <Palette size={20} className="transition-colors" style={{ color: rgbEnabled ? rgbColor : '#94a3b8' }} />
+          <Palette aria-hidden="true" size={20} className="transition-colors" style={{ color: rgbEnabled ? rgbColor : '#94a3b8' }} />
           <Tooltip text="Tryb RGB" />
         </motion.button>
         
@@ -166,9 +166,10 @@ export const UI = () => {
               initial={{ opacity: 0, y: -10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              className="absolute top-0 left-12 md:top-full md:left-0 md:mt-2 p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl flex gap-2 z-50 items-center flex-wrap w-[220px] sm:w-[280px] md:w-auto"
+              className="absolute top-0 left-14 md:top-full md:left-0 md:mt-2 p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl flex gap-2 z-50 items-center flex-wrap w-[220px] sm:w-[280px] md:w-auto"
             >
               <button
+                aria-label="Wyłącz RGB"
                 onClick={() => {
                   playSelectSound();
                   if (rgbEnabled) toggleRgbEnabled();
@@ -185,6 +186,7 @@ export const UI = () => {
               {COLORS.map(c => (
                 <button
                   key={c.hex}
+                  aria-label={`Kolor RGB ${c.name}`}
                   onClick={() => {
                     playSelectSound();
                     setRgbColor(c.hex);
@@ -217,7 +219,7 @@ export const UI = () => {
           }}
           className={`group relative flex items-center justify-center w-11 h-11 backdrop-blur-md border rounded-full transition-all ${showEnv ? 'bg-amber-500/20 border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.3)] text-amber-300' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-amber-500/20 hover:border-amber-500/30'}`}
         >
-          <Sun size={20} className={`transition-all duration-500 ${showEnv ? 'text-amber-400 scale-110 rotate-90' : 'text-slate-400 group-hover:text-amber-300'}`} />
+          <Sun aria-hidden="true" size={20} className={`transition-all duration-500 ${showEnv ? 'text-amber-400 scale-110 rotate-90' : 'text-slate-300 group-hover:text-amber-300'}`} />
           <Tooltip text="Otoczenie (HDRi)" />
         </motion.button>
         
@@ -227,11 +229,12 @@ export const UI = () => {
               initial={{ opacity: 0, y: -10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              className="absolute top-0 left-12 md:top-full md:left-0 md:mt-2 p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col gap-2 z-50 w-48"
+              className="absolute top-0 left-14 md:top-full md:left-0 md:mt-2 p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col gap-2 z-50 w-48"
             >
               {PRESETS.map(p => (
                 <button
                   key={p.id}
+                  aria-label={`Otoczenie ${p.name}`}
                   onClick={() => {
                     playSelectSound();
                     setEnvPreset(p.id);
@@ -240,7 +243,7 @@ export const UI = () => {
                   className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${envPreset === p.id ? 'bg-amber-500/20 text-amber-300 font-bold' : 'text-slate-300 hover:bg-white/10 hover:text-white'}`}
                 >
                   <div className="font-medium">{p.name}</div>
-                  <div className="text-[10px] text-slate-500 font-normal mt-0.5 leading-tight">{p.desc}</div>
+                  <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">{p.desc}</div>
                 </button>
               ))}
             </motion.div>
@@ -258,7 +261,7 @@ export const UI = () => {
         }}
         className={`group relative flex items-center justify-center w-11 h-11 backdrop-blur-md border rounded-full transition-all ${showLabels ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.3)]' : 'bg-[#0a0a0a]/90 border-white/5 text-slate-300 hover:bg-emerald-500/20 hover:border-emerald-500/30 hover:text-white'}`}
       >
-        <Tag size={20} className={`transition-all duration-500 ${showLabels ? 'text-emerald-400 scale-110' : 'text-slate-400 group-hover:text-emerald-300'}`} />
+        <Tag aria-hidden="true" size={20} className={`transition-all duration-500 ${showLabels ? 'text-emerald-400 scale-110' : 'text-slate-300 group-hover:text-emerald-300'}`} />
         <Tooltip text="Ukryj/pokaż etykiety" />
       </motion.button>
 
@@ -272,7 +275,7 @@ export const UI = () => {
         }}
         className="group relative flex items-center justify-center w-11 h-11 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/5 rounded-full text-slate-300 transition-all hover:bg-white/10 hover:border-white/30 hover:text-white"
       >
-        <Info size={20} className="text-slate-400 group-hover:text-white" />
+        <Info aria-hidden="true" size={20} className="text-slate-300 group-hover:text-white" />
         <Tooltip text="Instrukcja obsługi" />
       </motion.button>
     </motion.div>
@@ -287,7 +290,7 @@ export const UI = () => {
             className="fixed bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 px-6 py-3 bg-black/70 backdrop-blur-xl border border-white/10 rounded-full text-slate-300 text-sm z-30 cursor-pointer shadow-2xl"
             onClick={() => setShowHint(false)}
           >
-            <MousePointerClick size={18} className="text-indigo-400 animate-bounce" />
+            <MousePointerClick aria-hidden="true" size={18} className="text-indigo-400 animate-bounce" />
             Kliknij podzespół komputera, aby poznać jego budowę
           </motion.div>
         )}
@@ -313,9 +316,9 @@ export const UI = () => {
               <button 
                 onClick={() => setShowInstructions(false)}
                 aria-label="Zamknij instrukcję"
-                className="absolute top-6 right-6 text-slate-400 hover:text-white transition-colors"
+                className="absolute top-6 right-6 text-slate-300 hover:text-white transition-colors"
               >
-                <X size={24} />
+                <X aria-hidden="true" size={24} />
               </button>
               
               <h2 id="instructions-title" className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
@@ -325,7 +328,7 @@ export const UI = () => {
               
               <div className="grid gap-4 mb-8">
                 <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-                  <MousePointerClick className="text-indigo-400 shrink-0" />
+                  <MousePointerClick aria-hidden="true" className="text-indigo-400 shrink-0" />
                   <div>
                     <h3 className="text-base font-semibold text-white mb-2">Kamera i Interakcja</h3>
                     <p className="text-sm text-slate-300 leading-relaxed">
@@ -338,7 +341,7 @@ export const UI = () => {
                 </div>
 
                 <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
-                  <Layers className="text-indigo-400 shrink-0" />
+                  <Layers aria-hidden="true" className="text-indigo-400 shrink-0" />
                   <div>
                     <h3 className="text-base font-semibold text-white mb-2">Eksplozja (Teardown)</h3>
                     <p className="text-sm text-slate-300 leading-relaxed">
@@ -349,33 +352,34 @@ export const UI = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
-                    <Focus className="text-indigo-400 shrink-0" />
+                    <Focus aria-hidden="true" className="text-indigo-400 shrink-0" />
                     <span className="text-sm text-slate-300"><strong>Zresetuj:</strong> Domyślna kamera.</span>
                   </div>
                   <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
-                    <Scan className="text-cyan-400 shrink-0" />
+                    <Scan aria-hidden="true" className="text-cyan-400 shrink-0" />
                     <span className="text-sm text-slate-300"><strong>Hologram:</strong> X-Ray obudowy.</span>
                   </div>
                   <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
-                    <Wind className="text-blue-400 shrink-0" />
+                    <Wind aria-hidden="true" className="text-blue-400 shrink-0" />
                     <span className="text-sm text-slate-300"><strong>Airflow:</strong> Cyrkulacja wiatru.</span>
                   </div>
                   <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
-                    <Sun className="text-amber-400 shrink-0" />
+                    <Sun aria-hidden="true" className="text-amber-400 shrink-0" />
                     <span className="text-sm text-slate-300"><strong>Otoczenie:</strong> Zmiana tła (HDRi).</span>
                   </div>
                   <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
-                    <Palette className="text-purple-400 shrink-0" />
+                    <Palette aria-hidden="true" className="text-purple-400 shrink-0" />
                     <span className="text-sm text-slate-300"><strong>RGB:</strong> Zmiana koloru.</span>
                   </div>
                   <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
-                    <Tag className="text-emerald-400 shrink-0" />
+                    <Tag aria-hidden="true" className="text-emerald-400 shrink-0" />
                     <span className="text-sm text-slate-300"><strong>Etykiety:</strong> Ukryj/pokaż text.</span>
                   </div>
                 </div>
               </div>
               
               <button 
+                aria-label="Zamknij instrukcję"
                 onClick={() => setShowInstructions(false)}
                 className="w-full py-3 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 rounded-xl font-bold text-indigo-300 transition-colors shadow-[0_0_15px_rgba(99,102,241,0.1)] hover:shadow-[0_0_20px_rgba(99,102,241,0.3)]"
               >
@@ -383,7 +387,7 @@ export const UI = () => {
               </button>
               
               <div className="mt-5 text-center">
-                <p className="text-xs text-slate-500/70 font-medium tracking-wide">
+                <p className="text-xs text-slate-300/70 font-medium tracking-wide">
                   Designed by <span className="text-indigo-400 font-bold drop-shadow-[0_0_8px_rgba(99,102,241,0.5)] tracking-widest">apkmasondev</span>
                 </p>
               </div>

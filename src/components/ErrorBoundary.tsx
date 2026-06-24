@@ -33,7 +33,7 @@ export class GlobalErrorBoundary extends Component<{ fallback: ReactNode, childr
               onClick={() => window.location.reload()}
               className="mt-6 px-4 py-2 bg-red-900/30 hover:bg-red-900/50 rounded-md text-red-200 transition-colors"
             >
-              Reload Application
+              Uruchom ponownie aplikację
             </button>
           </div>
         </div>

@@ -1,6 +1,7 @@
+import { fanBladesRefsZ } from '../FanManager';
+import { materials, xrayMaterial } from '../materials';
 import { useRef, useEffect, useMemo } from 'react';
 import { Group } from 'three';
-import { useFrame } from '@react-three/fiber';
 import { useTexture } from '@react-three/drei';
 import heatsinkUrl from '../../../assets/heatsink.webp';
 import heatsinkSideUrl from '../../../assets/heatsink_side.webp';
@@ -9,7 +10,6 @@ import caseFanUrl from '../../../assets/case_fan.webp';
 import fanSideUrl from '../../../assets/fan_side.webp';
 import { usePCSettings } from '../../../hooks/usePC';
 import { LocalAirflowParticles } from './LocalAirflowParticles';
-import { xrayMaterial } from '../materials';
 
 export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbColor: string, isExhaust?: boolean, textureUrl?: string }) => {
   const { xrayMode } = usePCSettings();
@@ -25,24 +25,26 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
   }, [fanSideTexture]);
   const bladesRef = useRef<Group>(null);
 
-  useFrame((_state, delta) => {
+  useEffect(() => {
     if (bladesRef.current) {
-      bladesRef.current.rotation.z += delta * 15;
+      fanBladesRefsZ.add(bladesRef.current);
+      const currentRef = bladesRef.current;
+      return () => { fanBladesRefsZ.delete(currentRef); };
     }
-  });
+  }, []);
 
   return (
     <group>
       {/* Inner Physical Blades (visible in X-Ray mode) */}
-      <group position={[0, 0, 0]} ref={bladesRef}>
+      <group position={[0, 0, 0]} ref={bladesRef} userData={{ axis: 'z' }}>
         <mesh rotation={[Math.PI / 2, 0, 0]} material={xrayMode ? xrayMaterial : undefined}>
           <cylinderGeometry args={[0.15, 0.15, 0.05, 16]} />
-          {!xrayMode && <meshStandardMaterial color="#151515" roughness={0.6} />}
+          {!xrayMode && <primitive object={materials.darkMetal} attach="material" />}
         </mesh>
         {[0, 1, 2, 3, 4, 5, 6].map(i => (
           <mesh key={i} rotation={[0, 0, (Math.PI * 2 / 7) * i]} material={xrayMode ? xrayMaterial : undefined}>
             <boxGeometry args={[0.9, 0.15, 0.02]} />
-            {!xrayMode && <meshStandardMaterial color="#222" roughness={0.5} />}
+            {!xrayMode && <primitive object={materials.darkCharcoal} attach="material" />}
           </mesh>
         ))}
       </group>

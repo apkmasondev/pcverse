@@ -60,10 +60,8 @@ export const LocalAirflowParticles = ({ count = 50, radius = 0.4, length = 1.5, 
     meshRef.current.instanceMatrix.needsUpdate = true;
   });
 
-  if (!showAirflow) return null;
-
   return (
-    <instancedMesh ref={meshRef} args={[undefined as any, undefined as any, count]}>
+    <instancedMesh ref={meshRef} args={[undefined as any, undefined as any, count]} visible={showAirflow}>
       <sphereGeometry args={[0.015, 8, 8]} />
       <meshBasicMaterial 
         color={color} 
