@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { Group } from 'three';
 import { useFrame } from '@react-three/fiber';
 import { useTexture } from '@react-three/drei';
+import gpuBottomUrl from '../../../assets/gpu_bottom.webp';
 import gpuTopUrl from '../../../assets/gpu_top.webp';
 import gpuFrontUrl from '../../../assets/gpu_front.webp';
 import gpuBackplateUrl from '../../../assets/gpu_backplate.webp';
@@ -17,6 +18,7 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
   const fanRef2 = useRef<Group>(null);
   const fanRef3 = useRef<Group>(null);
   const gpuBackplateTexture = useTexture(gpuBackplateUrl);
+  const gpuBottomTexture = useTexture(gpuBottomUrl);
   const gpuTopTexture = useTexture(gpuTopUrl);
   const gpuFrontTexture = useTexture(gpuFrontUrl);
   const gpuIoTexture = useTexture(gpuIoUrl);
@@ -38,13 +40,13 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
   return (
     <group>
       {/* PCIe Connector - Short Segment (Front) */}
-      <mesh position={[-1.45, 0.05, -0.6]} material={xrayMode ? xrayMaterial : undefined}>
-        <boxGeometry args={[0.3, 0.08, 0.05]} />
+      <mesh position={[-1.45, 0.05, -0.66]} material={xrayMode ? xrayMaterial : undefined}>
+        <boxGeometry args={[0.3, 0.08, 0.10]} />
         {!xrayMode && <primitive object={materials.goldMetal} attach="material" />}
       </mesh>
       {/* PCIe Connector - Long Segment */}
-      <mesh position={[-0.35, 0.05, -0.6]} material={xrayMode ? xrayMaterial : undefined}>
-        <boxGeometry args={[1.8, 0.08, 0.05]} />
+      <mesh position={[-0.35, 0.05, -0.66]} material={xrayMode ? xrayMaterial : undefined}>
+        <boxGeometry args={[1.8, 0.08, 0.10]} />
         {!xrayMode && <primitive object={materials.goldMetal} attach="material" />}
       </mesh>
       {/* GPU IO Ports (HDMI & 3x DisplayPort) at Left Edge */}
@@ -118,6 +120,14 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
         <mesh position={[0, -0.15, 0.601]} rotation={[0, 0, 0]}>
           <planeGeometry args={[3.4, 0.45]} />
           <meshStandardMaterial map={gpuTopTexture} roughness={0.4} metalness={0.6} />
+        </mesh>
+      )}
+
+      {/* GPU Bottom Edge Texture (Facing the motherboard) */}
+      {!xrayMode && (
+        <mesh position={[0, -0.15, -0.601]} rotation={[0, Math.PI, Math.PI]}>
+          <planeGeometry args={[3.4, 0.45]} />
+          <meshStandardMaterial map={gpuBottomTexture} roughness={0.4} metalness={0.6} />
         </mesh>
       )}
 

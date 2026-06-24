@@ -1,12 +1,25 @@
 # Dziennik Zmian (Changelog)
 
-## [2026-06-24] - Tekstury, Glassmorphism Tooltips i poprawki Z-Index
+## Dzień 14 - Detale konstrukcyjne (Złącza i krawędzie)
 
 ### Dodane
+- **Tekstura spodu karty graficznej**: Zintegrowano nową grafikę `gpu_bottom.webp` na krawędzi karty graficznej przylegającej do złącza PCIe (płyty głównej).
+- **Tekstura portów HDD**: Wdrożono nową grafikę `hdd_ports.webp` na tylną krawędź dysku HDD, gdzie podpinane są kable. Użytkownik ręcznie dostosował współrzędne fizycznych, plastikowo-złotych wtyków, by lepiej komponowały się z tłem.
+- **Tekstura frontu HDD**: Zaaplikowano finalną grafikę `hdd_behind.webp` na całkowicie przednią (przeciwległą do portów) krawędź dysku HDD, kończąc tym samym oteksturowanie wszystkich 6 ścian dysku.
+
+### Poprawione / Zmienione
+- **Wydłużenie złącza PCIe**: Znacząco zwiększono głębokość wystawania złotych pinów PCIe z karty graficznej (z `0.05` na `0.15`), aby sprawiały wrażenie masywniejszych i mocniej "siedzących" w płycie głównej.
+- **Odwrócenie tekstury spodu GPU**: Obrócono płaszczyznę `gpu_bottom.webp` o 180 stopni (dodatkowe `Math.PI` na osi Z) zgodnie z wytycznymi.
+
+## Dzień 13 - Tekstury, Glassmorphism Tooltips i poprawki Z-Index
+
+### Dodane
+
 - Zintegrowano nową grafikę `hdd_side.webp` na lewą i prawą burtę dysku twardego (`HDDGeometry`).
 - Zintegrowano nową grafikę `fan_side.webp` na zewnętrzne krawędzie ram wszystkich wentylatorów w obudowie (`FanGeometry`).
 
 ### Poprawione / Zmienione
+
 - **Lustrzane Odbicie HDD**: Wdrożono sklonowaną i odwróconą teksturę (Mirroring via `RepeatWrapping` i `repeat.x = -1`) na prawej ścianie dysku HDD, co zapewnia jej poprawną orientację.
 - **Rotacja UV wentylatorów**: Zmodyfikowano mapowanie UV na bocznych krawędziach (lewa/prawa) wentylatorów poprzez rotację tekstury o równe 90 stopni (`Math.PI / 2`). Wyeliminowano efekt "pikselowych smug" wynikający z agresywnego zgniatania proporcji tekstury.
 - **Glassmorphism Tooltips**: Wdrożono nowy, elegancki design dymków z nazwami komponentów. Użyto `backdrop-blur-xl`, asymetrycznych zaokrągleń i gradientów, dodając jednocześnie precyzyjny celownik i lepszą typografię z oddzielonym tłumaczeniem (zero wpływu na wydajność, brak bibliotek zewnętrznych).
@@ -17,11 +30,9 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 
 - **Wyeliminowanie migotania (Flickeringu) Animacji**: Wdrożono system "zatrzasku" (Snap-to-Grid) na samą końcówkę krzywej animacji `lerp` dla rozsuwanych paneli szklanych i blaszanych (Exploded View). Skrypt ucina asympotyczną funkcję gdy margines błędu spadnie poniżej 0.005, drastycznie pomagając silnikowi WebGL z sortowaniem głębi i zapobiegając kilkusekundowemu migotaniu nakładających się warstw szkła.
 
-
 - **Hover Effect (Inteligenty Z-Offset)**: Skalowanie unoszenia się komponentów po najechaniu kursorem (hover) odbywa się teraz proporcjonalnie w dół względem rozmiaru komponentu. Ogromna obudowa drga minimalnie, a mały dysk SSD dynamicznie odskakuje.
 - **Wyeliminowanie Z-fightingu obudowy**: Skrócono w dół płaszczyzny lewego panelu, tacki płyty głównej i tylnego panelu w `CaseGeometry.tsx` o grubość podłogi (Y z `-2.4` na `-2.3`), eliminując brutalne przenikanie się brył.
 - **Śrubki Szklanych Paneli**: Zgodnie z zasadami oszczędzania Draw Calls, zastosowano system `<Instances>` dodający po 4 fizyczne śrubki montażowe w rogach dwóch szklanych paneli (przednim i prawym bocznym).
-
 
 - **Culling paneli bocznych**: Obudowa automatycznie wyłącza renderowanie paneli (właściwość `visible = false`), gdy oddalą się poza zasięg wzroku kamery, odciążając kartę graficzną i zmniejszając liczbę Draw Calls.
 - **Wznawianie ekranu ładowania**: Skrypt `LoadingScreen.tsx` został zaktualizowany, aby automatycznie powracał i maskował chrupnięcia podczas asynchronicznego pobierania nowych map środowiskowych (HDRI).
@@ -29,7 +40,6 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - **Złote piny w gniazdach RAM**: Dodano nowe, realistyczne, fizyczne złącza stykowe do środka wszystkich 4 slotów pamięci na płycie głównej.
 - **Obrót tekstury radiatora CPU**: Poprawiono mapowanie UV na wieży chłodzącej procesora, obracając tekstury bocznego i górnego finu o 90 stopni.
 - **Rozdział portów SATA dysku HDD**: Zastąpiono pojedyncze, szerokie gniazdo na dysku twardym prawidłowymi, osobnymi złączami zasilania oraz przesyłu danych, pokrytymi realistycznym materiałem `materials.goldMetal`.
-
 
 - **Kolizja Zasilacza z obudową**: Podniesiono globalne współrzędne zasilacza (PSU) wewnątrz obudowy (oś Y skorygowana z `-1.92` na `-1.86`), dzięki czemu wystający w dół pierścień podświetlenia RGB wentylatora opiera się elegancko na metalowej podłodze zamiast przez nią brutalnie przenikać.
 - **Śledzie PCIe w Exploded View**: Śledzie (zaślepki) portów PCIe obudowy zostały zintegrowane z grupą odlatującego, lewego panelu bocznego, dzięki czemu przestają nienaturalnie "lewitować" w powietrzu po rozłożeniu komputera. Zoptymalizowano je również za pomocą tagu `<Instances>`, redukując ilość zapytań Draw Calls.
@@ -64,7 +74,6 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 
 ## Dzień 10 - Stabilność Architektury i Pamięć (Faza 5)
 
-
 - **Refaktoryzacja stanu i hooków**: Rozdzielono masywny hook `usePC` na dedykowane mniejsze hooki (`usePCSelection` i `usePCSettings`), ograniczając niepotrzebne re-rendery i przeliczanie parametrów obudowy przez komponenty, które ich nie potrzebowały.
 - **Zarządzanie Pamięcią i Canvas**: Wprowadzono rygorystyczne czyszczenie pamięci tekstur (VRAM). Po wygenerowaniu dynamicznej siatki obudowy (mesh grill) za pomocą API Canvas, kod natychmiast zwalnia pamięć operacyjną wywołując `canvas.width = 0; canvas.height = 0;`.
 - **Zarządzanie Lifecycle Geometrii**: Dodano bezpieczniki czyszczące (`dispose()`) podpięte pod hooki `useEffect` (poprzez kolekcję `geoRefs`) dla ciężkich obiektów typu `ExtrudeGeometry` i `ShapeGeometry`, zapobiegając gigantycznym wyciekom pamięci podczas przeładowywania drzewa DOM w React Three Fiber.
@@ -73,19 +82,16 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 
 ## Dzień 9 - Detale i Poprawki Wizualne (Faza 4)
 
-
 - **Całkowita eliminacja Z-fightingu (C9/C15)**: Przebudowano geometrię obudowy (CaseGeometry). Stworzono lity panel górny (Top) oraz zunifikowano dolny. Usunięto zduplikowane listwy boczne szkła i wprowadzono precyzyjne narożniki (0.1x0.1), w które szkło płynnie się zagłębia, co permanentnie rozwiązało problem Z-fightingu. Wszystkie ramy używają teraz jednego globalnego materiału `caseFrameMaterial`, znacząco redukując draw-calls (zgodnie z PCVerse Audit).
 - **Poprawa estetyki GPU i płyty głównej**: Naprawiono błąd tekstury panelu I/O karty graficznej, naciągając siatkę na pełną szerokość złącza. Przesunięto całą "platformę" (płyta główna, CPU, RAM, GPU, SSD, cooler) o `0.1` w osi X w głąb obudowy, by złącza naturalnie chowały się za krawędzią tylnego panelu PC.
 - **Detale M.2 i Baterii CMOS**: Przesunięto baterię CMOS wyżej (z `Y=-1.4` na `Y=-0.9`), aby była widoczna i nie chowała się pod radiatorem. Nałożono nową, dedykowaną teksturę radiatora ("AORUS M.2 SSD HEATSINK") na dolny radiator M.2. Zoptymalizowano oryginalny, bazowy model dysku SSD na płycie głównej (pod CPU), poprawiając obrót i proporcje jego tekstury, dzięki czemu pozbyto się efektu "rozmazanego bluru" po wyjęciu interaktywnego dysku.
 
 ## Dzień 8 - Optymalizacja i Dostępność (Faza 3)
 
-
 - **Code Splitting (C38)**: Wdrożono dynamiczny import dla głównej sceny 3D (`React.lazy`) w pliku `App.tsx` oraz zdefiniowano `manualChunks` dla silnika Vite, co rozwiązuje problem zbyt dużych paczek przy kompilacji i przyspiesza wstępne ładowanie interfejsu.
 - **Dostępność i Screen Readery (C23-C25)**: Naprawiono problemy z czytelnością dla czytników ekranowych. Dodano etykiety `aria-label` do nawigacji galerii oraz przycisku zamknięcia. Panel informacyjny zyskał `role="dialog"` oraz `aria-live="polite"`, a renderowany element Canvas WebGL został ukryty z drzewa a11y (`aria-hidden="true"`), eliminując dezorientację użytkowników niepełnosprawnych.
 
 ## Dzień 7 - Kamień Milowy: Architektura i Płynność (Faza 2)
-
 
 - **Rozbicie Monolitu `PCModel.tsx` (C1)**: Wyodrębniono tysiące linijek kodu z jednego, ogromnego pliku `PCModel.tsx` do modułowej, zorganizowanej struktury w nowym katalogu `geometries/` (m.in. `MotherboardGeometry.tsx`, `CPUGeometry.tsx`, `GPUGeometry.tsx`, `PSUGeometry.tsx`, `CaseGeometry.tsx`). Główny plik pełni teraz wyłącznie rolę deklaratywnego orkiestratora.
 - **Globalny Hook `useIsMobile` (C2)**: Wydzielono logikę nasłuchiwania na rozmiar okna (media query) do reużywalnego hooka `src/hooks/useIsMobile.tsx`, oczyszczając kod i zapobiegając redundantnym event listenerom.
@@ -95,7 +101,6 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - **Poprawki Zgodności i Aparatu (C32)**: Odkryto i usunięto błąd TypeScripcie związany ze starą metodą `rest()` w `CameraControls` na rzecz poprawnego wywołania `reset(true)`.
 
 ## Dzień 6 - Wdrożenie Poprawek z Audytu (Faza 1)
-
 
 - **Rozwiązanie wycieku pamięci geometrii**: Wydzielono logikę generowania kabli do zewnętrznego komponentu `CableGeometry.tsx`. Od teraz krzywe modelujące kable są buforowane poprzez `useMemo`, a same kształty (`TubeGeometry`) posiadają mechanizm wymuszający zrzucanie instancji z pamięci VRAM (`dispose()`) przy każdorazowym chowaniu i demontażu komponentu, naprawiając największe "dropy" wydajności.
 - **Bezpieczeństwo animacji**: Dodano bezpiecznik stanu `isAnimating` do logiki widoku rozstrzelonego (Explode View). Zapobiega on zapętlaniu się i de-synchronizacji animacji podczas szybkiego, wielokrotnego klikania przycisku.
