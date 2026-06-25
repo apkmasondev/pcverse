@@ -8,6 +8,8 @@
 - **Dostępność i SEO (WCAG)**: Dodano unikalne i deskryptywne atrybuty `aria-label` do wszystkich przycisków interfejsu (m.in. nawigacji, zamykania instrukcji). Zwiększono kontrast kolorystyczny podrzędnych tekstów w interfejsie.
 - **Responsywność mobilna**: Skorygowano nachodzące na siebie warstwy interfejsu na bardzo wąskich ekranach smartfonów (zmiana pozycji wysuwanego menu z `left-12` na `left-14`), zapobiegając ucięciu interfejsu.
 - **Stabilność etykiet 3D**: Rozwiązano problem niespodziewanie znikających dymków (tooltips) z nazwami komponentów podczas swobodnego obracania kamerą po rozłożeniu komputera na części pierwsze.
+- **Korekta nóżek obudowy**: Przesunięto gumowe stopki na osi Y, eliminując wizualną szparę między nimi a dolnym panelem (podłogą) po ostatnich zmianach wysokości komponentów.
+- **Wyeliminowanie przenikania siatki zasilacza (Z-Fighting/Clipping)**: Docięto i przesunięto siatkę wywiewną (mesh) na panelu bocznym tak, aby idealnie przylegała do wycięcia na zasilacz, zapobiegając wychodzeniu jej poniżej rantu obudowy.
 
 ## Etap 14 - Detale konstrukcyjne (Złącza i krawędzie)
 

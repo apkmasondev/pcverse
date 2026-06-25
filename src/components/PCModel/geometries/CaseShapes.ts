@@ -28,11 +28,11 @@ export const leftPanelShape = (() => {
 
   // GPU PCIe Brackets Cutout
   const pcieHole = new THREE.Path();
-  pcieHole.moveTo(-1.15 - 0.6, -0.1 - 0.85); // Extended downwards
-  pcieHole.lineTo(-1.15 + 0.6, -0.1 - 0.85); // Extended downwards
+  pcieHole.moveTo(-1.15 - 0.6, -1.42); // Extended downwards for 6 slots
+  pcieHole.lineTo(-1.15 + 0.6, -1.42); // Extended downwards for 6 slots
   pcieHole.lineTo(-1.15 + 0.6, -0.1 + 0.25);
   pcieHole.lineTo(-1.15 - 0.6, -0.1 + 0.25);
-  pcieHole.lineTo(-1.15 - 0.6, -0.1 - 0.85); // Extended downwards
+  pcieHole.lineTo(-1.15 - 0.6, -1.42); // Extended downwards for 6 slots
   shape.holes.push(pcieHole);
 
   // Side Exhaust Fans Hole (covers both fans)
