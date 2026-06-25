@@ -6,14 +6,22 @@ import { useTexture } from '@react-three/drei';
 import heatsinkUrl from '../../../assets/heatsink.webp';
 import heatsinkSideUrl from '../../../assets/heatsink_side.webp';
 import aioFanUrl from '../../../assets/aio_fan.webp';
+import aioFanRgbUrl from '../../../assets/aio_fan_rgb.webp';
 import caseFanUrl from '../../../assets/case_fan.webp';
+import caseFanRgbUrl from '../../../assets/case_fan_rgb.webp';
 import fanSideUrl from '../../../assets/fan_side.webp';
 import { usePCSettings } from '../../../hooks/usePC';
 import { LocalAirflowParticles } from './LocalAirflowParticles';
 
 export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbColor: string, isExhaust?: boolean, textureUrl?: string }) => {
-  const { xrayMode } = usePCSettings();
-  const fanTexture = useTexture(textureUrl || caseFanUrl);
+  const { xrayMode, rgbEnabled } = usePCSettings();
+  
+  const baseTextureUrl = textureUrl || caseFanUrl;
+  const rgbTextureUrl = baseTextureUrl === aioFanUrl ? aioFanRgbUrl : caseFanRgbUrl;
+  
+  const fanBaseTexture = useTexture(baseTextureUrl);
+  const fanRgbTexture = useTexture(rgbTextureUrl);
+  const activeTexture = rgbEnabled ? fanRgbTexture : fanBaseTexture;
   const fanSideTexture = useTexture(fanSideUrl);
   
   const fanSideTextureRotated = useMemo(() => {
@@ -68,7 +76,7 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
       {!xrayMode && (
         <mesh position={[0, 0, 0.101]}>
           <planeGeometry args={[1, 1]} />
-          <meshStandardMaterial map={fanTexture} roughness={0.4} metalness={0.3} transparent={false} alphaTest={0.5} />
+          <meshStandardMaterial map={activeTexture} roughness={0.4} metalness={0.3} transparent={false} alphaTest={0.5} />
         </mesh>
       )}
       
@@ -84,7 +92,7 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
       {!xrayMode && (
         <mesh position={[0, 0, -0.101]} rotation={[0, Math.PI, 0]}>
           <planeGeometry args={[1, 1]} />
-          <meshStandardMaterial map={fanTexture} roughness={0.4} metalness={0.3} transparent={false} alphaTest={0.5} />
+          <meshStandardMaterial map={activeTexture} roughness={0.4} metalness={0.3} transparent={false} alphaTest={0.5} />
         </mesh>
       )}
       

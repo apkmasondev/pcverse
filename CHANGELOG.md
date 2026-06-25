@@ -14,6 +14,7 @@
 - **Rozszerzona paleta RGB**: Dodano siódmy, intensywny kolor podświetlenia (Pink) do opcji personalizacji UI, potęgujący immersję w klimacie cyberpunk.
 - **Aktualizacja tras kabli (Cable Management)**: Wygenerowano drugi przewód zasilający 8-pin PCIe dla masywnej karty graficznej. Zoptymalizowano punkty kontrolne krzywych Beziera dla pozostałych przewodów, poprawiając ich ułożenie w przestrzeni 3D.
 - **Uzupełnienie instrukcji obsługi UI**: Dodano brakującą informację o obsłudze przybliżania (Zoom) za pomocą scrolla myszki do modala z legendą interfejsu.
+- **Dynamiczne teksturowanie wentylatorów RGB**: Wdrożono system w locie podmieniający tekstury frontu wentylatorów chłodnicy AIO oraz obudowy w momencie aktywacji podświetlenia RGB w interfejsie. Rozwiązanie oparto na optymalnym bindowaniu tekstur z użyciem globalnego hooka bez dodatkowego narzutu na Draw Calls.
 
 ## Etap 14 - Detale konstrukcyjne (Złącza i krawędzie)
 
