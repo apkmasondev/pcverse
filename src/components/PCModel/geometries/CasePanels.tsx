@@ -1,5 +1,5 @@
-import { BackSide, CanvasTexture, DoubleSide, Group, MathUtils, Texture } from 'three';
-import { useRef } from 'react';
+import { BackSide, CanvasTexture, DoubleSide, Group, MathUtils, Texture, RepeatWrapping, MeshStandardMaterial } from 'three';
+import { useRef, useMemo } from 'react';
 
 import { useFrame } from '@react-three/fiber';
 import { usePCSelection, usePCSettings } from '../../../hooks/usePC';
@@ -9,6 +9,8 @@ import { XMesh as Mesh } from './XMesh';
 import { frontPanelShape, frontFrameShape, frontMeshShape, leftPanelShape } from './CaseShapes';
 import { caseFrameMaterial, extrudeOpts005 } from '../constants';
 import { materials, xrayMaterial } from '../materials';
+import bracketUrl from '../../../assets/bracket.webp';
+import { useTexture } from '@react-three/drei';
 
 export const CasePanels = ({
   frontMeshTexture,
@@ -24,6 +26,20 @@ export const CasePanels = ({
   const { xrayMode } = usePCSettings();
   const { explodeStep } = usePCSelection();
   const isMobile = useIsMobile();
+  const bracketTexture = useTexture(bracketUrl);
+  const bracketTextureFlipped = useTexture(bracketUrl);
+
+  const bracketMaterials = useMemo(() => {
+    bracketTextureFlipped.wrapS = RepeatWrapping;
+    bracketTextureFlipped.repeat.set(-1, 1);
+    bracketTextureFlipped.center.set(0.5, 0.5);
+
+    const mat = new MeshStandardMaterial({ map: bracketTexture, metalness: 0.6, roughness: 0.4 });
+    const matFlipped = new MeshStandardMaterial({ map: bracketTextureFlipped, metalness: 0.6, roughness: 0.4 });
+    
+    // BoxGeometry faces: right (+x - inside), left (-x - outside), top, bottom, front, back
+    return [matFlipped, mat, mat, mat, mat, mat];
+  }, [bracketTexture, bracketTextureFlipped]);
 
   const sideGlassRef = useRef<Group>(null);
   const sideGlassMatRef = useRef<any>(null);
@@ -164,7 +180,7 @@ export const CasePanels = ({
           {xrayMode ? (
             <primitive object={xrayMaterial} attach="material" />
           ) : (
-            <primitive object={materials.caseFrame} attach="material" />
+            <primitive object={bracketMaterials} attach="material" />
           )}
           {[-0.55, -0.7, -0.85, -1.0, -1.15, -1.3].map((y, i) => (
             <Instance key={i} position={[-1.97, y, -1.15]} />
