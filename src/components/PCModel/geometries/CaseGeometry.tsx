@@ -25,7 +25,7 @@ import {
 } from './CaseShapes';
 
 
-export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEnabled: boolean }) => {
+export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEnabled?: boolean }) => {
   const { xrayMode } = usePCSettings();
   const { explodeStep } = usePCSelection();
   const isMobile = useIsMobile();

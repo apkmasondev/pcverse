@@ -9,11 +9,11 @@ import { PSUGeometry } from './geometries/PSUGeometry';
 import { CaseGeometry } from './geometries/CaseGeometry';
 import { CPUCoolerGeometry, FanGeometry } from './geometries/CPUCoolerGeometry';
 import { CableGeometry } from './CableGeometry';
-import { useRef, useState, useMemo, Suspense } from 'react';
+import { useRef, useState, useMemo, Suspense, memo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Group, Color, Vector3 } from 'three';
 import { Html, useCursor, Bvh, useTexture } from '@react-three/drei';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { xrayMaterial } from './materials';
 import { pcComponents } from '../../data/components';
 import type { PCComponent } from '../../data/components';
@@ -40,36 +40,43 @@ import caseFanUrl from '../../assets/case_fan_rgb.webp';
 
 
 
-const GEOMETRY_REGISTRY: Record<string, React.FC<any>> = {
+export interface GeometryProps {
+  rgbColor: string;
+  [key: string]: any;
+}
+
+const GEOMETRY_REGISTRY: Record<string, React.FC<GeometryProps>> = {
   cpu_cooler: CPUCoolerGeometry,
   cpu: CPUGeometry,
   gpu: GPUGeometry,
   motherboard: MotherboardGeometry,
-  ram: RAMGeometry,
+  ram_1: RAMGeometry,
+  ram_2: RAMGeometry,
   ssd: SSDGeometry,
   storage_hdd: HDDGeometry,
   psu: PSUGeometry,
-  fan: FanGeometry,
+  case_fan_1: FanGeometry,
+  case_fan_2: FanGeometry,
+  rear_fan: FanGeometry,
+  side_fan_2: FanGeometry,
   case: CaseGeometry,
 };
 
 const ProceduralGeometry = ({ data, baseColor, rgbColor }: { data: PCComponent, baseColor: Color, rgbColor: string }) => {
   const { xrayMode } = usePCSettings();
   
-  // Find matching component in registry by checking if data.id includes the key
-  const match = Object.keys(GEOMETRY_REGISTRY).find(key => data.id.includes(key));
+  // Exact component matching to fix A2 (instead of .includes)
+  const Component = GEOMETRY_REGISTRY[data.id];
   
-  if (match) {
-    const Component = GEOMETRY_REGISTRY[match];
-    
+  if (Component) {
     // Special handling for fans
-    if (match === 'fan') {
+    if (['case_fan_1', 'case_fan_2', 'rear_fan', 'side_fan_2'].includes(data.id)) {
       const isExhaust = data.id === 'rear_fan' || data.id === 'side_fan_2';
       return <Component rgbColor={rgbColor} isExhaust={isExhaust} />;
     }
     
     // Special handling for case
-    if (match === 'case') {
+    if (data.id === 'case') {
       return <Component rgbColor={rgbColor} rgbEnabled={true} />;
     }
 
@@ -86,12 +93,13 @@ const ProceduralGeometry = ({ data, baseColor, rgbColor }: { data: PCComponent, 
 
 // --- Main Component Mesh ---
 
-const ComponentMesh = ({ data, isMobile }: { data: PCComponent, isMobile: boolean }) => {
+const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: boolean }) => {
   const groupRef = useRef<Group>(null);
   const [hovered, setHovered] = useState(false);
   const { selectedComponent, setSelectedComponent, explodeStep } = usePCSelection();
   const { xrayMode, rgbColor, rgbEnabled, showLabels, showInstructions } = usePCSettings();
   const effectiveRgbColor = rgbEnabled ? rgbColor : '#000000';
+  const shouldReduceMotion = useReducedMotion();
   
   useCursor(hovered && !isMobile);
   
@@ -115,7 +123,7 @@ const ComponentMesh = ({ data, isMobile }: { data: PCComponent, isMobile: boolea
     
     // Add a gentle, premium out-of-phase floating effect in the exploded view
     let floatOffset = 0;
-    if (explodeStep === 2) {
+    if (explodeStep === 2 && !shouldReduceMotion) {
       const phase = data.id.split('').reduce((acc, char) => acc + char.charCodeAt(0) * 17, 0);
       floatOffset = Math.sin(_state.clock.getElapsedTime() * 1.2 + phase) * 0.08;
     }
@@ -239,7 +247,7 @@ const ComponentMesh = ({ data, isMobile }: { data: PCComponent, isMobile: boolea
       )}
     </group>
   );
-};
+}, (prevProps, nextProps) => prevProps.data.id === nextProps.data.id && prevProps.isMobile === nextProps.isMobile);
 
 
 export const PCModel = () => {

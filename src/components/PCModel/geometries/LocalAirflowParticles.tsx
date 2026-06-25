@@ -2,9 +2,12 @@ import { useRef, useMemo } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 import { usePCSettings } from '../../../hooks/usePC';
+import { useReducedMotion } from 'framer-motion';
 
 export const LocalAirflowParticles = ({ count = 50, radius = 0.4, length = 1.5, speedMult = 1, color = "#38bdf8" }: { count?: number, radius?: number, length?: number, speedMult?: number, color?: string }) => {
   const { showAirflow } = usePCSettings();
+  const shouldReduceMotion = useReducedMotion();
+  const isVisible = showAirflow && !shouldReduceMotion;
   const meshRef = useRef<THREE.InstancedMesh>(null);
   
   const dummy = useMemo(() => new THREE.Object3D(), []);
@@ -29,7 +32,7 @@ export const LocalAirflowParticles = ({ count = 50, radius = 0.4, length = 1.5, 
   }, [count, radius, length, speedMult]);
 
   useFrame((state, delta) => {
-    if (!showAirflow || !meshRef.current) return;
+    if (!isVisible || !meshRef.current) return;
     
     particles.forEach((p, i) => {
       p.position.z += p.speed * delta;
@@ -61,7 +64,7 @@ export const LocalAirflowParticles = ({ count = 50, radius = 0.4, length = 1.5, 
   });
 
   return (
-    <instancedMesh ref={meshRef} args={[undefined as any, undefined as any, count]} visible={showAirflow}>
+    <instancedMesh ref={meshRef} args={[undefined as any, undefined as any, count]} visible={isVisible}>
       <sphereGeometry args={[0.015, 8, 8]} />
       <meshBasicMaterial 
         color={color} 

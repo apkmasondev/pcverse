@@ -9,6 +9,13 @@
 - **Wycieki pamięci w React (Timeouts)**: Zabezpieczono asynchroniczne funkcje czasu (setTimeout) odpowiedzialne za animację rozkładania (Teardown). Chroni to stan aplikacji przed błędem w przypadku szybkiego zamknięcia podglądu.
 - **Cykl życia silnika Audio**: Naprawiono niekontrolowane pozostawanie w pamięci i odtwarzanie dźwięków w tle po wyłączeniu nawiewu (odseparowanie oscylatorów). 
 - **Zabezpieczenie fokusu klawiatury**: Modale zostały w pełni dostosowane do standardów WCAG poprzez wymuszenie izolacji (focus trap za pomocą `aria-modal="true"` i `role="dialog"`).
+- **Dostępność (Wrażliwość na ruch)**: Zintegrowano obsługę `prefers-reduced-motion`. Użytkownicy z włączonym ograniczeniem ruchu w systemie (Windows/macOS) nie widzą już animacji lewitacji podzespołów ani cząsteczek powietrza (Airflow).
+- **Responsywność na najmniejszych ekranach**: Dodano elastyczne ograniczenia szerokości (`max-width: calc(100vw - 4.5rem)`) dla wyskakujących okien (Flyout) w menu RGB i środowiska, co zapobiega ucinaniu interfejsu na bardzo wąskich urządzeniach (np. stare modele iPhone).
+- **Architektura (Type-Safety i Re-Rendery)**:
+  - W `PCModel.tsx` zamieniono dopasowywanie komponentów po fragmencie nazwy na sztywną, bezpieczną mapę `GEOMETRY_REGISTRY`.
+  - Wprowadzono pełną ochronę przed re-renderami dla głównej pętli lewitacji (zastosowano `React.memo` na `ComponentMesh`).
+  - Rozwiązano błędy TypeScript w rejestrze komponentów poprzez dedykowany interfejs `GeometryProps`.
+  - Usunięto błąd TypeScript w postprocessingu (reverting do obejścia typów dla `DepthOfField` w `EffectComposer`).
 - **Użyteczność Galerii Zdjęć**: Kropki nawigacyjne w podglądzie zdjęć stały się pełnoprawnymi, interaktywnymi i opisanymi przyciskami. Wyświetlane zdjęcia doczekały się poprawnego atrybutu `alt`.
 - **Interfejs Użytkownika (UI)**:
   - Wdrożono opóźnienie pojawiania się opisów (tooltips), co usunęło chaotyczne migotanie przy szybkim ruchu myszką.

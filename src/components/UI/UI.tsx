@@ -167,7 +167,7 @@ export const UI = () => {
               initial={{ opacity: 0, y: -10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              className="absolute top-0 left-14 md:top-full md:left-0 md:mt-2 p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl flex gap-2 z-50 items-center flex-wrap w-[220px] sm:w-[280px] md:w-auto"
+              className="absolute top-0 left-14 md:top-full md:left-0 md:mt-2 p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl flex gap-2 z-50 items-center flex-wrap w-[220px] sm:w-[280px] md:w-auto max-w-[calc(100vw-4.5rem)]"
             >
               <button
                 aria-label="Wyłącz RGB"
@@ -230,7 +230,7 @@ export const UI = () => {
               initial={{ opacity: 0, y: -10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              className="absolute top-0 left-14 md:top-full md:left-0 md:mt-2 p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col gap-2 z-50 w-48"
+              className="absolute top-0 left-14 md:top-full md:left-0 md:mt-2 p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col gap-2 z-50 w-48 max-w-[calc(100vw-4.5rem)]"
             >
               {PRESETS.map(p => (
                 <button
