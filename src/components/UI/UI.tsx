@@ -17,7 +17,8 @@ const COLORS = [
   { name: 'Green', hex: '#10b981' },
   { name: 'Red', hex: '#ef4444' },
   { name: 'White', hex: '#ffffff' },
-  { name: 'Gold', hex: '#fbbf24' }
+  { name: 'Gold', hex: '#fbbf24' },
+  { name: 'Pink', hex: '#ec4899' }
 ];
 
 const Tooltip = ({ text }: { text: string }) => (
@@ -335,6 +336,7 @@ export const UI = () => {
                       • <strong>Obrót:</strong> Lewy Przycisk Myszy (LPM).<br/>
                       • <strong>Ruch postacią:</strong> Klawisze W, A, S, D.<br/>
                       • <strong>Przesuwanie (Pan):</strong> Prawy Przycisk Myszy (PPM).<br/>
+                      • <strong>Przybliżanie (Zoom):</strong> Kółko myszy (Scroll).<br/>
                       Kliknij w dany komponent z bliska, by wyświetlić jego detale.
                     </p>
                   </div>

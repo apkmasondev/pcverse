@@ -10,6 +10,10 @@
 - **Stabilność etykiet 3D**: Rozwiązano problem niespodziewanie znikających dymków (tooltips) z nazwami komponentów podczas swobodnego obracania kamerą po rozłożeniu komputera na części pierwsze.
 - **Korekta nóżek obudowy**: Przesunięto gumowe stopki na osi Y, eliminując wizualną szparę między nimi a dolnym panelem (podłogą) po ostatnich zmianach wysokości komponentów.
 - **Wyeliminowanie przenikania siatki zasilacza (Z-Fighting/Clipping)**: Docięto i przesunięto siatkę wywiewną (mesh) na panelu bocznym tak, aby idealnie przylegała do wycięcia na zasilacz, zapobiegając wychodzeniu jej poniżej rantu obudowy.
+- **Poprawa wycięcia na śledzie PCIe**: Wydłużono otwór na tylnym panelu obudowy, by odsłonić wszystkie 6 wygenerowanych zaślepek kart rozszerzeń, dopasowując geometrię do tekstury.
+- **Rozszerzona paleta RGB**: Dodano siódmy, intensywny kolor podświetlenia (Pink) do opcji personalizacji UI, potęgujący immersję w klimacie cyberpunk.
+- **Aktualizacja tras kabli (Cable Management)**: Wygenerowano drugi przewód zasilający 8-pin PCIe dla masywnej karty graficznej. Zoptymalizowano punkty kontrolne krzywych Beziera dla pozostałych przewodów, poprawiając ich ułożenie w przestrzeni 3D.
+- **Uzupełnienie instrukcji obsługi UI**: Dodano brakującą informację o obsłudze przybliżania (Zoom) za pomocą scrolla myszki do modala z legendą interfejsu.
 
 ## Etap 14 - Detale konstrukcyjne (Złącza i krawędzie)
 
