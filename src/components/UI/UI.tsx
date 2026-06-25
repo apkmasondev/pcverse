@@ -12,20 +12,17 @@ const PRESETS = [
 ];
 
 const COLORS = [
-  { name: 'Cyan', hex: '#06b6d4' },
-  { name: 'Purple', hex: '#8b5cf6' },
-  { name: 'Green', hex: '#10b981' },
-  { name: 'Red', hex: '#ef4444' },
-  { name: 'White', hex: '#ffffff' },
-  { name: 'Gold', hex: '#fbbf24' },
-  { name: 'Pink', hex: '#ec4899' }
+  { name: 'Red', hex: '#ff003c' },
+  { name: 'Orange', hex: '#ff7b00' },
+  { name: 'Gold', hex: '#ffc107' },
+  { name: 'Green', hex: '#00ff73' },
+  { name: 'Cyan', hex: '#00f2fe' },
+  { name: 'Purple', hex: '#8a2be2' },
+  { name: 'Pink', hex: '#ff00ff' },
+  { name: 'White', hex: '#ffffff' }
 ];
 
-const Tooltip = ({ text }: { text: string }) => (
-  <span className="absolute top-full mt-3 hidden md:block opacity-0 group-hover:opacity-100 transition-opacity duration-300 group-hover:delay-150 pointer-events-none bg-[#0a0a0a]/95 backdrop-blur-xl border border-white/10 text-slate-300 text-[13px] px-3 py-1.5 rounded-lg whitespace-nowrap shadow-[0_10px_25px_rgba(0,0,0,0.8)] z-50 font-medium tracking-wide">
-    {text}
-  </span>
-);
+
 
 export const UI = () => {
   const { explodeStep, toggleExploded, triggerCameraReset } = usePCSelection();
@@ -75,211 +72,235 @@ export const UI = () => {
         )}
       </AnimatePresence>
       <motion.div 
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-      className="absolute top-6 left-6 z-10 flex flex-col md:flex-row gap-3"
-    >
-      <motion.div 
-        whileHover={{ scale: 1.05 }}
-        className="hidden md:flex items-center gap-2 px-5 py-2 bg-indigo-500/10 backdrop-blur-md border border-indigo-500/20 rounded-full text-indigo-300 font-bold text-sm tracking-wide mr-2 shadow-[0_0_15px_rgba(99,102,241,0.2)]"
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="group fixed top-6 left-6 z-10 flex flex-col gap-2 p-2 bg-[#0a0a0a]/60 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-visible transition-all duration-500 w-[60px] hover:w-[220px]"
       >
-        <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
-        PCVerse
-      </motion.div>
-
-      <motion.button
-        aria-label="Rozłóż na Części"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => {
-          if (explodeStep === 0) playExplodeSound();
-          else playSelectSound();
-          toggleExploded();
-        }}
-        className="group relative flex items-center justify-center w-11 h-11 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/5 rounded-full transition-all hover:bg-indigo-500/20 hover:border-indigo-500/30"
-      >
-        <Layers aria-hidden="true" size={20} className={`transition-transform duration-500 ${explodeStep > 0 ? 'rotate-180 text-indigo-400' : 'text-slate-300 group-hover:text-indigo-300'}`} />
-        <Tooltip text={explodeStep === 2 ? 'Złóż Komputer' : explodeStep === 1 ? 'Sekwencja...' : 'Rozłóż na Części'} />
-      </motion.button>
-      
-      <motion.button
-        aria-label="Zresetuj Widok"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => {
-          playSelectSound();
-          triggerCameraReset();
-        }}
-        className="group relative flex items-center justify-center w-11 h-11 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/5 rounded-full transition-all hover:bg-indigo-500/20 hover:border-indigo-500/30"
-      >
-        <Focus aria-hidden="true" size={20} className="text-slate-300 group-hover:text-indigo-300" />
-        <Tooltip text="Zresetuj Widok" />
-      </motion.button>
-
-      <motion.button
-        aria-label="Hologram X-Ray"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => {
-          playSelectSound();
-          toggleXrayMode();
-        }}
-        className={`group relative flex items-center justify-center w-11 h-11 backdrop-blur-md border rounded-full transition-all ${xrayMode ? 'bg-cyan-500/20 border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.3)]' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-cyan-500/20 hover:border-cyan-500/30'}`}
-      >
-        <Scan aria-hidden="true" size={20} className={`transition-all duration-500 ${xrayMode ? 'text-cyan-400 scale-110' : 'text-slate-300 group-hover:text-cyan-300'}`} />
-        <Tooltip text="Hologram (X-Ray)" />
-      </motion.button>
-
-      <motion.button
-        aria-label="Symulacja Airflow"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => {
-          playSelectSound();
-          toggleAirflow();
-        }}
-        className={`group relative flex items-center justify-center w-11 h-11 backdrop-blur-md border rounded-full transition-all ${showAirflow ? 'bg-blue-500/20 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-blue-500/20 hover:border-blue-500/30'}`}
-      >
-        <Wind aria-hidden="true" size={20} className={`transition-all duration-500 ${showAirflow ? 'text-blue-400 scale-110' : 'text-slate-300 group-hover:text-blue-300'}`} />
-        <Tooltip text="Symulacja Airflow" />
-      </motion.button>
-
-      <div className="relative">
+        <div className="relative flex items-center w-full h-11 rounded-xl overflow-hidden cursor-default">
+          <div className="flex-shrink-0 w-[42px] h-[42px] flex items-center justify-center">
+            <span className="w-2.5 h-2.5 rounded-full bg-indigo-400 animate-pulse shadow-[0_0_12px_rgba(99,102,241,0.8)]"></span>
+          </div>
+          <span className="ml-1 font-extrabold text-base tracking-wider bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            PCVerse
+          </span>
+        </div>
+        
+        <div className="w-full h-px bg-white/10 mb-1 rounded-full" />
         <motion.button
-          aria-label="Tryb RGB"
-          whileHover={{ scale: 1.05 }}
+          aria-label="Rozłóż na Części"
+          whileTap={{ scale: 0.95 }}
+          onClick={() => {
+            if (explodeStep === 0) playExplodeSound();
+            else playSelectSound();
+            toggleExploded();
+          }}
+          className={`relative flex items-center w-full h-11 rounded-xl transition-all overflow-hidden ${explodeStep > 0 ? 'bg-indigo-500/20 border border-indigo-500/30' : 'bg-transparent border border-transparent hover:bg-white/5'}`}
+        >
+          <div className={`flex-shrink-0 w-[42px] h-[42px] flex items-center justify-center transition-colors ${explodeStep > 0 ? 'text-indigo-400' : 'text-slate-300'}`}>
+            <Layers aria-hidden="true" size={20} className={`transition-transform duration-500 ${explodeStep > 0 ? 'rotate-180' : ''}`} />
+          </div>
+          <span className="ml-1 font-medium text-sm text-slate-300 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            {explodeStep === 2 ? 'Złóż Komputer' : explodeStep === 1 ? 'Sekwencja...' : 'Rozłóż na Części'}
+          </span>
+        </motion.button>
+        
+        <motion.button
+          aria-label="Zresetuj Widok"
           whileTap={{ scale: 0.95 }}
           onClick={() => {
             playSelectSound();
-            setShowPalette(!showPalette);
-            setShowEnv(false);
+            triggerCameraReset();
           }}
-          className={`group relative flex items-center justify-center w-11 h-11 backdrop-blur-md border rounded-full transition-all ${showPalette || rgbEnabled ? 'bg-purple-500/20 border-purple-500/50 shadow-[0_0_15px_rgba(168,85,247,0.3)] text-purple-300' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-purple-500/20 hover:border-purple-500/30 text-slate-300'}`}
+          className="relative flex items-center w-full h-11 rounded-xl bg-transparent border border-transparent transition-colors hover:bg-white/5 overflow-hidden"
         >
-          <Palette aria-hidden="true" size={20} className="transition-colors" style={{ color: rgbEnabled ? rgbColor : '#94a3b8' }} />
-          <Tooltip text="Tryb RGB" />
+          <div className="flex-shrink-0 w-[42px] h-[42px] flex items-center justify-center text-slate-300">
+            <Focus aria-hidden="true" size={20} />
+          </div>
+          <span className="ml-1 font-medium text-sm text-slate-300 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            Zresetuj Widok
+          </span>
         </motion.button>
-        
-        <AnimatePresence>
-          {showPalette && (
-            <motion.div
-              initial={{ opacity: 0, y: -10, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              className="absolute top-0 left-14 md:top-full md:left-0 md:mt-2 p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl flex gap-2 z-50 items-center flex-wrap w-[220px] sm:w-[280px] md:w-auto max-w-[calc(100vw-4.5rem)]"
-            >
-              <button
-                aria-label="Wyłącz RGB"
-                onClick={() => {
-                  playSelectSound();
-                  if (rgbEnabled) toggleRgbEnabled();
-                  setShowPalette(false);
-                }}
-                className={`w-10 h-10 rounded-full border-2 transition-transform hover:scale-125 cursor-pointer flex-shrink-0 flex items-center justify-center bg-[#111] ${!rgbEnabled ? 'border-red-500 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]' : 'border-white/10 text-white/50 hover:border-white/30'}`}
-                title="Wyłącz RGB"
-              >
-                <span className="text-[10px] font-bold">OFF</span>
-              </button>
-              
-              <div className="w-px h-6 bg-white/10 mx-1" />
 
-              {COLORS.map(c => (
+        <motion.button
+          aria-label="Hologram X-Ray"
+          whileTap={{ scale: 0.95 }}
+          onClick={() => {
+            playSelectSound();
+            toggleXrayMode();
+          }}
+          className={`relative flex items-center w-full h-11 rounded-xl transition-all overflow-hidden ${xrayMode ? 'bg-cyan-500/20 border border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.3)]' : 'bg-transparent border border-transparent hover:bg-white/5'}`}
+        >
+          <div className={`flex-shrink-0 w-[42px] h-[42px] flex items-center justify-center transition-all duration-500 ${xrayMode ? 'text-cyan-400 scale-110' : 'text-slate-300'}`}>
+            <Scan aria-hidden="true" size={20} />
+          </div>
+          <span className="ml-1 font-medium text-sm text-slate-300 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            Hologram (X-Ray)
+          </span>
+        </motion.button>
+
+        <motion.button
+          aria-label="Symulacja Airflow"
+          whileTap={{ scale: 0.95 }}
+          onClick={() => {
+            playSelectSound();
+            toggleAirflow();
+          }}
+          className={`relative flex items-center w-full h-11 rounded-xl transition-all overflow-hidden ${showAirflow ? 'bg-blue-500/20 border border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'bg-transparent border border-transparent hover:bg-white/5'}`}
+        >
+          <div className={`flex-shrink-0 w-[42px] h-[42px] flex items-center justify-center transition-all duration-500 ${showAirflow ? 'text-blue-400 scale-110' : 'text-slate-300'}`}>
+            <Wind aria-hidden="true" size={20} />
+          </div>
+          <span className="ml-1 font-medium text-sm text-slate-300 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            Symulacja Airflow
+          </span>
+        </motion.button>
+
+        <div className="relative">
+          <motion.button
+            aria-label="Tryb RGB"
+            whileTap={{ scale: 0.95 }}
+            onClick={() => {
+              playSelectSound();
+              setShowPalette(!showPalette);
+              setShowEnv(false);
+            }}
+            className={`relative flex items-center w-full h-11 rounded-xl transition-all overflow-hidden ${showPalette || rgbEnabled ? 'bg-purple-500/20 border border-purple-500/50 shadow-[0_0_15px_rgba(168,85,247,0.3)]' : 'bg-transparent border border-transparent hover:bg-white/5'}`}
+          >
+            <div className="flex-shrink-0 w-[42px] h-[42px] flex items-center justify-center">
+              <Palette aria-hidden="true" size={20} className="transition-colors" style={{ color: rgbEnabled ? rgbColor : '#94a3b8' }} />
+            </div>
+            <span className="ml-1 font-medium text-sm text-slate-300 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              Tryb RGB
+            </span>
+          </motion.button>
+          
+          <AnimatePresence>
+            {showPalette && (
+              <motion.div
+                initial={{ opacity: 0, x: -10, scale: 0.95 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, x: -10, scale: 0.95 }}
+                className="absolute top-0 left-full ml-4 p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl grid grid-cols-3 gap-3 z-50 place-items-center shadow-2xl w-max"
+              >
                 <button
-                  key={c.hex}
-                  aria-label={`Kolor RGB ${c.name}`}
+                  aria-label="Wyłącz RGB"
                   onClick={() => {
                     playSelectSound();
-                    setRgbColor(c.hex);
-                    if (!rgbEnabled) toggleRgbEnabled();
+                    if (rgbEnabled) toggleRgbEnabled();
                     setShowPalette(false);
                   }}
-                  className="w-10 h-10 rounded-full border-2 transition-transform hover:scale-125 cursor-pointer flex-shrink-0"
-                  style={{ 
-                    backgroundColor: c.hex,
-                    borderColor: rgbColor === c.hex && rgbEnabled ? 'white' : 'transparent',
-                    boxShadow: rgbColor === c.hex && rgbEnabled ? `0 0 10px ${c.hex}` : 'none'
-                  }}
-                  title={c.name}
-                />
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+                  className={`w-10 h-10 rounded-full border-2 transition-transform hover:scale-125 cursor-pointer flex-shrink-0 flex items-center justify-center bg-[#111] ${!rgbEnabled ? 'border-red-500 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]' : 'border-white/10 text-white/50 hover:border-white/30'}`}
+                  title="Wyłącz RGB"
+                >
+                  <span className="text-[10px] font-bold">OFF</span>
+                </button>
 
-      <div className="relative">
+                {COLORS.map(c => (
+                  <button
+                    key={c.hex}
+                    aria-label={`Kolor RGB ${c.name}`}
+                    onClick={() => {
+                      playSelectSound();
+                      setRgbColor(c.hex);
+                      if (!rgbEnabled) toggleRgbEnabled();
+                      setShowPalette(false);
+                    }}
+                    className="w-10 h-10 rounded-full border-2 transition-transform hover:scale-125 cursor-pointer flex-shrink-0"
+                    style={{ 
+                      backgroundColor: c.hex,
+                      borderColor: rgbColor === c.hex && rgbEnabled ? 'white' : 'transparent',
+                      boxShadow: rgbColor === c.hex && rgbEnabled ? `0 0 10px ${c.hex}` : 'none'
+                    }}
+                    title={c.name}
+                  />
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        <div className="relative">
+          <motion.button
+            aria-label="Otoczenie HDRi"
+            whileTap={{ scale: 0.95 }}
+            onClick={() => {
+              playSelectSound();
+              setShowEnv(!showEnv);
+              setShowPalette(false);
+            }}
+            className={`relative flex items-center w-full h-11 rounded-xl transition-all overflow-hidden ${showEnv ? 'bg-amber-500/20 border border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.3)]' : 'bg-transparent border border-transparent hover:bg-white/5'}`}
+          >
+            <div className={`flex-shrink-0 w-[42px] h-[42px] flex items-center justify-center transition-all duration-500 ${showEnv ? 'text-amber-400 scale-110 rotate-90' : 'text-slate-300'}`}>
+              <Sun aria-hidden="true" size={20} />
+            </div>
+            <span className="ml-1 font-medium text-sm text-slate-300 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              Otoczenie (HDRi)
+            </span>
+          </motion.button>
+          
+          <AnimatePresence>
+            {showEnv && (
+              <motion.div
+                initial={{ opacity: 0, x: -10, scale: 0.95 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, x: -10, scale: 0.95 }}
+                className="absolute top-0 left-full ml-4 p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col gap-2 z-50 w-48"
+              >
+                {PRESETS.map(p => (
+                  <button
+                    key={p.id}
+                    aria-label={`Otoczenie ${p.name}`}
+                    onClick={() => {
+                      playSelectSound();
+                      setEnvPreset(p.id);
+                      setShowEnv(false);
+                    }}
+                    className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${envPreset === p.id ? 'bg-amber-500/20 text-amber-300 font-bold' : 'text-slate-300 hover:bg-white/10 hover:text-white'}`}
+                  >
+                    <div className="font-medium">{p.name}</div>
+                    <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">{p.desc}</div>
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
         <motion.button
-          aria-label="Otoczenie HDRi"
-          whileHover={{ scale: 1.05 }}
+          aria-label="Ukryj lub pokaż etykiety"
           whileTap={{ scale: 0.95 }}
           onClick={() => {
             playSelectSound();
-            setShowEnv(!showEnv);
-            setShowPalette(false);
+            toggleLabels();
           }}
-          className={`group relative flex items-center justify-center w-11 h-11 backdrop-blur-md border rounded-full transition-all ${showEnv ? 'bg-amber-500/20 border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.3)] text-amber-300' : 'bg-[#0a0a0a]/90 border-white/5 hover:bg-amber-500/20 hover:border-amber-500/30'}`}
+          className={`relative flex items-center w-full h-11 rounded-xl transition-all overflow-hidden ${showLabels ? 'bg-emerald-500/20 border border-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.3)]' : 'bg-transparent border border-transparent hover:bg-white/5'}`}
         >
-          <Sun aria-hidden="true" size={20} className={`transition-all duration-500 ${showEnv ? 'text-amber-400 scale-110 rotate-90' : 'text-slate-300 group-hover:text-amber-300'}`} />
-          <Tooltip text="Otoczenie (HDRi)" />
+          <div className={`flex-shrink-0 w-[42px] h-[42px] flex items-center justify-center transition-all duration-500 ${showLabels ? 'text-emerald-400 scale-110' : 'text-slate-300'}`}>
+            <Tag aria-hidden="true" size={20} />
+          </div>
+          <span className="ml-1 font-medium text-sm text-slate-300 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            Etykiety
+          </span>
         </motion.button>
-        
-        <AnimatePresence>
-          {showEnv && (
-            <motion.div
-              initial={{ opacity: 0, y: -10, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              className="absolute top-0 left-14 md:top-full md:left-0 md:mt-2 p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col gap-2 z-50 w-48 max-w-[calc(100vw-4.5rem)]"
-            >
-              {PRESETS.map(p => (
-                <button
-                  key={p.id}
-                  aria-label={`Otoczenie ${p.name}`}
-                  onClick={() => {
-                    playSelectSound();
-                    setEnvPreset(p.id);
-                    setShowEnv(false);
-                  }}
-                  className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${envPreset === p.id ? 'bg-amber-500/20 text-amber-300 font-bold' : 'text-slate-300 hover:bg-white/10 hover:text-white'}`}
-                >
-                  <div className="font-medium">{p.name}</div>
-                  <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">{p.desc}</div>
-                </button>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
 
-      <motion.button
-        aria-label="Ukryj lub pokaż etykiety"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => {
-          playSelectSound();
-          toggleLabels();
-        }}
-        className={`group relative flex items-center justify-center w-11 h-11 backdrop-blur-md border rounded-full transition-all ${showLabels ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.3)]' : 'bg-[#0a0a0a]/90 border-white/5 text-slate-300 hover:bg-emerald-500/20 hover:border-emerald-500/30 hover:text-white'}`}
-      >
-        <Tag aria-hidden="true" size={20} className={`transition-all duration-500 ${showLabels ? 'text-emerald-400 scale-110' : 'text-slate-300 group-hover:text-emerald-300'}`} />
-        <Tooltip text="Ukryj/pokaż etykiety" />
-      </motion.button>
-
-      <motion.button
-        aria-label="Instrukcja obsługi"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => {
-          playSelectSound();
-          setShowInstructions(true);
-        }}
-        className="group relative flex items-center justify-center w-11 h-11 bg-[#0a0a0a]/90 backdrop-blur-md border border-white/5 rounded-full text-slate-300 transition-all hover:bg-white/10 hover:border-white/30 hover:text-white"
-      >
-        <Info aria-hidden="true" size={20} className="text-slate-300 group-hover:text-white" />
-        <Tooltip text="Instrukcja obsługi" />
-      </motion.button>
-    </motion.div>
+        <motion.button
+          aria-label="Instrukcja obsługi"
+          whileTap={{ scale: 0.95 }}
+          onClick={() => {
+            playSelectSound();
+            setShowInstructions(true);
+          }}
+          className="relative flex items-center w-full h-11 rounded-xl bg-transparent border border-transparent transition-colors hover:bg-white/5 overflow-hidden"
+        >
+          <div className="flex-shrink-0 w-[42px] h-[42px] flex items-center justify-center text-slate-300">
+            <Info aria-hidden="true" size={20} />
+          </div>
+          <span className="ml-1 font-medium text-sm text-slate-300 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            Instrukcja obsługi
+          </span>
+        </motion.button>
+      </motion.div>
 
       <AnimatePresence>
         {showHint && (

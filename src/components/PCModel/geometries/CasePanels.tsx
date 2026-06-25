@@ -27,19 +27,20 @@ export const CasePanels = ({
   const { explodeStep } = usePCSelection();
   const isMobile = useIsMobile();
   const bracketTexture = useTexture(bracketUrl);
-  const bracketTextureFlipped = useTexture(bracketUrl);
 
   const bracketMaterials = useMemo(() => {
-    bracketTextureFlipped.wrapS = RepeatWrapping;
-    bracketTextureFlipped.repeat.set(-1, 1);
-    bracketTextureFlipped.center.set(0.5, 0.5);
+    const flippedTexture = bracketTexture.clone();
+    flippedTexture.wrapS = RepeatWrapping;
+    flippedTexture.repeat.set(-1, 1);
+    flippedTexture.center.set(0.5, 0.5);
+    flippedTexture.needsUpdate = true;
 
     const mat = new MeshStandardMaterial({ map: bracketTexture, metalness: 0.6, roughness: 0.4 });
-    const matFlipped = new MeshStandardMaterial({ map: bracketTextureFlipped, metalness: 0.6, roughness: 0.4 });
+    const matFlipped = new MeshStandardMaterial({ map: flippedTexture, metalness: 0.6, roughness: 0.4 });
     
     // BoxGeometry faces: right (+x - inside), left (-x - outside), top, bottom, front, back
     return [matFlipped, mat, mat, mat, mat, mat];
-  }, [bracketTexture, bracketTextureFlipped]);
+  }, [bracketTexture]);
 
   const sideGlassRef = useRef<Group>(null);
   const sideGlassMatRef = useRef<any>(null);
