@@ -261,7 +261,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
       {/* Case Feet (Rubberized) */}
       {[-1.8, 1.8].map(x => (
         [-1.8, 1.8].map(z => (
-          <Mesh key={`foot-${x}-${z}`} position={[x, -2.52, z]}>
+          <Mesh key={`foot-${x}-${z}`} position={[x, -2.42, z]}>
             <cylinderGeometry args={[0.08, 0.06, 0.04, 16]} />
             <meshStandardMaterial color="#111" roughness={0.9} metalness={0.1} />
           </Mesh>

@@ -1,6 +1,6 @@
 # Dziennik Zmian (Changelog)
 
-## Dzień 15 - Audyt Optymalizacji, UX i Fizyki
+## Etap 15 - Audyt Optymalizacji, UX i Fizyki
 
 ### Dodane / Poprawione
 - **Fizyka obrotu wentylatorów**: Zoptymalizowano system obrotu wirtualnych śmigieł. Wyeliminowano problem nieprawidłowej osi obrotu zasilacza (PSU) oraz karty graficznej (GPU) po restrukturyzacji pętli `useFrame`. Stworzono dedykowane sety `fanBladesRefsY` oraz `fanBladesRefsZ` dla uniknięcia opóźnień asynchronicznych w React Three Fiber.
@@ -9,7 +9,7 @@
 - **Responsywność mobilna**: Skorygowano nachodzące na siebie warstwy interfejsu na bardzo wąskich ekranach smartfonów (zmiana pozycji wysuwanego menu z `left-12` na `left-14`), zapobiegając ucięciu interfejsu.
 - **Stabilność etykiet 3D**: Rozwiązano problem niespodziewanie znikających dymków (tooltips) z nazwami komponentów podczas swobodnego obracania kamerą po rozłożeniu komputera na części pierwsze.
 
-## Dzień 14 - Detale konstrukcyjne (Złącza i krawędzie)
+## Etap 14 - Detale konstrukcyjne (Złącza i krawędzie)
 
 ### Dodane
 - **Tekstura spodu karty graficznej**: Zintegrowano nową grafikę `gpu_bottom.webp` na krawędzi karty graficznej przylegającej do złącza PCIe (płyty głównej).
@@ -20,7 +20,7 @@
 - **Wydłużenie złącza PCIe**: Znacząco zwiększono głębokość wystawania złotych pinów PCIe z karty graficznej (z `0.05` na `0.15`), aby sprawiały wrażenie masywniejszych i mocniej "siedzących" w płycie głównej.
 - **Odwrócenie tekstury spodu GPU**: Obrócono płaszczyznę `gpu_bottom.webp` o 180 stopni (dodatkowe `Math.PI` na osi Z) zgodnie z wytycznymi.
 
-## Dzień 13 - Tekstury, Glassmorphism Tooltips i poprawki Z-Index
+## Etap 13 - Tekstury, Glassmorphism Tooltips i poprawki Z-Index
 
 ### Dodane
 
@@ -35,7 +35,7 @@
 - **Z-Index Fix (Loading Screen)**: Naprawiono błąd nakładania się warstw, w którym etykiety 3D (`<Html>`) przebijały ekran ładowania podczas zmiany środowiska. Ekran ładowania otrzymał nadrzędny `z-[9999]`.
 Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 
-## Dzień 12 - Wdrożenie Ostatnich Szlifów Audytu - Faza 7 (Backlog)
+## Etap 12 - Wdrożenie Ostatnich Szlifów Audytu - Faza 7 (Backlog)
 
 - **Wyeliminowanie migotania (Flickeringu) Animacji**: Wdrożono system "zatrzasku" (Snap-to-Grid) na samą końcówkę krzywej animacji `lerp` dla rozsuwanych paneli szklanych i blaszanych (Exploded View). Skrypt ucina asympotyczną funkcję gdy margines błędu spadnie poniżej 0.005, drastycznie pomagając silnikowi WebGL z sortowaniem głębi i zapobiegając kilkusekundowemu migotaniu nakładających się warstw szkła.
 
@@ -72,7 +72,7 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - **Karta Graficzna (GPU)**: Dodano statyczne, świecące pierścienie RGB na wentylatorach karty graficznej, dopasowane do nowej tekstury frontu.
 - **Refaktoryzacja Trybu X-Ray (S3.3)**: Zastąpiono imperatywne przeszukiwanie sceny (`traverse`) w pełni deklaratywną obsługą `xrayMaterial` w JSX komponentów geometrii. Zapobiega to gubieniu tekstur na radiatorach płyty głównej przy zmianie stanu RGB i eliminuje race condition z Reactem. Ukryto szklane panele i wewnętrzne podświetlenie w trybie X-Ray, co znacząco poprawia widoczność wireframe'ów.
 
-## Dzień 11 - Zakończenie Audytu - Faza 6 (Wydajność i Kamery)
+## Etap 11 - Zakończenie Audytu - Faza 6 (Wydajność i Kamery)
 
 - **Warunkowe renderowanie materiałów szkła**: Obudowa zachowuje flagowy wygląd na komputerach stacjonarnych (\`MeshPhysicalMaterial\`), jednak na urządzeniach mobilnych korzysta ze zoptymalizowanego \`MeshStandardMaterial\` z przeźroczystością, zapewniając ogromny wzrost klatek (rozwiązany błąd P5).
 - **Czyszczenie tła i shaderów (P3, P7, P8)**:
@@ -81,7 +81,7 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
   - Grid renderowany pod sceną został odpowiednio wywindowany w górę.
 - **Uniezależnienie płynności od platformy**: Animacje \`CursorLight\` i ujęcia \`camera.LookAt()\` działają idealnie dzięki użyciu delta-time zamiast sztucznego timeoutu. Usunięto niepotrzebny frame limiter w pętli dla urządzeń mobilnych.
 
-## Dzień 10 - Stabilność Architektury i Pamięć (Faza 5)
+## Etap 10 - Stabilność Architektury i Pamięć (Faza 5)
 
 - **Refaktoryzacja stanu i hooków**: Rozdzielono masywny hook `usePC` na dedykowane mniejsze hooki (`usePCSelection` i `usePCSettings`), ograniczając niepotrzebne re-rendery i przeliczanie parametrów obudowy przez komponenty, które ich nie potrzebowały.
 - **Zarządzanie Pamięcią i Canvas**: Wprowadzono rygorystyczne czyszczenie pamięci tekstur (VRAM). Po wygenerowaniu dynamicznej siatki obudowy (mesh grill) za pomocą API Canvas, kod natychmiast zwalnia pamięć operacyjną wywołując `canvas.width = 0; canvas.height = 0;`.
@@ -89,18 +89,18 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - **Optymalizacja Materiałów**: Utworzono scentralizowany słownik materiałów `materials.ts`, drastycznie ograniczając instancjonowanie setek identycznych materiałów `MeshStandardMaterial` rozsianych wewnątrz plików geometrii. Wszystkie modele współdzielą od teraz predefiniowane referencje materiałów.
 - **Korekty Geometrii**: Wdrożono nowy tryb X-Ray (prześwietlenia), oparty na wstrzykiwaniu materiałów przez kontekst z wykorzystaniem React, pozbywając się inwazyjnego polecenia `scene.traverse()` (które zamrażało wątek przeglądarki). Zastąpiono instrukcje warunkowe `if-else` mapowaniem ze słownika `GEOMETRY_MAP` w `PCModel.tsx`.
 
-## Dzień 9 - Detale i Poprawki Wizualne (Faza 4)
+## Etap 9 - Detale i Poprawki Wizualne (Faza 4)
 
 - **Całkowita eliminacja Z-fightingu (C9/C15)**: Przebudowano geometrię obudowy (CaseGeometry). Stworzono lity panel górny (Top) oraz zunifikowano dolny. Usunięto zduplikowane listwy boczne szkła i wprowadzono precyzyjne narożniki (0.1x0.1), w które szkło płynnie się zagłębia, co permanentnie rozwiązało problem Z-fightingu. Wszystkie ramy używają teraz jednego globalnego materiału `caseFrameMaterial`, znacząco redukując draw-calls (zgodnie z PCVerse Audit).
 - **Poprawa estetyki GPU i płyty głównej**: Naprawiono błąd tekstury panelu I/O karty graficznej, naciągając siatkę na pełną szerokość złącza. Przesunięto całą "platformę" (płyta główna, CPU, RAM, GPU, SSD, cooler) o `0.1` w osi X w głąb obudowy, by złącza naturalnie chowały się za krawędzią tylnego panelu PC.
 - **Detale M.2 i Baterii CMOS**: Przesunięto baterię CMOS wyżej (z `Y=-1.4` na `Y=-0.9`), aby była widoczna i nie chowała się pod radiatorem. Nałożono nową, dedykowaną teksturę radiatora ("AORUS M.2 SSD HEATSINK") na dolny radiator M.2. Zoptymalizowano oryginalny, bazowy model dysku SSD na płycie głównej (pod CPU), poprawiając obrót i proporcje jego tekstury, dzięki czemu pozbyto się efektu "rozmazanego bluru" po wyjęciu interaktywnego dysku.
 
-## Dzień 8 - Optymalizacja i Dostępność (Faza 3)
+## Etap 8 - Optymalizacja i Dostępność (Faza 3)
 
 - **Code Splitting (C38)**: Wdrożono dynamiczny import dla głównej sceny 3D (`React.lazy`) w pliku `App.tsx` oraz zdefiniowano `manualChunks` dla silnika Vite, co rozwiązuje problem zbyt dużych paczek przy kompilacji i przyspiesza wstępne ładowanie interfejsu.
 - **Dostępność i Screen Readery (C23-C25)**: Naprawiono problemy z czytelnością dla czytników ekranowych. Dodano etykiety `aria-label` do nawigacji galerii oraz przycisku zamknięcia. Panel informacyjny zyskał `role="dialog"` oraz `aria-live="polite"`, a renderowany element Canvas WebGL został ukryty z drzewa a11y (`aria-hidden="true"`), eliminując dezorientację użytkowników niepełnosprawnych.
 
-## Dzień 7 - Kamień Milowy: Architektura i Płynność (Faza 2)
+## Etap 7 - Kamień Milowy: Architektura i Płynność (Faza 2)
 
 - **Rozbicie Monolitu `PCModel.tsx` (C1)**: Wyodrębniono tysiące linijek kodu z jednego, ogromnego pliku `PCModel.tsx` do modułowej, zorganizowanej struktury w nowym katalogu `geometries/` (m.in. `MotherboardGeometry.tsx`, `CPUGeometry.tsx`, `GPUGeometry.tsx`, `PSUGeometry.tsx`, `CaseGeometry.tsx`). Główny plik pełni teraz wyłącznie rolę deklaratywnego orkiestratora.
 - **Globalny Hook `useIsMobile` (C2)**: Wydzielono logikę nasłuchiwania na rozmiar okna (media query) do reużywalnego hooka `src/hooks/useIsMobile.tsx`, oczyszczając kod i zapobiegając redundantnym event listenerom.
@@ -109,7 +109,7 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - **Sloty PCIe w 3D**: Przepisano płaską "teksturową naklejkę" na porty PCIe i obudowano je fizyczną, trójwymiarową ramką, tworząc naturalne zagłębienia, do których karty rozszerzeń "wchodzą" zamiast na nich leżeć.
 - **Poprawki Zgodności i Aparatu (C32)**: Odkryto i usunięto błąd TypeScripcie związany ze starą metodą `rest()` w `CameraControls` na rzecz poprawnego wywołania `reset(true)`.
 
-## Dzień 6 - Wdrożenie Poprawek z Audytu (Faza 1)
+## Etap 6 - Wdrożenie Poprawek z Audytu (Faza 1)
 
 - **Rozwiązanie wycieku pamięci geometrii**: Wydzielono logikę generowania kabli do zewnętrznego komponentu `CableGeometry.tsx`. Od teraz krzywe modelujące kable są buforowane poprzez `useMemo`, a same kształty (`TubeGeometry`) posiadają mechanizm wymuszający zrzucanie instancji z pamięci VRAM (`dispose()`) przy każdorazowym chowaniu i demontażu komponentu, naprawiając największe "dropy" wydajności.
 - **Bezpieczeństwo animacji**: Dodano bezpiecznik stanu `isAnimating` do logiki widoku rozstrzelonego (Explode View). Zapobiega on zapętlaniu się i de-synchronizacji animacji podczas szybkiego, wielokrotnego klikania przycisku.
@@ -174,7 +174,7 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - Materiał tylnej siatki wylotowej zasilacza nakłada teraz kanał przezroczystości (alphaMap) bezpośrednio na strukturę siatki, dzięki czemu przewiewny plaster miodu widać naturalnie zarówno z wnętrza, jak i zewnątrz budy PC.
 - Animacja eksplozji rozsuwa teraz nie tylko boczny, ale również przedni, szklany panel obudowy. Przednie szkło otrzymało też dopasowaną cienką stalową ramkę.
 
-## Dzień 5 - Audyt SEO, Bezpieczeństwa i Wydajności
+## Etap 5 - Audyt SEO, Bezpieczeństwa i Wydajności
 
 ### Dodane
 
@@ -194,7 +194,7 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - Ukryto techniczne stosy wywołań w `ErrorBoundary` w środowisku produkcyjnym.
 - Usunięto nieużywany plik `App.css` pochodzący z szablonu.
 
-## Dzień 4 - Ostateczne Szlify Estetyczne i Poprawki Układu
+## Etap 4 - Ostateczne Szlify Estetyczne i Poprawki Układu
 
 ### Dodane
 
@@ -235,7 +235,7 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - Wentylator na zasilaczu działa poprawnie, a wektory obrotu ringów RGB na wentylatorach zostały perfekcyjnie zsynchronizowane z ich łopatkami.
 - Zoptymalizowano Karty Informacyjne - pasek przewijania jest teraz ukryty poprzez dedykowaną klasę CSS, a paski postępu renderowane są wielokolorowymi gradientami.
 
-## Dzień 3 - Profesjonalna Estetyka i Detale
+## Etap 3 - Profesjonalna Estetyka i Detale
 
 ### Zmienione
 
@@ -254,7 +254,7 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - Modele SSD, Pamięci RAM i Procesora idealnie przylegają teraz do szyny (tacy) płyty głównej.
 - Naprawiono globalny wektor obudowy (`Z=1`), który powodował wystawanie wszystkich podzespołów poza bryłę ochronną skrzyni komputera.
 
-## Dzień 2 - Przebudowa UX/UI
+## Etap 2 - Przebudowa UX/UI
 
 ### Zmienione
 
@@ -264,7 +264,7 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - Płaskie oświetlenie środowiskowe zostało zmienione w predefiniowany profil studia HDRI (`Environment preset=studio`).
 - Zreorganizowano pasek nawigacyjny do formy przypominającej nowoczesne aplikacje typu Linear czy Vercel (monochromatyczny design, rozmyte tła, czarne motywy z jedno-pikselowym borderem).
 
-## Dzień 1 - Inicjalizacja i Podstawowe Funkcje
+## Etap 1 - Inicjalizacja i Podstawowe Funkcje
 
 ### Dodane
 
