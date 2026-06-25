@@ -31,6 +31,8 @@ export const materials = {
   almostBlack: new MeshStandardMaterial({ color: '#050505', roughness: 0.8 }),
   lightSilver: new MeshStandardMaterial({ color: '#e5e7eb', metalness: 0.9, roughness: 0.3 }),
   ioShieldMetal: new MeshStandardMaterial({ color: '#e5e7eb', metalness: 0.9, roughness: 0.3 }),
+  redCable: new MeshStandardMaterial({ color: '#e94560', roughness: 0.7 }),
+  blackCable: new MeshStandardMaterial({ color: '#111', roughness: 0.7 }),
 };
 
 export const xrayMaterial = new MeshStandardMaterial({

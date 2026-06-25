@@ -10,6 +10,8 @@ import aioFanRgbUrl from '../../../assets/aio_fan_rgb.webp';
 import caseFanUrl from '../../../assets/case_fan.webp';
 import caseFanRgbUrl from '../../../assets/case_fan_rgb.webp';
 import fanSideUrl from '../../../assets/fan_side.webp';
+import copperPlateUrl from '../../../assets/copper_plate.webp';
+import radiatorPlateUrl from '../../../assets/radiator_plate.webp';
 import { usePCSettings } from '../../../hooks/usePC';
 import { LocalAirflowParticles } from './LocalAirflowParticles';
 
@@ -125,6 +127,8 @@ export const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string }) => {
   const { xrayMode } = usePCSettings();
   const heatsinkTexture = useTexture(heatsinkUrl);
   const heatsinkSideTexture = useTexture(heatsinkSideUrl);
+  const copperPlateTexture = useTexture(copperPlateUrl);
+  const radiatorPlateTexture = useTexture(radiatorPlateUrl);
   
   useEffect(() => {
     heatsinkTexture.rotation = Math.PI / 2;
@@ -134,14 +138,31 @@ export const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string }) => {
     heatsinkSideTexture.rotation = Math.PI / 2;
     heatsinkSideTexture.center.set(0.5, 0.5);
     heatsinkSideTexture.needsUpdate = true;
-  }, [heatsinkTexture, heatsinkSideTexture]);
+
+    copperPlateTexture.rotation = Math.PI / 2;
+    copperPlateTexture.center.set(0.5, 0.5);
+    copperPlateTexture.needsUpdate = true;
+
+    radiatorPlateTexture.rotation = 0;
+    radiatorPlateTexture.center.set(0.5, 0.5);
+    radiatorPlateTexture.needsUpdate = true;
+  }, [heatsinkTexture, heatsinkSideTexture, copperPlateTexture, radiatorPlateTexture]);
 
   return (
     <group scale={1.15} position={[0, 0, 0.0375]}>
       {/* Base Contact */}
       <mesh position={[0, 0, -0.25]} material={xrayMode ? xrayMaterial : undefined}>
         <boxGeometry args={[0.6, 0.6, 0.05]} />
-        {!xrayMode && <meshStandardMaterial color="#d4af37" metalness={0.9} roughness={0.1} />}
+        {!xrayMode && (
+          <>
+            <primitive attach="material-0" object={materials.copper} />
+            <primitive attach="material-1" object={materials.copper} />
+            <primitive attach="material-2" object={materials.copper} />
+            <primitive attach="material-3" object={materials.copper} />
+            <meshStandardMaterial attach="material-4" map={copperPlateTexture} metalness={0.8} roughness={0.2} />
+            <meshStandardMaterial attach="material-5" map={copperPlateTexture} metalness={0.8} roughness={0.2} />
+          </>
+        )}
       </mesh>
       {/* Heatpipes */}
       {[-0.15, 0, 0.15].map((x, i) => (
@@ -159,8 +180,8 @@ export const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string }) => {
             <meshStandardMaterial attach="material-1" map={heatsinkSideTexture} metalness={0.8} roughness={0.3} />
             <meshStandardMaterial attach="material-2" map={heatsinkTexture} metalness={0.8} roughness={0.3} />
             <meshStandardMaterial attach="material-3" map={heatsinkTexture} metalness={0.8} roughness={0.3} />
-            <meshStandardMaterial attach="material-4" map={heatsinkTexture} metalness={0.8} roughness={0.3} />
-            <meshStandardMaterial attach="material-5" color="#b0b5b9" metalness={0.9} roughness={0.2} />
+            <meshStandardMaterial attach="material-4" map={radiatorPlateTexture} metalness={0.8} roughness={0.3} />
+            <meshStandardMaterial attach="material-5" map={radiatorPlateTexture} metalness={0.8} roughness={0.3} />
           </>
         )}
       </mesh>
