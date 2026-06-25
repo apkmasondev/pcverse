@@ -230,8 +230,8 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
       </Mesh>
 
       {/* PSU Back panel with honeycomb mesh cutout */}
-      <Mesh position={[0, -1.95, -2.01]}>
-        <planeGeometry args={[1.5, 0.9]} />
+      <Mesh position={[0, -1.91, -2.01]}>
+        <planeGeometry args={[1.5, 0.78]} />
         <meshStandardMaterial 
           color="#4a4d54" 
           roughness={0.3} 
