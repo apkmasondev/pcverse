@@ -56,6 +56,20 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
   const dofTarget = useMemo(() => new Vector3(), []);
   const dofEnabled = !!selectedComponent;
   
+  const gridColors = useMemo(() => {
+    switch (envPreset) {
+      case 'city':
+        return { cell: '#1e3a8a', section: '#3b82f6' }; // Cyberpunk (Niebiesko/Neonowy)
+      case 'dawn':
+        return { cell: '#7c2d12', section: '#ea580c' }; // Świt (Pomarańcz/Ciepły)
+      case 'apartment':
+        return { cell: '#3f3f46', section: '#a1a1aa' }; // Mieszkanie (Ciepłe szarości)
+      case 'studio':
+      default:
+        return { cell: '#4b5563', section: '#6b7280' }; // Studio (Neutralny)
+    }
+  }, [envPreset]);
+
   useEffect(() => {
     if (selectedComponent) {
       const posArray = explodeStep === 2 ? selectedComponent.explodedPosition : selectedComponent.position;
@@ -223,15 +237,15 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
         </ErrorBoundary>
         <Grid 
           position={[0, -4.1, 0]} 
-          args={[40, 40]} 
+          args={[80, 80]} 
           cellSize={1} 
-          cellThickness={1} 
-          cellColor="#4b5563" 
+          cellThickness={1.2} 
+          cellColor={gridColors.cell} 
           sectionSize={5} 
-          sectionThickness={1.5} 
-          sectionColor="#6b7280" 
-          fadeDistance={60} 
-          fadeStrength={1} 
+          sectionThickness={2.0} 
+          sectionColor={gridColors.section} 
+          fadeDistance={40} 
+          fadeStrength={2} 
         />
         {!isMobile && !disableEffects && (
           <EffectComposer multisampling={4}>
