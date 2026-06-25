@@ -181,7 +181,7 @@ export const UI = () => {
                 initial={{ opacity: 0, x: -10, scale: 0.95 }}
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: -10, scale: 0.95 }}
-                className="absolute top-0 left-full ml-4 p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl grid grid-cols-3 gap-3 z-50 place-items-center shadow-2xl w-max"
+                className="absolute top-0 left-[50px] md:left-full ml-2 md:ml-4 p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl grid grid-cols-3 gap-3 z-50 place-items-center shadow-2xl w-max"
               >
                 <button
                   aria-label="Wyłącz RGB"
@@ -245,7 +245,7 @@ export const UI = () => {
                 initial={{ opacity: 0, x: -10, scale: 0.95 }}
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: -10, scale: 0.95 }}
-                className="absolute top-0 left-full ml-4 p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col gap-2 z-50 w-48"
+                className="absolute top-0 left-[50px] md:left-full ml-2 md:ml-4 p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col gap-2 z-50 w-48"
               >
                 {PRESETS.map(p => (
                   <button
@@ -333,12 +333,12 @@ export const UI = () => {
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="bg-gradient-to-br from-[#0a0a0a] to-indigo-950/20 border border-white/10 rounded-3xl p-8 max-w-2xl w-full relative shadow-[0_0_40px_rgba(99,102,241,0.15)]"
+              className="bg-gradient-to-br from-[#0a0a0a] to-indigo-950/20 border border-white/10 rounded-3xl p-5 md:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto relative shadow-[0_0_40px_rgba(99,102,241,0.15)]"
             >
               <button 
                 onClick={() => setShowInstructions(false)}
                 aria-label="Zamknij instrukcję"
-                className="absolute top-6 right-6 text-slate-300 hover:text-white transition-colors"
+                className="absolute top-4 right-4 md:top-6 md:right-6 text-slate-300 hover:text-white transition-colors"
               >
                 <X aria-hidden="true" size={24} />
               </button>
@@ -350,16 +350,34 @@ export const UI = () => {
               
               <div className="grid gap-4 mb-8">
                 <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-                  <MousePointerClick aria-hidden="true" className="text-indigo-400 shrink-0" />
-                  <div>
-                    <h3 className="text-base font-semibold text-white mb-2">Kamera i Interakcja</h3>
-                    <p className="text-sm text-slate-300 leading-relaxed">
-                      • <strong>Obrót:</strong> Lewy Przycisk Myszy (LPM).<br/>
-                      • <strong>Ruch postacią:</strong> Klawisze W, A, S, D.<br/>
-                      • <strong>Przesuwanie (Pan):</strong> Prawy Przycisk Myszy (PPM).<br/>
-                      • <strong>Przybliżanie (Zoom):</strong> Kółko myszy (Scroll).<br/>
-                      Kliknij w dany komponent z bliska, by wyświetlić jego detale.
-                    </p>
+                  <MousePointerClick aria-hidden="true" className="text-indigo-400 shrink-0 mt-1" />
+                  <div className="w-full">
+                    <h3 className="text-base font-semibold text-white mb-3">Sterowanie i Interakcja (PC & Mobile)</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-slate-300">
+                      <div>
+                        <p className="font-semibold text-white/90 mb-1.5 border-b border-white/10 pb-1">Mysz i Klawiatura</p>
+                        <ul className="space-y-1.5">
+                          <li>• <strong className="text-white">Obrót:</strong> Lewy przycisk (LPM)</li>
+                          <li>• <strong className="text-white">Przesuwanie:</strong> Prawy przycisk (PPM)</li>
+                          <li>• <strong className="text-white">Ruch kamery:</strong> W, A, S, D</li>
+                          <li>• <strong className="text-white">Zoom:</strong> Kółko myszy</li>
+                          <li>• <strong className="text-white">Wyjście:</strong> Klawisz ESC</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <p className="font-semibold text-white/90 mb-1.5 border-b border-white/10 pb-1">Gesty Dotykowe</p>
+                        <ul className="space-y-1.5">
+                          <li>• <strong className="text-white">Obrót:</strong> Pojedynczy palec</li>
+                          <li>• <strong className="text-white">Przesuwanie:</strong> Dwa palce</li>
+                          <li>• <strong className="text-white">Zoom:</strong> Uszczypnięcie ekranu</li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div className="mt-4 p-3 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
+                      <p className="text-sm text-indigo-200 font-medium leading-relaxed">
+                        💡 <strong className="text-indigo-100">Wskazówka:</strong> Kliknij (lub dotknij) dowolny podzespół komputera, by wyświetlić panel detali. W trybie powiększenia galerii możesz używać strzałek <kbd className="px-1.5 py-0.5 bg-black/40 rounded border border-white/20 text-xs">←</kbd> <kbd className="px-1.5 py-0.5 bg-black/40 rounded border border-white/20 text-xs">→</kbd> do przewijania zdjęć.
+                      </p>
+                    </div>
                   </div>
                 </div>
 
@@ -376,27 +394,27 @@ export const UI = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
                     <Focus aria-hidden="true" className="text-indigo-400 shrink-0" />
-                    <span className="text-sm text-slate-300"><strong>Zresetuj:</strong> Domyślna kamera.</span>
+                    <span className="text-sm text-slate-300 leading-tight"><strong>Zresetuj:</strong> Przywraca domyślny kąt kamery.</span>
                   </div>
                   <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
                     <Scan aria-hidden="true" className="text-cyan-400 shrink-0" />
-                    <span className="text-sm text-slate-300"><strong>Hologram:</strong> X-Ray obudowy.</span>
+                    <span className="text-sm text-slate-300 leading-tight"><strong>Hologram:</strong> Prześwietla wszystkie podzespoły PC.</span>
                   </div>
                   <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
                     <Wind aria-hidden="true" className="text-blue-400 shrink-0" />
-                    <span className="text-sm text-slate-300"><strong>Airflow:</strong> Cyrkulacja wiatru.</span>
+                    <span className="text-sm text-slate-300 leading-tight"><strong>Airflow:</strong> Wizualizacja przepływu powietrza.</span>
                   </div>
                   <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
                     <Sun aria-hidden="true" className="text-amber-400 shrink-0" />
-                    <span className="text-sm text-slate-300"><strong>Otoczenie:</strong> Zmiana tła (HDRi).</span>
+                    <span className="text-sm text-slate-300 leading-tight"><strong>Otoczenie:</strong> Zmienia globalne oświetlenie i tło.</span>
                   </div>
                   <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
                     <Palette aria-hidden="true" className="text-purple-400 shrink-0" />
-                    <span className="text-sm text-slate-300"><strong>RGB:</strong> Zmiana koloru.</span>
+                    <span className="text-sm text-slate-300 leading-tight"><strong>RGB:</strong> Sterowanie podświetleniem części.</span>
                   </div>
                   <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
                     <Tag aria-hidden="true" className="text-emerald-400 shrink-0" />
-                    <span className="text-sm text-slate-300"><strong>Etykiety:</strong> Ukryj/pokaż text.</span>
+                    <span className="text-sm text-slate-300 leading-tight"><strong>Etykiety:</strong> Włącza lub wyłącza nazwy w 3D.</span>
                   </div>
                 </div>
               </div>

@@ -3,7 +3,8 @@
 ## Etap 17 - Przebudowa UI i Nawigacji
 
 ### Dodane / Poprawione
-- **Nowy boczny panel nawigacyjny**: Wdrożono opcję rozszerzającego się paska bocznego (Sidebar), który grupuje wszystkie narzędzia i przyciski w jednym eleganckim miejscu z lewej strony ekranu.
+- **Nowy boczny panel nawigacyjny**: Wdrożono opcję rozszerzającego się paska bocznego (Sidebar), który grupuje wszystkie narzędzia i przyciski w jednym eleganckim miejscu z lewej strony ekranu. Poprawiono zachowanie wyskakujących menu (RGB i HDRi) na urządzeniach mobilnych, zapobiegając ucinaniu interfejsu (menu wysuwa się płynnie obok ikon, przykrywając tekst na małych ekranach).
+- **Zoptymalizowana Modalna Instrukcja**: Przebudowano okno instrukcji wprowadzając podział na mysz/klawiaturę i gesty mobilne. Usunięto błąd ucinania okna na małych ekranach (brak przewijania) poprzez wymuszenie `max-h-[90vh]` oraz `overflow-y-auto`. Zaktualizowano wszystkie opisy narzędzi dla pełnej spójności (m.in. tryb Hologramu).
 - **Integracja Logo**: Wbudowano logo PCVerse bezpośrednio w nagłówek rozsuwanego panelu bocznego, ze zaktualizowanym gradientem dla tekstu dopasowanym do motywu interfejsu.
 - **Odświeżona paleta RGB**: Zdefiniowano na nowo paletę barw Neon/Cyber, dostarczając 8 maksymalnie wyrazistych i odseparowanych od siebie kolorów. Przebudowano układ menu palety tworząc spójną siatkę 3x3 dla wszystkich kolorów (optymalizacja dla wersji mobilnych).
 - **Tekstura paneli PCIe (Śledzie)**: Rozwiązano błąd z odbiciem lustrzanym na tylnych śledziach obudowy poprzez odseparowanie (klonowanie) tekstury w kodzie - lustrzane odbicie ma zastosowanie tylko dla twarzy wewnątrz obudowy.
