@@ -161,7 +161,7 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
             <boxGeometry args={[0.04, 1.8, 0.01]} />
             <primitive object={materials.deepBlack} attach="material" />
           </Mesh>
-            
+
           {/* Złote styki wewnątrz slotu (Górna część) */}
           <Mesh position={[0, 0.39, 0.04]}>
             <boxGeometry args={[0.035, 1.02, 0.02]} />
@@ -209,7 +209,7 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
 
       {/* PCIe Slots (Reinforced) */}
       {[-0.4, -1.8].map((y, i) => (
-        <group key={`pcie-${i}`} position={[-0.1, y, 0.1]}>
+        <group key={`pcie-${i}`} position={[-0.05, y, 0.1]}>
           {/* Base Block */}
           <Mesh position={[0, 0, -0.02]}>
             <boxGeometry args={[2.8, 0.15, 0.08]} />
@@ -230,6 +230,12 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
           <Mesh position={[0, 0, 0.02]}>
             <boxGeometry args={[2.8, 0.07, 0.01]} />
             <primitive object={materials.deepBlack} attach="material" />
+          </Mesh>
+
+          {/* Main PCIe Slot Body */}
+          <Mesh position={[0.06, 0, 0]}>
+            <boxGeometry args={[2.9, 0.14, 0.08]} />
+            <primitive object={materials.blackPlastic} attach="material" />
           </Mesh>
 
           {/* PCIe slot Notch / Key Divider */}

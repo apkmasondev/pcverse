@@ -57,14 +57,18 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
     <group>
       {/* Inner Physical Blades (visible in X-Ray mode) */}
       <group position={[0, 0, 0]} ref={bladesRef} userData={{ axis: 'z' }}>
-        <mesh material={xrayMode ? xrayMaterial : undefined}>
-          <boxGeometry args={[0.78, 0.05, 0.1]} />
+        {/* Hub */}
+        <mesh rotation={[Math.PI / 2, 0, 0]} material={xrayMode ? xrayMaterial : undefined}>
+          <cylinderGeometry args={[0.15, 0.15, 0.06, 16]} />
           {!xrayMode && <primitive object={materials.darkMetal} attach="material" />}
         </mesh>
-        <mesh rotation={[0, 0, Math.PI / 2]} material={xrayMode ? xrayMaterial : undefined}>
-          <boxGeometry args={[0.78, 0.05, 0.1]} />
-          {!xrayMode && <primitive object={materials.darkMetal} attach="material" />}
-        </mesh>
+        {/* Blades (4 full-width boxes = 8 blades) */}
+        {[0, 1, 2, 3].map(i => (
+          <mesh key={i} rotation={[0, 0, (Math.PI / 4) * i]} material={xrayMode ? xrayMaterial : undefined}>
+            <boxGeometry args={[0.82, 0.03, 0.15]} />
+            {!xrayMode && <primitive object={materials.darkMetal} attach="material" />}
+          </mesh>
+        ))}
       </group>
 
       {/* Outer Frame */}

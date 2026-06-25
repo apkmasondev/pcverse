@@ -48,24 +48,24 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
     <group>
       {/* PCIe Connector - Short Segment (Front) */}
       <mesh position={[-1.45, 0.05, -0.66]} material={xrayMode ? xrayMaterial : undefined}>
-        <boxGeometry args={[0.3, 0.08, 0.10]} />
+        <boxGeometry args={[0.3, 0.08, 0.09]} />
         {!xrayMode && <primitive object={materials.goldMetal} attach="material" />}
       </mesh>
       {/* PCIe Connector - Long Segment */}
       <mesh position={[-0.35, 0.05, -0.66]} material={xrayMode ? xrayMaterial : undefined}>
-        <boxGeometry args={[1.8, 0.08, 0.10]} />
+        <boxGeometry args={[1.8, 0.08, 0.09]} />
         {!xrayMode && <primitive object={materials.goldMetal} attach="material" />}
       </mesh>
       {/* GPU IO Ports (HDMI & 3x DisplayPort) at Left Edge */}
       <group position={[-1.7, -0.15, 0]}>
         <mesh position={[0, 0, -0.05]} material={xrayMode ? xrayMaterial : undefined}>
-          <boxGeometry args={[0.04, 0.4, 1.1]} />
+          <boxGeometry args={[0.04, 0.38, 1.1]} />
           {!xrayMode && <primitive object={materials.roughDarkMetal} attach="material" />}
         </mesh>
         {/* GPU IO Texture Plane */}
         {!xrayMode && (
-          <mesh position={[-0.021, 0, -0.05]} rotation={[0, -Math.PI / 2, 0]}>
-            <planeGeometry args={[1.1, 0.4]} />
+          <mesh position={[-0.025, 0, -0.05]} rotation={[0, -Math.PI / 2, 0]}>
+            <planeGeometry args={[1.1, 0.38]} />
             <meshStandardMaterial map={gpuIoTexture} roughness={0.4} metalness={0.6} />
           </mesh>
         )}
@@ -175,8 +175,8 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {/* Static RGB Rings on the Front Texture - hide when xrayMode is active */}
       {!xrayMode && [-1.15, 0, 1.15].map((x, i) => (
         <mesh key={`rgb-ring-${i}`} position={[x, -0.385, 0]} rotation={[Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[0.49, 0.015, 16, 32]} />
-          <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={2.0} toneMapped={false} />
+          <torusGeometry args={[0.56, 0.022, 16, 48]} />
+          <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={2.5} toneMapped={false} />
         </mesh>
       ))}
 

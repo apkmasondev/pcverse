@@ -8,6 +8,8 @@
 - **Integracja Logo**: Wbudowano logo PCVerse bezpośrednio w nagłówek rozsuwanego panelu bocznego, ze zaktualizowanym gradientem dla tekstu dopasowanym do motywu interfejsu.
 - **Odświeżona paleta RGB**: Zdefiniowano na nowo paletę barw Neon/Cyber, dostarczając 8 maksymalnie wyrazistych i odseparowanych od siebie kolorów. Przebudowano układ menu palety tworząc spójną siatkę 3x3 dla wszystkich kolorów (optymalizacja dla wersji mobilnych).
 - **Tekstura paneli PCIe (Śledzie)**: Rozwiązano błąd z odbiciem lustrzanym na tylnych śledziach obudowy poprzez odseparowanie (klonowanie) tekstury w kodzie - lustrzane odbicie ma zastosowanie tylko dla twarzy wewnątrz obudowy.
+- **Wizualizacje 3D (Z-fighting)**: Zlikwidowano usterki wizualne (tzw. Z-fighting) pojawiające się na styku slotów PCIe na płycie głównej poprzez obniżenie wysokości czarnego wypełnienia o 0.01 jednostki. Zoptymalizowano wymiary styku karty graficznej i tylnego panelu I/O aby zapobiegać kolizji brył 3D.
+- **Ulepszone wentylatory (X-Ray)**: Zrekonstruowano modele fizycznych śmigieł wentylatorów (obudowy i coolera CPU) w trybie prześwietlenia (X-Ray). Zamiast surowego układu z dwóch krzyżujących się belek, renderowana jest płynna, 8-ramienna gwiazda wokół zaokrąglonego huba, dopasowując realizm do pozostałych komponentów.
 
 ## Etap 16 - Finalizacja Audytu (Wydajność, Pamięć i Dostępność)
 
