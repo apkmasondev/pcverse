@@ -1,5 +1,5 @@
 import { BackSide, CanvasTexture, DoubleSide, Group, MathUtils, Texture, RepeatWrapping, MeshStandardMaterial } from 'three';
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useEffect } from 'react';
 
 import { useFrame } from '@react-three/fiber';
 import { usePCSelection, usePCSettings } from '../../../hooks/usePC';
@@ -28,19 +28,26 @@ export const CasePanels = ({
   const isMobile = useIsMobile();
   const bracketTexture = useTexture(bracketUrl);
 
-  const bracketMaterials = useMemo(() => {
-    const flippedTexture = bracketTexture.clone();
-    flippedTexture.wrapS = RepeatWrapping;
-    flippedTexture.repeat.set(-1, 1);
-    flippedTexture.center.set(0.5, 0.5);
-    flippedTexture.needsUpdate = true;
+  const [bracketMaterials, flippedTexture] = useMemo(() => {
+    const flippedTex = bracketTexture.clone();
+    flippedTex.wrapS = RepeatWrapping;
+    flippedTex.repeat.set(-1, 1);
+    flippedTex.center.set(0.5, 0.5);
+    flippedTex.needsUpdate = true;
 
     const mat = new MeshStandardMaterial({ map: bracketTexture, metalness: 0.6, roughness: 0.4 });
-    const matFlipped = new MeshStandardMaterial({ map: flippedTexture, metalness: 0.6, roughness: 0.4 });
+    const matFlipped = new MeshStandardMaterial({ map: flippedTex, metalness: 0.6, roughness: 0.4 });
     
     // BoxGeometry faces: right (+x - inside), left (-x - outside), top, bottom, front, back
-    return [matFlipped, mat, mat, mat, mat, mat];
+    return [[matFlipped, mat, mat, mat, mat, mat], flippedTex] as const;
   }, [bracketTexture]);
+
+  useEffect(() => {
+    return () => {
+      flippedTexture.dispose();
+      bracketMaterials.forEach(m => m.dispose());
+    };
+  }, [flippedTexture, bracketMaterials]);
 
   const sideGlassRef = useRef<Group>(null);
   const sideGlassMatRef = useRef<any>(null);

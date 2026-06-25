@@ -70,6 +70,9 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
     }
   }, [envPreset]);
 
+  // Dynamiczny kolor tła zależny od wybranego środowiska HDRi
+  const bgColor = envPreset === 'studio' ? '#13141a' : envPreset === 'city' ? '#0f0a1c' : envPreset === 'apartment' ? '#8492a6' : '#1e1b18';
+
   useEffect(() => {
     if (selectedComponent) {
       const posArray = explodeStep === 2 ? selectedComponent.explodedPosition : selectedComponent.position;
@@ -113,9 +116,6 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
-
-  // Dynamiczny kolor tła zależny od wybranego środowiska HDRi
-  const bgColor = envPreset === 'studio' ? '#13141a' : envPreset === 'city' ? '#0f0a1c' : envPreset === 'apartment' ? '#8492a6' : '#1e1b18';
 
   useEffect(() => {
     if (cameraControlsRef.current && !hasInitialized.current) {
@@ -248,11 +248,11 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
           fadeDistance={40} 
           fadeStrength={2} 
         />
-        {!isMobile && !disableEffects && (
+        {!isMobile && (
           <EffectComposer multisampling={4}>
-            {dofEnabled ? <DepthOfField target={dofTarget} focalLength={0.05} bokehScale={8} height={700} /> : <group /> as any}
+            {dofEnabled && !disableEffects ? <DepthOfField target={dofTarget} focalLength={0.05} bokehScale={8} height={700} /> : <group /> as any}
             <Bloom luminanceThreshold={1} mipmapBlur={true} intensity={1.0} />
-            <N8AO aoRadius={0.5} intensity={2.0} distanceFalloff={0.5} quality="medium" halfRes />
+            {!disableEffects && <N8AO aoRadius={0.5} intensity={2.0} distanceFalloff={0.5} quality="medium" halfRes />}
             <Vignette eskil={false} offset={0.2} darkness={0.6} />
             <ChromaticAberration blendFunction={BlendFunction.NORMAL} offset={CHROMA_OFFSET} />
           </EffectComposer>

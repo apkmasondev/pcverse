@@ -84,7 +84,7 @@ export const pcComponents: PCComponent[] = [
       { label: "Kultura Pracy (Głośność)", value: 85 },
       { label: "Stabilność Temperatury pod Obciążeniem", value: 90 }
     ],
-    geometryArgs: [1, 0.8, 0.8],
+    geometryArgs: [1, 1.3, 0.8],
     imageUrls: ["/images/components/cooler.webp", "/images/components/cooler_macro.webp", "/images/components/cooler_alt.webp", "/images/components/cooler_real.webp"],
   },
   {

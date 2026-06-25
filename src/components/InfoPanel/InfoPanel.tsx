@@ -33,7 +33,7 @@ const getIcon = (id: string) => {
 const ProgressBar = ({ label, value }: { label: string; value: number }) => (
   <div className="mb-5 bg-white/[0.01] border border-white/[0.02] p-4 rounded-xl">
     <div className="flex justify-between text-xs mb-2.5">
-      <span className="text-slate-400 font-medium">{label}</span>
+      <span className="text-slate-300 font-medium">{label}</span>
       <span className="text-indigo-400 font-mono font-semibold text-[11px]">{value}%</span>
     </div>
     <div className="w-full bg-white/5 rounded-full h-1.5 overflow-hidden">

@@ -176,14 +176,14 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
       
       {showLabels && !showInstructions && !selectedComponent && (!isMobile && (hovered || isSelected) || explodeStep === 2) && (
         <Html 
-          position={[0, data.geometryArgs[1] / 2 + 0.15, 0]}
+          position={[0, data.geometryArgs[1] / 2, 0]}
           center
           distanceFactor={12}
           zIndexRange={[100, 0]}
         >
           <motion.div 
-            initial={{ opacity: 0, scale: 0.8, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
+            initial={{ opacity: 0, scale: 0.8, y: "calc(-50% + 10px)" }}
+            animate={{ opacity: 1, scale: 1, y: "-50%" }}
             transition={{ type: "spring", stiffness: 400, damping: 25 }}
             className="flex flex-col items-center pointer-events-auto cursor-pointer opacity-100"
             onPointerEnter={(e) => {
@@ -227,7 +227,7 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
             </div>
             <div className="relative flex flex-col items-center">
               <div 
-                className={`w-px h-8 transition-all duration-300 ${!hovered ? 'bg-gradient-to-b from-white/40 to-white/5' : ''}`}
+                className={`w-px h-16 transition-all duration-300 ${!hovered ? 'bg-gradient-to-b from-white/40 to-white/5' : ''}`}
                 style={hovered ? {
                   backgroundColor: rgbColor,
                   boxShadow: `0 0 10px ${rgbColor}`

@@ -37,10 +37,14 @@ function App() {
   }
 
   return (
-    <GlobalErrorBoundary fallback={<div className="text-white">Critical App Failure</div>}>
+    <GlobalErrorBoundary>
       <PCProvider>
         <main className="relative w-full h-screen overflow-hidden bg-[#0f0a1c]">
           <h1 className="sr-only">PCVerse — Interaktywna Anatomia Komputera 3D</h1>
+          <nav className="sr-only focus-within:not-sr-only focus-within:absolute focus-within:z-50 focus-within:bg-[#0f0a1c] focus-within:text-white focus-within:p-4 focus-within:rounded-br-xl">
+            <a href="#ui-controls" className="block py-2 outline-none focus:ring-2 focus:ring-indigo-500">Przejdź do kontrolerów środowiska</a>
+            <a href="#info-panel" className="block py-2 outline-none focus:ring-2 focus:ring-indigo-500">Przejdź do panelu informacji</a>
+          </nav>
 
           <Suspense fallback={null}>
             <Scene3D />

@@ -42,7 +42,7 @@ export const RAMGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {/* Metaliczny Radiator (Heat Spreader) */}
       <Mesh position={[0, 0, 0.02]}>
         <boxGeometry args={[0.08, 1.75, 0.32]} />
-        <meshStandardMaterial color="#1f2229" metalness={0.7} roughness={0.4} />
+        <primitive object={materials.slateMetal} attach="material" />
       </Mesh>
       
       {/* RAM Side Textures */}

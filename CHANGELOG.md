@@ -11,7 +11,17 @@
 - **Wizualizacje 3D (Z-fighting)**: Zlikwidowano usterki wizualne (tzw. Z-fighting) pojawiające się na styku slotów PCIe na płycie głównej poprzez obniżenie wysokości czarnego wypełnienia o 0.01 jednostki. Zoptymalizowano wymiary styku karty graficznej i tylnego panelu I/O aby zapobiegać kolizji brył 3D.
 - **Ulepszone wentylatory (X-Ray)**: Zrekonstruowano modele fizycznych śmigieł wentylatorów (obudowy i coolera CPU) w trybie prześwietlenia (X-Ray). Zamiast surowego układu z dwóch krzyżujących się belek, renderowana jest płynna, 8-ramienna gwiazda wokół zaokrąglonego huba, dopasowując realizm do pozostałych komponentów.
 
-## Etap 16 - Finalizacja Audytu (Wydajność, Pamięć i Dostępność)
+## Etap 18 - Audyt, Optymalizacja i Stabilizacja Wydania (Release Candidate)
+
+### Dodane / Poprawione
+- **Eliminacja Wycieków Pamięci (VRAM)**: Wprowadzono skrupulatne czyszczenie zasobów (`dispose()`) dla ręcznie klonowanych tekstur w obudowie oraz nowo tworzonych instancji materiałów (Bracket), zabezpieczając sprzęt mobilny przed przepełnieniem pamięci karty graficznej.
+- **Koniec "Zombie Oscylatorów" Audio**: Przebudowano logikę sterującą odtwarzaniem ambientowego szumu (Airflow). Twarde rozłączanie (`disconnect`) i czyszczenie buforów wyeliminowało błąd, który powodował nakładanie się dźwięków w nieskończoność przy szybkim przeklikiwaniu przycisków.
+- **Odciążenie GPU (Współdzielenie Materiałów)**: Usunięto setki zduplikowanych deklaracji materiałów "w locie" (np. RAM, sloty PCIe, kable). Przebudowano je tak, aby korzystały ze scentralizowanej bazy współdzielonych instancji (`materials.ts`), redukując liczbę shaderów na karcie graficznej.
+- **Zrównoważony Postprocessing**: Poprawiono nasłuchiwacz `PerformanceMonitor` tak, by przy spadkach płynności deaktywował jedynie najcięższe efekty (Głębia Ostrości `DepthOfField` oraz Globalne Cieniowanie `N8AO`). Dzięki temu aplikacja działa płynnie, ale zachowuje swój flagowy styl (np. urokliwy Bloom).
+- **Zgodność ze Standardami WCAG (Dostępność)**: Dokończono proces wdrażania dostępności: ukryto ikonki SVG dla czytników ekranowych (`aria-hidden`), dodano nawigację klawiaturową typu *skip link*, podbito kontrast pomniejszych opisów tekstowych na ciemnym tle oraz w pełni spolszczono komunikaty rzucane przez `GlobalErrorBoundary` w przypadku awarii renderera.
+- **Etykiety Informacyjne (HUD)**: Zrekonstruowano algorytm pozycjonowania "dymków" z nazwami komponentów. Etykiety nie uciekają już do wnętrza 3D, a punkty celownicze (kropki) i linie łączące zawsze celują precyzyjnie w górną krawędź opisywanego sprzętu (np. CPU Cooler), niezależnie od kąta kamery.
+
+## Etap 16 - Audyt i Ostatnie Szlify Przed Wersją Finalną
 
 ### Poprawione / Zoptymalizowane
 - **Efekty Wolumetryczne i Cząsteczkowe (Zgodne z Audytem)**: 

@@ -30,7 +30,7 @@ export const LoadingScreen = () => {
             <h1 className="text-4xl font-extrabold tracking-widest mb-2 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-500">
               PCVERSE
             </h1>
-            <p className="text-sm text-slate-400 tracking-widest uppercase mb-8">
+            <p className="text-sm text-slate-300 tracking-widest uppercase mb-8">
               Inicjalizacja środowiska
             </p>
 

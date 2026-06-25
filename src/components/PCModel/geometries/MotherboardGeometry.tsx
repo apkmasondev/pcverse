@@ -143,17 +143,17 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
           {/* Base Block */}
           <Mesh position={[0, 0, -0.02]}>
             <boxGeometry args={[0.1, 1.8, 0.11]} />
-            <meshStandardMaterial color={i % 2 === 0 ? "#111" : "#2a2a2a"} roughness={0.7} />
+            {i % 2 === 0 ? <primitive object={materials.pcbBlack} attach="material" /> : <primitive object={materials.roughDarkMetal} attach="material" />}
           </Mesh>
 
           {/* Left/Right Walls to create the groove */}
           <Mesh position={[-0.035, 0, 0.05]}>
             <boxGeometry args={[0.03, 1.8, 0.05]} />
-            <meshStandardMaterial color={i % 2 === 0 ? "#111" : "#2a2a2a"} roughness={0.7} />
+            {i % 2 === 0 ? <primitive object={materials.pcbBlack} attach="material" /> : <primitive object={materials.roughDarkMetal} attach="material" />}
           </Mesh>
           <Mesh position={[0.035, 0, 0.05]}>
             <boxGeometry args={[0.03, 1.8, 0.05]} />
-            <meshStandardMaterial color={i % 2 === 0 ? "#111" : "#2a2a2a"} roughness={0.7} />
+            {i % 2 === 0 ? <primitive object={materials.pcbBlack} attach="material" /> : <primitive object={materials.roughDarkMetal} attach="material" />}
           </Mesh>
 
           {/* Groove floor (dark) */}
@@ -176,7 +176,7 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
           {/* The RAM Notch (wcięcie / klucz na środku) */}
           <Mesh position={[0, -0.15, 0.05]}>
             <boxGeometry args={[0.04, 0.06, 0.05]} />
-            <meshStandardMaterial color={i % 2 === 0 ? "#111" : "#2a2a2a"} roughness={0.7} />
+            {i % 2 === 0 ? <primitive object={materials.pcbBlack} attach="material" /> : <primitive object={materials.roughDarkMetal} attach="material" />}
           </Mesh>
           {/* Top clip */}
           <Mesh position={[0, 0.95, 0]}>
@@ -213,17 +213,17 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
           {/* Base Block */}
           <Mesh position={[0, 0, -0.02]}>
             <boxGeometry args={[2.8, 0.15, 0.08]} />
-            <meshStandardMaterial color={i === 0 ? "#b0b5b9" : "#111"} metalness={i === 0 ? 0.8 : 0} roughness={0.5} />
+            {i === 0 ? <primitive object={materials.chromeMetal} attach="material" /> : <primitive object={materials.pcbBlack} attach="material" />}
           </Mesh>
 
           {/* Top/Bottom Walls to create the groove */}
           <Mesh position={[0, 0.055, 0.04]}>
             <boxGeometry args={[2.8, 0.04, 0.04]} />
-            <meshStandardMaterial color={i === 0 ? "#b0b5b9" : "#111"} metalness={i === 0 ? 0.8 : 0} roughness={0.5} />
+            {i === 0 ? <primitive object={materials.chromeMetal} attach="material" /> : <primitive object={materials.pcbBlack} attach="material" />}
           </Mesh>
           <Mesh position={[0, -0.055, 0.04]}>
             <boxGeometry args={[2.8, 0.04, 0.04]} />
-            <meshStandardMaterial color={i === 0 ? "#b0b5b9" : "#111"} metalness={i === 0 ? 0.8 : 0} roughness={0.5} />
+            {i === 0 ? <primitive object={materials.chromeMetal} attach="material" /> : <primitive object={materials.pcbBlack} attach="material" />}
           </Mesh>
 
           {/* Groove floor (dark) */}

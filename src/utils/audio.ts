@@ -115,15 +115,17 @@ export const stopAmbientSound = () => {
     if (ambientGain && ambientOsc) {
       const ctx = getContext();
       ambientGain.gain.cancelScheduledValues(ctx.currentTime);
-      ambientGain.gain.setValueAtTime(ambientGain.gain.value, ctx.currentTime);
-      ambientGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.1);
+      ambientGain.gain.setValueAtTime(0, ctx.currentTime);
       
-      ambientOsc.stop(ctx.currentTime + 0.15);
+      ambientOsc.stop();
+      ambientOsc.disconnect();
       if (whineOsc) {
-        whineOsc.stop(ctx.currentTime + 0.15);
+        whineOsc.stop();
+        whineOsc.disconnect();
         whineOsc = null;
       }
       
+      ambientGain.disconnect();
       ambientOsc = null;
       ambientGain = null;
     }
