@@ -296,7 +296,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
       </group>
 
       {/* PSU Bottom Ventilation Mesh (Visible from below) */}
-      <Mesh position={[-1.2, -2.51, -0.8]} rotation={[Math.PI / 2, 0, 0]}>
+      <Mesh position={[-1.2, -2.405, -0.8]} rotation={[Math.PI / 2, 0, 0]}>
         <planeGeometry args={[1.45, 1.45]} />
         <meshStandardMaterial 
           color="#1e1e24"
