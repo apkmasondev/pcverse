@@ -1,7 +1,8 @@
-import * as THREE from 'three';
+import { Path, Shape } from 'three';
+
 
 export const leftPanelShape = (() => {
-  const shape = new THREE.Shape();
+  const shape = new Shape();
   shape.moveTo(-1.95, -2.3);
   shape.lineTo(1.945, -2.3);
   shape.lineTo(1.945, 2.4);
@@ -9,7 +10,7 @@ export const leftPanelShape = (() => {
   shape.lineTo(-1.95, -2.3);
 
   // Motherboard IO Cutout
-  const ioHole = new THREE.Path();
+  const ioHole = new Path();
   ioHole.moveTo(-1.55 - 0.35, 1.2 - 0.725);
   ioHole.lineTo(-1.55 + 0.35, 1.2 - 0.725);
   ioHole.lineTo(-1.55 + 0.35, 1.2 + 0.725);
@@ -18,7 +19,7 @@ export const leftPanelShape = (() => {
   shape.holes.push(ioHole);
 
   // PSU Cutout
-  const psuHole = new THREE.Path();
+  const psuHole = new Path();
   psuHole.moveTo(-0.8 - 0.9, -2.3);
   psuHole.lineTo(-0.8 + 0.9, -2.3);
   psuHole.lineTo(-0.8 + 0.9, -1.92 + 0.5);
@@ -27,7 +28,7 @@ export const leftPanelShape = (() => {
   shape.holes.push(psuHole);
 
   // GPU PCIe Brackets Cutout
-  const pcieHole = new THREE.Path();
+  const pcieHole = new Path();
   pcieHole.moveTo(-1.15 - 0.6, -1.42); // Extended downwards for 6 slots
   pcieHole.lineTo(-1.15 + 0.6, -1.42); // Extended downwards for 6 slots
   pcieHole.lineTo(-1.15 + 0.6, -0.1 + 0.25);
@@ -36,7 +37,7 @@ export const leftPanelShape = (() => {
   shape.holes.push(pcieHole);
 
   // Side Exhaust Fans Hole (covers both fans)
-  const fanHole = new THREE.Path();
+  const fanHole = new Path();
   fanHole.moveTo(-1.0, 1.4 - 0.6);
   fanHole.lineTo(1.4, 1.4 - 0.6);
   fanHole.lineTo(1.4, 1.4 + 0.6);
@@ -48,7 +49,7 @@ export const leftPanelShape = (() => {
 })();
 
 export const backPanelShape = (() => {
-  const shape = new THREE.Shape();
+  const shape = new Shape();
   // Outer boundary (Counter-clockwise)
   shape.moveTo(-1.97, -2.3);
   shape.lineTo(1.97, -2.3);
@@ -57,7 +58,7 @@ export const backPanelShape = (() => {
   shape.lineTo(-1.97, -2.3);
 
   const addHole = (x1: number, y1: number, x2: number, y2: number) => {
-    const hole = new THREE.Path();
+    const hole = new Path();
     hole.moveTo(x1, y1);
     hole.lineTo(x1, y2);
     hole.lineTo(x2, y2);
@@ -74,7 +75,7 @@ export const backPanelShape = (() => {
 })();
 
 export const moboTrayShape = (() => {
-  const shape = new THREE.Shape();
+  const shape = new Shape();
   shape.moveTo(-1.97, -2.3);
   shape.lineTo(1.97, -2.3);
   shape.lineTo(1.97, 2.4);
@@ -82,7 +83,7 @@ export const moboTrayShape = (() => {
   shape.lineTo(-1.97, -2.3);
 
   const addHole = (x1: number, y1: number, x2: number, y2: number) => {
-    const hole = new THREE.Path();
+    const hole = new Path();
     hole.moveTo(x1, y1);
     hole.lineTo(x1, y2);
     hole.lineTo(x2, y2);
@@ -110,7 +111,7 @@ export const moboTrayShape = (() => {
 })();
 
 export const frontPanelShape = (() => {
-  const shape = new THREE.Shape();
+  const shape = new Shape();
   // Front Glass bounds
   shape.moveTo(-1.95, -2.42);
   shape.lineTo(1.95, -2.42);
@@ -119,7 +120,7 @@ export const frontPanelShape = (() => {
   shape.lineTo(-1.95, -2.42);
 
   // Pill-shaped Hole for Fans (Clockwise path)
-  const hole = new THREE.Path();
+  const hole = new Path();
   const x = 0.8;
   const y1 = -0.8;
   const y2 = 0.8;
@@ -136,7 +137,7 @@ export const frontPanelShape = (() => {
 })();
 
 export const frontFrameShape = (() => {
-  const shape = new THREE.Shape();
+  const shape = new Shape();
   const x = 0.8;
   const y1 = -0.8;
   const y2 = 0.8;
@@ -151,7 +152,7 @@ export const frontFrameShape = (() => {
   shape.lineTo(x - outerRadius, y1);
 
   // Inner hole (Clockwise path)
-  const hole = new THREE.Path();
+  const hole = new Path();
   hole.moveTo(x - innerRadius, y2);
   hole.absarc(x, y2, innerRadius, Math.PI, 0, true); // Top semicircle (CW)
   hole.lineTo(x + innerRadius, y1);
@@ -163,7 +164,7 @@ export const frontFrameShape = (() => {
 })();
 
 export const frontMeshShape = (() => {
-  const shape = new THREE.Shape();
+  const shape = new Shape();
   const x = 0.8;
   const y1 = -0.8;
   const y2 = 0.8;
@@ -180,7 +181,7 @@ export const frontMeshShape = (() => {
 })();
 
 export const topFrameShape = (() => {
-  const shape = new THREE.Shape();
+  const shape = new Shape();
   // Outer border 4.0 x 4.0
   shape.moveTo(-2.0, -2.0);
   shape.lineTo(2.0, -2.0);
@@ -189,7 +190,7 @@ export const topFrameShape = (() => {
   shape.lineTo(-2.0, -2.0);
 
   // Hole for the mesh (0.2 width on each side)
-  const hole = new THREE.Path();
+  const hole = new Path();
   hole.moveTo(-1.8, -1.8);
   hole.lineTo(-1.8, 1.8);
   hole.lineTo(1.8, 1.8);
@@ -201,7 +202,7 @@ export const topFrameShape = (() => {
 })();
 
 export const bottomPanelShape = (() => {
-  const shape = new THREE.Shape();
+  const shape = new Shape();
   // Local Y maps to -Z. Size 3.8 x 3.8.
   shape.moveTo(-1.97, -1.97);
   shape.lineTo(1.97, -1.97);
@@ -210,7 +211,7 @@ export const bottomPanelShape = (() => {
   shape.lineTo(-1.97, -1.97);
 
   const addHole = (x1: number, y1: number, x2: number, y2: number) => {
-    const hole = new THREE.Path();
+    const hole = new Path();
     hole.moveTo(x1, y1);
     hole.lineTo(x1, y2);
     hole.lineTo(x2, y2);

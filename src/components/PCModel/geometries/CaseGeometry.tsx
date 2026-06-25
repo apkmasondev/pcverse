@@ -1,10 +1,9 @@
-import { materials, xrayMaterial } from '../materials';
-import { useMemo, useRef, useEffect } from 'react';
-import { useFrame } from '@react-three/fiber';
-import { usePCSelection, usePCSettings } from '../../../hooks/usePC';
-import { useIsMobile } from '../../../hooks/useIsMobile';
-import * as THREE from 'three';
-import { useTexture, Instances, Instance } from '@react-three/drei';
+import { BackSide, CanvasTexture, ClampToEdgeWrapping, DoubleSide, RepeatWrapping, SRGBColorSpace } from 'three';
+import { materials } from '../materials';
+import { useMemo, useEffect } from 'react';
+import { usePCSettings } from '../../../hooks/usePC';
+
+import { useTexture } from '@react-three/drei';
 import { extrudeOpts01, extrudeOpts005, caseFrameMaterial } from '../constants';
 import caseBackUrl from '../../../assets/case_back.webp';
 import caseBehindUrl from '../../../assets/case_behind.webp';
@@ -13,13 +12,10 @@ import caseInteriorUrl from '../../../assets/case_interior.webp';
 
 
 import { XMesh as Mesh } from './XMesh';
+import { CasePanels } from './CasePanels';
 import {
-  leftPanelShape,
   backPanelShape,
   moboTrayShape,
-  frontPanelShape,
-  frontFrameShape,
-  frontMeshShape,
   topFrameShape,
   bottomPanelShape
 } from './CaseShapes';
@@ -27,8 +23,6 @@ import {
 
 export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEnabled?: boolean }) => {
   const { xrayMode } = usePCSettings();
-  const { explodeStep } = usePCSelection();
-  const isMobile = useIsMobile();
   const effectiveRgbColor = rgbEnabled ? rgbColor : '#000000';
   const caseBackTexture = useTexture(caseBackUrl);
   const caseBehindTexture = useTexture(caseBehindUrl);
@@ -37,9 +31,9 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
 
   useMemo(() => {
     // Correctly scale caseInteriorTexture for the 3.8 x 4.8 panels
-    caseInteriorTexture.colorSpace = THREE.SRGBColorSpace;
-    caseInteriorTexture.wrapS = THREE.ClampToEdgeWrapping;
-    caseInteriorTexture.wrapT = THREE.ClampToEdgeWrapping;
+    caseInteriorTexture.colorSpace = SRGBColorSpace;
+    caseInteriorTexture.wrapS = ClampToEdgeWrapping;
+    caseInteriorTexture.wrapT = ClampToEdgeWrapping;
     caseInteriorTexture.repeat.set(1 / 3.8, 1 / 4.8);
     caseInteriorTexture.offset.set(0.5, 0.5);
     caseInteriorTexture.center.set(0, 0); // Must be 0,0 for offset to work as UV_new = X * repeat + offset
@@ -47,71 +41,22 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
   }, [caseInteriorTexture]);
 
   useMemo(() => {
-    caseBackTexture.colorSpace = THREE.SRGBColorSpace;
+    caseBackTexture.colorSpace = SRGBColorSpace;
     caseBackTexture.repeat.set(1 / 3.9, 1 / 5.0);
     caseBackTexture.offset.set(1.95 / 3.9, 2.5 / 5.0);
 
-    caseBehindTexture.colorSpace = THREE.SRGBColorSpace;
+    caseBehindTexture.colorSpace = SRGBColorSpace;
     caseBehindTexture.repeat.set(-1 / 3.8, 1 / 4.8);
     caseBehindTexture.offset.set(0.5, 0.5);
 
-    caseBottomTexture.colorSpace = THREE.SRGBColorSpace;
-    caseBottomTexture.wrapS = THREE.RepeatWrapping;
-    caseBottomTexture.wrapT = THREE.RepeatWrapping;
+    caseBottomTexture.colorSpace = SRGBColorSpace;
+    caseBottomTexture.wrapS = RepeatWrapping;
+    caseBottomTexture.wrapT = RepeatWrapping;
     caseBottomTexture.repeat.set(-1 / 3.8, 1 / 3.8);
     caseBottomTexture.offset.set(0.5, 0.5);
   }, [caseBackTexture, caseBehindTexture, caseBottomTexture]);
 
-  const sideGlassRef = useRef<THREE.Group>(null);
-  const sideGlassMatRef = useRef<any>(null);
-  const frontGlassRef = useRef<THREE.Group>(null);
-  const frontGlassMatRef = useRef<any>(null);
-  const solidSideRef = useRef<THREE.Group>(null);
 
-  useFrame((_state, delta) => {
-    const FLY_DIST = 50.0;
-    const HIDE_THRESHOLD = 35.0;
-
-    if (sideGlassRef.current && sideGlassMatRef.current) {
-      const targetX = explodeStep >= 1 ? FLY_DIST : 1.95; // Fly away off-screen
-      const targetOpacity = explodeStep >= 1 ? 0 : 0.25; // fade out
-      
-      if (Math.abs(sideGlassRef.current.position.x - targetX) < 0.005) {
-        sideGlassRef.current.position.x = targetX;
-        sideGlassMatRef.current.opacity = targetOpacity;
-      } else {
-        sideGlassRef.current.position.x = THREE.MathUtils.lerp(sideGlassRef.current.position.x, targetX, delta * 2.5);
-        sideGlassMatRef.current.opacity = THREE.MathUtils.lerp(sideGlassMatRef.current.opacity, targetOpacity, delta * 2.5);
-      }
-      
-      // Ukryj panel gdy jest dostatecznie daleko (tylko w trakcie wybuchu)
-      sideGlassRef.current.visible = !(explodeStep >= 1 && sideGlassRef.current.position.x > HIDE_THRESHOLD);
-    }
-    if (frontGlassRef.current && frontGlassMatRef.current) {
-      const targetZ = explodeStep >= 1 ? FLY_DIST : 1.95;
-      const targetOpacity = explodeStep >= 1 ? 0 : 0.25;
-      
-      if (Math.abs(frontGlassRef.current.position.z - targetZ) < 0.005) {
-        frontGlassRef.current.position.z = targetZ;
-        frontGlassMatRef.current.opacity = targetOpacity;
-      } else {
-        frontGlassRef.current.position.z = THREE.MathUtils.lerp(frontGlassRef.current.position.z, targetZ, delta * 2.5);
-        frontGlassMatRef.current.opacity = THREE.MathUtils.lerp(frontGlassMatRef.current.opacity, targetOpacity, delta * 2.5);
-      }
-
-      frontGlassRef.current.visible = !(explodeStep >= 1 && frontGlassRef.current.position.z > HIDE_THRESHOLD);
-    }
-    if (solidSideRef.current) {
-      const targetX = explodeStep >= 1 ? -FLY_DIST : 0;
-      if (Math.abs(solidSideRef.current.position.x - targetX) < 0.005) {
-        solidSideRef.current.position.x = targetX;
-      } else {
-        solidSideRef.current.position.x = THREE.MathUtils.lerp(solidSideRef.current.position.x, targetX, delta * 2.5);
-      }
-
-      solidSideRef.current.visible = !(explodeStep >= 1 && solidSideRef.current.position.x < -HIDE_THRESHOLD);
-    }
-  });
 
 
 
@@ -139,9 +84,9 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
       drawDot(0, 24);
       drawDot(32, 24);
     }
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
+    const texture = new CanvasTexture(canvas);
+    texture.wrapS = RepeatWrapping;
+    texture.wrapT = RepeatWrapping;
     texture.repeat.set(20, 20); // Scale the mesh grill for the top
     return texture;
   }, []);
@@ -169,9 +114,9 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
       drawDot(0, 24);
       drawDot(32, 24);
     }
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
+    const texture = new CanvasTexture(canvas);
+    texture.wrapS = RepeatWrapping;
+    texture.wrapT = RepeatWrapping;
     texture.repeat.set(8, 8); // Less dense for back/side panels
     return texture;
   }, []);
@@ -196,12 +141,12 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
       {/* Back Panel (Solid metal frame with Motherboard/PSU cutout locations) */}
       <Mesh position={[0, 0, -2.0]}>
         <extrudeGeometry args={[backPanelShape, extrudeOpts01]} />
-        <meshStandardMaterial color="#4a4d54" metalness={0.85} roughness={0.3} />
+        <primitive object={materials.grayMetal} attach="material" />
       </Mesh>
       {/* Back Panel Texture */}
       <Mesh position={[0, 0, -2.001]} rotation={[0, 0, 0]}>
         <shapeGeometry args={[backPanelShape]} />
-        <meshStandardMaterial map={caseBehindTexture} metalness={0.4} roughness={0.6} side={THREE.BackSide} />
+        <meshStandardMaterial map={caseBehindTexture} metalness={0.4} roughness={0.6} side={BackSide} />
       </Mesh>
       {/* Back Panel Texture (Inside, facing Motherboard) */}
       <Mesh position={[0, 0, -1.899]}>
@@ -225,7 +170,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
           color="#4a4d54"
           metalness={0.8}
           roughness={0.3}
-          side={THREE.DoubleSide}
+          side={DoubleSide}
         />
       </Mesh>
 
@@ -238,7 +183,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
           metalness={0.85} 
           alphaMap={backMeshTexture} 
           transparent={true} 
-          side={THREE.DoubleSide} 
+          side={DoubleSide} 
         />
       </Mesh>
 
@@ -250,7 +195,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
         {/* Bottom Panel Texture (Outside) */}
         <Mesh position={[0, 0, -0.001]} rotation={[0, 0, 0]}>
           <shapeGeometry args={[bottomPanelShape]} />
-          <meshStandardMaterial map={caseBottomTexture} metalness={0.5} roughness={0.7} side={THREE.BackSide} />
+          <meshStandardMaterial map={caseBottomTexture} metalness={0.5} roughness={0.7} side={BackSide} />
         </Mesh>
         {/* Bottom Panel Texture (Inside) */}
         <Mesh position={[0, 0, 0.101]} rotation={[0, 0, 0]}>
@@ -263,7 +208,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
         [-1.8, 1.8].map(z => (
           <Mesh key={`foot-${x}-${z}`} position={[x, -2.42, z]}>
             <cylinderGeometry args={[0.08, 0.06, 0.04, 16]} />
-            <meshStandardMaterial color="#111" roughness={0.9} metalness={0.1} />
+            <primitive object={materials.veryDarkGray} attach="material" />
           </Mesh>
         ))
       ))}
@@ -273,7 +218,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
         {/* Power Button Base */}
         <Mesh position={[0, 0, 0]}>
           <cylinderGeometry args={[0.08, 0.08, 0.02, 32]} />
-          <meshStandardMaterial color="#2a2c30" metalness={0.9} roughness={0.2} />
+          <primitive object={materials.caseFrame} attach="material" />
         </Mesh>
         {/* Power Button RGB Ring */}
         <Mesh position={[0, 0.011, 0]} rotation={[-Math.PI / 2, 0, 0]}>
@@ -283,7 +228,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
         {/* Power Button Inner */}
         <Mesh position={[0, 0.012, 0]}>
           <cylinderGeometry args={[0.05, 0.05, 0.01, 32]} />
-          <meshStandardMaterial color="#1a1c22" metalness={0.8} roughness={0.4} />
+          <primitive object={materials.darkShinyMetal} attach="material" />
         </Mesh>
         
         {/* USB Ports */}
@@ -304,7 +249,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
           metalness={0.85}
           alphaMap={backMeshTexture} 
           transparent={true} 
-          side={THREE.DoubleSide} 
+          side={DoubleSide} 
         />
       </Mesh>
       {/* PSU Bottom Ventilation Mesh (Visible from inside case) */}
@@ -314,7 +259,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
           color="#151515" 
           alphaMap={backMeshTexture} 
           transparent={true} 
-          side={THREE.DoubleSide} 
+          side={DoubleSide} 
         />
       </Mesh>
       
@@ -323,7 +268,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
         {/* Main Tray */}
         <Mesh>
           <extrudeGeometry args={[moboTrayShape, extrudeOpts005]} />
-          <meshStandardMaterial color="#111" roughness={0.6} />
+          <primitive object={materials.darkMetal} attach="material" />
         </Mesh>
         {/* Motherboard Tray Texture */}
         <Mesh position={[0, 0, 0.051]}>
@@ -336,7 +281,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
           [-1.85, 0, 1.85].map((y, j) => (
             <Mesh key={`standoff-${i}-${j}`} position={[x, y, 0.035]} rotation={[Math.PI / 2, 0, 0]}>
               <cylinderGeometry args={[0.03, 0.03, 0.07, 16]} />
-              <meshStandardMaterial color="#b87333" metalness={0.8} roughness={0.4} />
+              <primitive object={materials.copper} attach="material" />
             </Mesh>
           ))
         ))}
@@ -345,14 +290,14 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
         {[-1.0, 0, 1.0].map((y, i) => (
           <Mesh key={`grommet-${i}`} position={[1.4, y, 0.03]}>
             <boxGeometry args={[0.3, 0.6, 0.06]} />
-            <meshStandardMaterial color="#050505" roughness={0.9} />
+            <primitive object={materials.almostBlack} attach="material" />
           </Mesh>
         ))}
         {/* Top/Bottom Cable Routing Cutouts */}
         {[-0.8, 0.5].map((x, i) => (
           <Mesh key={`grommet-top-${i}`} position={[x, 2.1, 0.03]}>
             <boxGeometry args={[0.6, 0.2, 0.06]} />
-            <meshStandardMaterial color="#050505" roughness={0.9} />
+            <primitive object={materials.almostBlack} attach="material" />
           </Mesh>
         ))}
       </group>
@@ -364,157 +309,23 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
           color="#151515" 
           alphaMap={backMeshTexture} 
           transparent={true} 
-          side={THREE.DoubleSide} 
+          side={DoubleSide} 
         />
       </Mesh>
 
-      {/* Front Panel - Glass with Frame - hide in X-Ray mode */}
-      {!xrayMode && (
-      <group position={[0, 0, 1.95]} ref={frontGlassRef as any}>
-        <Mesh position={[0, 0, -0.01]}>
-          <extrudeGeometry args={[frontPanelShape, { depth: 0.02, bevelEnabled: false }]} />
-          {isMobile ? (
-            <meshStandardMaterial ref={frontGlassMatRef} color="#c7d2fe" transparent={true} opacity={0.3} roughness={0.1} metalness={0.5} />
-          ) : (
-            <meshPhysicalMaterial 
-              ref={frontGlassMatRef}
-              color="#c7d2fe" metalness={0.1} roughness={0.05} 
-              transmission={1.0} thickness={1.5} transparent={true} opacity={1.0}
-              ior={1.5} clearcoat={1.0} clearcoatRoughness={0.05}
-            />
-          )}
-        </Mesh>
-        
-        {/* Metal Frame for Fans */}
-        <Mesh position={[0, 0, -0.015]}>
-          <extrudeGeometry args={[frontFrameShape, { depth: 0.03, bevelEnabled: false }]} />
-          <meshStandardMaterial color="#2a2c30" metalness={0.9} roughness={0.2} />
-        </Mesh>
-
-        {/* Mesh Filter inside Frame */}
-        <Mesh position={[0, 0, 0]}>
-          <shapeGeometry args={[frontMeshShape]} />
-          <meshStandardMaterial 
-            color="#151515" 
-            alphaMap={frontMeshTexture} 
-            transparent={true} 
-            side={THREE.DoubleSide} 
-            metalness={0.8}
-            roughness={0.3}
-          />
-        </Mesh>
-        
-        {/* Glass Frame Elements */}
-        {/* Left/Right Frames (Square corner pillars perfectly flush with top/bottom panels) */}
-        {[-1.95, 1.95].map(x => (
-          <Mesh key={`front-v-frame-${x}`} position={[x, 0, 0]} material={caseFrameMaterial}>
-            <boxGeometry args={[0.1, 4.8, 0.1]} />
-          </Mesh>
-        ))}
-
-        {/* Thumbscrews for Front Glass */}
-        <Instances limit={4}>
-          <cylinderGeometry args={[0.05, 0.05, 0.04, 16]} />
-          <meshStandardMaterial color="#1a1c20" metalness={0.9} roughness={0.3} />
-          {[-1.85, 1.85].map((x, i) => (
-            [-2.3, 2.3].map((y, j) => (
-              <Instance key={`front-screw-${i}-${j}`} position={[x, y, 0.02]} rotation={[Math.PI / 2, 0, 0]} />
-            ))
-          ))}
-        </Instances>
-      </group>
-      )}
-      
-      {/* Side Panel - Glass with Frame - hide in X-Ray mode */}
-      {!xrayMode && (
-      <group position={[1.95, 0, 0]} ref={sideGlassRef as any}>
-        <Mesh>
-          <boxGeometry args={[0.02, 4.84, 3.84]} />
-          {isMobile ? (
-            <meshStandardMaterial ref={sideGlassMatRef} color="#a5f3fc" transparent={true} opacity={0.3} roughness={0.1} metalness={0.5} />
-          ) : (
-            <meshPhysicalMaterial 
-              ref={sideGlassMatRef}
-              color="#a5f3fc" metalness={0.1} roughness={0.05} 
-              transmission={1.0} thickness={1.5} transparent={true} opacity={1.0}
-              ior={1.5} clearcoat={1.0} clearcoatRoughness={0.05}
-            />
-          )}
-        </Mesh>
-        
-        {/* Thumbscrews for Side Glass */}
-        <Instances limit={4}>
-          <cylinderGeometry args={[0.05, 0.05, 0.04, 16]} />
-          <meshStandardMaterial color="#1a1c20" metalness={0.9} roughness={0.3} />
-          {[-2.3, 2.3].map((y, i) => (
-            [-1.8, 1.8].map((z, j) => (
-              <Instance key={`side-screw-${i}-${j}`} position={[0.02, y, z]} rotation={[0, 0, Math.PI / 2]} />
-            ))
-          ))}
-        </Instances>
-      </group>
-      )}
-
-
-      
-      {/* Solid Side Panel (Back) - Motherboard tray with correct IO/GPU/PSU cutouts */}
-      <group ref={solidSideRef as any}>
-        {/* GPU PCIe Brackets at the left wall - Moved here to fly away with the side panel */}
-        <Instances limit={6}>
-          <boxGeometry args={[0.04, 0.14, 1.2]} />
-          {xrayMode ? (
-            <primitive object={xrayMaterial} attach="material" />
-          ) : (
-            <meshStandardMaterial color="#2a2c30" metalness={0.9} roughness={0.3} />
-          )}
-          {[-0.55, -0.7, -0.85, -1.0, -1.15, -1.3].map((y, i) => (
-            <Instance key={i} position={[-1.97, y, -1.15]} />
-          ))}
-        </Instances>
-        <group position={[-1.975, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
-          <Mesh>
-            <extrudeGeometry args={[leftPanelShape, extrudeOpts005]} />
-            <meshStandardMaterial color="#4a4d54" metalness={0.85} roughness={0.3} />
-          </Mesh>
-          {/* Back Panel Texture (Outside) */}
-          <Mesh position={[0, 0, 0.051]}>
-            <shapeGeometry args={[leftPanelShape]} />
-            <meshStandardMaterial map={caseBackTexture} metalness={0.4} roughness={0.6} />
-          </Mesh>
-          {/* Back Panel Texture (Inside) */}
-          <Mesh position={[0, 0, -0.001]}>
-            <shapeGeometry args={[leftPanelShape]} />
-            <meshStandardMaterial map={caseInteriorTexture} metalness={0.5} roughness={0.7} side={THREE.BackSide} />
-          </Mesh>
-        </group>
-        {/* Side mesh cutout where the side exhaust fans are! (Outside) */}
-        <Mesh position={[-1.98, 1.4, 0.2]} rotation={[0, Math.PI / 2, 0]}>
-          <planeGeometry args={[2.4, 1.2]} />
-          <meshStandardMaterial 
-            color="#151515" 
-            alphaMap={backMeshTexture} 
-            transparent={true} 
-            side={THREE.DoubleSide} 
-          />
-        </Mesh>
-        {/* Side mesh cutout (Inside view) */}
-        <Mesh position={[-1.92, 1.4, 0.2]} rotation={[0, -Math.PI / 2, 0]}>
-          <planeGeometry args={[2.4, 1.2]} />
-          <meshStandardMaterial 
-            color="#151515" 
-            alphaMap={backMeshTexture} 
-            transparent={true} 
-            side={THREE.DoubleSide} 
-          />
-        </Mesh>
-      </group>
+      <CasePanels 
+        frontMeshTexture={frontMeshTexture} 
+        caseBackTexture={caseBackTexture} 
+        caseInteriorTexture={caseInteriorTexture} 
+        backMeshTexture={backMeshTexture} 
+      />
 
       {/* Frame Posts */}
       {[1.95, -1.95].map(x => (
         [1.95, -1.95].map(z => (
           <Mesh key={`${x}-${z}`} position={[x, 0, z]}>
             <boxGeometry args={[0.1, 4.8, 0.1]} />
-            <meshStandardMaterial color="#3a3d42" metalness={0.8} roughness={0.3} />
+            <primitive object={materials.darkGrayMetal} attach="material" />
           </Mesh>
         ))
       ))}

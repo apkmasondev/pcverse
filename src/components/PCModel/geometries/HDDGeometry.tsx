@@ -1,5 +1,6 @@
+import { RepeatWrapping } from 'three';
 import { materials, xrayMaterial } from '../materials';
-import * as THREE from 'three';
+
 import { useMemo } from 'react';
 import { useTexture } from '@react-three/drei';
 import hddTopUrl from '../../../assets/hdd_top.webp';
@@ -19,7 +20,7 @@ export const HDDGeometry = () => {
 
   const hddSideTextureMirrored = useMemo(() => {
     const tex = hddSideTexture.clone();
-    tex.wrapS = THREE.RepeatWrapping;
+    tex.wrapS = RepeatWrapping;
     tex.repeat.x = -1;
     tex.needsUpdate = true;
     return tex;

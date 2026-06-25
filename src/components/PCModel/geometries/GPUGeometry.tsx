@@ -1,7 +1,8 @@
+import { RepeatWrapping, SRGBColorSpace } from 'three';
 import { fanBladesRefsY } from '../FanManager';
 import { materials, xrayMaterial } from '../materials';
 import { useRef, useMemo, useEffect } from 'react';
-import * as THREE from 'three';
+
 import { Group } from 'three';
 import { useTexture } from '@react-three/drei';
 import gpuBottomUrl from '../../../assets/gpu_bottom.webp';
@@ -24,9 +25,9 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
   const gpuIoTexture = useTexture(gpuIoUrl);
 
   useMemo(() => {
-    gpuFrontTexture.colorSpace = THREE.SRGBColorSpace;
-    gpuFrontTexture.wrapS = THREE.RepeatWrapping;
-    gpuFrontTexture.wrapT = THREE.RepeatWrapping;
+    gpuFrontTexture.colorSpace = SRGBColorSpace;
+    gpuFrontTexture.wrapS = RepeatWrapping;
+    gpuFrontTexture.wrapT = RepeatWrapping;
     gpuFrontTexture.repeat.set(3, 1);
   }, [gpuFrontTexture]);
 

@@ -11,7 +11,11 @@
 - **Zabezpieczenie fokusu klawiatury**: Modale zostały w pełni dostosowane do standardów WCAG poprzez wymuszenie izolacji (focus trap za pomocą `aria-modal="true"` i `role="dialog"`).
 - **Dostępność (Wrażliwość na ruch)**: Zintegrowano obsługę `prefers-reduced-motion`. Użytkownicy z włączonym ograniczeniem ruchu w systemie (Windows/macOS) nie widzą już animacji lewitacji podzespołów ani cząsteczek powietrza (Airflow).
 - **Responsywność na najmniejszych ekranach**: Dodano elastyczne ograniczenia szerokości (`max-width: calc(100vw - 4.5rem)`) dla wyskakujących okien (Flyout) w menu RGB i środowiska, co zapobiega ucinaniu interfejsu na bardzo wąskich urządzeniach (np. stare modele iPhone).
-- **Architektura (Type-Safety i Re-Rendery)**:
+- **Architektura, Wydajność i Rozmiar Builda**:
+  - Rozbito gigantyczny plik `CaseGeometry.tsx` wyodrębniając z niego panele szklane i boczne do nowego pliku `CasePanels.tsx` w celu poprawy czytelności kodu.
+  - Zoptymalizowano proces pakowania (bundlowania) Vite/Rollup - główny plik vendor o wadze 1.5MB został rozbity na mniejsze, precyzyjne paczki (`vendor-r3f`, `vendor-postprocessing`, `vendor-motion`, `vendor-core`). Znacznie przyspieszy to ładowanie aplikacji i efektywność cache'owania przeglądarki.
+  - Zastosowano globalne optymalizacje importów (Tree-Shaking): usunięto wszystkie instrukcje `import * as THREE` na rzecz precyzyjnych importów nazwanych we wszystkich komponentach geometrii. Zmniejszy to końcowy rozmiar biblioteki 3D w projekcie.
+  - Oczyszczono `CaseGeometry.tsx` i `CasePanels.tsx` z materiałów definiowanych w locie (inline) i przeniesiono je do globalnego słownika `materials.ts` (lepsza reużywalność i mniejsze obciążenie pamięci).
   - W `PCModel.tsx` zamieniono dopasowywanie komponentów po fragmencie nazwy na sztywną, bezpieczną mapę `GEOMETRY_REGISTRY`.
   - Wprowadzono pełną ochronę przed re-renderami dla głównej pętli lewitacji (zastosowano `React.memo` na `ComponentMesh`).
   - Rozwiązano błędy TypeScript w rejestrze komponentów poprzez dedykowany interfejs `GeometryProps`.

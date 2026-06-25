@@ -1,5 +1,6 @@
+import { ExtrudeGeometry, Shape } from 'three';
 import { useRef, useMemo, useEffect } from 'react';
-import * as THREE from 'three';
+
 import { useTexture } from '@react-three/drei';
 import cpuTopUrl from '../../../assets/cpu_top.webp';
 import cpuBottomUrl from '../../../assets/cpu_bottom.webp';
@@ -11,10 +12,10 @@ export const CPUGeometry = () => {
   const { xrayMode } = usePCSettings();
   const cpuTexture = useTexture(cpuTopUrl);
   const cpuBottomTexture = useTexture(cpuBottomUrl);
-  const ihsGeoRef = useRef<THREE.ExtrudeGeometry>(null);
+  const ihsGeoRef = useRef<ExtrudeGeometry>(null);
 
   const ihsShape = useMemo(() => {
-    const shape = new THREE.Shape();
+    const shape = new Shape();
     shape.moveTo(0.36, 0.36);
     shape.lineTo(0.22, 0.36);
     shape.lineTo(0.22, 0.28);

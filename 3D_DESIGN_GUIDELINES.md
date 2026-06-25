@@ -120,5 +120,23 @@ import { materials } from '../materials';
 ```
 W ostateczności, w przypadku proceduralnych kolorów, deklaruj materiały po za komponentem lub używaj hooka `useMemo`.
 
+## 8. Optymalizacja Importów z Three.js (Tree-Shaking)
+**Problem:** Używanie dzikiej karty `import * as THREE from 'three'` sprawia, że narzędzia do bundlowania (jak Vite/Rollup) nie potrafią efektywnie wyciąć nieużywanego kodu (tree-shaking). Prowadzi to do drastycznego powiększenia finalnego rozmiaru aplikacji, obciążając pamięć RAM i czas ładowania przeglądarki użytkownika, ponieważ importowana jest cała potężna biblioteka Three.js, nawet jeśli używamy z niej tylko obiektu `Vector3`.
+
+**Rozwiązanie:** 
+Zawsze używaj importów nazwanych. Zamiast importować wszystko, deklaruj precyzyjnie te elementy, których fizycznie używasz w komponencie:
+
+```tsx
+{/* ŹLE: Powoduje wczytanie całego Three.js (duży rozmiar paczki) */}
+import * as THREE from 'three';
+// ...
+const vec = new THREE.Vector3();
+
+{/* DOBRZE: Pozwala na perfekcyjny Tree-Shaking */}
+import { Vector3, MeshStandardMaterial } from 'three';
+// ...
+const vec = new Vector3();
+```
+
 ---
-Dbając o powyższe 7 filarów zagwarantujesz, że renderowana scena 3D pozostanie wolna od błędów wizualnych (glitchy) oraz zachowa stabilność pamięci i wydajność powyżej optymalnych 60 FPS na każdym urządzeniu.
+Dbając o powyższe 8 filarów zagwarantujesz, że renderowana scena 3D pozostanie wolna od błędów wizualnych (glitchy) oraz zachowa stabilność pamięci i wydajność powyżej optymalnych 60 FPS na każdym urządzeniu.

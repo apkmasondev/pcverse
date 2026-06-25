@@ -1,5 +1,6 @@
+import { AdditiveBlending, InstancedMesh, Object3D, Vector3 } from 'three';
 import { useRef, useMemo } from 'react';
-import * as THREE from 'three';
+
 import { useFrame } from '@react-three/fiber';
 import { usePCSettings } from '../../../hooks/usePC';
 import { useReducedMotion } from 'framer-motion';
@@ -8,16 +9,16 @@ export const LocalAirflowParticles = ({ count = 50, radius = 0.4, length = 1.5, 
   const { showAirflow } = usePCSettings();
   const shouldReduceMotion = useReducedMotion();
   const isVisible = showAirflow && !shouldReduceMotion;
-  const meshRef = useRef<THREE.InstancedMesh>(null);
+  const meshRef = useRef<InstancedMesh>(null);
   
-  const dummy = useMemo(() => new THREE.Object3D(), []);
+  const dummy = useMemo(() => new Object3D(), []);
   
   const particles = useMemo(() => {
     return Array.from({ length: count }).map(() => {
       const angle = Math.random() * Math.PI * 2;
       const r = Math.sqrt(Math.random()) * radius;
       return {
-        position: new THREE.Vector3(
+        position: new Vector3(
           Math.cos(angle) * r,
           Math.sin(angle) * r,
           Math.random() * length
@@ -70,7 +71,7 @@ export const LocalAirflowParticles = ({ count = 50, radius = 0.4, length = 1.5, 
         color={color} 
         transparent 
         opacity={0.6} 
-        blending={THREE.AdditiveBlending} 
+        blending={AdditiveBlending} 
         depthWrite={false} 
       />
     </instancedMesh>
