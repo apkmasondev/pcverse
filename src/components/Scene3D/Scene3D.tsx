@@ -59,14 +59,14 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
   const gridColors = useMemo(() => {
     switch (envPreset) {
       case 'city':
-        return { cell: '#1e3a8a', section: '#3b82f6' }; // Cyberpunk (Niebiesko/Neonowy)
+        return { cell: '#1e3a8a', section: '#3b82f6', sparkles: '#06b6d4' }; // Cyberpunk (Niebiesko/Neonowy), pyłki Cyan
       case 'dawn':
-        return { cell: '#7c2d12', section: '#ea580c' }; // Świt (Pomarańcz/Ciepły)
+        return { cell: '#7c2d12', section: '#ea580c', sparkles: '#fef08a' }; // Świt (Pomarańcz/Ciepły), pyłki Złote
       case 'apartment':
-        return { cell: '#3f3f46', section: '#a1a1aa' }; // Mieszkanie (Ciepłe szarości)
+        return { cell: '#3f3f46', section: '#a1a1aa', sparkles: '#e5e7eb' }; // Mieszkanie (Ciepłe szarości), pyłki Białe
       case 'studio':
       default:
-        return { cell: '#4b5563', section: '#6b7280' }; // Studio (Neutralny)
+        return { cell: '#4b5563', section: '#6b7280', sparkles: '#9ca3af' }; // Studio (Neutralny), pyłki Szare
     }
   }, [envPreset]);
 
@@ -207,6 +207,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
   return (
     <>
       <color attach="background" args={[bgColor]} />
+      <fog attach="fog" args={[bgColor, 15, 60]} />
       
       <ambientLight intensity={1.8} />
       
@@ -214,7 +215,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
       
       {!isMobile && !disableEffects && (
         <>
-          <Sparkles count={150} scale={20} size={3} speed={0.3} opacity={0.2} color="#8b5cf6" />
+          <Sparkles count={500} scale={30} size={4} speed={0.5} opacity={0.5} color={gridColors.sparkles} />
           <Stars radius={50} depth={50} count={3000} factor={3} saturation={0.5} fade speed={1.5} />
         </>
       )}

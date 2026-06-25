@@ -3,6 +3,9 @@
 ## Etap 16 - Finalizacja Audytu (Wydajność, Pamięć i Dostępność)
 
 ### Poprawione / Zoptymalizowane
+- **Efekty Wolumetryczne i Cząsteczkowe (Zgodne z Audytem)**: 
+  - Wdrożono mgłę środowiskową (`<fog>`), która nadaje głębi układowi współrzędnych 3D (obiekty znikające na krawędzi sceny) bez spadków wydajności.
+  - Zaktualizowano Cząsteczki (`<Sparkles>`) na dynamiczne "cyber-pyłki", dopasowujące barwy (miedziane, cyjan, szare) do wybranego presetu oświetlenia. Efekt ten, za pomocą instancjonowania sprzętowego, pozostaje ukryty na urządzeniach mobilnych oszczędzając baterię.
 - **Dynamiczna Siatka (Grid)**: Wzbogacono tło środowiska 3D o potężną, zanikającą siatkę (Grid oparty na shaderach z biblioteki `drei`). Kolorystyka siatki dynamicznie adaptuje się do wybranego otoczenia (`envPreset`), oferując spójny, profesjonalny wygląd dla każdego trybu (np. miedziane barwy dla Świtu, neonowo-niebieskie dla Cyberpunku).
 - **Materiały Kabli i X-Ray Mode**: Refaktoryzacja `CableGeometry` zgodnie z wytycznymi projektu (3D_DESIGN_GUIDELINES.md). Usunięto inline'owe definicje kolorów i modyfikatory przezroczystości, zastępując je globalnymi, reużywalnymi materiałami (`redCable`, `blackCable` w `materials.ts`). W trybie X-Ray kable poprawnie współdzielą wireframe'owy `xrayMaterial` zamiast błędnie korzystać z wbudowanego `opacity`.
 - **Tekstury Chłodzenia CPU**: Wdrożono autorskie tekstury dla chłodzenia procesora (`copper_plate.webp` dla podstawy stykowej procesora oraz `radiator_plate.webp` na górze i dole głównego ożebrowania) co drastycznie podnosi realizm chłodzenia w trybie RGB.
