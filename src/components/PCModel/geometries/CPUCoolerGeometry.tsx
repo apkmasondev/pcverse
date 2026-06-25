@@ -24,6 +24,10 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
   const activeTexture = rgbEnabled ? fanRgbTexture : fanBaseTexture;
   const fanSideTexture = useTexture(fanSideUrl);
   
+  const isCaseFan = baseTextureUrl === caseFanUrl;
+  const torusRadius = isCaseFan ? 0.47 : 0.455;
+  const torusTube = isCaseFan ? 0.028 : 0.027;
+  
   const fanSideTextureRotated = useMemo(() => {
     const tex = fanSideTexture.clone();
     tex.rotation = Math.PI / 2;
@@ -83,7 +87,7 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
       {/* Front RGB LED Ring - hide when xrayMode is active */}
       {!xrayMode && (
         <mesh position={[0, 0, 0.103]}>
-          <torusGeometry args={[0.44, 0.025, 16, 64]} />
+          <torusGeometry args={[torusRadius, torusTube, 16, 64]} />
           <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={3} toneMapped={false} />
         </mesh>
       )}
@@ -99,7 +103,7 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
       {/* Back RGB LED Ring - hide when xrayMode is active */}
       {!xrayMode && (
         <mesh position={[0, 0, -0.103]} rotation={[0, Math.PI, 0]}>
-          <torusGeometry args={[0.44, 0.025, 16, 64]} />
+          <torusGeometry args={[torusRadius, torusTube, 16, 64]} />
           <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={3} toneMapped={false} />
         </mesh>
       )}
@@ -162,7 +166,7 @@ export const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string }) => {
         {!xrayMode && <meshStandardMaterial map={heatsinkTexture} metalness={0.6} roughness={0.4} />}
       </mesh>
     {/* Attached Fan */}
-    <group position={[0, 0.1, 0.5]}>
+    <group position={[0, 0.1, 0.52]}>
       <FanGeometry rgbColor={rgbColor} textureUrl={aioFanUrl} />
     </group>
   </group>
