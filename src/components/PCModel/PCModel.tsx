@@ -28,6 +28,8 @@ import caseInteriorUrl from '../../assets/case_interior.webp';
 import moboTopUrl from '../../assets/mobo_top.webp';
 import gpuTopUrl from '../../assets/gpu_top.webp';
 import gpuFrontUrl from '../../assets/gpu_front.webp';
+import aioFanUrl from '../../assets/aio_fan_rgb.webp';
+import caseFanUrl from '../../assets/case_fan_rgb.webp';
 
 // --- R3F Extrude Options (extracted to prevent memory leak/geometry recreation) ---
 
@@ -273,4 +275,5 @@ useTexture.preload(caseInteriorUrl);
 useTexture.preload(moboTopUrl);
 useTexture.preload(gpuTopUrl);
 useTexture.preload(gpuFrontUrl);
-
+useTexture.preload(aioFanUrl);
+useTexture.preload(caseFanUrl);

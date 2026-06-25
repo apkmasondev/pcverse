@@ -1,5 +1,21 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 16 - Finalizacja Audytu (Wydajność, Pamięć i Dostępność)
+
+### Poprawione / Zoptymalizowane
+- **Zarządzanie Pamięcią (VRAM)**: Dodano wymuszony `dispose()` dla ręcznie klonowanych tekstur w wentylatorach. Likwiduje to wyciek pamięci karty graficznej występujący przy każdej zmianie trybu RGB lub X-Ray.
+- **Optymalizacja Materiałów**: Znacznie zredukowano ilość unikalnych instancji `meshStandardMaterial` poprzez współdzielenie referencji do predefiniowanych materiałów (np. `darkMetal`). Skutkuje to mniejszym narzutem na procesor.
+- **Preloading Tekstur**: Wdrożono funkcję wstępnego ładowania (`useTexture.preload()`) dla tekstur podświetlanych wentylatorów RGB, całkowicie eliminując wizualne zacięcia ("pop-in") podczas pierwszej zmiany kolorów.
+- **Wycieki pamięci w React (Timeouts)**: Zabezpieczono asynchroniczne funkcje czasu (setTimeout) odpowiedzialne za animację rozkładania (Teardown). Chroni to stan aplikacji przed błędem w przypadku szybkiego zamknięcia podglądu.
+- **Cykl życia silnika Audio**: Naprawiono niekontrolowane pozostawanie w pamięci i odtwarzanie dźwięków w tle po wyłączeniu nawiewu (odseparowanie oscylatorów). 
+- **Zabezpieczenie fokusu klawiatury**: Modale zostały w pełni dostosowane do standardów WCAG poprzez wymuszenie izolacji (focus trap za pomocą `aria-modal="true"` i `role="dialog"`).
+- **Użyteczność Galerii Zdjęć**: Kropki nawigacyjne w podglądzie zdjęć stały się pełnoprawnymi, interaktywnymi i opisanymi przyciskami. Wyświetlane zdjęcia doczekały się poprawnego atrybutu `alt`.
+- **Interfejs Użytkownika (UI)**:
+  - Wdrożono opóźnienie pojawiania się opisów (tooltips), co usunęło chaotyczne migotanie przy szybkim ruchu myszką.
+  - Do Panelu Informacyjnego dodano elegancki, dolny wskaźnik przewijania (gradient scroll indicator) poprawiający czytelność długich opisów.
+  - Usunięto nieaktywne, zduplikowane odnośniki z ukrytej nawigacji.
+  - Naprawiono warunkowe renderowanie postprocessingu (Głębia Ostrości).
+- **Utrzymanie Kodu**: Oznaczono jako przestarzały (`@deprecated`) ogólny hak `usePC` na korzyść rozdzielonych stanów (`usePCSelection` / `usePCSettings`) wraz ze stosownym ostrzeżeniem środowiskowym.
 ## Etap 15 - Audyt Optymalizacji, UX i Fizyki
 
 ### Dodane / Poprawione

@@ -41,19 +41,7 @@ function App() {
       <PCProvider>
         <main className="relative w-full h-screen overflow-hidden bg-[#0f0a1c]">
           <h1 className="sr-only">PCVerse — Interaktywna Anatomia Komputera 3D</h1>
-          <nav aria-label="Szybka nawigacja po podzespołach" className="sr-only">
-            <ul>
-              <li><a href="#component-case">Obudowa (Case)</a></li>
-              <li><a href="#component-mobo">Płyta główna (Motherboard)</a></li>
-              <li><a href="#component-gpu">Karta graficzna (GPU)</a></li>
-              <li><a href="#component-cpu">Procesor (CPU)</a></li>
-              <li><a href="#component-cooler">Chłodzenie (Cooler)</a></li>
-              <li><a href="#component-ram">Pamięć RAM</a></li>
-              <li><a href="#component-ssd">Dysk SSD</a></li>
-              <li><a href="#component-hdd">Dysk HDD</a></li>
-              <li><a href="#component-psu">Zasilacz (PSU)</a></li>
-            </ul>
-          </nav>
+
           <Suspense fallback={null}>
             <Scene3D />
           </Suspense>

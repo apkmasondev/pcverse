@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import type { PCComponent } from '../data/components';
 
@@ -45,6 +45,14 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
   const [showLabels, setShowLabels] = useState(true);
   const [showInstructions, setShowInstructions] = useState(false);
 
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
+
   const toggleExploded = () => {
     if (isAnimating) return;
     setIsAnimating(true);
@@ -52,13 +60,13 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
     
     if (explodeStep === 0) {
       setExplodeStep(1);
-      setTimeout(() => {
+      timeoutRef.current = setTimeout(() => {
         setExplodeStep(2);
         setIsAnimating(false);
       }, 800);
     } else {
       setExplodeStep(1);
-      setTimeout(() => {
+      timeoutRef.current = setTimeout(() => {
         setExplodeStep(0);
         setIsAnimating(false);
       }, 800);
@@ -126,8 +134,11 @@ export const usePCSettings = () => {
   return context;
 };
 
-// Legacy hook dla kompatybilności wstecznej - uzywac ostroznie!
+/** @deprecated Użyj usePCSelection() lub usePCSettings() */
 export const usePC = () => {
+  if (import.meta.env.DEV) {
+    console.warn('Użycie przestarzałego hooka usePC(). Zastąp go usePCSelection() lub usePCSettings() dla lepszej wydajności.');
+  }
   const selection = usePCSelection();
   const settings = usePCSettings();
   return { ...selection, ...settings };

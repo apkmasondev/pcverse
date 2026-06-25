@@ -79,6 +79,7 @@ export const playExplodeSound = () => {
 
 let ambientOsc: OscillatorNode | null = null;
 let ambientGain: GainNode | null = null;
+let whineOsc: OscillatorNode | null = null;
 
 export const playAmbientSound = () => {
   try {
@@ -87,14 +88,13 @@ export const playAmbientSound = () => {
     
     ambientOsc = ctx.createOscillator();
     ambientGain = ctx.createGain();
+    whineOsc = ctx.createOscillator();
     
-    ambientOsc.type = 'brown' as any; // fake brown noise using low sine
     ambientOsc.type = 'sine';
     // Server room deep hum
     ambientOsc.frequency.setValueAtTime(50, ctx.currentTime);
     
     // Create a second oscillator for a bit of fan whine
-    const whineOsc = ctx.createOscillator();
     whineOsc.type = 'triangle';
     whineOsc.frequency.setValueAtTime(250, ctx.currentTime);
     
@@ -107,9 +107,6 @@ export const playAmbientSound = () => {
     
     ambientOsc.start(ctx.currentTime);
     whineOsc.start(ctx.currentTime);
-    
-    // Attach whineOsc to ambientOsc so we can stop it together (hacky but works if we just store whine in custom property or stop it directly)
-    (ambientOsc as any).whine = whineOsc;
   } catch (e) { console.warn('Audio warning:', e); }
 };
 
@@ -120,10 +117,13 @@ export const stopAmbientSound = () => {
       ambientGain.gain.cancelScheduledValues(ctx.currentTime);
       ambientGain.gain.setValueAtTime(ambientGain.gain.value, ctx.currentTime);
       ambientGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.1);
+      
       ambientOsc.stop(ctx.currentTime + 0.15);
-      if ((ambientOsc as any).whine) {
-        (ambientOsc as any).whine.stop(ctx.currentTime + 0.15);
+      if (whineOsc) {
+        whineOsc.stop(ctx.currentTime + 0.15);
+        whineOsc = null;
       }
+      
       ambientOsc = null;
       ambientGain = null;
     }

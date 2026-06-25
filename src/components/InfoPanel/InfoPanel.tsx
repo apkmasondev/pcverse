@@ -137,6 +137,7 @@ export const InfoPanel = () => {
           animate="visible"
           exit="exit"
           role="dialog"
+          aria-modal="true"
           aria-live="polite"
           aria-label={`Informacje o podzespole: ${selectedComponent.name}`}
           style={isMobile ? {} : { rotateX, rotateY, transformPerspective: 1200 }}
@@ -260,6 +261,7 @@ export const InfoPanel = () => {
               </>
             )}
           </motion.div>
+          <div className="sticky bottom-0 -mx-6 md:-mx-12 -mb-6 md:-mb-12 h-20 bg-gradient-to-t from-[#050505] to-transparent pointer-events-none z-10" />
         </motion.div>
       )}
     </AnimatePresence>
@@ -267,6 +269,9 @@ export const InfoPanel = () => {
     <AnimatePresence>
       {zoomedImageIndex !== null && selectedComponent && (
         <motion.div 
+          role="dialog"
+          aria-modal="true"
+          aria-label="Powiększone zdjęcie podzespołu"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -295,6 +300,7 @@ export const InfoPanel = () => {
               exit={{ opacity: 0, x: -20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
               src={getImageUrl(selectedComponent.imageUrls[zoomedImageIndex])} 
+              alt={`${selectedComponent.name} - zdjęcie powiększone`}
               className="relative max-w-full max-h-full object-contain rounded-xl shadow-[0_0_80px_rgba(0,0,0,0.8)] border border-white/5 z-40 pointer-events-none"
             />
           </AnimatePresence>
@@ -313,9 +319,11 @@ export const InfoPanel = () => {
           
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-50">
             {selectedComponent.imageUrls.map((_, idx) => (
-              <div 
+              <button 
                 key={idx} 
-                className={`w-2 h-2 rounded-full transition-all ${idx === zoomedImageIndex ? 'bg-white scale-125' : 'bg-white/30'}`} 
+                onClick={(e) => { e.stopPropagation(); setZoomedImageIndex(idx); }}
+                aria-label={`Przejdź do zdjęcia ${idx + 1}`}
+                className={`w-2.5 h-2.5 rounded-full transition-all ${idx === zoomedImageIndex ? 'bg-white scale-125' : 'bg-white/30 hover:bg-white/50'}`} 
               />
             ))}
           </div>

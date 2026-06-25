@@ -35,6 +35,12 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
     tex.needsUpdate = true;
     return tex;
   }, [fanSideTexture]);
+  
+  useEffect(() => {
+    return () => {
+      fanSideTextureRotated.dispose();
+    };
+  }, [fanSideTextureRotated]);
   const bladesRef = useRef<Group>(null);
 
   useEffect(() => {
@@ -49,16 +55,14 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
     <group>
       {/* Inner Physical Blades (visible in X-Ray mode) */}
       <group position={[0, 0, 0]} ref={bladesRef} userData={{ axis: 'z' }}>
-        <mesh rotation={[Math.PI / 2, 0, 0]} material={xrayMode ? xrayMaterial : undefined}>
-          <cylinderGeometry args={[0.15, 0.15, 0.05, 16]} />
+        <mesh material={xrayMode ? xrayMaterial : undefined}>
+          <boxGeometry args={[0.78, 0.05, 0.1]} />
           {!xrayMode && <primitive object={materials.darkMetal} attach="material" />}
         </mesh>
-        {[0, 1, 2, 3, 4, 5, 6].map(i => (
-          <mesh key={i} rotation={[0, 0, (Math.PI * 2 / 7) * i]} material={xrayMode ? xrayMaterial : undefined}>
-            <boxGeometry args={[0.9, 0.15, 0.02]} />
-            {!xrayMode && <primitive object={materials.darkCharcoal} attach="material" />}
-          </mesh>
-        ))}
+        <mesh rotation={[0, 0, Math.PI / 2]} material={xrayMode ? xrayMaterial : undefined}>
+          <boxGeometry args={[0.78, 0.05, 0.1]} />
+          {!xrayMode && <primitive object={materials.darkMetal} attach="material" />}
+        </mesh>
       </group>
 
       {/* Outer Frame */}
@@ -70,8 +74,8 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
             <meshStandardMaterial attach="material-1" map={fanSideTextureRotated} roughness={0.6} />
             <meshStandardMaterial attach="material-2" map={fanSideTexture} roughness={0.6} />
             <meshStandardMaterial attach="material-3" map={fanSideTexture} roughness={0.6} />
-            <meshStandardMaterial attach="material-4" color="#151515" roughness={0.7} />
-            <meshStandardMaterial attach="material-5" color="#151515" roughness={0.7} />
+            <primitive object={materials.darkMetal} attach="material-4" />
+            <primitive object={materials.darkMetal} attach="material-5" />
           </>
         )}
       </mesh>
@@ -143,7 +147,7 @@ export const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {[-0.15, 0, 0.15].map((x, i) => (
         <mesh key={i} position={[x, 0, -0.1]} rotation={[Math.PI / 2, 0, 0]} material={xrayMode ? xrayMaterial : undefined}>
           <cylinderGeometry args={[0.03, 0.03, 0.3, 16]} />
-          {!xrayMode && <meshStandardMaterial color="#b0b5b9" metalness={0.9} roughness={0.2} />}
+          {!xrayMode && <primitive object={materials.chromeMetal} attach="material" />}
         </mesh>
       ))}
       {/* Fin Stack - shifted to Z=0.12 and shortened to 0.54 depth to prevent overlapping/smudging with the Fan at Z=0.5 */}
