@@ -130,9 +130,14 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
     return texture;
   }, [backMeshTexture]);
 
-  // Celowo nie zwalniamy tych tekstur przez dispose() w useEffect, 
-  // ponieważ React Strict Mode / Vite HMR wywołuje cleanup, co niszczy tekstury 
-  // trzymane w useMemo i powoduje czarne/znikające siatki mesh.
+  useEffect(() => {
+    if (import.meta.env.DEV) return;
+    return () => {
+      meshTexture.dispose();
+      backMeshTexture.dispose();
+      frontMeshTexture.dispose();
+    };
+  }, [meshTexture, backMeshTexture, frontMeshTexture]);
 
   const rgbMaterial = useMemo(() => new MeshStandardMaterial({ emissiveIntensity: 2, toneMapped: false }), []);
   useEffect(() => {

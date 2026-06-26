@@ -198,7 +198,7 @@ export const DeskScenery = () => {
         <planeGeometry args={[50, 50]} />
         <MeshReflectorMaterial
           blur={[300, 100]} // Odbicie rozmyte kierunkowo
-          resolution={512} // Optymalna rozdzielczość dla wydajności
+          resolution={512} // Przywrócono optymalną rozdzielczość
           mixBlur={1} // Mieszanie odbicia z kolorem blatu
           mixStrength={20} // Siła odbicia
           roughness={0.5}

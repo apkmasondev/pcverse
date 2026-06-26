@@ -1,5 +1,13 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 23 - Wdrożenie Poprawek z Audytu v4 (Etap 5) 🛠️
+
+### Dostępność i Oczyszczanie Kodu
+- **Lepsze Wsparcie dla Czytników Ekranowych**: Rozbudowano komponent `UI.tsx` o dynamiczne flagi `aria-pressed` informujące o aktywności trybów specjalnych (X-Ray, Airflow). Dodano również specjalny niewidoczny region tekstowy `aria-live="polite"`, który bezprzewodowo informuje czytniki o każdorazowej zmianie stanu środowiska (np. "Hologram włączony").
+- **Dostępność CSS (Reduced Motion)**: Zabezpieczono animacje pulsowania (`animate-pulse`) i podskakiwania (`animate-bounce`) w CSS dla osób z wrażliwością na ruch. Respektują one teraz natywną flagę systemu operacyjnego `prefers-reduced-motion: reduce`.
+- **Zabezpieczenie Środowiska DEV**: Zaimplementowano warunkowe czyszczenie `.dispose()` dla ciężkich tekstur proceduralnych obudowy PC. Zabezpiecza to kod produkcyjny przed wyciekami, ale szanuje system HMR (Hot Module Replacement) Vite ułatwiający prace deweloperskie bez efektu "znikających paneli".
+- **Szlifowanie Lintera i Kosmetyka**: Usunięto niewykorzystane importy biblioteki `framer-motion` oraz puste bloki, wyciszając ostrzeżenia konsoli przed potencjalnymi błędami przy budowaniu aplikacji w trybie restrykcyjnym.
+
 ## Etap 22 - Wdrożenie Poprawek z Audytu v4 (Część 4) 🛠️
 
 ### Architektura i Kod

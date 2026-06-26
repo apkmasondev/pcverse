@@ -161,6 +161,7 @@ export const UI = () => {
 
         <motion.button
           aria-label="Hologram X-Ray"
+          aria-pressed={xrayMode}
           whileTap={{ scale: 0.95 }}
           onClick={() => {
             playSelectSound();
@@ -178,6 +179,7 @@ export const UI = () => {
 
         <motion.button
           aria-label="Symulacja Airflow"
+          aria-pressed={showAirflow}
           whileTap={{ scale: 0.95 }}
           onClick={() => {
             playSelectSound();
@@ -196,6 +198,7 @@ export const UI = () => {
         <div className="relative">
           <motion.button
             aria-label="Tryb RGB"
+            aria-pressed={showPalette || rgbEnabled}
             whileTap={{ scale: 0.95 }}
             onClick={() => {
               playSelectSound();
@@ -515,6 +518,9 @@ export const UI = () => {
           </motion.div>
         )}
       </AnimatePresence>
+      <span role="status" aria-live="polite" className="sr-only">
+        {`Hologram ${xrayMode ? 'włączony' : 'wyłączony'}. Airflow ${showAirflow ? 'włączony' : 'wyłączony'}.`}
+      </span>
     </>
   );
 };

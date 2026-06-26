@@ -31,15 +31,6 @@ import gpuFrontUrl from '../../assets/gpu_front.webp';
 import aioFanUrl from '../../assets/aio_fan_rgb.webp';
 import caseFanUrl from '../../assets/case_fan_rgb.webp';
 
-// --- R3F Extrude Options (extracted to prevent memory leak/geometry recreation) ---
-
-// --- Procedural Geometries (Premium 3D) ---
-
-
-
-
-
-
 export interface GeometryProps {
   rgbColor: string;
   [key: string]: any;
@@ -108,8 +99,6 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
   const targetScale3 = useMemo(() => new Vector3(), []);
   const baseColor = useMemo(() => new Color(data.color || '#333333'), [data.color]);
   
- 
-
   const maxDim = data.geometryArgs ? Math.max(...data.geometryArgs) : 1;
   const baseLift = Math.max(0.02, Math.min(0.15, 0.1 / maxDim));
   const liftOffset = hovered && !isSelected ? baseLift : 0;
