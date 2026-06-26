@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { usePCSelection, usePCSettings } from '../../hooks/usePC';
-import { Layers, Focus, MousePointerClick, Scan, Wind, Palette, Sun, Tag, Info, X, Sparkles, Monitor } from 'lucide-react';
+import { Layers, Focus, MousePointerClick, Scan, Wind, Palette, Sun, Tag, Info, X, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { playExplodeSound, playSelectSound, playAmbientSound, stopAmbientSound } from '../../utils/audio';
 
