@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { useEffect, useMemo } from 'react';
-import { MeshReflectorMaterial, Float, useTexture, Instances, Instance, Text } from '@react-three/drei';
+import { MeshReflectorMaterial, Float, useTexture, Instances, Instance } from '@react-three/drei';
 import { usePCSettings } from '../../hooks/usePC';
 import { useIsMobile } from '../../hooks/useIsMobile';
 
@@ -42,13 +42,6 @@ const energyCanTopMat = new THREE.MeshStandardMaterial({ color: '#d0d0d0', rough
 
 // Żółte Karteczki (Post-it)
 const postItGeo = new THREE.PlaneGeometry(1.2, 1.2);
-const postItMat = new THREE.MeshStandardMaterial({
-  color: '#ffeb3b',
-  roughness: 0.9,
-  polygonOffset: true,
-  polygonOffsetFactor: -1,
-  polygonOffsetUnits: -1
-});
 
 const ScatteredItems = () => {
   return (
