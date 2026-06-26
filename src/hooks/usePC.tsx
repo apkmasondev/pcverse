@@ -28,6 +28,8 @@ export interface PCSettingsContextType {
   setShowInstructions: (show: boolean) => void;
   showDesk: boolean;
   toggleDesk: () => void;
+  showParticles: boolean;
+  toggleParticles: () => void;
 }
 
 const PCSelectionContext = createContext<PCSelectionContextType | undefined>(undefined);
@@ -47,6 +49,7 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
   const [showLabels, setShowLabels] = useState(true);
   const [showInstructions, setShowInstructions] = useState(false);
   const [showDesk, setShowDesk] = useState(false);
+  const [showParticles, setShowParticles] = useState(false);
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -88,6 +91,7 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
   const toggleLabels = useCallback(() => setShowLabels((prev) => !prev), []);
   const toggleRgbEnabled = useCallback(() => setRgbEnabled((prev) => !prev), []);
   const toggleDesk = useCallback(() => setShowDesk((prev) => !prev), []);
+  const toggleParticles = useCallback(() => setShowParticles((prev) => !prev), []);
 
   const settingsValue = useMemo(() => ({
     xrayMode,
@@ -106,12 +110,9 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
     setShowInstructions,
     showDesk,
     toggleDesk,
-  }), [
-    xrayMode, toggleXrayMode, rgbColor, setRgbColor,
-    rgbEnabled, toggleRgbEnabled, showAirflow, toggleAirflow,
-    envPreset, setEnvPreset, showLabels, toggleLabels,
-    showInstructions, setShowInstructions, showDesk, toggleDesk
-  ]);
+    showParticles,
+    toggleParticles,
+  }), [xrayMode, rgbColor, rgbEnabled, showAirflow, envPreset, showLabels, showInstructions, showDesk, showParticles, toggleXrayMode, setRgbColor, toggleRgbEnabled, toggleAirflow, setEnvPreset, toggleLabels, setShowInstructions, toggleDesk, toggleParticles]);
 
   const selectionValue = useMemo(() => ({
     selectedComponent,

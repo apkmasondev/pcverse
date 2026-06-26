@@ -45,7 +45,7 @@ const CursorLight = () => {
 
 const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disableEffects?: boolean }) => {
   const { selectedComponent, cameraResetTrigger, explodeStep } = usePCSelection();
-  const { envPreset, showDesk } = usePCSettings();
+  const { envPreset, showDesk, showParticles } = usePCSettings();
   const cameraControlsRef = useRef<CameraControls>(null);
   const { camera } = useThree();
 
@@ -214,7 +214,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
       
       <PerspectiveCamera makeDefault position={[0, 3, 16]} fov={50} near={0.5} far={100} />
       
-      {!isMobile && !disableEffects && (
+      {!isMobile && !disableEffects && showParticles && (
         <>
           <Sparkles count={500} scale={30} size={4} speed={0.5} opacity={0.5} color={gridColors.sparkles} />
           <Stars radius={50} depth={50} count={3000} factor={3} saturation={0.5} fade speed={1.5} />

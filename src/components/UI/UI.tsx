@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { usePCSelection, usePCSettings } from '../../hooks/usePC';
-import { Layers, Focus, MousePointerClick, Scan, Wind, Palette, Sun, Tag, Info, X } from 'lucide-react';
+import { Layers, Focus, MousePointerClick, Scan, Wind, Palette, Sun, Tag, Info, X, Sparkles, Monitor } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { playExplodeSound, playSelectSound, playAmbientSound, stopAmbientSound } from '../../utils/audio';
 
@@ -26,7 +26,7 @@ const COLORS = [
 
 export const UI = () => {
   const { explodeStep, toggleExploded, triggerCameraReset } = usePCSelection();
-  const { xrayMode, toggleXrayMode, rgbColor, setRgbColor, rgbEnabled, toggleRgbEnabled, showAirflow, toggleAirflow, envPreset, setEnvPreset, showLabels, toggleLabels, showInstructions, setShowInstructions, showDesk, toggleDesk } = usePCSettings();
+  const { xrayMode, toggleXrayMode, rgbColor, setRgbColor, rgbEnabled, toggleRgbEnabled, showAirflow, toggleAirflow, envPreset, setEnvPreset, showLabels, toggleLabels, showInstructions, setShowInstructions, showDesk, toggleDesk, showParticles, toggleParticles } = usePCSettings();
   const [showHint, setShowHint] = useState(true);
   const [showPalette, setShowPalette] = useState(false);
   const [showEnv, setShowEnv] = useState(false);
@@ -335,6 +335,23 @@ export const UI = () => {
         </motion.button>
 
         <motion.button
+          aria-label="Efekty cząsteczkowe (Pył)"
+          whileTap={{ scale: 0.95 }}
+          onClick={() => {
+            playSelectSound();
+            toggleParticles();
+          }}
+          className={`relative flex items-center w-full h-11 rounded-xl transition-all overflow-hidden ${showParticles ? 'bg-amber-500/20 border border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.3)]' : 'bg-transparent border border-transparent hover:bg-white/5'}`}
+        >
+          <div className={`flex-shrink-0 w-[42px] h-[42px] flex items-center justify-center transition-all duration-500 ${showParticles ? 'text-amber-400 scale-110' : 'text-slate-300'}`}>
+            <Sparkles aria-hidden="true" size={20} />
+          </div>
+          <span className="ml-1 font-medium text-sm text-slate-300 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            Efekty cząsteczkowe
+          </span>
+        </motion.button>
+
+        <motion.button
           aria-label="Instrukcja obsługi"
           whileTap={{ scale: 0.95 }}
           onClick={() => {
@@ -436,7 +453,17 @@ export const UI = () => {
                   <div>
                     <h3 className="text-base font-semibold text-white mb-2">Eksplozja (Teardown)</h3>
                     <p className="text-sm text-slate-300 leading-relaxed">
-                      Przycisk <strong>"Rozłóż na Części"</strong> uruchamia wybuchową animację rozsunięcia całego PC. Pozwala na zbadanie budowy sprzętu od środka!
+                      Przycisk <strong>"Rozłóż na Części"</strong> uruchamia wybuchową animację rozsunięcia obudowy PC. Pozwala na zbadanie budowy sprzętu od środka.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
+                  <Sun aria-hidden="true" className="text-amber-400 shrink-0" />
+                  <div>
+                    <h3 className="text-base font-semibold text-white mb-2">Otoczenie i Cyber-Scenografia</h3>
+                    <p className="text-sm text-slate-300 leading-relaxed">
+                      Zmienia globalne oświetlenie sceny 3D. Po wejściu w ten tryb możesz aktywować <strong>"Tryb Scenografii"</strong>, by postawić sprzęt na biurku z fotorealistycznymi odbiciami i plakatami w tle.
                     </p>
                   </div>
                 </div>
@@ -455,16 +482,16 @@ export const UI = () => {
                     <span className="text-sm text-slate-300 leading-tight"><strong>Airflow:</strong> Wizualizacja przepływu powietrza.</span>
                   </div>
                   <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
-                    <Sun aria-hidden="true" className="text-amber-400 shrink-0" />
-                    <span className="text-sm text-slate-300 leading-tight"><strong>Otoczenie:</strong> Zmienia globalne oświetlenie i tło.</span>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
                     <Palette aria-hidden="true" className="text-purple-400 shrink-0" />
                     <span className="text-sm text-slate-300 leading-tight"><strong>RGB:</strong> Sterowanie podświetleniem części.</span>
                   </div>
                   <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
                     <Tag aria-hidden="true" className="text-emerald-400 shrink-0" />
                     <span className="text-sm text-slate-300 leading-tight"><strong>Etykiety:</strong> Włącza lub wyłącza nazwy w 3D.</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
+                    <Sparkles aria-hidden="true" className="text-amber-400 shrink-0" />
+                    <span className="text-sm text-slate-300 leading-tight"><strong>Pył / Iskry:</strong> Przełącza zawieszone efekty cząsteczkowe 3D.</span>
                   </div>
                 </div>
               </div>

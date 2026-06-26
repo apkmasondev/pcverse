@@ -195,15 +195,15 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
       ))}
 
       {/* Static RGB Rings on the Front Texture - hide when xrayMode is active */}
-      {!xrayMode && [-1.15, 0, 1.15].map((x, i) => (
+      {!xrayMode && [-1.14, 0, 1.14].map((x, i) => (
         <mesh key={`rgb-ring-${i}`} position={[x, -0.385, 0]} rotation={[Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[0.56, 0.022, 16, 48]} />
+          <torusGeometry args={[0.54, 0.022, 16, 48]} />
           <primitive object={rgbMat25} attach="material" />
         </mesh>
       ))}
 
       {/* GPU Cooling Airflow Particles - 3 streams for 3 fans */}
-      {[-1.15, 0, 1.15].map((x, i) => (
+      {[-1.14, 0, 1.14].map((x, i) => (
         <group key={`airflow-${i}`} position={[x, -0.85, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <LocalAirflowParticles count={30} radius={0.35} length={0.8} speedMult={1.5} color="#38bdf8" />
         </group>

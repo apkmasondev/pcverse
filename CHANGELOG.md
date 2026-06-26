@@ -3,6 +3,7 @@
 ## Etap 20 - Wielki Audyt Kodowy i Dostępność 🚀
 
 ### Poprawione / Zoptymalizowane
+- **Zarządzanie Wydajnością (Efekty Cząsteczkowe)**: Wprowadzono w głównym interfejsie nową opcję włączania i wyłączania efektów cząsteczkowych (np. "kosmicznego pyłu"). Zgodnie z rygorystycznymi wytycznymi optymalizacji, efekty przestrzenne `<Sparkles>` oraz `<Stars>` są teraz domyślnie wyłączone, co gwarantuje najwyższą płynność (FPS) na najsłabszych urządzeniach i eliminuje nadmierny fill rate.
 - **Zarządzanie Pamięcią i VRAM**: Wyeliminowano krytyczne wycieki pamięci materiałów w R3F. Zabezpieczono komponenty `MotherboardGeometry`, `GPUGeometry`, `CaseGeometry` oraz `CPUCoolerGeometry` hookiem `useMemo` dla współdzielonych referencji i wdrożono wymuszone czyszczenie `dispose()` dla dynamicznie generowanej siatki na obiekcie 2D Canvas.
 - **Audio Memory Leaks**: Poprawiono architekturę modułu dźwiękowego. Dźwięki hover (najechania), kliknięcia oraz dekonstrukcji precyzyjnie odłączają teraz swoje węzły (`oscillator.disconnect()`) po zakończeniu odtwarzania, likwidując problem "osieroconych" procesów audio w tle.
 - **Wydajność Renderingu**: Przebudowano logikę hooka `useIsMobile`, eliminując nadmiarowe aktualizacje stanu (Layout Shifts) powodujące kosztowne przebudowy głównego drzewa komponentów Reacta. Dodano również adaptacyjne zarządzanie pętlą `frameloop` ("demand" vs "always") dla urządzeń mobilnych.
