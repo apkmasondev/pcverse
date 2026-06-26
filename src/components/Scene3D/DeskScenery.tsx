@@ -1,9 +1,21 @@
+import React, { useState, useEffect } from 'react';
 import { MeshReflectorMaterial, ContactShadows, Float, useTexture } from '@react-three/drei';
-import { usePCSettings } from '../../hooks/usePC';
+import { usePCSettings, usePCSelection } from '../../hooks/usePC';
 import { useIsMobile } from '../../hooks/useIsMobile';
 
 export const DeskScenery = () => {
   const { xrayMode } = usePCSettings();
+  const { isExploded } = usePCSelection();
+  const [bakeKey, setBakeKey] = useState(0);
+
+  useEffect(() => {
+    // Kiedy stan 'isExploded' się zmienia, odczekaj 2.5 sekundy (aż zakończy się animacja)
+    // i wymuś ponowne wygenerowanie cienia (1 klatka), aby uniknąć smug i złych wypieków.
+    const timer = setTimeout(() => {
+      setBakeKey(prev => prev + 1);
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, [isExploded]);
 
   // Wczytywanie tekstur plakatów
   const [texIO, texCPU, texOS] = useTexture([
@@ -21,6 +33,7 @@ export const DeskScenery = () => {
     <group position={[0, -4.1, 0]}>
       {/* Cienie Kontaktowe rzucane przez komputer na biurko */}
       <ContactShadows
+        key={bakeKey}
         position={[0, 0.01, 0]} // Minimalnie nad blatem by uniknąć z-fighting
         opacity={0.8}
         scale={10}
@@ -28,6 +41,7 @@ export const DeskScenery = () => {
         far={4}
         resolution={512}
         color="#000000"
+        frames={1}
       />
 
       {/* Blat Biurka */}
