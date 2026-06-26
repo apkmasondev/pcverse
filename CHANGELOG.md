@@ -1,6 +1,11 @@
 # Dziennik Zmian (Changelog)
 
-## Etap 22 - Wdrożenie Poprawek z Audytu v4 (Część 1) 🛠️
+## Etap 22 - Wdrożenie Poprawek z Audytu v4 (Część 2) 🛠️
+
+### Poprawione / Zoptymalizowane
+- **Zarządzanie Pamięcią i VRAM**: Część 2 wycieków. Zabezpieczono kolejne elementy infrastruktury 3D, dopisując brakujące metody `.dispose()` do szklanych osłon komputera (`frontGlassMatRef` i `sideGlassMatRef`) oraz zaawansowanego materiału odblaskowego na głównym biurku (`MeshReflectorMaterial`). Dzięki temu przełączanie widoku X-Ray oraz Scenografii jest w 100% zoptymalizowane pod kątem zużycia pamięci.
+- **Bezpieczeństwo Postprocessingu**: Całkowicie wyeliminowano niebezpieczne rzutowania typów (`as any`) przy potężnych efektach wewnątrz warstwy `EffectComposer` (głębia ostrości `DepthOfField` oraz cieniowanie przestrzenne `N8AO`). Kod wykorzystuje teraz bezpieczne renderowanie warunkowe `&&`.
+- **Kompresja (Pojemność)**: Odchudzono nadmiernie powiększoną teksturę na inteligentnym kubku (`new_mug_screen.webp`), redukując jej wagę z ponad 560 KB do minimalnych wartości akceptowalnych dla detali tła. Wpływa to bezpośrednio na szybszy czas pierwszej interakcji.
 
 ### Poprawione / Zoptymalizowane
 - **Zarządzanie Pamięcią i VRAM**: Rozwiązano krytyczne wycieki materiałów w klasach geometrii. Zrefaktoryzowano wbudowane instrukcje tworzące `meshStandardMaterial` z suwakiem `rgbColor` w komponentach `RAMGeometry` i `PSUGeometry`, wynosząc je do instancji referencyjnych wewnątrz hooków `useMemo` oraz `useEffect`. Każdy materiał jest teraz poprawnie czyszczony w fazie demontażu komponentu wywołaniem metody `.dispose()`.

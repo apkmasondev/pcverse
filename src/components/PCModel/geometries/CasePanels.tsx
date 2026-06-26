@@ -55,6 +55,13 @@ export const CasePanels = ({
   const frontGlassMatRef = useRef<any>(null);
   const solidSideRef = useRef<Group>(null);
 
+  useEffect(() => {
+    return () => {
+      if (frontGlassMatRef.current) frontGlassMatRef.current.dispose();
+      if (sideGlassMatRef.current) sideGlassMatRef.current.dispose();
+    };
+  }, []);
+
   useFrame((_state, delta) => {
     const FLY_DIST = 50.0;
     const HIDE_THRESHOLD = 35.0;

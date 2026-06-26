@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { MeshReflectorMaterial, Float, useTexture, Instances, Instance } from '@react-three/drei';
 import { usePCSettings } from '../../hooks/usePC';
 import { useIsMobile } from '../../hooks/useIsMobile';
@@ -112,6 +112,7 @@ export const DeskScenery = () => {
   ]);
 
   const isMobile = useIsMobile();
+  const reflectorMeshRef = useRef<THREE.Mesh>(null);
 
   // Zgodnie z audytem: zarządzanie pamięcią dla materiałów z teksturami
   const { gpuBoxMaterials, energyCanMaterials, ramFloorMaterials, postItMaterials } = useMemo(() => {
@@ -170,6 +171,10 @@ export const DeskScenery = () => {
 
       postItMaterials[0].dispose(); // Zwolnienie pierwszej karteczki
       postItMaterials[1].dispose(); // Zwolnienie drugiej karteczki
+      
+      if (reflectorMeshRef.current?.material) {
+        (reflectorMeshRef.current.material as THREE.Material).dispose();
+      }
     };
   }, [gpuBoxMaterials, energyCanMaterials, ramFloorMaterials, postItMaterials]);
 
@@ -179,7 +184,7 @@ export const DeskScenery = () => {
   return (
     <group position={[0, -4.1, 0]}>
       {/* Blat Biurka */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+      <mesh ref={reflectorMeshRef} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
         <planeGeometry args={[50, 50]} />
         <MeshReflectorMaterial
           blur={[300, 100]} // Odbicie rozmyte kierunkowo
