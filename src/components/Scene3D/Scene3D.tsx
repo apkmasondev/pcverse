@@ -256,11 +256,9 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
         )}
         {!isMobile && (
           <EffectComposer multisampling={4}>
-            {/* @ts-ignore */}
-            {dofEnabled && !disableEffects ? <DepthOfField target={dofTarget} focalLength={0.05} bokehScale={8} height={700} /> : null}
+            {(dofEnabled && !disableEffects ? <DepthOfField target={dofTarget} focalLength={0.05} bokehScale={8} height={700} /> : null) as any}
             <Bloom luminanceThreshold={1} mipmapBlur={true} intensity={1.0} />
-            {/* @ts-ignore */}
-            {!disableEffects ? <N8AO aoRadius={0.5} intensity={2.0} distanceFalloff={0.5} quality="medium" halfRes /> : null}
+            {(!disableEffects ? <N8AO aoRadius={0.5} intensity={2.0} distanceFalloff={0.5} quality="medium" halfRes /> : null) as any}
             <Vignette eskil={false} offset={0.2} darkness={0.6} />
             <ChromaticAberration blendFunction={BlendFunction.NORMAL} offset={CHROMA_OFFSET} />
           </EffectComposer>

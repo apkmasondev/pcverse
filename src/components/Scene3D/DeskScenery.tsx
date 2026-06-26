@@ -1,25 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { MeshReflectorMaterial, ContactShadows, Float, useTexture } from '@react-three/drei';
-import { usePCSettings, usePCSelection } from '../../hooks/usePC';
+import { MeshReflectorMaterial, Float, useTexture } from '@react-three/drei';
+import { usePCSettings } from '../../hooks/usePC';
 import { useIsMobile } from '../../hooks/useIsMobile';
 
 export const DeskScenery = () => {
   const { xrayMode } = usePCSettings();
-  const { explodeStep } = usePCSelection();
-  const [bakeKey, setBakeKey] = useState(0);
-  const [isBaking, setIsBaking] = useState(false);
-
-  useEffect(() => {
-    setIsBaking(true); // Ukryj cienie podczas animacji i oczekiwania na wypiek
-    // Kiedy stan 'explodeStep' się zmienia, odczekaj (aż zakończy się animacja)
-    // i wymuś ponowne wygenerowanie cienia (1 klatka), aby uniknąć smug i złych wypieków.
-    const timer = setTimeout(() => {
-      setBakeKey(prev => prev + 1);
-      setIsBaking(false); // Pokaż cienie po wygenerowaniu nowej klatki
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, [explodeStep]);
-
   // Wczytywanie tekstur plakatów
   const [texIO, texCPU, texOS] = useTexture([
     import.meta.env.BASE_URL + 'textures/posters/poster_io.webp',
@@ -34,19 +18,6 @@ export const DeskScenery = () => {
 
   return (
     <group position={[0, -4.1, 0]}>
-      {/* Cienie Kontaktowe rzucane przez komputer na biurko */}
-      <ContactShadows
-        key={bakeKey}
-        position={[0, 0.01, 0]} // Minimalnie nad blatem by uniknąć z-fighting
-        opacity={isBaking ? 0 : 0.8}
-        scale={10}
-        blur={2}
-        far={4}
-        resolution={512}
-        color="#000000"
-        frames={1}
-      />
-
       {/* Blat Biurka */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
         <planeGeometry args={[50, 50]} />
