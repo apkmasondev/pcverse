@@ -1,5 +1,13 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 24 - Wdrożenie Poprawek z Audytu v4 (Etap 6) 🛠️
+
+### Optymalizacja Ładowania
+- **Progresywne Ładowanie (Suspense)**: Drastycznie zmniejszono efekt blokowania ("zacinania") całej aplikacji podczas pierwszego ładowania Cyber-Biurka. Komponent `DeskScenery` został rozbity na dwa mniejsze: 
+  - Główny (ładujący tylko podstawowe tekstury: blat i dywan).
+  - Leniwy (`DeskDetails` ładujący całą resztę 15 ciężkich tekstur, takich jak plakaty, pudełka i detale).
+  Dzięki temu komputer nie znika, a biurko wyświetla się ułamek sekundy wcześniej, pozwalając na dynamiczne "wskakiwanie" detali bez przerywania działania interfejsu.
+
 ## Etap 23 - Wdrożenie Poprawek z Audytu v4 (Etap 5) 🛠️
 
 ### Dostępność i Oczyszczanie Kodu
