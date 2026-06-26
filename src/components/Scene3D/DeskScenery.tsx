@@ -5,17 +5,17 @@ import { useIsMobile } from '../../hooks/useIsMobile';
 
 export const DeskScenery = () => {
   const { xrayMode } = usePCSettings();
-  const { isExploded } = usePCSelection();
+  const { explodeStep } = usePCSelection();
   const [bakeKey, setBakeKey] = useState(0);
 
   useEffect(() => {
-    // Kiedy stan 'isExploded' się zmienia, odczekaj 2.5 sekundy (aż zakończy się animacja)
+    // Kiedy stan 'explodeStep' się zmienia, odczekaj (aż zakończy się animacja)
     // i wymuś ponowne wygenerowanie cienia (1 klatka), aby uniknąć smug i złych wypieków.
     const timer = setTimeout(() => {
       setBakeKey(prev => prev + 1);
-    }, 2500);
+    }, 2000);
     return () => clearTimeout(timer);
-  }, [isExploded]);
+  }, [explodeStep]);
 
   // Wczytywanie tekstur plakatów
   const [texIO, texCPU, texOS] = useTexture([
