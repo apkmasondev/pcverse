@@ -1,7 +1,7 @@
 import { fanBladesRefsZ } from '../FanManager';
 import { materials, xrayMaterial } from '../materials';
 import { useRef, useEffect, useMemo } from 'react';
-import { Group } from 'three';
+import { Group, MeshStandardMaterial } from 'three';
 import { useTexture } from '@react-three/drei';
 import heatsinkUrl from '../../../assets/heatsink.webp';
 import heatsinkSideUrl from '../../../assets/heatsink_side.webp';
@@ -30,19 +30,22 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
   const torusRadius = isCaseFan ? 0.47 : 0.455;
   const torusTube = isCaseFan ? 0.028 : 0.027;
   
-  const fanSideTextureRotated = useMemo(() => {
-    const tex = fanSideTexture.clone();
-    tex.rotation = Math.PI / 2;
-    tex.center.set(0.5, 0.5);
-    tex.needsUpdate = true;
-    return tex;
-  }, [fanSideTexture]);
+  const rgbMaterial = useMemo(() => new MeshStandardMaterial({ emissiveIntensity: 3, toneMapped: false }), []);
   
   useEffect(() => {
+    rgbMaterial.color.set(rgbColor);
+    rgbMaterial.emissive.set(rgbColor);
+  }, [rgbColor, rgbMaterial]);
+
+  useEffect(() => {
     return () => {
-      fanSideTextureRotated.dispose();
+      rgbMaterial.dispose();
     };
-  }, [fanSideTextureRotated]);
+  }, [rgbMaterial]);
+
+  const fanSideMat = useMemo(() => new MeshStandardMaterial({ map: fanSideTexture, roughness: 0.6 }), [fanSideTexture]);
+  useEffect(() => () => fanSideMat.dispose(), [fanSideMat]);
+
   const bladesRef = useRef<Group>(null);
 
   useEffect(() => {
@@ -76,10 +79,10 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
         <boxGeometry args={[1, 1, 0.2]} />
         {!xrayMode && (
           <>
-            <meshStandardMaterial attach="material-0" map={fanSideTextureRotated} roughness={0.6} />
-            <meshStandardMaterial attach="material-1" map={fanSideTextureRotated} roughness={0.6} />
-            <meshStandardMaterial attach="material-2" map={fanSideTexture} roughness={0.6} />
-            <meshStandardMaterial attach="material-3" map={fanSideTexture} roughness={0.6} />
+            <primitive object={fanSideMat} attach="material-0" />
+            <primitive object={fanSideMat} attach="material-1" />
+            <primitive object={fanSideMat} attach="material-2" />
+            <primitive object={fanSideMat} attach="material-3" />
             <primitive object={materials.darkMetal} attach="material-4" />
             <primitive object={materials.darkMetal} attach="material-5" />
           </>
@@ -98,7 +101,7 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
       {!xrayMode && (
         <mesh position={[0, 0, 0.103]}>
           <torusGeometry args={[torusRadius, torusTube, 16, 64]} />
-          <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={3} toneMapped={false} />
+          <primitive object={rgbMaterial} attach="material" />
         </mesh>
       )}
 
@@ -114,7 +117,7 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
       {!xrayMode && (
         <mesh position={[0, 0, -0.103]} rotation={[0, Math.PI, 0]}>
           <torusGeometry args={[torusRadius, torusTube, 16, 64]} />
-          <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={3} toneMapped={false} />
+          <primitive object={rgbMaterial} attach="material" />
         </mesh>
       )}
 
@@ -152,6 +155,20 @@ export const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string }) => {
     radiatorPlateTexture.needsUpdate = true;
   }, [heatsinkTexture, heatsinkSideTexture, copperPlateTexture, radiatorPlateTexture]);
 
+  const copperMat = useMemo(() => new MeshStandardMaterial({ map: copperPlateTexture, metalness: 0.8, roughness: 0.2 }), [copperPlateTexture]);
+  const sideMat = useMemo(() => new MeshStandardMaterial({ map: heatsinkSideTexture, metalness: 0.8, roughness: 0.3 }), [heatsinkSideTexture]);
+  const topMat = useMemo(() => new MeshStandardMaterial({ map: heatsinkTexture, metalness: 0.8, roughness: 0.3 }), [heatsinkTexture]);
+  const plateMat = useMemo(() => new MeshStandardMaterial({ map: radiatorPlateTexture, metalness: 0.8, roughness: 0.3 }), [radiatorPlateTexture]);
+
+  useEffect(() => {
+    return () => {
+      copperMat.dispose();
+      sideMat.dispose();
+      topMat.dispose();
+      plateMat.dispose();
+    };
+  }, [copperMat, sideMat, topMat, plateMat]);
+
   return (
     <group scale={1.15} position={[0, 0, 0.0375]}>
       {/* Base Contact */}
@@ -163,8 +180,8 @@ export const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string }) => {
             <primitive attach="material-1" object={materials.copper} />
             <primitive attach="material-2" object={materials.copper} />
             <primitive attach="material-3" object={materials.copper} />
-            <meshStandardMaterial attach="material-4" map={copperPlateTexture} metalness={0.8} roughness={0.2} />
-            <meshStandardMaterial attach="material-5" map={copperPlateTexture} metalness={0.8} roughness={0.2} />
+            <primitive attach="material-4" object={copperMat} />
+            <primitive attach="material-5" object={copperMat} />
           </>
         )}
       </mesh>
@@ -180,12 +197,12 @@ export const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string }) => {
         <boxGeometry args={[1, 0.8, 0.54]} />
         {!xrayMode && (
           <>
-            <meshStandardMaterial attach="material-0" map={heatsinkSideTexture} metalness={0.8} roughness={0.3} />
-            <meshStandardMaterial attach="material-1" map={heatsinkSideTexture} metalness={0.8} roughness={0.3} />
-            <meshStandardMaterial attach="material-2" map={heatsinkTexture} metalness={0.8} roughness={0.3} />
-            <meshStandardMaterial attach="material-3" map={heatsinkTexture} metalness={0.8} roughness={0.3} />
-            <meshStandardMaterial attach="material-4" map={radiatorPlateTexture} metalness={0.8} roughness={0.3} />
-            <meshStandardMaterial attach="material-5" map={radiatorPlateTexture} metalness={0.8} roughness={0.3} />
+            <primitive attach="material-0" object={sideMat} />
+            <primitive attach="material-1" object={sideMat} />
+            <primitive attach="material-2" object={topMat} />
+            <primitive attach="material-3" object={topMat} />
+            <primitive attach="material-4" object={plateMat} />
+            <primitive attach="material-5" object={plateMat} />
           </>
         )}
       </mesh>

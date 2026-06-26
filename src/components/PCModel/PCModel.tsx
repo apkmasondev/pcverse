@@ -247,7 +247,7 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
       )}
     </group>
   );
-}, (prevProps, nextProps) => prevProps.data.id === nextProps.data.id && prevProps.isMobile === nextProps.isMobile);
+}, (prevProps, nextProps) => prevProps.data === nextProps.data && prevProps.isMobile === nextProps.isMobile);
 
 
 export const PCModel = () => {

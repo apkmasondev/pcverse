@@ -8,9 +8,8 @@ export const XMesh = ({ children, material, ...props }: any) => {
   const filteredChildren = React.Children.map(children, (child) => {
     if (!child) return null;
     if (xrayMode) {
-      if (child.type === 'meshStandardMaterial' || child.type === 'meshPhysicalMaterial' || child.type === 'primitive') {
-        return null;
-      }
+      const isGeometry = typeof child.type === 'string' && child.type.endsWith('Geometry');
+      return isGeometry ? child : null;
     }
     return child;
   });

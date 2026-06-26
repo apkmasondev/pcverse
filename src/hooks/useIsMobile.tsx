@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react';
 
 export const useIsMobile = (breakpoint = 768) => {
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.matchMedia(`(max-width: ${breakpoint}px)`).matches;
+    }
+    return false;
+  });
 
   useEffect(() => {
     // Check if window is defined (for SSR safety, though R3F is usually client-only)

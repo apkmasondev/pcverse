@@ -26,7 +26,7 @@ const COLORS = [
 
 export const UI = () => {
   const { explodeStep, toggleExploded, triggerCameraReset } = usePCSelection();
-  const { xrayMode, toggleXrayMode, rgbColor, setRgbColor, rgbEnabled, toggleRgbEnabled, showAirflow, toggleAirflow, envPreset, setEnvPreset, showLabels, toggleLabels, showInstructions, setShowInstructions } = usePCSettings();
+  const { xrayMode, toggleXrayMode, rgbColor, setRgbColor, rgbEnabled, toggleRgbEnabled, showAirflow, toggleAirflow, envPreset, setEnvPreset, showLabels, toggleLabels, showInstructions, setShowInstructions, showDesk, toggleDesk } = usePCSettings();
   const [showHint, setShowHint] = useState(true);
   const [showPalette, setShowPalette] = useState(false);
   const [showEnv, setShowEnv] = useState(false);
@@ -54,6 +54,40 @@ export const UI = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [showInstructions, setShowInstructions]);
 
+  useEffect(() => {
+    if (!showInstructions) return;
+    const handleTab = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return;
+      const dialog = document.querySelector('[role="dialog"]');
+      if (!dialog) return;
+      const focusableElements = dialog.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (e.shiftKey) {
+        if (document.activeElement === firstElement) {
+          lastElement?.focus();
+          e.preventDefault();
+        }
+      } else {
+        if (document.activeElement === lastElement) {
+          firstElement?.focus();
+          e.preventDefault();
+        }
+      }
+    };
+    window.addEventListener('keydown', handleTab);
+    // Focus first element on open
+    setTimeout(() => {
+      const dialog = document.querySelector('[role="dialog"]');
+      if (dialog) {
+        const firstBtn = dialog.querySelector<HTMLElement>('button');
+        firstBtn?.focus();
+      }
+    }, 100);
+    return () => window.removeEventListener('keydown', handleTab);
+  }, [showInstructions]);
+
   return (
     <>
 
@@ -72,6 +106,7 @@ export const UI = () => {
         )}
       </AnimatePresence>
       <motion.div 
+        id="ui-controls"
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
@@ -262,6 +297,21 @@ export const UI = () => {
                     <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">{p.desc}</div>
                   </button>
                 ))}
+                
+                <div className="h-px bg-white/10 my-1 w-full" />
+                
+                <button
+                  aria-label="Przełącz Biurko"
+                  onClick={() => {
+                    playSelectSound();
+                    toggleDesk();
+                    setShowEnv(false);
+                  }}
+                  className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${showDesk ? 'bg-amber-500/20 text-amber-300 font-bold' : 'text-slate-300 hover:bg-white/10 hover:text-white'}`}
+                >
+                  <div className="font-medium">Tryb Scenografii</div>
+                  <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">{showDesk ? 'Cyber-Biurko (Wł)' : 'Cyber-Biurko (Wył)'}</div>
+                </button>
               </motion.div>
             )}
           </AnimatePresence>

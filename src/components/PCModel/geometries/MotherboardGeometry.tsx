@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useMemo, useEffect } from 'react';
+import { MeshStandardMaterial } from 'three';
 import { materials, xrayMaterial } from '../materials';
 import { usePCSettings } from '../../../hooks/usePC';
 import { useTexture, Instances, Instance } from '@react-three/drei';
@@ -40,6 +41,21 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
   const moboIoTexture = useTexture(moboIoUrl);
   const cmosBatteryTexture = useTexture(cmosBatteryUrl);
   const m2HeatsinkTexture = useTexture(m2HeatsinkUrl);
+
+  const rgbMaterial = useMemo(() => {
+    return new MeshStandardMaterial({ emissiveIntensity: 1.5, toneMapped: false });
+  }, []);
+
+  useEffect(() => {
+    rgbMaterial.color.set(rgbColor);
+    rgbMaterial.emissive.set(rgbColor);
+  }, [rgbColor, rgbMaterial]);
+
+  useEffect(() => {
+    return () => {
+      rgbMaterial.dispose();
+    };
+  }, [rgbMaterial]);
 
   return (
     <group>
@@ -292,7 +308,7 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
         {/* Metal clip securing the battery */}
         <Mesh position={[0, 0.1, 0.04]}>
           <boxGeometry args={[0.08, 0.08, 0.02]} />
-          <meshStandardMaterial color="#d4af37" metalness={0.8} roughness={0.4} />
+          <primitive object={materials.goldMetal} attach="material" />
         </Mesh>
       </group>
 
@@ -303,13 +319,13 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
       </Mesh>
       <Mesh position={[-0.95, -1.5, 0.04]}>
         <boxGeometry args={[0.02, 0.8, 0.01]} />
-        <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={1.5} toneMapped={false} />
+        <primitive object={rgbMaterial} attach="material" />
       </Mesh>
       {/* Audio Capacitors (Gold) */}
       {[-1.2, -1.4, -1.6].map((y, i) => (
         <Mesh key={`audio-cap-${i}`} position={[-1.2, y, 0.08]} rotation={[Math.PI / 2, 0, 0]}>
           <cylinderGeometry args={[0.04, 0.04, 0.12, 16]} />
-          <meshStandardMaterial color="#d4af37" metalness={0.8} roughness={0.3} />
+          <primitive object={materials.goldMetal} attach="material" />
         </Mesh>
       ))}
 
@@ -340,22 +356,22 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
           {/* Top */}
           <Mesh position={[0, 0.36, 0]}>
             <planeGeometry args={[0.8, 0.08]} />
-            <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={1.5} toneMapped={false} />
+            <primitive object={rgbMaterial} attach="material" />
           </Mesh>
           {/* Bottom */}
           <Mesh position={[0, -0.36, 0]}>
             <planeGeometry args={[0.8, 0.08]} />
-            <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={1.5} toneMapped={false} />
+            <primitive object={rgbMaterial} attach="material" />
           </Mesh>
           {/* Left */}
           <Mesh position={[-0.36, 0, 0]}>
             <planeGeometry args={[0.08, 0.64]} />
-            <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={1.5} toneMapped={false} />
+            <primitive object={rgbMaterial} attach="material" />
           </Mesh>
           {/* Right */}
           <Mesh position={[0.36, 0, 0]}>
             <planeGeometry args={[0.08, 0.64]} />
-            <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={1.5} toneMapped={false} />
+            <primitive object={rgbMaterial} attach="material" />
           </Mesh>
         </group>
       </group>
@@ -437,13 +453,13 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
         {[-1.65, -1.55, -1.45].map((z, i) => (
           <Mesh key={`audio-top-${i}`} position={[-1.55, 0.85, z]} rotation={[0, 0, Math.PI / 2]}>
             <cylinderGeometry args={[0.025, 0.025, 0.03, 16]} />
-            <meshStandardMaterial color="#d4af37" metalness={0.9} roughness={0.2} />
+            <primitive object={materials.goldMetal} attach="material" />
           </Mesh>
         ))}
         {[-1.65, -1.55].map((z, i) => (
           <Mesh key={`audio-bot-${i}`} position={[-1.55, 0.75, z]} rotation={[0, 0, Math.PI / 2]}>
             <cylinderGeometry args={[0.025, 0.025, 0.03, 16]} />
-            <meshStandardMaterial color="#d4af37" metalness={0.9} roughness={0.2} />
+            <primitive object={materials.goldMetal} attach="material" />
           </Mesh>
         ))}
         {/* SPDIF Optical out */}

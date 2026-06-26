@@ -1,5 +1,25 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 20 - Wielki Audyt Kodowy i Dostępność 🚀
+
+### Poprawione / Zoptymalizowane
+- **Zarządzanie Pamięcią i VRAM**: Wyeliminowano krytyczne wycieki pamięci materiałów w R3F. Zabezpieczono komponenty `MotherboardGeometry`, `GPUGeometry`, `CaseGeometry` oraz `CPUCoolerGeometry` hookiem `useMemo` dla współdzielonych referencji i wdrożono wymuszone czyszczenie `dispose()` dla dynamicznie generowanej siatki na obiekcie 2D Canvas.
+- **Audio Memory Leaks**: Poprawiono architekturę modułu dźwiękowego. Dźwięki hover (najechania), kliknięcia oraz dekonstrukcji precyzyjnie odłączają teraz swoje węzły (`oscillator.disconnect()`) po zakończeniu odtwarzania, likwidując problem "osieroconych" procesów audio w tle.
+- **Wydajność Renderingu**: Przebudowano logikę hooka `useIsMobile`, eliminując nadmiarowe aktualizacje stanu (Layout Shifts) powodujące kosztowne przebudowy głównego drzewa komponentów Reacta. Dodano również adaptacyjne zarządzanie pętlą `frameloop` ("demand" vs "always") dla urządzeń mobilnych.
+- **Dostępność i Standardy WCAG**: 
+  - Wdrożono rygorystyczny "Focus Trap" na modalu z instrukcjami, co zatrzymuje obieg klawisza `Tab` w obrębie panelu.
+  - Naprawiono ukryte linki "Skip to content" (dodano identyfikatory `#ui-controls` i `#info-panel`), ułatwiając nawigację czytnikom ekranowym i użytkownikom klawiatury.
+- **Optymalizacja Reacta**: Oczyszczono konsolę z komunikatów ostrzegawczych (React Warnings) używając `Array.flatMap()` zamiast podwójnie zagnieżdżonego `.map()` przy generowaniu dziesiątek portów i ram w obudowie.
+- **Konfiguracja PWA i SEO**: Stworzono oficjalny plik `manifest.json`, wdrożono tagi `<meta name="theme-color">` dopasowane do trybu `prefers-color-scheme`, zoptymalizowano `chunkSizeWarningLimit` w narzędziu Vite oraz wygenerowano za pomocą AI dedykowaną ilustrację do kart Open Graph (`og-cover.png`).
+
+## Etap 19 - Cyber-Scenografia i Plakaty 🖼️
+
+### Dodane / Poprawione
+- **Fotorealistyczne Cyber-Biurko**: Zastąpiono starą siatkę (Grid) fizycznym blatem z zaawansowanym materiałem `MeshReflectorMaterial`. Blat precyzyjnie odbija spód komputera, dodając ogromnej głębi i realizmu godnego silników klasy AAA.
+- **Optymalizacja Cieni (`ContactShadows`)**: Wdrożono "wypiekanie" (baking) cieni uziemiających za pomocą flagi `frames={1}`. Usunęło to błąd z "ciągnącymi się smugami cienia" podczas animacji rozkładania komputera na części (Explode) i drastycznie podniosło wydajność aplikacji (FPS).
+- **Galeria Plakatów PC**: Wzbogacono tło wirtualnego pokoju o potężne, lewitujące plakaty tematyczne. Skrypty graficzne AI wygenerowały obrazy: *Wojna CPU (Intel vs AMD)*, *Wojna OS (Windows vs Linux)* oraz klasyczny koszmar *Don't forget the I/O Shield*.
+- **Bezstratna Kompresja WEBP**: Opracowano i wdrożono skrypt (Python + Pillow) automatycznie kompresujący ciężkie plakaty z rozszerzenia PNG do nowoczesnego, lekkiego formatu `.webp` – redukując ich wagę o ponad 80% (krytyczne dla czasu ładowania strony).
+
 ## Etap 18 - Audyt, Optymalizacja i Stabilizacja Wydania (Release Candidate)
 
 ### Dodane / Poprawione

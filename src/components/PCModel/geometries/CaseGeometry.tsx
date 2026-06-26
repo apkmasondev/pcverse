@@ -1,10 +1,10 @@
-import { BackSide, CanvasTexture, ClampToEdgeWrapping, DoubleSide, RepeatWrapping, SRGBColorSpace } from 'three';
+import { BackSide, CanvasTexture, ClampToEdgeWrapping, DoubleSide, RepeatWrapping, SRGBColorSpace, MeshStandardMaterial } from 'three';
 import { materials } from '../materials';
 import { useMemo, useEffect } from 'react';
 import { usePCSettings } from '../../../hooks/usePC';
 
 import { useTexture } from '@react-three/drei';
-import { extrudeOpts01, extrudeOpts005, caseFrameMaterial } from '../constants';
+import { extrudeOpts01, extrudeOpts005 } from '../constants';
 import caseBackUrl from '../../../assets/case_back.webp';
 import caseBehindUrl from '../../../assets/case_behind.webp';
 import caseBottomUrl from '../../../assets/case_bottom.webp';
@@ -88,6 +88,11 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
     texture.wrapS = RepeatWrapping;
     texture.wrapT = RepeatWrapping;
     texture.repeat.set(20, 20); // Scale the mesh grill for the top
+    
+    // Free canvas memory
+    canvas.width = 0;
+    canvas.height = 0;
+    
     return texture;
   }, []);
 
@@ -118,6 +123,11 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
     texture.wrapS = RepeatWrapping;
     texture.wrapT = RepeatWrapping;
     texture.repeat.set(8, 8); // Less dense for back/side panels
+    
+    // Free canvas memory
+    canvas.width = 0;
+    canvas.height = 0;
+    
     return texture;
   }, []);
 
@@ -135,6 +145,15 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
       frontMeshTexture.dispose();
     };
   }, [meshTexture, backMeshTexture, frontMeshTexture]);
+
+  const rgbMaterial = useMemo(() => new MeshStandardMaterial({ emissiveIntensity: 2, toneMapped: false }), []);
+  useEffect(() => {
+    rgbMaterial.color.set(effectiveRgbColor);
+    rgbMaterial.emissive.set(effectiveRgbColor);
+  }, [effectiveRgbColor, rgbMaterial]);
+  useEffect(() => {
+    return () => rgbMaterial.dispose();
+  }, [rgbMaterial]);
 
   return (
     <group>
@@ -157,7 +176,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
 
 
       {/* Top Panel (Solid Frame) */}
-      <Mesh position={[0, 2.50, 0]} rotation={[Math.PI / 2, 0, 0]} material={caseFrameMaterial}>
+      <Mesh position={[0, 2.50, 0]} rotation={[Math.PI / 2, 0, 0]} material={materials.caseFrame}>
         <extrudeGeometry args={[topFrameShape, extrudeOpts01]} />
       </Mesh>
 
@@ -189,7 +208,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
 
       {/* Bottom Panel with PSU ventilation cutout */}
       <group position={[0, -2.4, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <Mesh material={caseFrameMaterial}>
+        <Mesh material={materials.caseFrame}>
           <extrudeGeometry args={[bottomPanelShape, extrudeOpts01]} />
         </Mesh>
         {/* Bottom Panel Texture (Outside) */}
@@ -204,9 +223,9 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
         </Mesh>
       </group>
       {/* Case Feet (Rubberized) */}
-      {[-1.8, 1.8].map(x => (
-        [-1.8, 1.8].map(z => (
-          <Mesh key={`foot-${x}-${z}`} position={[x, -2.42, z]}>
+      {[-1.8, 1.8].flatMap((x, i) => (
+        [-1.8, 1.8].map((z, j) => (
+          <Mesh key={`foot-${i}-${j}`} position={[x, -2.42, z]}>
             <cylinderGeometry args={[0.08, 0.06, 0.04, 16]} />
             <primitive object={materials.veryDarkGray} attach="material" />
           </Mesh>
@@ -223,7 +242,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
         {/* Power Button RGB Ring */}
         <Mesh position={[0, 0.011, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <torusGeometry args={[0.06, 0.005, 16, 32]} />
-          <meshStandardMaterial color={effectiveRgbColor} emissive={effectiveRgbColor} emissiveIntensity={2} toneMapped={false} />
+          <primitive object={rgbMaterial} attach="material" />
         </Mesh>
         {/* Power Button Inner */}
         <Mesh position={[0, 0.012, 0]}>
@@ -277,7 +296,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
         </Mesh>
         
         {/* Raised Standoffs (Gwinty) for Motherboard */}
-        {[-1.3, -0.45, 0.4].map((x, i) => (
+        {[-1.3, -0.45, 0.4].flatMap((x, i) => (
           [-1.85, 0, 1.85].map((y, j) => (
             <Mesh key={`standoff-${i}-${j}`} position={[x, y, 0.035]} rotation={[Math.PI / 2, 0, 0]}>
               <cylinderGeometry args={[0.03, 0.03, 0.07, 16]} />
@@ -321,9 +340,9 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
       />
 
       {/* Frame Posts */}
-      {[1.95, -1.95].map(x => (
-        [1.95, -1.95].map(z => (
-          <Mesh key={`${x}-${z}`} position={[x, 0, z]}>
+      {[1.95, -1.95].flatMap((x, i) => (
+        [1.95, -1.95].map((z, j) => (
+          <Mesh key={`frame-${i}-${j}`} position={[x, 0, z]}>
             <boxGeometry args={[0.1, 4.8, 0.1]} />
             <primitive object={materials.darkGrayMetal} attach="material" />
           </Mesh>

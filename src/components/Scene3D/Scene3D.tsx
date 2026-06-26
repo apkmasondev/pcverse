@@ -10,6 +10,7 @@ import { PCModel } from '../PCModel/PCModel';
 import { usePCSelection, usePCSettings } from '../../hooks/usePC';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { GlobalErrorBoundary as ErrorBoundary } from '../ErrorBoundary';
+import { DeskScenery } from './DeskScenery';
 
 const envMap: Record<string, string> = {
   studio: import.meta.env.BASE_URL + 'environments/studio_small_03_1k.hdr',
@@ -44,7 +45,7 @@ const CursorLight = () => {
 
 const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disableEffects?: boolean }) => {
   const { selectedComponent, cameraResetTrigger, explodeStep } = usePCSelection();
-  const { envPreset } = usePCSettings();
+  const { envPreset, showDesk } = usePCSettings();
   const cameraControlsRef = useRef<CameraControls>(null);
   const { camera } = useThree();
 
@@ -236,21 +237,26 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
         <ErrorBoundary fallback={null}>
           <Environment files={envMap[envPreset] || envMap.studio} environmentIntensity={1.5} />
         </ErrorBoundary>
-        <Grid 
-          position={[0, -4.1, 0]} 
-          args={[80, 80]} 
-          cellSize={1} 
-          cellThickness={1.2} 
-          cellColor={gridColors.cell} 
-          sectionSize={5} 
-          sectionThickness={2.0} 
-          sectionColor={gridColors.section} 
-          fadeDistance={40} 
-          fadeStrength={2} 
-        />
+
+        {showDesk ? (
+          <DeskScenery />
+        ) : (
+          <Grid 
+            position={[0, -4.1, 0]} 
+            args={[80, 80]} 
+            cellSize={1} 
+            cellThickness={1.2} 
+            cellColor={gridColors.cell} 
+            sectionSize={5} 
+            sectionThickness={2.0} 
+            sectionColor={gridColors.section} 
+            fadeDistance={40} 
+            fadeStrength={2} 
+          />
+        )}
         {!isMobile && (
           <EffectComposer multisampling={4}>
-            {dofEnabled && !disableEffects ? <DepthOfField target={dofTarget} focalLength={0.05} bokehScale={8} height={700} /> : <group /> as any}
+            {dofEnabled && !disableEffects && <DepthOfField target={dofTarget} focalLength={0.05} bokehScale={8} height={700} />}
             <Bloom luminanceThreshold={1} mipmapBlur={true} intensity={1.0} />
             {!disableEffects && <N8AO aoRadius={0.5} intensity={2.0} distanceFalloff={0.5} quality="medium" halfRes />}
             <Vignette eskil={false} offset={0.2} darkness={0.6} />
@@ -301,6 +307,7 @@ export const Scene3D = () => {
       <Canvas
         gl={{ antialias: true }}
         dpr={dpr} 
+        frameloop={isMobile ? 'demand' : 'always'}
         onPointerMissed={() => setSelectedComponent(null)}
       >
         <PerformanceMonitor 

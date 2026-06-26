@@ -1,0 +1,17 @@
+{
+  "name": "PCVerse",
+  "short_name": "PCVerse",
+  "description": "Interaktywna Anatomia Komputera 3D",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f0a1c",
+  "theme_color": "#0f0a1c",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

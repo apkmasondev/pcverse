@@ -10,7 +10,7 @@ export default defineConfig({
   ],
   base: '/pcverse/',
   build: {
-    chunkSizeWarningLimit: 1600,
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         manualChunks(id) {

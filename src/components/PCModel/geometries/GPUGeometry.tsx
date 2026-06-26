@@ -1,4 +1,4 @@
-import { RepeatWrapping, SRGBColorSpace } from 'three';
+import { RepeatWrapping, SRGBColorSpace, MeshStandardMaterial } from 'three';
 import { fanBladesRefsY } from '../FanManager';
 import { materials, xrayMaterial } from '../materials';
 import { useRef, useMemo, useEffect } from 'react';
@@ -42,6 +42,28 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
       });
     };
   }, []);
+
+  const rgbMat15 = useMemo(() => new MeshStandardMaterial({ emissiveIntensity: 1.5, toneMapped: false }), []);
+  const rgbMat10 = useMemo(() => new MeshStandardMaterial({ emissiveIntensity: 1, toneMapped: false }), []);
+  const rgbMat25 = useMemo(() => new MeshStandardMaterial({ emissiveIntensity: 2.5, toneMapped: false }), []);
+
+  useEffect(() => {
+    rgbMat15.color.set(rgbColor);
+    rgbMat15.emissive.set(rgbColor);
+    rgbMat10.color.set(rgbColor);
+    rgbMat10.emissive.set(rgbColor);
+    rgbMat25.color.set(rgbColor);
+    rgbMat25.emissive.set(rgbColor);
+  }, [rgbColor, rgbMat15, rgbMat10, rgbMat25]);
+
+  useEffect(() => {
+    return () => {
+      rgbMat15.dispose();
+      rgbMat10.dispose();
+      rgbMat25.dispose();
+    };
+  }, [rgbMat15, rgbMat10, rgbMat25]);
+
 
 
   return (
@@ -142,7 +164,7 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {!xrayMode && (
         <mesh position={[0, -0.15, 0.59]}>
           <boxGeometry args={[1.0, 0.06, 0.05]} />
-          <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={1.5} toneMapped={false} />
+          <primitive object={rgbMat15} attach="material" />
         </mesh>
       )}
 
@@ -150,7 +172,7 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {!xrayMode && (
         <mesh position={[1.68, -0.15, 0]}>
           <boxGeometry args={[0.05, 0.1, 1.2]} />
-          <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={1} toneMapped={false} />
+          <primitive object={rgbMat10} attach="material" />
         </mesh>
       )}
 
@@ -176,7 +198,7 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {!xrayMode && [-1.15, 0, 1.15].map((x, i) => (
         <mesh key={`rgb-ring-${i}`} position={[x, -0.385, 0]} rotation={[Math.PI / 2, 0, 0]}>
           <torusGeometry args={[0.56, 0.022, 16, 48]} />
-          <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={2.5} toneMapped={false} />
+          <primitive object={rgbMat25} attach="material" />
         </mesh>
       ))}
 

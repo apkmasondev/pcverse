@@ -79,7 +79,7 @@ const itemVariants = {
 
 const getImageUrl = (url: string) => {
   if (url.startsWith('http') || url.startsWith('data:')) return url;
-  const baseUrl = import.meta.env.BASE_URL || '/';
+  const baseUrl = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
   return `${baseUrl}${url.replace(/^\//, '')}`;
 };
 
@@ -119,26 +119,27 @@ export const InfoPanel = () => {
   const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-4, 4]), { stiffness: 150, damping: 30 });
 
   useEffect(() => {
+    if (isMobile || !selectedComponent) return;
     const handleMouseMove = (e: MouseEvent) => {
       mouseX.set((e.clientX / window.innerWidth) - 0.5);
       mouseY.set((e.clientY / window.innerHeight) - 0.5);
     };
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [mouseX, mouseY]);
+  }, [isMobile, selectedComponent, mouseX, mouseY]);
 
   return (
     <>
     <AnimatePresence>
       {selectedComponent && (
         <motion.div
+          id="info-panel"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
           exit="exit"
           role="dialog"
           aria-modal="true"
-          aria-live="polite"
           aria-label={`Informacje o podzespole: ${selectedComponent.name}`}
           style={isMobile ? {} : { rotateX, rotateY, transformPerspective: 1200 }}
           className="absolute bottom-0 md:bottom-0 md:top-0 md:right-0 z-20 
@@ -301,6 +302,8 @@ export const InfoPanel = () => {
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
               src={getImageUrl(selectedComponent.imageUrls[zoomedImageIndex])} 
               alt={`${selectedComponent.name} - zdjęcie powiększone`}
+              loading="lazy"
+              decoding="async"
               className="relative max-w-full max-h-full object-contain rounded-xl shadow-[0_0_80px_rgba(0,0,0,0.8)] border border-white/5 z-40 pointer-events-none"
             />
           </AnimatePresence>

@@ -7,7 +7,7 @@ import { useIsMobile } from '../../../hooks/useIsMobile';
 import { Instances, Instance } from '@react-three/drei';
 import { XMesh as Mesh } from './XMesh';
 import { frontPanelShape, frontFrameShape, frontMeshShape, leftPanelShape } from './CaseShapes';
-import { caseFrameMaterial, extrudeOpts005 } from '../constants';
+import { extrudeOpts005 } from '../constants';
 import { materials, xrayMaterial } from '../materials';
 import bracketUrl from '../../../assets/bracket.webp';
 import { useTexture } from '@react-three/drei';
@@ -137,15 +137,16 @@ export const CasePanels = ({
         </Mesh>
         
         {[-1.95, 1.95].map(x => (
-          <Mesh key={`front-v-frame-${x}`} position={[x, 0, 0]} material={caseFrameMaterial}>
+          <Mesh key={`front-v-frame-${x}`} position={[x, 0, 0]}>
             <boxGeometry args={[0.1, 4.8, 0.1]} />
+            <primitive object={materials.darkGrayMetal} attach="material" />
           </Mesh>
         ))}
 
         <Instances limit={4}>
           <cylinderGeometry args={[0.05, 0.05, 0.04, 16]} />
           <primitive object={materials.darkMetal} attach="material" />
-          {[-1.85, 1.85].map((x, i) => (
+          {[-1.85, 1.85].flatMap((x, i) => (
             [-2.3, 2.3].map((y, j) => (
               <Instance key={`front-screw-${i}-${j}`} position={[x, y, 0.02]} rotation={[Math.PI / 2, 0, 0]} />
             ))
@@ -173,7 +174,7 @@ export const CasePanels = ({
         <Instances limit={4}>
           <cylinderGeometry args={[0.05, 0.05, 0.04, 16]} />
           <primitive object={materials.darkMetal} attach="material" />
-          {[-2.3, 2.3].map((y, i) => (
+          {[-2.3, 2.3].flatMap((y, i) => (
             [-1.8, 1.8].map((z, j) => (
               <Instance key={`side-screw-${i}-${j}`} position={[0.02, y, z]} rotation={[0, 0, Math.PI / 2]} />
             ))

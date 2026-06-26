@@ -29,6 +29,7 @@ export const playHoverSound = () => {
     
     osc.start(ctx.currentTime);
     osc.stop(ctx.currentTime + 0.1);
+    osc.onended = () => { osc.disconnect(); gain.disconnect(); };
   } catch (e) { console.warn('Audio warning:', e); }
 };
 
@@ -51,6 +52,7 @@ export const playSelectSound = () => {
     
     osc.start(ctx.currentTime);
     osc.stop(ctx.currentTime + 0.2);
+    osc.onended = () => { osc.disconnect(); gain.disconnect(); };
   } catch (e) { console.warn('Audio warning:', e); }
 };
 
@@ -74,6 +76,7 @@ export const playExplodeSound = () => {
     
     osc.start(ctx.currentTime);
     osc.stop(ctx.currentTime + 0.6);
+    osc.onended = () => { osc.disconnect(); gain.disconnect(); };
   } catch (e) { console.warn('Audio warning:', e); }
 };
 

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { createContext, useContext, useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import type { PCComponent } from '../data/components';
 
@@ -26,6 +26,8 @@ export interface PCSettingsContextType {
   toggleLabels: () => void;
   showInstructions: boolean;
   setShowInstructions: (show: boolean) => void;
+  showDesk: boolean;
+  toggleDesk: () => void;
 }
 
 const PCSelectionContext = createContext<PCSelectionContextType | undefined>(undefined);
@@ -35,7 +37,7 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
   const [selectedComponent, setSelectedComponent] = useState<PCComponent | null>(null);
   const [explodeStep, setExplodeStep] = useState(0); // 0: closed, 1: glass removed, 2: fully exploded
   const [cameraResetTrigger, setCameraResetTrigger] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const isAnimatingRef = useRef(false);
 
   const [xrayMode, setXrayMode] = useState(false);
   const [rgbColor, setRgbColor] = useState('#06b6d4'); // Default Cyan
@@ -44,6 +46,7 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
   const [envPreset, setEnvPreset] = useState('city');
   const [showLabels, setShowLabels] = useState(true);
   const [showInstructions, setShowInstructions] = useState(false);
+  const [showDesk, setShowDesk] = useState(false);
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -53,65 +56,78 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []);
 
-  const toggleExploded = () => {
-    if (isAnimating) return;
-    setIsAnimating(true);
+  const toggleExploded = useCallback(() => {
+    if (isAnimatingRef.current) return;
+    isAnimatingRef.current = true;
     setSelectedComponent(null); // Ukryj kartę szczegółów przy składaniu/rozkładaniu
     
-    if (explodeStep === 0) {
-      setExplodeStep(1);
-      timeoutRef.current = setTimeout(() => {
-        setExplodeStep(2);
-        setIsAnimating(false);
-      }, 800);
-    } else {
-      setExplodeStep(1);
-      timeoutRef.current = setTimeout(() => {
-        setExplodeStep(0);
-        setIsAnimating(false);
-      }, 800);
-    }
-  };
+    setExplodeStep(prev => {
+      if (prev === 0) {
+        timeoutRef.current = setTimeout(() => {
+          setExplodeStep(2);
+          isAnimatingRef.current = false;
+        }, 800);
+        return 1;
+      } else {
+        timeoutRef.current = setTimeout(() => {
+          setExplodeStep(0);
+          isAnimatingRef.current = false;
+        }, 800);
+        return 1;
+      }
+    });
+  }, []);
 
-  const triggerCameraReset = () => {
+  const triggerCameraReset = useCallback(() => {
     setCameraResetTrigger((prev) => prev + 1);
     setSelectedComponent(null);
-  };
+  }, []);
 
-  const toggleXrayMode = () => setXrayMode((prev) => !prev);
-  const toggleAirflow = () => setShowAirflow((prev) => !prev);
-  const toggleLabels = () => setShowLabels((prev) => !prev);
-  const toggleRgbEnabled = () => setRgbEnabled((prev) => !prev);
+  const toggleXrayMode = useCallback(() => setXrayMode((prev) => !prev), []);
+  const toggleAirflow = useCallback(() => setShowAirflow((prev) => !prev), []);
+  const toggleLabels = useCallback(() => setShowLabels((prev) => !prev), []);
+  const toggleRgbEnabled = useCallback(() => setRgbEnabled((prev) => !prev), []);
+  const toggleDesk = useCallback(() => setShowDesk((prev) => !prev), []);
+
+  const settingsValue = useMemo(() => ({
+    xrayMode,
+    toggleXrayMode,
+    rgbColor,
+    setRgbColor,
+    rgbEnabled,
+    toggleRgbEnabled,
+    showAirflow,
+    toggleAirflow,
+    envPreset,
+    setEnvPreset,
+    showLabels,
+    toggleLabels,
+    showInstructions,
+    setShowInstructions,
+    showDesk,
+    toggleDesk,
+  }), [
+    xrayMode, toggleXrayMode, rgbColor, setRgbColor,
+    rgbEnabled, toggleRgbEnabled, showAirflow, toggleAirflow,
+    envPreset, setEnvPreset, showLabels, toggleLabels,
+    showInstructions, setShowInstructions, showDesk, toggleDesk
+  ]);
+
+  const selectionValue = useMemo(() => ({
+    selectedComponent,
+    explodeStep,
+    cameraResetTrigger,
+    setSelectedComponent,
+    toggleExploded,
+    triggerCameraReset,
+  }), [
+    selectedComponent, explodeStep, cameraResetTrigger,
+    setSelectedComponent, toggleExploded, triggerCameraReset
+  ]);
 
   return (
-    <PCSettingsContext.Provider
-      value={{
-        xrayMode,
-        toggleXrayMode,
-        rgbColor,
-        setRgbColor,
-        rgbEnabled,
-        toggleRgbEnabled,
-        showAirflow,
-        toggleAirflow,
-        envPreset,
-        setEnvPreset,
-        showLabels,
-        toggleLabels,
-        showInstructions,
-        setShowInstructions,
-      }}
-    >
-      <PCSelectionContext.Provider
-        value={{
-          selectedComponent,
-          explodeStep,
-          cameraResetTrigger,
-          setSelectedComponent,
-          toggleExploded,
-          triggerCameraReset,
-        }}
-      >
+    <PCSettingsContext.Provider value={settingsValue}>
+      <PCSelectionContext.Provider value={selectionValue}>
         {children}
       </PCSelectionContext.Provider>
     </PCSettingsContext.Provider>
@@ -132,14 +148,4 @@ export const usePCSettings = () => {
     throw new Error('usePCSettings must be used within a PCProvider');
   }
   return context;
-};
-
-/** @deprecated Użyj usePCSelection() lub usePCSettings() */
-export const usePC = () => {
-  if (import.meta.env.DEV) {
-    console.warn('Użycie przestarzałego hooka usePC(). Zastąp go usePCSelection() lub usePCSettings() dla lepszej wydajności.');
-  }
-  const selection = usePCSelection();
-  const settings = usePCSettings();
-  return { ...selection, ...settings };
 };
