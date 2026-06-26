@@ -12,10 +12,10 @@ import gpuFrontUrl from '../../../assets/gpu_front.webp';
 import gpuBackplateUrl from '../../../assets/gpu_backplate.webp';
 import gpuIoUrl from '../../../assets/gpu_io.webp';
 import { LocalAirflowParticles } from './LocalAirflowParticles';
-import { usePCSettings } from '../../../hooks/usePC';
+import { usePCView } from '../../../hooks/usePC';
 
 export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
-  const { xrayMode } = usePCSettings();
+  const { xrayMode } = usePCView();
   const fanRef1 = useRef<Group>(null);
   const fanRef2 = useRef<Group>(null);
   const fanRef3 = useRef<Group>(null);

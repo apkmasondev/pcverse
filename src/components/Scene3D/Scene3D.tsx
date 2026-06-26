@@ -7,7 +7,7 @@ import { BlendFunction } from 'postprocessing';
 
 const CHROMA_OFFSET = new Vector2(0.0005, 0.0005);
 import { PCModel } from '../PCModel/PCModel';
-import { usePCSelection, usePCSettings } from '../../hooks/usePC';
+import { usePCSelection, usePCView } from '../../hooks/usePC';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { GlobalErrorBoundary as ErrorBoundary } from '../ErrorBoundary';
 import { DeskScenery } from './DeskScenery';
@@ -58,7 +58,7 @@ const CursorLight = () => {
 
 const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disableEffects?: boolean }) => {
   const { selectedComponent, cameraResetTrigger, explodeStep } = usePCSelection();
-  const { envPreset, showDesk, showParticles } = usePCSettings();
+  const { envPreset, showDesk, showParticles } = usePCView();
   const cameraControlsRef = useRef<CameraControls>(null);
   const { camera } = useThree();
   const reducedMotion = useReducedMotion();
@@ -272,11 +272,13 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
         )}
         {!isMobile && (
           <EffectComposer multisampling={4}>
-            {(dofEnabled && !disableEffects && <DepthOfField target={dofTarget} focalLength={0.05} bokehScale={8} height={700} />) as any}
-            <Bloom luminanceThreshold={1} mipmapBlur={true} intensity={1.0} />
-            {(!disableEffects && <N8AO aoRadius={0.5} intensity={2.0} distanceFalloff={0.5} quality="medium" halfRes />) as any}
-            <Vignette eskil={false} offset={0.2} darkness={0.6} />
-            <ChromaticAberration blendFunction={BlendFunction.NORMAL} offset={CHROMA_OFFSET} />
+            {/* @ts-ignore */}
+            {dofEnabled && !disableEffects ? <DepthOfField target={dofTarget} focalLength={0.05} bokehScale={8} height={700} /> : null}
+            {/* @ts-ignore */}
+            {!disableEffects ? <N8AO aoRadius={0.5} intensity={2.0} distanceFalloff={0.5} quality="medium" halfRes /> : null}
+            <Bloom luminanceThreshold={0.5} mipmapBlur intensity={1.5} />
+            <Vignette eskil={false} offset={0.1} darkness={0.9} />
+            <ChromaticAberration offset={new Vector2(0.0005, 0.0005)} radialModulation={false} modulationOffset={0} />
           </EffectComposer>
         )}
       </React.Suspense>

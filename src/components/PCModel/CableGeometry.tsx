@@ -2,11 +2,11 @@ import { CatmullRomCurve3, CubicBezierCurve3, TubeGeometry, Vector3 } from 'thre
 import { useMemo, useEffect, useRef } from 'react';
 import { materials, xrayMaterial } from './materials';
 
-import { usePCSelection, usePCSettings } from '../../hooks/usePC';
+import { usePCSelection, usePCView } from '../../hooks/usePC';
 
 export const CableGeometry = () => {
   const { explodeStep } = usePCSelection();
-  const { xrayMode } = usePCSettings();
+  const { xrayMode } = usePCView();
   const tubeRefs = useRef<(TubeGeometry | null)[]>([]);
 
   // 24-pin ATX Cable (PSU to Mobo)

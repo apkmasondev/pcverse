@@ -3,7 +3,7 @@ import { BackSide, CanvasTexture, DoubleSide, Group, MathUtils, Texture, RepeatW
 import { useRef, useMemo, useEffect } from 'react';
 
 import { useFrame } from '@react-three/fiber';
-import { usePCSelection, usePCSettings } from '../../../hooks/usePC';
+import { usePCSelection, usePCView } from '../../../hooks/usePC';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import { Instances, Instance } from '@react-three/drei';
 import { XMesh as Mesh } from './XMesh';
@@ -24,7 +24,7 @@ export const CasePanels = ({
   caseInteriorTexture: Texture;
   backMeshTexture: CanvasTexture;
 }) => {
-  const { xrayMode } = usePCSettings();
+  const { xrayMode } = usePCView();
   const { explodeStep } = usePCSelection();
   const isMobile = useIsMobile();
   const bracketTexture = useTexture(bracketUrl);
@@ -124,7 +124,7 @@ export const CasePanels = ({
     <>
       {!xrayMode && (
       <group position={[0, 0, 1.95]} ref={frontGlassRef as any}>
-        <Mesh position={[0, 0, -0.01]}>
+        <Mesh position={[0, 0, -0.01]} raycast={() => null}>
           <extrudeGeometry args={[frontPanelShape, { depth: 0.02, bevelEnabled: false }]} />
           {isMobile ? (
             <meshStandardMaterial ref={frontGlassMatRef} color="#c7d2fe" transparent={true} opacity={0.3} roughness={0.1} metalness={0.5} />
@@ -138,12 +138,12 @@ export const CasePanels = ({
           )}
         </Mesh>
         
-        <Mesh position={[0, 0, -0.015]}>
+        <Mesh position={[0, 0, -0.015]} raycast={() => null}>
           <extrudeGeometry args={[frontFrameShape, { depth: 0.03, bevelEnabled: false }]} />
           <primitive object={materials.caseFrame} attach="material" />
         </Mesh>
 
-        <Mesh position={[0, 0, 0]}>
+        <Mesh position={[0, 0, 0]} raycast={() => null}>
           <shapeGeometry args={[frontMeshShape]} />
           <meshStandardMaterial 
             color="#151515" 
@@ -176,7 +176,7 @@ export const CasePanels = ({
       
       {!xrayMode && (
       <group position={[1.95, 0, 0]} ref={sideGlassRef as any}>
-        <Mesh>
+        <Mesh raycast={() => null}>
           <boxGeometry args={[0.02, 4.84, 3.84]} />
           {isMobile ? (
             <meshStandardMaterial ref={sideGlassMatRef} color="#a5f3fc" transparent={true} opacity={0.3} roughness={0.1} metalness={0.5} />

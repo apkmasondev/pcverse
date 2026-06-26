@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { fanBladesRefsY } from '../FanManager';
 import { materials } from '../materials';
-import { usePCSettings } from '../../../hooks/usePC';
+import { usePCView } from '../../../hooks/usePC';
 import { useRef, useEffect, useMemo } from 'react';
 import { Group, MeshStandardMaterial } from 'three';
 import { useTexture } from '@react-three/drei';
@@ -16,7 +16,7 @@ import { LocalAirflowParticles } from './LocalAirflowParticles';
 import { XMesh as Mesh } from './XMesh';
 
 export const PSUGeometry = ({ rgbColor }: { rgbColor: string }) => {
-  const { xrayMode } = usePCSettings();
+  const { xrayMode } = usePCView();
   const psuTopTexture = useTexture(psuTopUrl);
   const psuSideTexture = useTexture(psuSideUrl);
   const psuBackTexture = useTexture(psuBackUrl);

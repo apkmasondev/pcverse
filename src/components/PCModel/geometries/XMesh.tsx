@@ -1,9 +1,9 @@
 import React from 'react';
-import { usePCSettings } from '../../../hooks/usePC';
+import { usePCView } from '../../../hooks/usePC';
 import { xrayMaterial } from '../materials';
 
 export const XMesh = ({ children, material, ...props }: any) => {
-  const { xrayMode } = usePCSettings();
+  const { xrayMode } = usePCView();
   
   const filteredChildren = React.Children.map(children, (child) => {
     if (!child) return null;

@@ -4,10 +4,10 @@ import { materials, xrayMaterial } from '../materials';
 import { useTexture } from '@react-three/drei';
 import ssdTopUrl from '../../../assets/ssd_top.webp';
 import ssdBottomUrl from '../../../assets/ssd_bottom.webp';
-import { usePCSettings } from '../../../hooks/usePC';
+import { usePCView } from '../../../hooks/usePC';
 
 export const SSDGeometry = () => {
-  const { xrayMode } = usePCSettings();
+  const { xrayMode } = usePCView();
   const ssdTexture = useTexture(ssdTopUrl);
   const ssdBottomTexture = useTexture(ssdBottomUrl);
 

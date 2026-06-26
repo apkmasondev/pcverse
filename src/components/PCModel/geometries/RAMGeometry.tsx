@@ -2,13 +2,13 @@ import * as THREE from 'three';
 import { useMemo, useEffect } from 'react';
 import { MeshStandardMaterial } from 'three';
 import { materials } from '../materials';
-import { usePCSettings } from '../../../hooks/usePC';
+import { usePCView } from '../../../hooks/usePC';
 import { useTexture } from '@react-three/drei';
 import ramSideUrl from '../../../assets/ram_side.webp';
 import { XMesh as Mesh } from './XMesh';
 
 export const RAMGeometry = ({ rgbColor }: { rgbColor: string }) => {
-  const { xrayMode } = usePCSettings();
+  const { xrayMode } = usePCView();
   const ramSideTexture = useTexture(ramSideUrl);
   
   const rgbMat = useMemo(() => new MeshStandardMaterial({ emissiveIntensity: 1.5, toneMapped: false }), []);

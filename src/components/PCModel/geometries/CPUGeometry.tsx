@@ -7,10 +7,10 @@ import cpuTopUrl from '../../../assets/cpu_top.webp';
 import cpuBottomUrl from '../../../assets/cpu_bottom.webp';
 import { extrudeOptsIhs } from '../constants';
 import { materials, xrayMaterial } from '../materials';
-import { usePCSettings } from '../../../hooks/usePC';
+import { usePCView } from '../../../hooks/usePC';
 
 export const CPUGeometry = () => {
-  const { xrayMode } = usePCSettings();
+  const { xrayMode } = usePCView();
   const cpuTexture = useTexture(cpuTopUrl);
   const cpuBottomTexture = useTexture(cpuBottomUrl);
   const ihsGeoRef = useRef<ExtrudeGeometry>(null);

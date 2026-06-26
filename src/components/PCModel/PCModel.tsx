@@ -12,12 +12,12 @@ import { CableGeometry } from './CableGeometry';
 import { useRef, useState, useMemo, Suspense, memo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Group, Color, Vector3 } from 'three';
-import { Html, useCursor, Bvh, useTexture } from '@react-three/drei';
+import { Html, useCursor, useTexture } from '@react-three/drei';
 import { motion, useReducedMotion } from 'framer-motion';
 import { xrayMaterial } from './materials';
 import { pcComponents } from '../../data/components';
 import type { PCComponent } from '../../data/components';
-import { usePCSelection, usePCSettings } from '../../hooks/usePC';
+import { usePCSelection, usePCRGB, usePCView, usePCUI } from '../../hooks/usePC';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { GlobalErrorBoundary as ErrorBoundary } from '../ErrorBoundary';
 import { playHoverSound, playSelectSound } from '../../utils/audio';
@@ -54,7 +54,7 @@ const GEOMETRY_REGISTRY: Record<string, React.FC<GeometryProps>> = {
 };
 
 const ProceduralGeometry = ({ data, baseColor, rgbColor }: { data: PCComponent, baseColor: Color, rgbColor: string }) => {
-  const { xrayMode } = usePCSettings();
+  const { xrayMode } = usePCView();
   
   // Exact component matching to fix A2 (instead of .includes)
   const Component = GEOMETRY_REGISTRY[data.id];
@@ -88,7 +88,9 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
   const groupRef = useRef<Group>(null);
   const [hovered, setHovered] = useState(false);
   const { selectedComponent, setSelectedComponent, explodeStep } = usePCSelection();
-  const { xrayMode, rgbColor, rgbEnabled, showLabels, showInstructions } = usePCSettings();
+  const { rgbColor, rgbEnabled } = usePCRGB();
+  const { xrayMode } = usePCView();
+  const { showLabels, showInstructions } = usePCUI();
   const effectiveRgbColor = rgbEnabled ? rgbColor : '#000000';
   const shouldReduceMotion = useReducedMotion();
   
@@ -165,6 +167,12 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
       <ErrorBoundary fallback={<mesh material={xrayMode ? xrayMaterial : undefined}><boxGeometry args={data.geometryArgs} />{!xrayMode && <meshStandardMaterial color={baseColor} />}</mesh>}>
         <Suspense fallback={<mesh material={xrayMode ? xrayMaterial : undefined}><boxGeometry args={data.geometryArgs} />{!xrayMode && <meshStandardMaterial color={baseColor} />}</mesh>}>
           {visual}
+          {data.id !== 'case' && (
+            <mesh>
+              <boxGeometry args={[data.geometryArgs[0] * 1.2, data.geometryArgs[1] * 1.2, data.geometryArgs[2] * 1.2]} />
+              <meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} />
+            </mesh>
+          )}
         </Suspense>
       </ErrorBoundary>
       
@@ -174,40 +182,42 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
           center
           distanceFactor={12}
           zIndexRange={[100, 0]}
+          wrapperClass="pointer-events-none"
         >
           <motion.div 
             initial={{ opacity: 0, scale: 0.8, y: "calc(-50% + 10px)" }}
             animate={{ opacity: 1, scale: 1, y: "-50%" }}
             transition={{ type: "spring", stiffness: 400, damping: 25 }}
-            className="flex flex-col items-center pointer-events-auto cursor-pointer opacity-100"
-            onPointerEnter={(e) => {
-              if (isMobile) return;
-              e.stopPropagation();
-              if (!hovered) {
-                playHoverSound();
-              }
-              setHovered(true);
-            }}
-            onPointerLeave={(e) => {
-              if (isMobile) return;
-              e.stopPropagation();
-              setHovered(false);
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              playSelectSound();
-              setSelectedComponent(data);
-            }}
+            className="flex flex-col items-center pointer-events-none opacity-100"
+            style={{ willChange: "transform, opacity" }}
           >
             <div 
-              className={`px-4 py-2 rounded-xl rounded-br-sm backdrop-blur-xl border shadow-2xl transition-all duration-300 ${hovered ? 'scale-105' : 'bg-gradient-to-br from-black/80 to-slate-900/40 border-white/20'}`}
+              className={`pointer-events-auto cursor-pointer px-4 py-2 rounded-xl rounded-br-sm border shadow-xl transition-all duration-300 ${hovered ? 'scale-105' : 'bg-gradient-to-br from-black/95 to-slate-900/90 border-white/20'}`}
               style={hovered ? { 
-                backgroundColor: `${rgbColor}33`, 
-                borderColor: `${rgbColor}80`, 
-                boxShadow: `0 0 15px ${rgbColor}80` 
+                backgroundColor: `#111111`, // Solid dark background for readability without blur
+                borderColor: `${rgbColor}`, 
+                boxShadow: `0 0 15px ${rgbColor}60` 
               } : undefined}
+              onPointerEnter={(e) => {
+                if (isMobile) return;
+                e.stopPropagation();
+                if (!hovered) {
+                  playHoverSound();
+                }
+                setHovered(true);
+              }}
+              onPointerLeave={(e) => {
+                if (isMobile) return;
+                e.stopPropagation();
+                setHovered(false);
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                playSelectSound();
+                setSelectedComponent(data);
+              }}
             >
-              <span className="font-bold tracking-wider text-sm whitespace-nowrap drop-shadow-md">
+              <span className="font-bold tracking-wider text-sm whitespace-nowrap drop-shadow-md pointer-events-none">
                 {data.name.includes(' - ') ? (
                   <>
                     <span className="text-white">{data.name.split(' - ')[0]}</span>
@@ -219,7 +229,7 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
                 )}
               </span>
             </div>
-            <div className="relative flex flex-col items-center">
+            <div className="relative flex flex-col items-center pointer-events-none">
               <div 
                 className={`w-px h-16 transition-all duration-300 ${!hovered ? 'bg-gradient-to-b from-white/40 to-white/5' : ''}`}
                 style={hovered ? {
@@ -259,12 +269,10 @@ export const PCModel = () => {
 
   return (
     <group position={[0, isMobile ? -0.5 : -1, 0]} scale={isMobile ? 0.7 : 1} ref={groupRef}>
-      <Bvh firstHitOnly>
-        {pcComponents.map((comp) => {
-          return <ComponentMesh key={comp.id} data={comp} isMobile={isMobile} />;
-        })}
-        <CableGeometry />
-      </Bvh>
+      {pcComponents.map((comp) => {
+        return <ComponentMesh key={comp.id} data={comp} isMobile={isMobile} />;
+      })}
+      <CableGeometry />
     </group>
   );
 };

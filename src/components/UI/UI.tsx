@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { usePCSelection, usePCSettings } from '../../hooks/usePC';
+import { usePCSelection, usePCRGB, usePCView, usePCUI } from '../../hooks/usePC';
 import { Layers, Focus, MousePointerClick, Scan, Wind, Palette, Sun, Tag, Info, X, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { playExplodeSound, playSelectSound, playAmbientSound, stopAmbientSound } from '../../utils/audio';
@@ -26,7 +26,9 @@ const COLORS = [
 
 export const UI = () => {
   const { explodeStep, toggleExploded, triggerCameraReset } = usePCSelection();
-  const { xrayMode, toggleXrayMode, rgbColor, setRgbColor, rgbEnabled, toggleRgbEnabled, showAirflow, toggleAirflow, envPreset, setEnvPreset, showLabels, toggleLabels, showInstructions, setShowInstructions, showDesk, toggleDesk, showParticles, toggleParticles } = usePCSettings();
+  const { rgbColor, setRgbColor, rgbEnabled, toggleRgbEnabled } = usePCRGB();
+  const { xrayMode, toggleXrayMode, showAirflow, toggleAirflow, envPreset, setEnvPreset, showDesk, toggleDesk, showParticles, toggleParticles } = usePCView();
+  const { showLabels, toggleLabels, showInstructions, setShowInstructions } = usePCUI();
   const [showHint, setShowHint] = useState(true);
   const [showPalette, setShowPalette] = useState(false);
   const [showEnv, setShowEnv] = useState(false);

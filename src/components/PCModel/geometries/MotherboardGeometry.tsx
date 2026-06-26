@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import React, { useMemo, useEffect } from 'react';
 import { MeshStandardMaterial } from 'three';
 import { materials, xrayMaterial } from '../materials';
-import { usePCSettings } from '../../../hooks/usePC';
+import { usePCView } from '../../../hooks/usePC';
 import { useTexture, Instances, Instance } from '@react-three/drei';
 import moboBackUrl from '../../../assets/mobo_back_photo.webp';
 import moboTopUrl from '../../../assets/mobo_top.webp';
@@ -16,7 +16,7 @@ import m2HeatsinkUrl from '../../../assets/m2_heatsink.webp';
 import { XMesh as Mesh } from './XMesh';
 
 const XInstances = ({ children, material, ...props }: any) => {
-  const { xrayMode } = usePCSettings();
+  const { xrayMode } = usePCView();
   const filteredChildren = React.Children.map(children, (child) => {
     if (!child) return null;
     if (xrayMode) {

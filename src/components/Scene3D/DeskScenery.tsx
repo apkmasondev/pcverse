@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { useEffect, useMemo, useRef, useState, Suspense } from 'react';
 import { MeshReflectorMaterial, Float, useTexture, Instances, Instance } from '@react-three/drei';
-import { usePCSettings } from '../../hooks/usePC';
+import { usePCView } from '../../hooks/usePC';
 import { useIsMobile } from '../../hooks/useIsMobile';
 
 // --- Zgodnie z AUDYTEM (Etap 20) ---
@@ -168,10 +168,22 @@ const DeskDetails = ({ reducedMotion }: { reducedMotion: boolean }) => {
   return (
     <>
       <group position={[6.8, 0, 4]} scale={0.7}>
+        {/* Outer wall */}
         <mesh position={[0, 1, 0]}>
           <cylinderGeometry args={[0.8, 0.8, 2, 16, 1, true]} />
           <meshStandardMaterial color="#0f0f13" roughness={0.2} metalness={0.6} side={THREE.DoubleSide} />
         </mesh>
+        {/* Inner wall for thickness */}
+        <mesh position={[0, 1, 0]}>
+          <cylinderGeometry args={[0.74, 0.74, 2, 16, 1, true]} />
+          <meshStandardMaterial color="#0f0f13" roughness={0.2} metalness={0.6} side={THREE.DoubleSide} />
+        </mesh>
+        {/* Top Rim */}
+        <mesh position={[0, 2, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <ringGeometry args={[0.74, 0.8, 16]} />
+          <meshStandardMaterial color="#0f0f13" roughness={0.2} metalness={0.6} side={THREE.DoubleSide} />
+        </mesh>
+        {/* Bottom */}
         <mesh position={[0, 0.05, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <circleGeometry args={[0.8, 16]} />
           <meshStandardMaterial color="#0f0f13" roughness={0.2} metalness={0.6} side={THREE.DoubleSide} />
@@ -262,7 +274,7 @@ const DeskDetails = ({ reducedMotion }: { reducedMotion: boolean }) => {
 };
 
 export const DeskScenery = () => {
-  const { xrayMode } = usePCSettings();
+  const { xrayMode } = usePCView();
   const [texRug, texCrate] = useTexture([
     import.meta.env.BASE_URL + 'textures/posters/desk_rug.webp',
     import.meta.env.BASE_URL + 'textures/posters/wood_crate.webp'

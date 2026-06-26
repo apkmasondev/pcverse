@@ -11,33 +11,41 @@ export interface PCSelectionContextType {
   triggerCameraReset: () => void;
 }
 
-export interface PCSettingsContextType {
-  xrayMode: boolean;
-  toggleXrayMode: () => void;
+export interface PCRGBContextType {
   rgbColor: string;
   setRgbColor: (color: string) => void;
   rgbEnabled: boolean;
   toggleRgbEnabled: () => void;
+}
+
+export interface PCViewContextType {
+  xrayMode: boolean;
+  toggleXrayMode: () => void;
   showAirflow: boolean;
   toggleAirflow: () => void;
   envPreset: string;
   setEnvPreset: (preset: string) => void;
-  showLabels: boolean;
-  toggleLabels: () => void;
-  showInstructions: boolean;
-  setShowInstructions: (show: boolean) => void;
   showDesk: boolean;
   toggleDesk: () => void;
   showParticles: boolean;
   toggleParticles: () => void;
 }
 
+export interface PCUIContextType {
+  showLabels: boolean;
+  toggleLabels: () => void;
+  showInstructions: boolean;
+  setShowInstructions: (show: boolean) => void;
+}
+
 const PCSelectionContext = createContext<PCSelectionContextType | undefined>(undefined);
-const PCSettingsContext = createContext<PCSettingsContextType | undefined>(undefined);
+const PCRGBContext = createContext<PCRGBContextType | undefined>(undefined);
+const PCViewContext = createContext<PCViewContextType | undefined>(undefined);
+const PCUIContext = createContext<PCUIContextType | undefined>(undefined);
 
 export const PCProvider = ({ children }: { children: ReactNode }) => {
   const [selectedComponent, setSelectedComponent] = useState<PCComponent | null>(null);
-  const [explodeStep, setExplodeStep] = useState(0); // 0: closed, 1: glass removed, 2: fully exploded
+  const [explodeStep, setExplodeStep] = useState(0);
   const [cameraResetTrigger, setCameraResetTrigger] = useState(0);
   const isAnimatingRef = useRef(false);
 
@@ -62,7 +70,7 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
   const toggleExploded = useCallback(() => {
     if (isAnimatingRef.current) return;
     isAnimatingRef.current = true;
-    setSelectedComponent(null); // Ukryj kartę szczegółów przy składaniu/rozkładaniu
+    setSelectedComponent(null); 
     
     setExplodeStep(prev => {
       if (prev === 0) {
@@ -93,27 +101,6 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
   const toggleDesk = useCallback(() => setShowDesk((prev) => !prev), []);
   const toggleParticles = useCallback(() => setShowParticles((prev) => !prev), []);
 
-  const settingsValue = useMemo(() => ({
-    xrayMode,
-    toggleXrayMode,
-    rgbColor,
-    setRgbColor,
-    rgbEnabled,
-    toggleRgbEnabled,
-    showAirflow,
-    toggleAirflow,
-    envPreset,
-    setEnvPreset,
-    showLabels,
-    toggleLabels,
-    showInstructions,
-    setShowInstructions,
-    showDesk,
-    toggleDesk,
-    showParticles,
-    toggleParticles,
-  }), [xrayMode, rgbColor, rgbEnabled, showAirflow, envPreset, showLabels, showInstructions, showDesk, showParticles, toggleXrayMode, setRgbColor, toggleRgbEnabled, toggleAirflow, setEnvPreset, toggleLabels, setShowInstructions, toggleDesk, toggleParticles]);
-
   const selectionValue = useMemo(() => ({
     selectedComponent,
     explodeStep,
@@ -126,12 +113,30 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
     setSelectedComponent, toggleExploded, triggerCameraReset
   ]);
 
+  const rgbValue = useMemo(() => ({
+    rgbColor, setRgbColor, rgbEnabled, toggleRgbEnabled
+  }), [rgbColor, rgbEnabled, setRgbColor, toggleRgbEnabled]);
+
+  const viewValue = useMemo(() => ({
+    xrayMode, toggleXrayMode, showAirflow, toggleAirflow,
+    envPreset, setEnvPreset, showDesk, toggleDesk,
+    showParticles, toggleParticles
+  }), [xrayMode, showAirflow, envPreset, showDesk, showParticles, toggleXrayMode, toggleAirflow, setEnvPreset, toggleDesk, toggleParticles]);
+
+  const uiValue = useMemo(() => ({
+    showLabels, toggleLabels, showInstructions, setShowInstructions
+  }), [showLabels, showInstructions, toggleLabels, setShowInstructions]);
+
   return (
-    <PCSettingsContext.Provider value={settingsValue}>
-      <PCSelectionContext.Provider value={selectionValue}>
-        {children}
-      </PCSelectionContext.Provider>
-    </PCSettingsContext.Provider>
+    <PCSelectionContext.Provider value={selectionValue}>
+      <PCRGBContext.Provider value={rgbValue}>
+        <PCViewContext.Provider value={viewValue}>
+          <PCUIContext.Provider value={uiValue}>
+            {children}
+          </PCUIContext.Provider>
+        </PCViewContext.Provider>
+      </PCRGBContext.Provider>
+    </PCSelectionContext.Provider>
   );
 };
 
@@ -143,10 +148,26 @@ export const usePCSelection = () => {
   return context;
 };
 
-export const usePCSettings = () => {
-  const context = useContext(PCSettingsContext);
+export const usePCRGB = () => {
+  const context = useContext(PCRGBContext);
   if (context === undefined) {
-    throw new Error('usePCSettings must be used within a PCProvider');
+    throw new Error('usePCRGB must be used within a PCProvider');
+  }
+  return context;
+};
+
+export const usePCView = () => {
+  const context = useContext(PCViewContext);
+  if (context === undefined) {
+    throw new Error('usePCView must be used within a PCProvider');
+  }
+  return context;
+};
+
+export const usePCUI = () => {
+  const context = useContext(PCUIContext);
+  if (context === undefined) {
+    throw new Error('usePCUI must be used within a PCProvider');
   }
   return context;
 };

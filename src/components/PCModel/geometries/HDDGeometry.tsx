@@ -9,10 +9,10 @@ import hddBottomUrl from '../../../assets/hdd_bottom.webp';
 import hddSideUrl from '../../../assets/hdd_side.webp';
 import hddPortsUrl from '../../../assets/hdd_ports.webp';
 import hddBehindUrl from '../../../assets/hdd_behind.webp';
-import { usePCSettings } from '../../../hooks/usePC';
+import { usePCView } from '../../../hooks/usePC';
 
 export const HDDGeometry = () => {
-  const { xrayMode } = usePCSettings();
+  const { xrayMode } = usePCView();
   const hddTopTexture = useTexture(hddTopUrl);
   const hddBottomTexture = useTexture(hddBottomUrl);
   const hddSideTexture = useTexture(hddSideUrl);

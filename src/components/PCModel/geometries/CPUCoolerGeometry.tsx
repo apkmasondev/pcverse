@@ -13,11 +13,12 @@ import caseFanRgbUrl from '../../../assets/case_fan_rgb.webp';
 import fanSideUrl from '../../../assets/fan_side.webp';
 import copperPlateUrl from '../../../assets/copper_plate.webp';
 import radiatorPlateUrl from '../../../assets/radiator_plate.webp';
-import { usePCSettings } from '../../../hooks/usePC';
+import { usePCRGB, usePCView } from '../../../hooks/usePC';
 import { LocalAirflowParticles } from './LocalAirflowParticles';
 
 export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbColor: string, isExhaust?: boolean, textureUrl?: string }) => {
-  const { xrayMode, rgbEnabled } = usePCSettings();
+  const { rgbEnabled } = usePCRGB();
+  const { xrayMode } = usePCView();
   
   const baseTextureUrl = textureUrl || caseFanUrl;
   const rgbTextureUrl = baseTextureUrl === aioFanUrl ? aioFanRgbUrl : caseFanRgbUrl;
@@ -158,7 +159,7 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
 
 
 export const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string }) => {
-  const { xrayMode } = usePCSettings();
+  const { xrayMode } = usePCView();
   const heatsinkTexture = useTexture(heatsinkUrl);
   const heatsinkSideTexture = useTexture(heatsinkSideUrl);
   const copperPlateTexture = useTexture(copperPlateUrl);

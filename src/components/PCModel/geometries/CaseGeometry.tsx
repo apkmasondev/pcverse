@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { BackSide, CanvasTexture, ClampToEdgeWrapping, DoubleSide, RepeatWrapping, SRGBColorSpace, MeshStandardMaterial } from 'three';
 import { materials } from '../materials';
 import { useMemo, useEffect } from 'react';
-import { usePCSettings } from '../../../hooks/usePC';
+import { usePCView } from '../../../hooks/usePC';
 
 import { useTexture } from '@react-three/drei';
 import { extrudeOpts01, extrudeOpts005 } from '../constants';
@@ -23,7 +23,7 @@ import {
 
 
 export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEnabled?: boolean }) => {
-  const { xrayMode } = usePCSettings();
+  const { xrayMode } = usePCView();
   const effectiveRgbColor = rgbEnabled ? rgbColor : '#000000';
   const caseBackTexture = useTexture(caseBackUrl);
   const caseBehindTexture = useTexture(caseBehindUrl);
@@ -189,7 +189,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
       </Mesh>
 
       {/* Top Panel (Mesh grill inside the frame) */}
-      <Mesh position={[0, 2.45, 0]}>
+      <Mesh position={[0, 2.45, 0]} raycast={() => null}>
         <boxGeometry args={[3.6, 0.02, 3.6]} />
         <meshStandardMaterial 
           alphaMap={meshTexture} 
@@ -202,7 +202,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
       </Mesh>
 
       {/* PSU Back panel with honeycomb mesh cutout */}
-      <Mesh position={[0, -1.91, -2.01]}>
+      <Mesh position={[0, -1.91, -2.01]} raycast={() => null}>
         <planeGeometry args={[1.5, 0.78]} />
         <meshStandardMaterial 
           color="#4a4d54" 
@@ -268,7 +268,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
       </group>
 
       {/* PSU Bottom Ventilation Mesh (Visible from below) */}
-      <Mesh position={[-1.2, -2.405, -0.8]} rotation={[Math.PI / 2, 0, 0]}>
+      <Mesh position={[-1.2, -2.405, -0.8]} rotation={[Math.PI / 2, 0, 0]} raycast={() => null}>
         <planeGeometry args={[1.45, 1.45]} />
         <meshStandardMaterial 
           color="#1e1e24"
@@ -280,7 +280,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
         />
       </Mesh>
       {/* PSU Bottom Ventilation Mesh (Visible from inside case) */}
-      <Mesh position={[-1.2, -2.39, -0.8]} rotation={[Math.PI / 2, 0, 0]}>
+      <Mesh position={[-1.2, -2.39, -0.8]} rotation={[Math.PI / 2, 0, 0]} raycast={() => null}>
         <planeGeometry args={[1.45, 1.45]} />
         <meshStandardMaterial 
           color="#151515" 
@@ -330,7 +330,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
       </group>
 
       {/* CPU Cooler Backplate Mesh Cutout (on the Back Panel, directly behind the CPU) */}
-      <Mesh position={[-0.45, 1.0, -2.01]}>
+      <Mesh position={[-0.45, 1.0, -2.01]} raycast={() => null}>
         <planeGeometry args={[1.4, 1.4]} />
         <meshStandardMaterial 
           color="#151515" 

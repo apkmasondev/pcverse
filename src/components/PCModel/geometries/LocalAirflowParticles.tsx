@@ -2,11 +2,11 @@ import { AdditiveBlending, InstancedMesh, Object3D, Vector3 } from 'three';
 import { useRef, useMemo } from 'react';
 
 import { useFrame } from '@react-three/fiber';
-import { usePCSettings } from '../../../hooks/usePC';
+import { usePCView } from '../../../hooks/usePC';
 import { useReducedMotion } from 'framer-motion';
 
 export const LocalAirflowParticles = ({ count = 50, radius = 0.4, length = 1.5, speedMult = 1, color = "#38bdf8" }: { count?: number, radius?: number, length?: number, speedMult?: number, color?: string }) => {
-  const { showAirflow } = usePCSettings();
+  const { showAirflow } = usePCView();
   const shouldReduceMotion = useReducedMotion();
   const isVisible = showAirflow && !shouldReduceMotion;
   const meshRef = useRef<InstancedMesh>(null);

@@ -1,5 +1,16 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 26 - Optymalizacja Etykiet i Detali Scenografii 🛠️
+
+### Optymalizacja Wydajności (Performance)
+- **Rozwiązanie Compositor Bottleneck**: Usunięto efekt `backdrop-blur-xl` z animowanych etykiet 3D, zastępując go nieprzezroczystym, stylowym tłem. Dodano `will-change: transform, opacity` do kontenerów Framer Motion, wymuszając akcelerację GPU. Całkowicie zlikwidowano mikro-przycięcia podczas operowania kamerą z dużą ilością widocznych etykiet.
+- **Poprawa Interakcji 3D (Raycasting / DOM Overlay)**: Naprawiono irytujący błąd blokujący możliwość klikania komponentów w trybie Rozłożonym (Explode). Wyłączono przechwytywanie eventów przez niewidoczne, nadrzędne warstwy wstrzykiwane przez `<Html>` (`pointer-events-none`).
+- **Odchudzanie Pamięci**: Zoptymalizowano teksturę kubka (`new_mug_screen.webp`), radykalnie zmniejszając jej wagę.
+
+### Poprawki Wizualne i Bezpieczeństwo Kodu
+- **Fizyczność Ceramiki**: Znacząco ulepszono model 3D kubka w `DeskScenery`. Konstrukcja otrzymała podwójną ściankę (wewnętrzny cylinder) i górny brzeg (torus), eliminując fałszywy wygląd cienkiego "papieru".
+- **TypeScript Fix**: Usunięto rzutowania `as any` wokół węzłów `DepthOfField` i `N8AO` w pliku `Scene3D.tsx`, zamieniając je na ternaries oparte o `null`.
+
 ## Etap 25 - Wdrożenie Poprawek z Audytu v4 (Etap 7) 🛠️
 
 ### Optymalizacja Pamięci 
