@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { useEffect, useMemo } from 'react';
-import { MeshReflectorMaterial, Float, useTexture } from '@react-three/drei';
+import { MeshReflectorMaterial, Float, useTexture, Instances, Instance, Text } from '@react-three/drei';
 import { usePCSettings } from '../../hooks/usePC';
 import { useIsMobile } from '../../hooks/useIsMobile';
 
@@ -32,20 +32,38 @@ const pastePlungerGeo = new THREE.CylinderGeometry(0.03, 0.03, 0.4, 8);
 const gpuBoxGeo = new THREE.BoxGeometry(3, 0.6, 2.0);
 const gpuBoxSideMat = new THREE.MeshStandardMaterial({ color: '#090a0c', roughness: 0.8 });
 
+// RAM (przygotowane pod teksturę)
+const ramStickGeo = new THREE.BoxGeometry(1.75, 0.04, 0.32);
+const ramStickMat = new THREE.MeshStandardMaterial({ color: '#1a1c20', roughness: 0.7, metalness: 0.3 }); // Zostanie zastąpiony po dodaniu tekstury
+
+// Puszka Energetyka
+const energyCanGeo = new THREE.CylinderGeometry(0.35, 0.35, 1.4, 32);
+const energyCanTopMat = new THREE.MeshStandardMaterial({ color: '#d0d0d0', roughness: 0.3, metalness: 0.8 });
+
+// Żółte Karteczki (Post-it)
+const postItGeo = new THREE.PlaneGeometry(1.2, 1.2);
+const postItMat = new THREE.MeshStandardMaterial({
+  color: '#ffeb3b',
+  roughness: 0.9,
+  polygonOffset: true,
+  polygonOffsetFactor: -1,
+  polygonOffsetUnits: -1
+});
+
 const ScatteredItems = () => {
   return (
     <group position={[0, 0.04, 0]}>
       {/* Śrubki krzyżakowe (rozrzucone pod monitorem/komputerem) */}
       {[
-        [-2.5, 3.5, 0.5], [-2.2, 3.8, 1.2], [-1.8, 3.4, -0.4], 
+        [-2.5, 3.5, 0.5], [-2.2, 3.8, 1.2], [-1.8, 3.4, -0.4],
         [2.1, 3.2, 0.8], [2.4, 3.6, -1.5], [1.5, 4.0, 2.1]
       ].map((pos, i) => (
-        <mesh 
-          key={`screw-${i}`} 
-          geometry={screwGeo} 
-          material={screwMat} 
-          position={[pos[0], 0, pos[1]]} 
-          rotation={[Math.PI / 2, 0, pos[2]]} 
+        <mesh
+          key={`screw-${i}`}
+          geometry={screwGeo}
+          material={screwMat}
+          position={[pos[0], 0, pos[1]]}
+          rotation={[Math.PI / 2, 0, pos[2]]}
           castShadow
         />
       ))}
@@ -80,7 +98,7 @@ const ScatteredItems = () => {
 export const DeskScenery = () => {
   const { xrayMode } = usePCSettings();
   // Wczytywanie tekstur plakatów i scenografii
-  const [texIO, texCPU, texOS, texRug, texBug, texNewMug, texRam, texSpag, texCrate, texGpuBox, texSideLong, texSideShort] = useTexture([
+  const [texIO, texCPU, texOS, texRug, texBug, texNewMug, texRam, texSpag, texCrate, texGpuBox, texSideLong, texSideShort, texEnergyCan, texCanTop, texRamFloor, texNote1, texNote2] = useTexture([
     import.meta.env.BASE_URL + 'textures/posters/poster_io.webp',
     import.meta.env.BASE_URL + 'textures/posters/poster_cpu_war.webp',
     import.meta.env.BASE_URL + 'textures/posters/poster_os_war.webp',
@@ -92,28 +110,52 @@ export const DeskScenery = () => {
     import.meta.env.BASE_URL + 'textures/posters/wood_crate.webp',
     import.meta.env.BASE_URL + 'textures/posters/gpu_box.webp',
     import.meta.env.BASE_URL + 'textures/posters/side_long.webp',
-    import.meta.env.BASE_URL + 'textures/posters/side_short.webp'
+    import.meta.env.BASE_URL + 'textures/posters/side_short.webp',
+    import.meta.env.BASE_URL + 'textures/posters/energy_drink.webp',
+    import.meta.env.BASE_URL + 'textures/posters/can_top.webp',
+    import.meta.env.BASE_URL + 'textures/posters/ram_floor.webp',
+    import.meta.env.BASE_URL + 'textures/posters/note1.webp',
+    import.meta.env.BASE_URL + 'textures/posters/note2.webp'
   ]);
 
   const isMobile = useIsMobile();
 
-  // Zgodnie z audytem: zarządzanie pamięcią dla dynamicznego materiału pudełka GPU
-  const gpuBoxMaterials = useMemo(() => {
+  // Zgodnie z audytem: zarządzanie pamięcią dla materiałów z teksturami
+  const { gpuBoxMaterials, energyCanMaterials, ramFloorMaterials, postItMaterials } = useMemo(() => {
     // Odbicie lustrzane tekstury dla boku bliżej PC (prawy bok pudełka)
     const texSideShortMirrored = texSideShort.clone();
     texSideShortMirrored.wrapS = THREE.RepeatWrapping;
     texSideShortMirrored.repeat.x = -1;
     texSideShortMirrored.needsUpdate = true;
 
-    return [
-      new THREE.MeshStandardMaterial({ map: texSideShortMirrored, roughness: 0.4 }), // right (+X face, towards PC)
-      new THREE.MeshStandardMaterial({ map: texSideShort, roughness: 0.4 }), // left (-X face, away from PC)
-      new THREE.MeshStandardMaterial({ map: texGpuBox, roughness: 0.4 }), // top
-      gpuBoxSideMat, // bottom
-      new THREE.MeshStandardMaterial({ map: texSideLong, roughness: 0.4 }), // front (+Z face)
-      new THREE.MeshStandardMaterial({ map: texSideLong, roughness: 0.4 }), // back (-Z face)
-    ];
-  }, [texGpuBox, texSideLong, texSideShort]);
+    return {
+      gpuBoxMaterials: [
+        new THREE.MeshStandardMaterial({ map: texSideShortMirrored, roughness: 0.4 }), // right (+X face, towards PC)
+        new THREE.MeshStandardMaterial({ map: texSideShort, roughness: 0.4 }), // left (-X face, away from PC)
+        new THREE.MeshStandardMaterial({ map: texGpuBox, roughness: 0.4 }), // top
+        gpuBoxSideMat, // bottom
+        new THREE.MeshStandardMaterial({ map: texSideLong, roughness: 0.4 }), // front (+Z face)
+        new THREE.MeshStandardMaterial({ map: texSideLong, roughness: 0.4 }), // back (-Z face)
+      ],
+      energyCanMaterials: [
+        new THREE.MeshStandardMaterial({ map: texEnergyCan, roughness: 0.2, metalness: 0.5 }), // side
+        new THREE.MeshStandardMaterial({ map: texCanTop, roughness: 0.3, metalness: 0.8 }), // top (zawleczka)
+        energyCanTopMat // bottom (zwykłe srebro)
+      ],
+      ramFloorMaterials: [
+        ramStickMat, // right
+        ramStickMat, // left
+        new THREE.MeshStandardMaterial({ map: texRamFloor, roughness: 0.5, metalness: 0.6 }), // top (nadruk kości RAM)
+        ramStickMat, // bottom
+        new THREE.MeshStandardMaterial({ color: '#ffcc00', metalness: 1.0, roughness: 0.2 }), // front (długa ściana - złote piny)
+        ramStickMat  // back
+      ],
+      postItMaterials: [
+        new THREE.MeshStandardMaterial({ map: texNote1, color: '#ffffff', roughness: 0.9, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }),
+        new THREE.MeshStandardMaterial({ map: texNote2, color: '#ffffff', roughness: 0.9, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 })
+      ]
+    };
+  }, [texGpuBox, texSideLong, texSideShort, texEnergyCan, texCanTop, texRamFloor, texNote1, texNote2]);
 
   useEffect(() => {
     return () => {
@@ -126,8 +168,17 @@ export const DeskScenery = () => {
       gpuBoxMaterials[2].dispose();
       gpuBoxMaterials[4].dispose();
       gpuBoxMaterials[5].dispose();
+
+      energyCanMaterials[0].dispose(); // Zwolnienie boku puszki
+      energyCanMaterials[1].dispose(); // Zwolnienie góry puszki (nowy materiał z teksturą zawleczki)
+
+      ramFloorMaterials[2].dispose(); // Zwolnienie górnego materiału kości RAM z teksturą
+      ramFloorMaterials[4].dispose(); // Zwolnienie złotych pinów
+
+      postItMaterials[0].dispose(); // Zwolnienie pierwszej karteczki
+      postItMaterials[1].dispose(); // Zwolnienie drugiej karteczki
     };
-  }, [gpuBoxMaterials]);
+  }, [gpuBoxMaterials, energyCanMaterials, ramFloorMaterials, postItMaterials]);
 
   // Ukrywamy biurko w całości podczas X-Ray lub na mobile (zgodnie z prośbą)
   if (xrayMode || isMobile) return null;
@@ -172,7 +223,7 @@ export const DeskScenery = () => {
       </mesh>
 
       {/* Kubek Apkmasondev */}
-      <group position={[6, 0, 4]} scale={0.7}>
+      <group position={[6.8, 0, 4]} scale={0.7}>
         {/* Ścianki kubka (otwarte od góry) */}
         <mesh position={[0, 1, 0]}>
           {/* radiusTop, radiusBottom, height, radialSegments, heightSegments, openEnded */}
@@ -209,13 +260,35 @@ export const DeskScenery = () => {
       </group>
 
       {/* Pudełko po karcie graficznej (zgodne z audytem - dispose zaimplementowany) */}
-      <mesh 
-        geometry={gpuBoxGeo} 
-        material={gpuBoxMaterials} 
-        position={[-6.5, 0.34, 2]} 
-        rotation={[0, 0.25, 0]} 
-        castShadow 
+      <mesh
+        geometry={gpuBoxGeo}
+        material={gpuBoxMaterials}
+        position={[-6.5, 0.34, 2]}
+        rotation={[0, 0.25, 0]}
+        castShadow
       />
+
+      {/* Luźne kości RAM (Zasada 4: Instances) */}
+      <Instances limit={10} geometry={ramStickGeo} material={ramFloorMaterials} castShadow frustumCulled={false}>
+        <Instance position={[1.5, 0.04, 3.6]} rotation={[0, 0.5, 0]} />
+        <Instance position={[1.8, 0.04, 4.1]} rotation={[0, 0.7, 0]} />
+      </Instances>
+
+      {/* Puszka Energetyka (Zasada 6: Współdzielone geo/mat) */}
+      <mesh
+        geometry={energyCanGeo}
+        material={energyCanMaterials}
+        position={[5.5, 0.74, 2.5]}
+        rotation={[0, 0.5, 0]}
+        castShadow
+      />
+
+      {/* Żółte Karteczki (Post-it) (Zasada 1: polygonOffset) */}
+      {/* Karteczka na brzegu biurka z hasłem */}
+      <mesh geometry={postItGeo} material={postItMaterials[0]} position={[-2.0, 0.045, 5.2]} rotation={[-Math.PI / 2, 0, 0.2]} receiveShadow />
+
+      {/* Karteczka obok energetyka z wiadomością od developera */}
+      <mesh geometry={postItGeo} material={postItMaterials[1]} position={[3.5, 0.045, 5.5]} rotation={[-Math.PI / 2, 0, -0.1]} receiveShadow />
 
       {/* Rozsypane detale na dywanie (zgodne z audytem) */}
       <ScatteredItems />

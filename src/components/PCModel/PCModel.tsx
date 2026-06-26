@@ -122,13 +122,18 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
     const posArray = explodeStep === 2 ? data.explodedPosition : data.position;
     
     // Add a gentle, premium out-of-phase floating effect in the exploded view
+    // AND a base lift to prevent clipping through the desk at the lowest point of the sine wave
     let floatOffset = 0;
-    if (explodeStep === 2 && !shouldReduceMotion) {
-      const phase = data.id.split('').reduce((acc, char) => acc + char.charCodeAt(0) * 17, 0);
-      floatOffset = Math.sin(_state.clock.getElapsedTime() * 1.2 + phase) * 0.08;
+    let explodeLift = 0;
+    if (explodeStep === 2) {
+      explodeLift = 0.15; // Minimalne podniesienie, by dolne nóżki nie wcinały się w skrzynkę
+      if (!shouldReduceMotion) {
+        const phase = data.id.split('').reduce((acc, char) => acc + char.charCodeAt(0) * 17, 0);
+        floatOffset = Math.sin(_state.clock.getElapsedTime() * 1.2 + phase) * 0.08;
+      }
     }
 
-    targetPosition.set(posArray[0], posArray[1] + liftOffset + floatOffset, posArray[2]);
+    targetPosition.set(posArray[0], posArray[1] + liftOffset + floatOffset + explodeLift, posArray[2]);
     groupRef.current.position.lerp(targetPosition, delta * 5);
     
     const targetScale = isSelected ? 1.05 : hovered ? 1.03 : 1.0;
