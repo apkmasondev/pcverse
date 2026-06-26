@@ -192,11 +192,11 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
             style={{ willChange: "transform, opacity" }}
           >
             <div 
-              className={`pointer-events-auto cursor-pointer px-4 py-2 rounded-xl rounded-br-sm border shadow-xl transition-all duration-300 ${hovered ? 'scale-105' : 'bg-gradient-to-br from-black/95 to-slate-900/90 border-white/20'}`}
+              className={`pointer-events-auto cursor-pointer px-4 py-2 rounded-xl rounded-br-sm border shadow-xl transition-all duration-300 ${hovered ? 'scale-105' : 'bg-black/60 border-white/20'}`}
               style={hovered ? { 
-                backgroundColor: `#111111`, // Solid dark background for readability without blur
+                backgroundColor: `${rgbColor}40`,
                 borderColor: `${rgbColor}`, 
-                boxShadow: `0 0 15px ${rgbColor}60` 
+                boxShadow: `0 0 15px ${rgbColor}60`
               } : undefined}
               onPointerEnter={(e) => {
                 if (isMobile) return;

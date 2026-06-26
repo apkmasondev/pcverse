@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { usePCSelection, usePCRGB, usePCView, usePCUI } from '../../hooks/usePC';
-import { Layers, Focus, MousePointerClick, Scan, Wind, Palette, Sun, Tag, Info, X, Sparkles } from 'lucide-react';
+import { Layers, Focus, MousePointerClick, Scan, Wind, Palette, Sun, Tag, Info, X, Sparkles, Cloud } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { playExplodeSound, playSelectSound, playAmbientSound, stopAmbientSound } from '../../utils/audio';
 
@@ -27,7 +27,7 @@ const COLORS = [
 export const UI = () => {
   const { explodeStep, toggleExploded, triggerCameraReset } = usePCSelection();
   const { rgbColor, setRgbColor, rgbEnabled, toggleRgbEnabled } = usePCRGB();
-  const { xrayMode, toggleXrayMode, showAirflow, toggleAirflow, envPreset, setEnvPreset, showDesk, toggleDesk, showParticles, toggleParticles } = usePCView();
+  const { xrayMode, toggleXrayMode, showAirflow, toggleAirflow, envPreset, setEnvPreset, showDesk, toggleDesk, showParticles, toggleParticles, showFog, toggleFog } = usePCView();
   const { showLabels, toggleLabels, showInstructions, setShowInstructions } = usePCUI();
   const [showHint, setShowHint] = useState(true);
   const [showPalette, setShowPalette] = useState(false);
@@ -359,6 +359,23 @@ export const UI = () => {
         </motion.button>
 
         <motion.button
+          aria-label="Mgła tła"
+          whileTap={{ scale: 0.95 }}
+          onClick={() => {
+            playSelectSound();
+            toggleFog();
+          }}
+          className={`relative flex items-center w-full h-11 rounded-xl transition-all overflow-hidden ${showFog ? 'bg-sky-500/20 border border-sky-500/50 shadow-[0_0_15px_rgba(14,165,233,0.3)]' : 'bg-transparent border border-transparent hover:bg-white/5'}`}
+        >
+          <div className={`flex-shrink-0 w-[42px] h-[42px] flex items-center justify-center transition-all duration-500 ${showFog ? 'text-sky-400 scale-110' : 'text-slate-300'}`}>
+            <Cloud aria-hidden="true" size={20} />
+          </div>
+          <span className="ml-1 font-medium text-sm text-slate-300 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            Mgła tła
+          </span>
+        </motion.button>
+
+        <motion.button
           aria-label="Instrukcja obsługi"
           whileTap={{ scale: 0.95 }}
           onClick={() => {
@@ -407,7 +424,7 @@ export const UI = () => {
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="bg-gradient-to-br from-[#0a0a0a] to-indigo-950/20 border border-white/10 rounded-3xl p-5 md:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto relative shadow-[0_0_40px_rgba(99,102,241,0.15)]"
+              className="bg-gradient-to-br from-[#0a0a0a] to-indigo-950/20 border border-white/10 rounded-3xl p-5 md:p-8 max-w-5xl w-full max-h-[90vh] overflow-y-auto scrollbar-hide relative shadow-[0_0_40px_rgba(99,102,241,0.15)]"
             >
               <button 
                 onClick={() => setShowInstructions(false)}
@@ -422,83 +439,94 @@ export const UI = () => {
                 Legenda i Instrukcja
               </h2>
               
-              <div className="grid gap-4 mb-8">
-                <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-                  <MousePointerClick aria-hidden="true" className="text-indigo-400 shrink-0 mt-1" />
-                  <div className="w-full">
-                    <h3 className="text-base font-semibold text-white mb-3">Sterowanie i Interakcja (PC & Mobile)</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-slate-300">
-                      <div>
-                        <p className="font-semibold text-white/90 mb-1.5 border-b border-white/10 pb-1">Mysz i Klawiatura</p>
-                        <ul className="space-y-1.5">
-                          <li>• <strong className="text-white">Obrót:</strong> Lewy przycisk (LPM)</li>
-                          <li>• <strong className="text-white">Przesuwanie:</strong> Prawy przycisk (PPM)</li>
-                          <li>• <strong className="text-white">Ruch kamery:</strong> W, A, S, D</li>
-                          <li>• <strong className="text-white">Zoom:</strong> Kółko myszy</li>
-                          <li>• <strong className="text-white">Wyjście:</strong> Klawisz ESC</li>
-                        </ul>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                {/* Lewa Kolumna - Sterowanie */}
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-start gap-4 p-5 rounded-2xl bg-white/[0.02] border border-white/[0.05] h-full">
+                    <MousePointerClick aria-hidden="true" className="text-indigo-400 shrink-0 mt-1" />
+                    <div className="w-full">
+                      <h3 className="text-lg font-semibold text-white mb-4">Sterowanie i Interakcja</h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm text-slate-300">
+                        <div>
+                          <p className="font-semibold text-white/90 mb-2 border-b border-white/10 pb-1.5">Mysz i Klawiatura</p>
+                          <ul className="space-y-2">
+                            <li>• <strong className="text-white">Obrót:</strong> Lewy przycisk (LPM)</li>
+                            <li>• <strong className="text-white">Przesuwanie:</strong> Prawy przycisk (PPM)</li>
+                            <li>• <strong className="text-white">Ruch kamery:</strong> W, A, S, D</li>
+                            <li>• <strong className="text-white">Zoom:</strong> Kółko myszy</li>
+                            <li>• <strong className="text-white">Wyjście:</strong> Klawisz ESC</li>
+                          </ul>
+                        </div>
+                        <div>
+                          <p className="font-semibold text-white/90 mb-2 border-b border-white/10 pb-1.5">Gesty Dotykowe</p>
+                          <ul className="space-y-2">
+                            <li>• <strong className="text-white">Obrót:</strong> Pojedynczy palec</li>
+                            <li>• <strong className="text-white">Przesuwanie:</strong> Dwa palce</li>
+                            <li>• <strong className="text-white">Zoom:</strong> Uszczypnięcie ekranu</li>
+                          </ul>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-semibold text-white/90 mb-1.5 border-b border-white/10 pb-1">Gesty Dotykowe</p>
-                        <ul className="space-y-1.5">
-                          <li>• <strong className="text-white">Obrót:</strong> Pojedynczy palec</li>
-                          <li>• <strong className="text-white">Przesuwanie:</strong> Dwa palce</li>
-                          <li>• <strong className="text-white">Zoom:</strong> Uszczypnięcie ekranu</li>
-                        </ul>
+                      <div className="mt-6 p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+                        <p className="text-sm text-indigo-200 font-medium leading-relaxed">
+                          💡 <strong className="text-indigo-100">Wskazówka:</strong> Kliknij (lub dotknij) dowolny podzespół komputera, by wyświetlić panel detali. W trybie powiększenia galerii możesz używać strzałek <kbd className="px-1.5 py-0.5 bg-black/40 rounded border border-white/20 text-xs">←</kbd> <kbd className="px-1.5 py-0.5 bg-black/40 rounded border border-white/20 text-xs">→</kbd> do przewijania.
+                        </p>
                       </div>
                     </div>
-                    <div className="mt-4 p-3 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
-                      <p className="text-sm text-indigo-200 font-medium leading-relaxed">
-                        💡 <strong className="text-indigo-100">Wskazówka:</strong> Kliknij (lub dotknij) dowolny podzespół komputera, by wyświetlić panel detali. W trybie powiększenia galerii możesz używać strzałek <kbd className="px-1.5 py-0.5 bg-black/40 rounded border border-white/20 text-xs">←</kbd> <kbd className="px-1.5 py-0.5 bg-black/40 rounded border border-white/20 text-xs">→</kbd> do przewijania zdjęć.
+                  </div>
+                </div>
+
+                {/* Prawa Kolumna - Opcje i Legenda */}
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
+                    <Layers aria-hidden="true" className="text-indigo-400 shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="text-base font-semibold text-white mb-1.5">Eksplozja (Teardown)</h3>
+                      <p className="text-sm text-slate-300 leading-relaxed">
+                        Przycisk <strong>"Rozłóż na Części"</strong> uruchamia animację rozsunięcia obudowy PC, pozwalając zbadanie budowy sprzętu od środka.
                       </p>
                     </div>
                   </div>
-                </div>
 
-                <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
-                  <Layers aria-hidden="true" className="text-indigo-400 shrink-0" />
-                  <div>
-                    <h3 className="text-base font-semibold text-white mb-2">Eksplozja (Teardown)</h3>
-                    <p className="text-sm text-slate-300 leading-relaxed">
-                      Przycisk <strong>"Rozłóż na Części"</strong> uruchamia wybuchową animację rozsunięcia obudowy PC. Pozwala na zbadanie budowy sprzętu od środka.
-                    </p>
+                  <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
+                    <Sun aria-hidden="true" className="text-amber-400 shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="text-base font-semibold text-white mb-1.5">Otoczenie i Cyber-Scenografia</h3>
+                      <p className="text-sm text-slate-300 leading-relaxed">
+                        Zmienia globalne oświetlenie. Aktywuj <strong>"Tryb Scenografii"</strong>, by postawić sprzęt na biurku z fotorealistycznymi odbiciami.
+                        <span className="text-amber-400/90 block mt-1.5 text-xs">⚠️ <strong>Uwaga:</strong> Scenografia podwaja ilość renderowanych detali (wymagane GPU).</span>
+                      </p>
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
-                  <Sun aria-hidden="true" className="text-amber-400 shrink-0" />
-                  <div>
-                    <h3 className="text-base font-semibold text-white mb-2">Otoczenie i Cyber-Scenografia</h3>
-                    <p className="text-sm text-slate-300 leading-relaxed">
-                      Zmienia globalne oświetlenie sceny 3D. Po wejściu w ten tryb możesz aktywować <strong>"Tryb Scenografii"</strong>, by postawić sprzęt na biurku z fotorealistycznymi odbiciami i plakatami w tle.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
-                    <Focus aria-hidden="true" className="text-indigo-400 shrink-0" />
-                    <span className="text-sm text-slate-300 leading-tight"><strong>Zresetuj:</strong> Przywraca domyślny kąt kamery.</span>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
-                    <Scan aria-hidden="true" className="text-cyan-400 shrink-0" />
-                    <span className="text-sm text-slate-300 leading-tight"><strong>Hologram:</strong> Prześwietla wszystkie podzespoły PC.</span>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
-                    <Wind aria-hidden="true" className="text-blue-400 shrink-0" />
-                    <span className="text-sm text-slate-300 leading-tight"><strong>Airflow:</strong> Wizualizacja przepływu powietrza.</span>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
-                    <Palette aria-hidden="true" className="text-purple-400 shrink-0" />
-                    <span className="text-sm text-slate-300 leading-tight"><strong>RGB:</strong> Sterowanie podświetleniem części.</span>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
-                    <Tag aria-hidden="true" className="text-emerald-400 shrink-0" />
-                    <span className="text-sm text-slate-300 leading-tight"><strong>Etykiety:</strong> Włącza lub wyłącza nazwy w 3D.</span>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
-                    <Sparkles aria-hidden="true" className="text-amber-400 shrink-0" />
-                    <span className="text-sm text-slate-300 leading-tight"><strong>Pył / Iskry:</strong> Przełącza zawieszone efekty cząsteczkowe 3D.</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
+                      <Scan aria-hidden="true" className="text-cyan-400 shrink-0" />
+                      <span className="text-sm text-slate-300 leading-tight"><strong>Hologram:</strong> Prześwietla wszystkie podzespoły PC.</span>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
+                      <Wind aria-hidden="true" className="text-blue-400 shrink-0" />
+                      <span className="text-sm text-slate-300 leading-tight"><strong>Airflow:</strong> Wizualizacja przepływu powietrza.</span>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
+                      <Palette aria-hidden="true" className="text-purple-400 shrink-0" />
+                      <span className="text-sm text-slate-300 leading-tight"><strong>RGB:</strong> Sterowanie podświetleniem części.</span>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
+                      <Tag aria-hidden="true" className="text-emerald-400 shrink-0" />
+                      <span className="text-sm text-slate-300 leading-tight"><strong>Etykiety:</strong> Włącza lub wyłącza nazwy w 3D.</span>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
+                      <Sparkles aria-hidden="true" className="text-amber-400 shrink-0" />
+                      <span className="text-sm text-slate-300 leading-tight"><strong>Pył / Iskry:</strong> Przełącza efekty cząsteczkowe 3D.</span>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
+                      <Cloud aria-hidden="true" className="text-sky-400 shrink-0" />
+                      <span className="text-sm text-slate-300 leading-tight"><strong>Mgła tła:</strong> Włącza klimatyczne wtapianie sceny w horyzont.</span>
+                    </div>
+                    <div className="col-span-full flex items-center justify-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
+                      <Focus aria-hidden="true" className="text-indigo-400 shrink-0" />
+                      <span className="text-sm text-slate-300 leading-tight"><strong>Zresetuj:</strong> Przywraca domyślny kąt kamery i resetuje przybliżenie.</span>
+                    </div>
                   </div>
                 </div>
               </div>

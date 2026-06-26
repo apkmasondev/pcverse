@@ -56,7 +56,7 @@ const CursorLight = () => {
 
 const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disableEffects?: boolean }) => {
   const { selectedComponent, cameraResetTrigger, explodeStep } = usePCSelection();
-  const { envPreset, showDesk, showParticles } = usePCView();
+  const { envPreset, showDesk, showParticles, showFog } = usePCView();
   const cameraControlsRef = useRef<CameraControls>(null);
   const { camera } = useThree();
   const reducedMotion = useReducedMotion();
@@ -220,7 +220,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
   return (
     <>
       <color attach="background" args={[bgColor]} />
-      <fog attach="fog" args={[bgColor, 15, 60]} />
+      {showFog && <fog attach="fog" args={[bgColor, 15, 60]} />}
       
       <ambientLight intensity={1.8} />
       

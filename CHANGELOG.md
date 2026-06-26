@@ -2,9 +2,13 @@
 
 ## Etap 26 - Optymalizacja Etykiet i Detali Scenografii 🛠️
 
+### Ulepszenia Interfejsu i Narzędzi
+- **Redesign Modalu Instrukcji**: Całkowicie przebudowano główne okno informacyjne aplikacji (`UI.tsx`). Zastąpiono pojedynczą, przewijaną listę nowoczesnym layoutem dwukolumnowym (CSS Grid `lg:grid-cols-2`). Poszerzono modal (`max-w-5xl`), co na komputerach całkowicie eliminuje potrzebę paska przewijania, poprawiając czytelność i nadając oknu "desktopowy" charakter. Zoptymalizowano ułożenie przycisków w siatce (grid), dodając wyróżnienie na sekcję o "Sterowaniu i Interakcji".
+- **Mgła Tła (Atmospheric Fog)**: Dodano nowy przycisk do menu "Otoczenie i Cyber-Scenografia" pozwalający na ręczne sterowanie globalną mgłą 3D (`<fog>`). Dodano również wyraźne ostrzeżenie w instrukcji o wysokich wymaganiach sprzętowych trybu Scenografii (MeshReflectorMaterial).
+
 ### Optymalizacja Wydajności (Performance)
-- **Rozwiązanie Compositor Bottleneck**: Usunięto efekt `backdrop-blur-xl` z animowanych etykiet 3D, zastępując go nieprzezroczystym, stylowym tłem. Dodano `will-change: transform, opacity` do kontenerów Framer Motion, wymuszając akcelerację GPU. Całkowicie zlikwidowano mikro-przycięcia podczas operowania kamerą z dużą ilością widocznych etykiet.
-- **Poprawa Interakcji 3D (Raycasting / DOM Overlay)**: Naprawiono irytujący błąd blokujący możliwość klikania komponentów w trybie Rozłożonym (Explode). Wyłączono przechwytywanie eventów przez niewidoczne, nadrzędne warstwy wstrzykiwane przez `<Html>` (`pointer-events-none`).
+- **Kompaktowy Render Etykiet**: Ostatecznie rozwiązano kwestię stylizacji etykiet. Zrezygnowano zarówno z kosztownego rozmycia Gaussa (`backdrop-blur-xl`), jak i brzydkich "smolistych" kwadratów, decydując się na eleganckie, w 100% płynne półprzezroczyste czarne tło (`bg-black/60`). Dodano również obsługę `occlude={true}`, ale ostatecznie wycofano ją z uwagi na agresywną blokadę raycastingu przez szybę obudowy komputera, powracając do renderowania na wierzchu (Overlay) dla poprawnej czytelności etykiet zza zamkniętej obudowy.
+- **Rozwiązanie Compositor Bottleneck**: Skrypt w pełni eliminuje klatkowanie podczas operowania kamerą wokół gęsto opisanych komponentów PC. Wyłączono przechwytywanie eventów przez niewidoczne, nadrzędne warstwy wstrzykiwane przez `<Html>` (`pointer-events-none`).
 - **Odchudzanie Pamięci**: Zoptymalizowano teksturę kubka (`new_mug_screen.webp`), radykalnie zmniejszając jej wagę.
 
 ### Poprawki Wizualne i Bezpieczeństwo Kodu
