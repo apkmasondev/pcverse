@@ -175,8 +175,8 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
       }
       // Płynny powrót kamery na środek
       cameraControlsRef.current?.setLookAt(
-        0, 3, 20,
-        0, 0, 0,
+        0, 4.36, 20,
+        0, 1.36, 0,
         true
       );
     }
@@ -198,8 +198,8 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
       }
       cameraControlsRef.current.reset(true);
       cameraControlsRef.current.setLookAt(
-        0, 3, 20,
-        0, 0, 0,
+        0, 4.36, 20,
+        0, 1.36, 0,
         true
       );
     }
@@ -233,7 +233,9 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
       {!isMobile && !disableEffects && <CursorLight />}
       
       <React.Suspense fallback={null}>
-        <PCModel />
+        <group position={[0, 1.36, 0]}>
+          <PCModel />
+        </group>
         <ErrorBoundary fallback={null}>
           <Environment files={envMap[envPreset] || envMap.studio} environmentIntensity={1.5} />
         </ErrorBoundary>

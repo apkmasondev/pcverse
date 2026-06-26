@@ -6,7 +6,7 @@ import { useIsMobile } from '../../hooks/useIsMobile';
 export const DeskScenery = () => {
   const { xrayMode } = usePCSettings();
   // Wczytywanie tekstur plakatów i scenografii
-  const [texIO, texCPU, texOS, texRug, texBug, texNewMug, texRam, texSpag] = useTexture([
+  const [texIO, texCPU, texOS, texRug, texBug, texNewMug, texRam, texSpag, texCrate] = useTexture([
     import.meta.env.BASE_URL + 'textures/posters/poster_io.webp',
     import.meta.env.BASE_URL + 'textures/posters/poster_cpu_war.webp',
     import.meta.env.BASE_URL + 'textures/posters/poster_os_war.webp',
@@ -14,7 +14,8 @@ export const DeskScenery = () => {
     import.meta.env.BASE_URL + 'textures/posters/poster_bug.webp',
     import.meta.env.BASE_URL + 'textures/posters/new_mug_screen.webp',
     import.meta.env.BASE_URL + 'textures/posters/poster_ram.webp',
-    import.meta.env.BASE_URL + 'textures/posters/poster_spaghetti.webp'
+    import.meta.env.BASE_URL + 'textures/posters/poster_spaghetti.webp',
+    import.meta.env.BASE_URL + 'textures/posters/wood_crate.webp'
   ]);
 
   const isMobile = useIsMobile();
@@ -42,45 +43,52 @@ export const DeskScenery = () => {
         />
       </mesh>
 
+      {/* Drewniana Skrzynia (Podstawka pod PC) */}
+      <mesh position={[0, 1.02, 0]}>
+        <boxGeometry args={[5, 2.0, 5]} />
+        <meshStandardMaterial
+          map={texCrate}
+          roughness={0.9}
+          metalness={0.0}
+        />
+      </mesh>
+
       {/* Podkładka na biurko (Dywan Turecki) */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
-        <planeGeometry args={[22, 12.375]} />
-        <meshStandardMaterial 
-          map={texRug} 
-          roughness={0.9} 
-          polygonOffset={true}
-          polygonOffsetFactor={-1}
-          polygonOffsetUnits={-1}
+        <boxGeometry args={[22, 12.375, 0.04]} />
+        <meshStandardMaterial
+          map={texRug}
+          roughness={0.9}
         />
       </mesh>
 
       {/* Kubek Apkmasondev */}
-      <group position={[6, 0, 4]}>
+      <group position={[6, 0, 4]} scale={0.7}>
         {/* Ścianki kubka (otwarte od góry) */}
         <mesh position={[0, 1, 0]}>
           {/* radiusTop, radiusBottom, height, radialSegments, heightSegments, openEnded */}
           <cylinderGeometry args={[0.8, 0.8, 2, 16, 1, true]} />
           <meshStandardMaterial color="#0f0f13" roughness={0.2} metalness={0.6} side={THREE.DoubleSide} />
         </mesh>
-        
+
         {/* Dno kubka */}
         <mesh position={[0, 0.05, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <circleGeometry args={[0.8, 16]} />
           <meshStandardMaterial color="#0f0f13" roughness={0.2} metalness={0.6} side={THREE.DoubleSide} />
         </mesh>
-        
+
         {/* Ucho kubka */}
         <mesh position={[0.8, 1, 0]} rotation={[0, 0, -Math.PI / 2]}>
           <torusGeometry args={[0.5, 0.15, 8, 16, Math.PI]} />
           <meshStandardMaterial color="#0f0f13" roughness={0.2} metalness={0.6} />
         </mesh>
-        
+
         {/* Zakrzywiony Wyświetlacz na kubku (z wygenerowaną grafiką) */}
         <mesh position={[0, 1, 0]} rotation={[0, 0, 0]}>
           {/* thetaStart = -0.6 (lekko w lewo), thetaLength = 1.2 (kąt wycinka) */}
           <cylinderGeometry args={[0.81, 0.81, 1.3, 16, 1, true, -0.6, 1.2]} />
-          <meshStandardMaterial 
-            map={texNewMug} 
+          <meshStandardMaterial
+            map={texNewMug}
             emissiveMap={texNewMug}
             emissiveIntensity={0.2}
             emissive="#ffffff"

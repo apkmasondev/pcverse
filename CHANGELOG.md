@@ -5,7 +5,9 @@
 ### Dodane / Poprawione
 - **Nowe Plakaty w Scenografii**: Dodano nową, lewitującą ścianę po przeciwnej stronie biurka (za plecami kamery). Wygenerowano za pomocą AI i zaimplementowano trzy nowe nerdowskie, cyberpunkowe plakaty ("IT IS NOT A BUG, IT IS A FEATURE", "DOWNLOAD MORE RAM", "SPAGHETTI CODE"). Plakaty zostały bezstratnie skompresowane do formatu `.webp`.
 - **Hollow Mug (Prawdziwy Kubek)**: Przebudowano geometrię kubka na biurku z litego bloku na puste w środku naczynie przy pomocy obustronnych (`DoubleSide`) materiałów, znacznie zwiększając realizm bez spadku wydajności.
-- **Aktualizacja Scenografii**: Znacząco powiększono wymiary podkładki na biurku (tureckiego dywanu). Podmieniono również wyświetlacz kubka na zupełnie nowy motyw "NO RISK NO FUN".
+- **Aktualizacja Scenografii**: Znacząco powiększono wymiary podkładki na biurku (tureckiego dywanu) i zmieniono jej budowę z płaskiego arkusza na pełnoprawny obiekt 3D nadając mu fizyczną grubość. Podmieniono również wyświetlacz kubka na zupełnie nowy motyw "NO RISK NO FUN".
+- **Drewniana Skrzynia**: Dodano fizyczną, drewnianą podstawkę pod komputer, rozwiązując problem lewitowania sprzętu nad biurkiem z uwzględnieniem matematycznej precyzji styku podzespołów. Wygenerowano dedykowaną, fotorealistyczną teksturę bejcowanego drewna przy pomocy AI.
+- **Korekta Proporcji (Pixel-Perfect)**: Skalibrowano proporcje otoczenia – zmniejszono skalę kubka o 30%, podniesiono komputer i śledzenie kamery do poziomu wzroku oraz precyzyjnie wyrównano dół obudowy ze stelażem, całkowicie eliminując błędy przenikania się brył.
 - **UX/UI Modala Instrukcji**: Skondensowano tekst w głównym panelu objaśnień. "Eksplozję" oraz "Scenografię" przekonstruowano w ergonomiczny, dwukolumnowy układ siatki, omijając w ten sposób błąd z paskiem scrollowania.
 - **Poprawka Znikających Siatek (HMR Bug)**: Zdiagnozowano i usunięto ukryty błąd deweloperski `canvas.width = 0`, który niszczył `CanvasTexture` zanim Three.js zdążył załadować teksturę górnej kratki wentylacyjnej obudowy na kartę graficzną.
 
