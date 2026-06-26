@@ -12,6 +12,8 @@
 - **Odchudzanie Pamięci**: Zoptymalizowano teksturę kubka (`new_mug_screen.webp`), radykalnie zmniejszając jej wagę.
 
 ### Poprawki Wizualne i Bezpieczeństwo Kodu
+- **Blokada Kamery (Horizon Limit)**: Wprowadzono fizyczną blokadę wychylenia kamery `maxPolarAngle={Math.PI / 2}` w komponencie `CameraControls`, dzięki czemu użytkownik nie może już "wpaść pod siatkę/blat" psując sobie perspektywę i optykę sceny.
+- **Optymalizacja Trybu Rozłożonego (Exploded View)**: Dostrojono finalne koordynaty (`explodedPosition`) dla obudowy, zasilacza, wentylatorów i innych komponentów. Dzięki temu wszystkie elementy perfekcyjnie komponują się ze zblokowaną w poprzednim kroku kamerą, zapobiegając wcinaniu się dolnych części w wirtualną podłogę.
 - **Fizyczność Ceramiki**: Znacząco ulepszono model 3D kubka w `DeskScenery`. Konstrukcja otrzymała podwójną ściankę (wewnętrzny cylinder) i górny brzeg (torus), eliminując fałszywy wygląd cienkiego "papieru".
 - **TypeScript Fix**: Usunięto rzutowania `as any` wokół węzłów `DepthOfField` i `N8AO` w pliku `Scene3D.tsx`, zamieniając je na ternaries oparte o `null`.
 
