@@ -7,12 +7,15 @@ export const DeskScenery = () => {
   const { xrayMode } = usePCSettings();
   const { explodeStep } = usePCSelection();
   const [bakeKey, setBakeKey] = useState(0);
+  const [isBaking, setIsBaking] = useState(false);
 
   useEffect(() => {
+    setIsBaking(true); // Ukryj cienie podczas animacji i oczekiwania na wypiek
     // Kiedy stan 'explodeStep' się zmienia, odczekaj (aż zakończy się animacja)
     // i wymuś ponowne wygenerowanie cienia (1 klatka), aby uniknąć smug i złych wypieków.
     const timer = setTimeout(() => {
       setBakeKey(prev => prev + 1);
+      setIsBaking(false); // Pokaż cienie po wygenerowaniu nowej klatki
     }, 2000);
     return () => clearTimeout(timer);
   }, [explodeStep]);
@@ -35,7 +38,7 @@ export const DeskScenery = () => {
       <ContactShadows
         key={bakeKey}
         position={[0, 0.01, 0]} // Minimalnie nad blatem by uniknąć z-fighting
-        opacity={0.8}
+        opacity={isBaking ? 0 : 0.8}
         scale={10}
         blur={2}
         far={4}
