@@ -3,9 +3,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { CameraControls, Environment, PerspectiveCamera, Sparkles, PerformanceMonitor, Grid, Stars } from '@react-three/drei';
 import { EffectComposer, Bloom, N8AO, Vignette, ChromaticAberration, DepthOfField } from '@react-three/postprocessing';
 import { Vector2, Vector3, PointLight } from 'three';
-import { BlendFunction } from 'postprocessing';
 
-const CHROMA_OFFSET = new Vector2(0.0005, 0.0005);
 import { PCModel } from '../PCModel/PCModel';
 import { usePCSelection, usePCView } from '../../hooks/usePC';
 import { useIsMobile } from '../../hooks/useIsMobile';
@@ -272,13 +270,13 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
         )}
         {!isMobile && (
           <EffectComposer multisampling={4}>
-            {/* @ts-ignore */}
-            {dofEnabled && !disableEffects ? <DepthOfField target={dofTarget} focalLength={0.05} bokehScale={8} height={700} /> : null}
-            {/* @ts-ignore */}
-            {!disableEffects ? <N8AO aoRadius={0.5} intensity={2.0} distanceFalloff={0.5} quality="medium" halfRes /> : null}
-            <Bloom luminanceThreshold={0.5} mipmapBlur intensity={1.5} />
-            <Vignette eskil={false} offset={0.1} darkness={0.9} />
-            <ChromaticAberration offset={new Vector2(0.0005, 0.0005)} radialModulation={false} modulationOffset={0} />
+            {([
+              dofEnabled && !disableEffects && <DepthOfField key="dof" target={dofTarget} focalLength={0.05} bokehScale={8} height={700} />,
+              !disableEffects && <N8AO key="n8ao" aoRadius={0.5} intensity={2.0} distanceFalloff={0.5} quality="medium" halfRes />,
+              <Bloom key="bloom" luminanceThreshold={0.5} mipmapBlur intensity={1.5} />,
+              <Vignette key="vig" eskil={false} offset={0.1} darkness={0.9} />,
+              <ChromaticAberration key="ca" offset={new Vector2(0.0005, 0.0005)} radialModulation={false} modulationOffset={0} />
+            ] as any)}
           </EffectComposer>
         )}
       </React.Suspense>
