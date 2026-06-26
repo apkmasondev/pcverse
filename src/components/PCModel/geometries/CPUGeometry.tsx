@@ -74,6 +74,10 @@ export const CPUGeometry = () => {
     }
   }, [ihsShape]);
 
+  useEffect(() => {
+    return () => ihsGeoRef.current?.dispose();
+  }, []);
+
   return (
     <group>
       {/* Base Substrate Block */}

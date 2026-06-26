@@ -1,7 +1,7 @@
 import { RepeatWrapping } from 'three';
 import { materials, xrayMaterial } from '../materials';
 
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useTexture } from '@react-three/drei';
 import hddTopUrl from '../../../assets/hdd_top.webp';
 import hddBottomUrl from '../../../assets/hdd_bottom.webp';
@@ -25,6 +25,10 @@ export const HDDGeometry = () => {
     tex.needsUpdate = true;
     return tex;
   }, [hddSideTexture]);
+
+  useEffect(() => {
+    return () => hddSideTextureMirrored.dispose();
+  }, [hddSideTextureMirrored]);
 
   return (
     <group>

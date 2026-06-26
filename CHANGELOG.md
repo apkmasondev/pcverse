@@ -1,5 +1,13 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 22 - Wdrożenie Poprawek z Audytu v4 (Część 1) 🛠️
+
+### Poprawione / Zoptymalizowane
+- **Zarządzanie Pamięcią i VRAM**: Rozwiązano krytyczne wycieki materiałów w klasach geometrii. Zrefaktoryzowano wbudowane instrukcje tworzące `meshStandardMaterial` z suwakiem `rgbColor` w komponentach `RAMGeometry` i `PSUGeometry`, wynosząc je do instancji referencyjnych wewnątrz hooków `useMemo` oraz `useEffect`. Każdy materiał jest teraz poprawnie czyszczony w fazie demontażu komponentu wywołaniem metody `.dispose()`.
+- **Globalny Mesh w RAM**: Usunięto przestarzały, własny mechanizm renderujący siatki dla prześwietlenia komponentu (X-Ray Mode) w obiekcie modułów pamięci `RAMGeometry`, podmieniając go na centralnie zdefiniowany zoptymalizowany element `XMesh`.
+- **Czyszczenie Skrytych Referencji**: Wprowadzono bezpieczniki uwalniające z pamięci klonowaną dynamicznie teksturę bocznej obudowy w komponencie dysku twardego (`HDDGeometry`) oraz generowaną w sposób proceduralny geometrię bloku IHS na płycie chłodzenia procesora w kodzie `CPUGeometry.tsx`. Ogranicza to "puchnięcie" aplikacji w cyklach HMR (Hot Module Replacement) w przypadku prac programistycznych.
+- **Aktualizacja Architektury PWA**: Poprawiono problem braku renderowania pliku Web App Manifest. Ścieżka `/manifest.json` w głównym drzewie renderowania `index.html` została podmieniona na względną `./manifest.json`, co wymusi prawidłowe doczytanie pliku przy nietypowym mapowaniu w repozytoriach.
+
 ## Etap 21 - Rozbudowa Scenografii i AI Plakaty ☕
 
 ### Dodane / Poprawione

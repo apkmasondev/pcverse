@@ -278,10 +278,10 @@ export const DeskScenery = () => {
 
       {/* Żółte Karteczki (Post-it) (Zasada 1: polygonOffset) */}
       {/* Karteczka na brzegu biurka z hasłem */}
-      <mesh geometry={postItGeo} material={postItMaterials[0]} position={[-2.0, 0.045, 5.2]} rotation={[-Math.PI / 2, 0, 0.2]} receiveShadow />
+      <mesh geometry={postItGeo} material={postItMaterials[0]} position={[-2.2, 0.1, 4.8]} rotation={[-Math.PI / 2, 0, 0.2]} receiveShadow />
 
       {/* Karteczka obok energetyka z wiadomością od developera */}
-      <mesh geometry={postItGeo} material={postItMaterials[1]} position={[3.5, 0.045, 5.5]} rotation={[-Math.PI / 2, 0, -0.1]} receiveShadow />
+      <mesh geometry={postItGeo} material={postItMaterials[1]} position={[3.5, 0.1, 5.4]} rotation={[-Math.PI / 2, 0, -0.1]} receiveShadow />
 
       {/* Rozsypane detale na dywanie (zgodne z audytem) */}
       <ScatteredItems />

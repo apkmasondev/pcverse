@@ -1,8 +1,8 @@
 import { fanBladesRefsY } from '../FanManager';
 import { materials } from '../materials';
 import { usePCSettings } from '../../../hooks/usePC';
-import { useRef, useEffect } from 'react';
-import { Group } from 'three';
+import { useRef, useEffect, useMemo } from 'react';
+import { Group, MeshStandardMaterial } from 'three';
 import { useTexture } from '@react-three/drei';
 import psuSideUrl from '../../../assets/psu_side.webp';
 import psuTopUrl from '../../../assets/psu_top.webp';
@@ -30,6 +30,13 @@ export const PSUGeometry = ({ rgbColor }: { rgbColor: string }) => {
       return () => { fanBladesRefsY.delete(currentRef); };
     }
   }, []);
+
+  const rgbMat = useMemo(() => new MeshStandardMaterial({ emissiveIntensity: 2, toneMapped: false }), []);
+  useEffect(() => {
+    rgbMat.color.set(rgbColor);
+    rgbMat.emissive.set(rgbColor);
+  }, [rgbColor, rgbMat]);
+  useEffect(() => () => rgbMat.dispose(), [rgbMat]);
 
   return (
     <group>
@@ -78,12 +85,7 @@ export const PSUGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {!xrayMode && (
         <Mesh position={[0, -0.402, 0]} rotation={[Math.PI / 2, 0, 0]} scale={[1.8/1.5, 1, 1]}>
           <torusGeometry args={[0.67, 0.015, 16, 64]} />
-          <meshStandardMaterial 
-            color={rgbColor} 
-            emissive={rgbColor} 
-            emissiveIntensity={2} 
-            toneMapped={false} 
-          />
+          <primitive object={rgbMat} attach="material" />
         </Mesh>
       )}
       {/* Back Texture (Exhaust & AC Plug) */}

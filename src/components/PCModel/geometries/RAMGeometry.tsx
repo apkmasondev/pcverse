@@ -1,31 +1,21 @@
-import React from 'react';
-import { materials, xrayMaterial } from '../materials';
+import { useMemo, useEffect } from 'react';
+import { MeshStandardMaterial } from 'three';
+import { materials } from '../materials';
 import { usePCSettings } from '../../../hooks/usePC';
 import { useTexture } from '@react-three/drei';
 import ramSideUrl from '../../../assets/ram_side.webp';
-
-
-const Mesh = ({ children, material, ...props }: any) => {
-  const { xrayMode } = usePCSettings();
-  const filteredChildren = React.Children.map(children, (child) => {
-    if (!child) return null;
-    if (xrayMode) {
-      if (child.type === 'meshStandardMaterial' || child.type === 'meshPhysicalMaterial' || child.type === 'primitive') {
-        return null;
-      }
-    }
-    return child;
-  });
-  return (
-    <mesh material={xrayMode ? xrayMaterial : material} {...props}>
-      {filteredChildren}
-    </mesh>
-  );
-};
+import { XMesh as Mesh } from './XMesh';
 
 export const RAMGeometry = ({ rgbColor }: { rgbColor: string }) => {
   const { xrayMode } = usePCSettings();
   const ramSideTexture = useTexture(ramSideUrl);
+  
+  const rgbMat = useMemo(() => new MeshStandardMaterial({ emissiveIntensity: 1.5, toneMapped: false }), []);
+  useEffect(() => {
+    rgbMat.color.set(rgbColor);
+    rgbMat.emissive.set(rgbColor);
+  }, [rgbColor, rgbMat]);
+  useEffect(() => () => rgbMat.dispose(), [rgbMat]);
   
   return (
     <group>
@@ -61,7 +51,7 @@ export const RAMGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {!xrayMode && (
         <Mesh position={[0, 0, 0.2]}>
           <boxGeometry args={[0.06, 1.72, 0.04]} />
-          <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={1.5} toneMapped={false} />
+          <primitive object={rgbMat} attach="material" />
         </Mesh>
       )}
     </group>
