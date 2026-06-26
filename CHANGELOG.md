@@ -1,5 +1,14 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 21 - Rozbudowa Scenografii i AI Plakaty ☕
+
+### Dodane / Poprawione
+- **Nowe Plakaty w Scenografii**: Dodano nową, lewitującą ścianę po przeciwnej stronie biurka (za plecami kamery). Wygenerowano za pomocą AI i zaimplementowano trzy nowe nerdowskie, cyberpunkowe plakaty ("IT IS NOT A BUG, IT IS A FEATURE", "DOWNLOAD MORE RAM", "SPAGHETTI CODE"). Plakaty zostały bezstratnie skompresowane do formatu `.webp`.
+- **Hollow Mug (Prawdziwy Kubek)**: Przebudowano geometrię kubka na biurku z litego bloku na puste w środku naczynie przy pomocy obustronnych (`DoubleSide`) materiałów, znacznie zwiększając realizm bez spadku wydajności.
+- **Aktualizacja Scenografii**: Znacząco powiększono wymiary podkładki na biurku (tureckiego dywanu). Podmieniono również wyświetlacz kubka na zupełnie nowy motyw "NO RISK NO FUN".
+- **UX/UI Modala Instrukcji**: Skondensowano tekst w głównym panelu objaśnień. "Eksplozję" oraz "Scenografię" przekonstruowano w ergonomiczny, dwukolumnowy układ siatki, omijając w ten sposób błąd z paskiem scrollowania.
+- **Poprawka Znikających Siatek (HMR Bug)**: Zdiagnozowano i usunięto ukryty błąd deweloperski `canvas.width = 0`, który niszczył `CanvasTexture` zanim Three.js zdążył załadować teksturę górnej kratki wentylacyjnej obudowy na kartę graficzną.
+
 ## Etap 20 - Wielki Audyt Kodowy i Dostępność 🚀
 
 ### Poprawione / Zoptymalizowane

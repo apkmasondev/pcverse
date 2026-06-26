@@ -89,10 +89,6 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
     texture.wrapT = RepeatWrapping;
     texture.repeat.set(20, 20); // Scale the mesh grill for the top
     
-    // Free canvas memory
-    canvas.width = 0;
-    canvas.height = 0;
-    
     return texture;
   }, []);
 
@@ -124,10 +120,6 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
     texture.wrapT = RepeatWrapping;
     texture.repeat.set(8, 8); // Less dense for back/side panels
     
-    // Free canvas memory
-    canvas.width = 0;
-    canvas.height = 0;
-    
     return texture;
   }, []);
 
@@ -138,13 +130,9 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
     return texture;
   }, [backMeshTexture]);
 
-  useEffect(() => {
-    return () => {
-      meshTexture.dispose();
-      backMeshTexture.dispose();
-      frontMeshTexture.dispose();
-    };
-  }, [meshTexture, backMeshTexture, frontMeshTexture]);
+  // Celowo nie zwalniamy tych tekstur przez dispose() w useEffect, 
+  // ponieważ React Strict Mode / Vite HMR wywołuje cleanup, co niszczy tekstury 
+  // trzymane w useMemo i powoduje czarne/znikające siatki mesh.
 
   const rgbMaterial = useMemo(() => new MeshStandardMaterial({ emissiveIntensity: 2, toneMapped: false }), []);
   useEffect(() => {
