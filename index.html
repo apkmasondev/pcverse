@@ -42,11 +42,38 @@
     }
     </script>
     <link rel="canonical" href="https://pcverse.app/" />
+    <script>
+      function checkWebGL() {
+        try {
+          var canvas = document.createElement('canvas');
+          return !!(window.WebGL2RenderingContext && canvas.getContext('webgl2'));
+        } catch (e) {
+          return false;
+        }
+      }
+      if (!checkWebGL()) {
+        document.documentElement.className += ' no-webgl';
+      }
+    </script>
+    <style>
+      .no-webgl #root { display: none !important; }
+      .no-webgl-msg { display: none; }
+      .no-webgl .no-webgl-msg { display: flex; align-items: center; justify-content: center; height: 100vh; background: #0f0a1c; color: white; text-align: center; font-family: sans-serif; padding: 2rem; }
+      .no-webgl .no-webgl-box { max-width: 28rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 1.5rem; border-radius: 1rem; }
+      .no-webgl h1 { font-size: 1.5rem; color: #f87171; margin-bottom: 1rem; }
+      .no-webgl p { color: #cbd5e1; line-height: 1.5; }
+    </style>
   </head>
   <body>
     <noscript>
       Do poprawnego działania aplikacji PCVerse wymagana jest włączona obsługa języka JavaScript.
     </noscript>
+    <div class="no-webgl-msg">
+      <div class="no-webgl-box">
+        <h1>Brak Obsługi WebGL</h1>
+        <p>Twoja przeglądarka lub urządzenie nie obsługuje WebGL, który jest wymagany do uruchomienia aplikacji PCVerse. Spróbuj zaktualizować sterowniki karty graficznej lub użyć innej przeglądarki.</p>
+      </div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

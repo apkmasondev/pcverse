@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { MeshReflectorMaterial, Float, useTexture, Instances, Instance } from '@react-three/drei';
 import { usePCSettings } from '../../hooks/usePC';
 import { useIsMobile } from '../../hooks/useIsMobile';
@@ -113,6 +113,16 @@ export const DeskScenery = () => {
 
   const isMobile = useIsMobile();
   const reflectorMeshRef = useRef<THREE.Mesh>(null);
+  
+  const [reducedMotion, setReducedMotion] = useState(() => 
+    typeof window !== 'undefined' ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false
+  );
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
+  }, []);
 
   // Zgodnie z audytem: zarządzanie pamięcią dla materiałów z teksturami
   const { gpuBoxMaterials, energyCanMaterials, ramFloorMaterials, postItMaterials } = useMemo(() => {
@@ -293,7 +303,7 @@ export const DeskScenery = () => {
 
       {/* Ściana z plakatami w tle */}
       <group position={[0, 12, -25]}>
-        <Float speed={1.5} rotationIntensity={0.05} floatIntensity={0.2}>
+        <Float speed={reducedMotion ? 0 : 1.5} rotationIntensity={reducedMotion ? 0 : 0.05} floatIntensity={reducedMotion ? 0 : 0.2}>
           {/* Lewy Plakat (CPU War) */}
           <mesh position={[-12, 0, 2]} rotation={[0, 0.2, 0]}>
             <planeGeometry args={[8, 8]} />
@@ -328,7 +338,7 @@ export const DeskScenery = () => {
 
       {/* Ściana z plakatami za plecami gracza */}
       <group position={[0, 12, 25]} rotation={[0, Math.PI, 0]}>
-        <Float speed={1.5} rotationIntensity={0.05} floatIntensity={0.2}>
+        <Float speed={reducedMotion ? 0 : 1.5} rotationIntensity={reducedMotion ? 0 : 0.05} floatIntensity={reducedMotion ? 0 : 0.2}>
           {/* Lewy Plakat (Bug Feature) */}
           <mesh position={[-12, 0, 2]} rotation={[0, 0.2, 0]}>
             <planeGeometry args={[8, 8]} />

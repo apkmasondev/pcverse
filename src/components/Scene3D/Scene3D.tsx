@@ -19,6 +19,19 @@ const envMap: Record<string, string> = {
   apartment: import.meta.env.BASE_URL + 'environments/lebombo_1k.hdr'
 };
 
+const useReducedMotion = () => {
+  const [reducedMotion, setReducedMotion] = useState(() => 
+    typeof window !== 'undefined' ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false
+  );
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
+  }, []);
+  return reducedMotion;
+};
+
 const CursorLight = () => {
   const lightRef = useRef<PointLight>(null);
   const _vec = useRef(new Vector3());
@@ -48,6 +61,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
   const { envPreset, showDesk, showParticles } = usePCSettings();
   const cameraControlsRef = useRef<CameraControls>(null);
   const { camera } = useThree();
+  const reducedMotion = useReducedMotion();
 
   const hasInitialized = useRef(false);
   const _tempVec = useRef(new Vector3());
@@ -214,7 +228,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
       
       <PerspectiveCamera makeDefault position={[0, 3, 16]} fov={50} near={0.5} far={100} />
       
-      {!isMobile && !disableEffects && showParticles && (
+      {!isMobile && !disableEffects && showParticles && !reducedMotion && (
         <>
           <Sparkles count={500} scale={30} size={4} speed={0.5} opacity={0.5} color={gridColors.sparkles} />
           <Stars radius={50} depth={50} count={3000} factor={3} saturation={0.5} fade speed={1.5} />
@@ -275,8 +289,8 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
         minPolarAngle={0.2}
         maxPolarAngle={Math.PI * 0.85}
         dollySpeed={0.5}
-        smoothTime={0.4}
-        draggingSmoothTime={0.2}
+        smoothTime={reducedMotion ? 0.05 : 0.4}
+        draggingSmoothTime={reducedMotion ? 0.05 : 0.2}
       />
     </>
   );

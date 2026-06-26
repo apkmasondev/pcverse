@@ -1,6 +1,11 @@
 # Dziennik Zmian (Changelog)
 
-## Etap 22 - Wdrożenie Poprawek z Audytu v4 (Część 2) 🛠️
+## Etap 22 - Wdrożenie Poprawek z Audytu v4 (Część 3) 🛠️
+
+### Dostępność i UX (WCAG)
+- **Redukcja Animacji**: Wdrożono globalną detekcję `prefers-reduced-motion: reduce`. Użytkownicy z odpowiednimi ustawieniami systemowymi otrzymają błyskawiczne (nie animowane) płynne przejścia kamery. Wyłączono u nich również rozpraszające pływające plakaty (komponent `Float`) w Cyber-Biurku oraz gęste efekty cząsteczkowe (`Sparkles`, `Stars`).
+- **Tagi ARIA**: Dodano `role="region"` i opisy `aria-label` w kluczowych częściach DOM (jak `<main>` w `App.tsx` oraz cały interfejs nawigacji w `UI.tsx`). Ułatwi to odczyt aplikacji i nawigację z użyciem czytników ekranowych.
+- **Renderowanie warunkowe WebGL**: Skrypt weryfikujący wsparcie przeglądarki pod kątem WebGL2 został przeniesiony prosto do tagu `<head>` w `index.html`. Interfejs błędu oznaczający brak WebGL jest teraz stylizowany lokalnie i pokazywany bez potrzeby ładownia dziesiątek megabajtów bundli w React, kompletnie pozbawiając użytkownika denerwującego "mrugania" ekranu po awaryjnym starcie React.
 
 ### Poprawione / Zoptymalizowane
 - **Zarządzanie Pamięcią i VRAM**: Część 2 wycieków. Zabezpieczono kolejne elementy infrastruktury 3D, dopisując brakujące metody `.dispose()` do szklanych osłon komputera (`frontGlassMatRef` i `sideGlassMatRef`) oraz zaawansowanego materiału odblaskowego na głównym biurku (`MeshReflectorMaterial`). Dzięki temu przełączanie widoku X-Ray oraz Scenografii jest w 100% zoptymalizowane pod kątem zużycia pamięci.

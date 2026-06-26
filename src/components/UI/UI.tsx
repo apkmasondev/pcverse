@@ -107,6 +107,8 @@ export const UI = () => {
       </AnimatePresence>
       <motion.div 
         id="ui-controls"
+        role="region"
+        aria-label="Kontrolery aplikacji"
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
