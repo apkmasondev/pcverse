@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import { RepeatWrapping, SRGBColorSpace, MeshStandardMaterial } from 'three';
 import { fanBladesRefsY } from '../FanManager';
 import { materials, xrayMaterial } from '../materials';
@@ -66,6 +67,20 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
 
 
 
+  const texturedMaterials = useMemo(() => ({
+    texMat0: new THREE.MeshStandardMaterial({ map: gpuIoTexture, roughness: 0.4, metalness: 0.6 }),
+    texMat1: new THREE.MeshStandardMaterial({ map: gpuBackplateTexture, roughness: 0.3, metalness: 0.7 }),
+    texMat2: new THREE.MeshStandardMaterial({ map: gpuFrontTexture, roughness: 0.3, metalness: 0.5 }),
+    texMat3: new THREE.MeshStandardMaterial({ map: gpuTopTexture, roughness: 0.4, metalness: 0.6 }),
+    texMat4: new THREE.MeshStandardMaterial({ map: gpuBottomTexture, roughness: 0.4, metalness: 0.6 })
+  }), [gpuBackplateTexture, gpuBottomTexture, gpuFrontTexture, gpuIoTexture, gpuTopTexture]);
+
+  useEffect(() => {
+    return () => {
+      Object.values(texturedMaterials).forEach(mat => mat.dispose());
+    };
+  }, [texturedMaterials]);
+
   return (
     <group>
       {/* PCIe Connector - Short Segment (Front) */}
@@ -88,7 +103,7 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
         {!xrayMode && (
           <mesh position={[-0.025, 0, -0.05]} rotation={[0, -Math.PI / 2, 0]}>
             <planeGeometry args={[1.1, 0.38]} />
-            <meshStandardMaterial map={gpuIoTexture} roughness={0.4} metalness={0.6} />
+            <primitive object={texturedMaterials.texMat0} />
           </mesh>
         )}
         {/* HDMI Port (Gold plated) */}
@@ -120,7 +135,7 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {!xrayMode && (
         <mesh position={[0, 0.076, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <planeGeometry args={[3.4, 1.2]} />
-          <meshStandardMaterial map={gpuBackplateTexture} roughness={0.3} metalness={0.7} />
+          <primitive object={texturedMaterials.texMat1} />
         </mesh>
       )}
       {/* Backplate Accent / Cutout detail (Removed to expose texture) */}
@@ -140,7 +155,7 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {!xrayMode && (
         <mesh position={[0, -0.376, 0]} rotation={[Math.PI / 2, 0, 0]}>
           <planeGeometry args={[3.4, 1.2]} />
-          <meshStandardMaterial map={gpuFrontTexture} roughness={0.3} metalness={0.5} />
+          <primitive object={texturedMaterials.texMat2} />
         </mesh>
       )}
 
@@ -148,7 +163,7 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {!xrayMode && (
         <mesh position={[0, -0.15, 0.601]} rotation={[0, 0, 0]}>
           <planeGeometry args={[3.4, 0.45]} />
-          <meshStandardMaterial map={gpuTopTexture} roughness={0.4} metalness={0.6} />
+          <primitive object={texturedMaterials.texMat3} />
         </mesh>
       )}
 
@@ -156,7 +171,7 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {!xrayMode && (
         <mesh position={[0, -0.15, -0.601]} rotation={[0, Math.PI, Math.PI]}>
           <planeGeometry args={[3.4, 0.45]} />
-          <meshStandardMaterial map={gpuBottomTexture} roughness={0.4} metalness={0.6} />
+          <primitive object={texturedMaterials.texMat4} />
         </mesh>
       )}
 

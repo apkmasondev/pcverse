@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import { useMemo, useEffect } from 'react';
 import { MeshStandardMaterial } from 'three';
 import { materials } from '../materials';
@@ -17,6 +18,17 @@ export const RAMGeometry = ({ rgbColor }: { rgbColor: string }) => {
   }, [rgbColor, rgbMat]);
   useEffect(() => () => rgbMat.dispose(), [rgbMat]);
   
+  const texturedMaterials = useMemo(() => ({
+    texMat0: new THREE.MeshStandardMaterial({ map: ramSideTexture, roughness: 0.4, metalness: 0.6 }),
+    texMat1: new THREE.MeshStandardMaterial({ map: ramSideTexture, roughness: 0.4, metalness: 0.6 })
+  }), [ramSideTexture]);
+
+  useEffect(() => {
+    return () => {
+      Object.values(texturedMaterials).forEach(mat => mat.dispose());
+    };
+  }, [texturedMaterials]);
+
   return (
     <group>
       {/* RAM PCB (Długa na osi Y, wpięta w płytę główną osiami Z) */}
@@ -39,12 +51,12 @@ export const RAMGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {/* Right side (+X) */}
       <Mesh position={[0.041, 0, 0.02]} rotation={[0, Math.PI / 2, Math.PI / 2]}>
         <planeGeometry args={[1.75, 0.32]} />
-        <meshStandardMaterial map={ramSideTexture} roughness={0.4} metalness={0.6} />
+        <primitive object={texturedMaterials.texMat0} />
       </Mesh>
       {/* Left side (-X) */}
       <Mesh position={[-0.041, 0, 0.02]} rotation={[0, -Math.PI / 2, -Math.PI / 2]}>
         <planeGeometry args={[1.75, 0.32]} />
-        <meshStandardMaterial map={ramSideTexture} roughness={0.4} metalness={0.6} />
+        <primitive object={texturedMaterials.texMat1} />
       </Mesh>
 
       {/* RGB Top Bar - hide when xrayMode is active */}

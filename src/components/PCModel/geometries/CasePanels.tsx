@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import { BackSide, CanvasTexture, DoubleSide, Group, MathUtils, Texture, RepeatWrapping, MeshStandardMaterial } from 'three';
 import { useRef, useMemo, useEffect } from 'react';
 
@@ -108,6 +109,17 @@ export const CasePanels = ({
     }
   });
 
+  const texturedMaterials = useMemo(() => ({
+    texMat0: new THREE.MeshStandardMaterial({ map: caseBackTexture, metalness: 0.4, roughness: 0.6 }),
+    texMat1: new THREE.MeshStandardMaterial({ map: caseInteriorTexture, metalness: 0.5, roughness: 0.7, side: BackSide })
+  }), [caseBackTexture, caseInteriorTexture]);
+
+  useEffect(() => {
+    return () => {
+      Object.values(texturedMaterials).forEach(mat => mat.dispose());
+    };
+  }, [texturedMaterials]);
+
   return (
     <>
       {!xrayMode && (
@@ -209,11 +221,11 @@ export const CasePanels = ({
           </Mesh>
           <Mesh position={[0, 0, 0.051]}>
             <shapeGeometry args={[leftPanelShape]} />
-            <meshStandardMaterial map={caseBackTexture} metalness={0.4} roughness={0.6} />
+            <primitive object={texturedMaterials.texMat0} />
           </Mesh>
           <Mesh position={[0, 0, -0.001]}>
             <shapeGeometry args={[leftPanelShape]} />
-            <meshStandardMaterial map={caseInteriorTexture} metalness={0.5} roughness={0.7} side={BackSide} />
+            <primitive object={texturedMaterials.texMat1} />
           </Mesh>
         </group>
         <Mesh position={[-1.98, 1.4, 0.2]} rotation={[0, Math.PI / 2, 0]}>

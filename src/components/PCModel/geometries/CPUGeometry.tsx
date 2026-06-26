@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import { ExtrudeGeometry, Shape } from 'three';
 import { useRef, useMemo, useEffect } from 'react';
 
@@ -78,6 +79,18 @@ export const CPUGeometry = () => {
     return () => ihsGeoRef.current?.dispose();
   }, []);
 
+  const texturedMaterials = useMemo(() => ({
+    texMat0: new THREE.MeshStandardMaterial({ map: cpuTexture, roughness: 0.9 }),
+    texMat1: new THREE.MeshStandardMaterial({ map: cpuTexture, roughness: 0.4, metalness: 0.7 }),
+    texMat2: new THREE.MeshStandardMaterial({ map: cpuBottomTexture, roughness: 0.4, metalness: 0.8 })
+  }), [cpuBottomTexture, cpuTexture]);
+
+  useEffect(() => {
+    return () => {
+      Object.values(texturedMaterials).forEach(mat => mat.dispose());
+    };
+  }, [texturedMaterials]);
+
   return (
     <group>
       {/* Base Substrate Block */}
@@ -88,7 +101,7 @@ export const CPUGeometry = () => {
       {/* Substrate Top Texture Plane (Edges around IHS) */}
       <mesh position={[0, 0, 0.021]} material={xrayMode ? xrayMaterial : undefined}>
         <planeGeometry args={[0.8, 0.8]} />
-        {!xrayMode && <meshStandardMaterial map={cpuTexture} roughness={0.9} />}
+        {!xrayMode && <primitive object={texturedMaterials.texMat0} />}
       </mesh>
 
       {/* 3D Raised IHS (Octopus Shape with Bevels) */}
@@ -96,7 +109,7 @@ export const CPUGeometry = () => {
         <extrudeGeometry ref={ihsGeoRef as any} args={[ihsShape, extrudeOptsIhs]} />
         {!xrayMode && (
           <>
-            <meshStandardMaterial attach="material-0" map={cpuTexture} roughness={0.4} metalness={0.7} />
+            <primitive object={texturedMaterials.texMat1} attach="material-0" />
             <primitive object={materials.cpuSilverMetal} attach="material-1" />
           </>
         )}
@@ -105,7 +118,7 @@ export const CPUGeometry = () => {
       {/* Photorealistic CPU Bottom (Pins) */}
       <mesh position={[0, 0, -0.041]} rotation={[0, Math.PI, 0]} material={xrayMode ? xrayMaterial : undefined}>
         <planeGeometry args={[0.8, 0.8]} />
-        {!xrayMode && <meshStandardMaterial map={cpuBottomTexture} roughness={0.4} metalness={0.8} />}
+        {!xrayMode && <primitive object={texturedMaterials.texMat2} />}
       </mesh>
     </group>
   );

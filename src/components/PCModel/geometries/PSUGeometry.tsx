@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import { fanBladesRefsY } from '../FanManager';
 import { materials } from '../materials';
 import { usePCSettings } from '../../../hooks/usePC';
@@ -38,6 +39,21 @@ export const PSUGeometry = ({ rgbColor }: { rgbColor: string }) => {
   }, [rgbColor, rgbMat]);
   useEffect(() => () => rgbMat.dispose(), [rgbMat]);
 
+  const texturedMaterials = useMemo(() => ({
+    texMat0: new THREE.MeshStandardMaterial({ map: psuTopTexture, roughness: 0.6, metalness: 0.4 }),
+    texMat1: new THREE.MeshStandardMaterial({ map: psuSideTexture, roughness: 0.6, metalness: 0.4 }),
+    texMat2: new THREE.MeshStandardMaterial({ map: psuSideTexture, roughness: 0.6, metalness: 0.4 }),
+    texMat3: new THREE.MeshStandardMaterial({ map: psuBottomTexture, roughness: 0.6, metalness: 0.4 }),
+    texMat4: new THREE.MeshStandardMaterial({ map: psuBackTexture, roughness: 0.8 }),
+    texMat5: new THREE.MeshStandardMaterial({ map: psuFrontTexture, roughness: 0.8 })
+  }), [psuBackTexture, psuBottomTexture, psuFrontTexture, psuSideTexture, psuTopTexture]);
+
+  useEffect(() => {
+    return () => {
+      Object.values(texturedMaterials).forEach(mat => mat.dispose());
+    };
+  }, [texturedMaterials]);
+
   return (
     <group>
       {/* Inner Rotating Fan Blades (Visible in X-Ray mode) */}
@@ -64,22 +80,22 @@ export const PSUGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {/* PSU Top Texture */}
       <Mesh position={[0, 0.401, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[1.8, 1.5]} />
-        <meshStandardMaterial map={psuTopTexture} roughness={0.6} metalness={0.4} />
+        <primitive object={texturedMaterials.texMat0} />
       </Mesh>
       {/* PSU Side Texture (Facing Glass) */}
       <Mesh position={[0.901, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
         <planeGeometry args={[1.5, 0.8]} />
-        <meshStandardMaterial map={psuSideTexture} roughness={0.6} metalness={0.4} />
+        <primitive object={texturedMaterials.texMat1} />
       </Mesh>
       {/* PSU Side Texture (Facing Back Panel) */}
       <Mesh position={[-0.901, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
         <planeGeometry args={[1.5, 0.8]} />
-        <meshStandardMaterial map={psuSideTexture} roughness={0.6} metalness={0.4} />
+        <primitive object={texturedMaterials.texMat2} />
       </Mesh>
       {/* PSU Bottom Texture */}
       <Mesh position={[0, -0.401, 0]} rotation={[Math.PI / 2, 0, 0]}>
         <planeGeometry args={[1.8, 1.5]} />
-        <meshStandardMaterial map={psuBottomTexture} roughness={0.6} metalness={0.4} />
+        <primitive object={texturedMaterials.texMat3} />
       </Mesh>
       {/* RGB Ring over the fan - hide when xrayMode is active */}
       {!xrayMode && (
@@ -91,12 +107,12 @@ export const PSUGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {/* Back Texture (Exhaust & AC Plug) */}
       <Mesh position={[0, 0, -0.751]} rotation={[0, Math.PI, 0]}>
         <planeGeometry args={[1.8, 0.8]} />
-        <meshStandardMaterial map={psuBackTexture} roughness={0.8} />
+        <primitive object={texturedMaterials.texMat4} />
       </Mesh>
       {/* Modular Cable Ports Texture (Front of PSU) */}
       <Mesh position={[0, 0, 0.751]}>
         <planeGeometry args={[1.8, 0.8]} />
-        <meshStandardMaterial map={psuFrontTexture} roughness={0.8} />
+        <primitive object={texturedMaterials.texMat5} />
       </Mesh>
       {/* Airflow Intake (Blue, from bottom into the PSU) */}
       <group position={[0, -1.0, 0]} rotation={[-Math.PI / 2, 0, 0]}>

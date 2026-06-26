@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import React, { useMemo, useEffect } from 'react';
 import { MeshStandardMaterial } from 'three';
 import { materials, xrayMaterial } from '../materials';
@@ -57,6 +58,23 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
     };
   }, [rgbMaterial]);
 
+  const texturedMaterials = useMemo(() => ({
+    texMat0: new THREE.MeshStandardMaterial({ map: moboTopTexture, roughness: 0.5, metalness: 0.4, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }),
+    texMat1: new THREE.MeshStandardMaterial({ map: backTexture, roughness: 0.4, metalness: 0.2, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }),
+    texMat2: new THREE.MeshStandardMaterial({ map: cpuSocketTexture, metalness: 0.8, roughness: 0.2 }),
+    texMat3: new THREE.MeshStandardMaterial({ map: ssdTexture, roughness: 0.5 }),
+    texMat4: new THREE.MeshStandardMaterial({ map: m2HeatsinkTexture, roughness: 0.4, metalness: 0.6 }),
+    texMat5: new THREE.MeshStandardMaterial({ map: cmosBatteryTexture, metalness: 0.7, roughness: 0.3, color: "#ffffff" }),
+    texMat6: new THREE.MeshStandardMaterial({ map: chipsetTexture, roughness: 0.3, metalness: 0.6 }),
+    texMat7: new THREE.MeshStandardMaterial({ map: moboIoTexture, roughness: 0.6, metalness: 0.4, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 })
+  }), [backTexture, chipsetTexture, cmosBatteryTexture, cpuSocketTexture, m2HeatsinkTexture, moboIoTexture, moboTopTexture, ssdTexture]);
+
+  useEffect(() => {
+    return () => {
+      Object.values(texturedMaterials).forEach(mat => mat.dispose());
+    };
+  }, [texturedMaterials]);
+
   return (
     <group>
       {/* Main PCB */}
@@ -68,13 +86,13 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {/* Motherboard Top Texture (Photorealistic Base) */}
       <Mesh position={[0, 0, 0.031]}>
         <planeGeometry args={[3, 4]} />
-        <meshStandardMaterial map={moboTopTexture} roughness={0.5} metalness={0.4} polygonOffset={true} polygonOffsetFactor={-1} polygonOffsetUnits={-1} />
+        <primitive object={texturedMaterials.texMat0} />
       </Mesh>
 
       {/* Motherboard Backplate Texture */}
       <Mesh position={[0, 0, -0.031]} rotation={[0, Math.PI, 0]}>
         <planeGeometry args={[3, 4]} />
-        <meshStandardMaterial map={backTexture} roughness={0.4} metalness={0.2} polygonOffset={true} polygonOffsetFactor={-1} polygonOffsetUnits={-1} />
+        <primitive object={texturedMaterials.texMat1} />
       </Mesh>
 
       {/* CPU Socket Cover (Grey rectangle to hide the printed socket on texture) */}
@@ -90,7 +108,7 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
       </Mesh>
       <Mesh position={[0, 0.95, 0.095]}>
         <planeGeometry args={[1.3, 1.45]} />
-        <meshStandardMaterial map={cpuSocketTexture} metalness={0.8} roughness={0.2} />
+        <primitive object={texturedMaterials.texMat2} />
       </Mesh>
 
       {/* NVMe M.2 SSD */}
@@ -101,7 +119,7 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
         </Mesh>
         <Mesh position={[0, 0, 0.011]} rotation={[0, 0, -Math.PI / 2]}>
           <planeGeometry args={[0.2, 0.78]} />
-          <meshStandardMaterial map={ssdTexture} roughness={0.5} />
+          <primitive object={texturedMaterials.texMat3} />
         </Mesh>
       </group>
 
@@ -289,7 +307,7 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
         {/* Top face with AORUS texture */}
         <Mesh position={[0, 0, 0.051]}>
           <planeGeometry args={[1.8, 0.3]} />
-          <meshStandardMaterial map={m2HeatsinkTexture} roughness={0.4} metalness={0.6} />
+          <primitive object={texturedMaterials.texMat4} />
         </Mesh>
       </group>
 
@@ -303,7 +321,7 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
         {/* The shiny CR2032 Battery */}
         <Mesh position={[0, 0, 0.03]} rotation={[Math.PI / 2, 0, 0]}>
           <cylinderGeometry args={[0.15, 0.15, 0.02, 32]} />
-          <meshStandardMaterial color="#ffffff" map={cmosBatteryTexture} metalness={0.7} roughness={0.3} />
+          <primitive object={texturedMaterials.texMat5} />
         </Mesh>
         {/* Metal clip securing the battery */}
         <Mesh position={[0, 0.1, 0.04]}>
@@ -344,7 +362,7 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
         {/* Chipset Texture */}
         <Mesh position={[0, 0, 0.076]}>
           <planeGeometry args={[1.0, 1.0]} />
-          <meshStandardMaterial map={chipsetTexture} roughness={0.3} metalness={0.6} />
+          <primitive object={texturedMaterials.texMat6} />
         </Mesh>
         {/* Sci-fi grooves */}
         <Mesh position={[-0.2, 0, 0.08]}>
@@ -392,7 +410,7 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
         {/* Motherboard IO Image Texture Plane */}
         <Mesh position={[-1.551, 1.2, -1.55]} rotation={[0, -Math.PI / 2, 0]}>
           <planeGeometry args={[0.65, 1.4]} />
-          <meshStandardMaterial map={moboIoTexture} roughness={0.6} metalness={0.4} polygonOffset={true} polygonOffsetFactor={-1} polygonOffsetUnits={-1} />
+          <primitive object={texturedMaterials.texMat7} />
         </Mesh>
         {/* Motherboard IO Ports - Professional High-End Layout */}
         {/* BIOS Flashback & Clear CMOS */}

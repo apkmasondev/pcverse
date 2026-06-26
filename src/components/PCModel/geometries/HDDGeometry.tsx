@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import { RepeatWrapping } from 'three';
 import { materials, xrayMaterial } from '../materials';
 
@@ -30,6 +31,21 @@ export const HDDGeometry = () => {
     return () => hddSideTextureMirrored.dispose();
   }, [hddSideTextureMirrored]);
 
+  const texturedMaterials = useMemo(() => ({
+    texMat0: new THREE.MeshStandardMaterial({ map: hddTopTexture, roughness: 0.3, metalness: 0.6 }),
+    texMat1: new THREE.MeshStandardMaterial({ map: hddBottomTexture, roughness: 0.6, metalness: 0.3 }),
+    texMat2: new THREE.MeshStandardMaterial({ map: hddSideTextureMirrored, roughness: 0.5, metalness: 0.5 }),
+    texMat3: new THREE.MeshStandardMaterial({ map: hddSideTexture, roughness: 0.5, metalness: 0.5 }),
+    texMat4: new THREE.MeshStandardMaterial({ map: hddBehindTexture, roughness: 0.4, metalness: 0.6 }),
+    texMat5: new THREE.MeshStandardMaterial({ map: hddPortsTexture, roughness: 0.4, metalness: 0.6 })
+  }), [hddBehindTexture, hddBottomTexture, hddPortsTexture, hddSideTexture, hddSideTextureMirrored, hddTopTexture]);
+
+  useEffect(() => {
+    return () => {
+      Object.values(texturedMaterials).forEach(mat => mat.dispose());
+    };
+  }, [texturedMaterials]);
+
   return (
     <group>
       {/* HDD Main Casing */}
@@ -48,7 +64,7 @@ export const HDDGeometry = () => {
       {!xrayMode && (
         <mesh position={[0, 0.141, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <planeGeometry args={[0.96, 1.36]} />
-          <meshStandardMaterial map={hddTopTexture} roughness={0.3} metalness={0.6} />
+          <primitive object={texturedMaterials.texMat0} />
         </mesh>
       )}
 
@@ -56,7 +72,7 @@ export const HDDGeometry = () => {
       {!xrayMode && (
         <mesh position={[0, -0.126, 0]} rotation={[Math.PI / 2, 0, 0]}>
           <planeGeometry args={[1.0, 1.4]} />
-          <meshStandardMaterial map={hddBottomTexture} roughness={0.6} metalness={0.3} />
+          <primitive object={texturedMaterials.texMat1} />
         </mesh>
       )}
 
@@ -64,7 +80,7 @@ export const HDDGeometry = () => {
       {!xrayMode && (
         <mesh position={[0.501, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
           <planeGeometry args={[1.4, 0.25]} />
-          <meshStandardMaterial map={hddSideTextureMirrored} roughness={0.5} metalness={0.5} />
+          <primitive object={texturedMaterials.texMat2} />
         </mesh>
       )}
 
@@ -72,7 +88,7 @@ export const HDDGeometry = () => {
       {!xrayMode && (
         <mesh position={[-0.501, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
           <planeGeometry args={[1.4, 0.25]} />
-          <meshStandardMaterial map={hddSideTexture} roughness={0.5} metalness={0.5} />
+          <primitive object={texturedMaterials.texMat3} />
         </mesh>
       )}
 
@@ -80,7 +96,7 @@ export const HDDGeometry = () => {
       {!xrayMode && (
         <mesh position={[0, 0, -0.701]} rotation={[0, Math.PI, 0]}>
           <planeGeometry args={[1.0, 0.25]} />
-          <meshStandardMaterial map={hddBehindTexture} roughness={0.4} metalness={0.6} />
+          <primitive object={texturedMaterials.texMat4} />
         </mesh>
       )}
 
@@ -88,7 +104,7 @@ export const HDDGeometry = () => {
       {!xrayMode && (
         <mesh position={[0, 0, 0.701]} rotation={[0, 0, 0]}>
           <planeGeometry args={[1.0, 0.25]} />
-          <meshStandardMaterial map={hddPortsTexture} roughness={0.4} metalness={0.6} />
+          <primitive object={texturedMaterials.texMat5} />
         </mesh>
       )}
 

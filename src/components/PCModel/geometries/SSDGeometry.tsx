@@ -1,3 +1,5 @@
+import { useMemo, useEffect } from 'react';
+import * as THREE from 'three';
 import { materials, xrayMaterial } from '../materials';
 import { useTexture } from '@react-three/drei';
 import ssdTopUrl from '../../../assets/ssd_top.webp';
@@ -8,6 +10,17 @@ export const SSDGeometry = () => {
   const { xrayMode } = usePCSettings();
   const ssdTexture = useTexture(ssdTopUrl);
   const ssdBottomTexture = useTexture(ssdBottomUrl);
+
+  const texturedMaterials = useMemo(() => ({
+    texMat0: new THREE.MeshStandardMaterial({ map: ssdTexture, roughness: 0.4, metalness: 0.2, transparent: true }),
+    texMat1: new THREE.MeshStandardMaterial({ map: ssdBottomTexture, roughness: 0.4, metalness: 0.2, transparent: true })
+  }), [ssdBottomTexture, ssdTexture]);
+
+  useEffect(() => {
+    return () => {
+      Object.values(texturedMaterials).forEach(mat => mat.dispose());
+    };
+  }, [texturedMaterials]);
 
   return (
     <group>
@@ -20,13 +33,13 @@ export const SSDGeometry = () => {
       {/* SSD Photorealistic Top */}
       <mesh position={[0, 0, 0.006]} material={xrayMode ? xrayMaterial : undefined}>
         <planeGeometry args={[0.22, 0.8]} />
-        {!xrayMode && <meshStandardMaterial map={ssdTexture} roughness={0.4} metalness={0.2} transparent={true} />}
+        {!xrayMode && <primitive object={texturedMaterials.texMat0} />}
       </mesh>
       
       {/* SSD Photorealistic Bottom */}
       <mesh position={[0, 0, -0.006]} rotation={[0, Math.PI, 0]} material={xrayMode ? xrayMaterial : undefined}>
         <planeGeometry args={[0.22, 0.8]} />
-        {!xrayMode && <meshStandardMaterial map={ssdBottomTexture} roughness={0.4} metalness={0.2} transparent={true} />}
+        {!xrayMode && <primitive object={texturedMaterials.texMat1} />}
       </mesh>
       
       {/* Gold Connector Edge (Pins are at the bottom: -Y) */}

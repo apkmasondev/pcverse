@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import { BackSide, CanvasTexture, ClampToEdgeWrapping, DoubleSide, RepeatWrapping, SRGBColorSpace, MeshStandardMaterial } from 'three';
 import { materials } from '../materials';
 import { useMemo, useEffect } from 'react';
@@ -148,6 +149,20 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
     return () => rgbMaterial.dispose();
   }, [rgbMaterial]);
 
+  const texturedMaterials = useMemo(() => ({
+    texMat0: new THREE.MeshStandardMaterial({ map: caseBehindTexture, metalness: 0.4, roughness: 0.6, side: BackSide }),
+    texMat1: new THREE.MeshStandardMaterial({ map: caseInteriorTexture, metalness: 0.5, roughness: 0.7 }),
+    texMat2: new THREE.MeshStandardMaterial({ map: caseBottomTexture, metalness: 0.5, roughness: 0.7, side: BackSide }),
+    texMat3: new THREE.MeshStandardMaterial({ map: caseBottomTexture, metalness: 0.5, roughness: 0.7 }),
+    texMat4: new THREE.MeshStandardMaterial({ map: caseInteriorTexture, metalness: 0.5, roughness: 0.7 })
+  }), [caseBehindTexture, caseBottomTexture, caseInteriorTexture]);
+
+  useEffect(() => {
+    return () => {
+      Object.values(texturedMaterials).forEach(mat => mat.dispose());
+    };
+  }, [texturedMaterials]);
+
   return (
     <group>
       {/* Back Panel (Solid metal frame with Motherboard/PSU cutout locations) */}
@@ -158,12 +173,12 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
       {/* Back Panel Texture */}
       <Mesh position={[0, 0, -2.001]} rotation={[0, 0, 0]}>
         <shapeGeometry args={[backPanelShape]} />
-        <meshStandardMaterial map={caseBehindTexture} metalness={0.4} roughness={0.6} side={BackSide} />
+        <primitive object={texturedMaterials.texMat0} />
       </Mesh>
       {/* Back Panel Texture (Inside, facing Motherboard) */}
       <Mesh position={[0, 0, -1.899]}>
         <shapeGeometry args={[backPanelShape]} />
-        <meshStandardMaterial map={caseInteriorTexture} metalness={0.5} roughness={0.7} />
+        <primitive object={texturedMaterials.texMat1} />
       </Mesh>
       
 
@@ -207,12 +222,12 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
         {/* Bottom Panel Texture (Outside) */}
         <Mesh position={[0, 0, -0.001]} rotation={[0, 0, 0]}>
           <shapeGeometry args={[bottomPanelShape]} />
-          <meshStandardMaterial map={caseBottomTexture} metalness={0.5} roughness={0.7} side={BackSide} />
+          <primitive object={texturedMaterials.texMat2} />
         </Mesh>
         {/* Bottom Panel Texture (Inside) */}
         <Mesh position={[0, 0, 0.101]} rotation={[0, 0, 0]}>
           <shapeGeometry args={[bottomPanelShape]} />
-          <meshStandardMaterial map={caseBottomTexture} metalness={0.5} roughness={0.7} />
+          <primitive object={texturedMaterials.texMat3} />
         </Mesh>
       </group>
       {/* Case Feet (Rubberized) */}
@@ -285,7 +300,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
         {/* Motherboard Tray Texture */}
         <Mesh position={[0, 0, 0.051]}>
           <shapeGeometry args={[moboTrayShape]} />
-          <meshStandardMaterial map={caseInteriorTexture} metalness={0.5} roughness={0.7} />
+          <primitive object={texturedMaterials.texMat4} />
         </Mesh>
         
         {/* Raised Standoffs (Gwinty) for Motherboard */}

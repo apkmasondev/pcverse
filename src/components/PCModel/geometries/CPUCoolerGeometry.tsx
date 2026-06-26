@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import { fanBladesRefsZ } from '../FanManager';
 import { materials, xrayMaterial } from '../materials';
 import { useRef, useEffect, useMemo } from 'react';
@@ -43,8 +44,23 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
     };
   }, [rgbMaterial]);
 
-  const fanSideMat = useMemo(() => new MeshStandardMaterial({ map: fanSideTexture, roughness: 0.6 }), [fanSideTexture]);
-  useEffect(() => () => fanSideMat.dispose(), [fanSideMat]);
+  const { fanSideMat, fanSideMatRotated } = useMemo(() => {
+    const matNormal = new MeshStandardMaterial({ map: fanSideTexture, roughness: 0.6 });
+    const rotatedTex = fanSideTexture.clone();
+    rotatedTex.center.set(0.5, 0.5);
+    rotatedTex.rotation = Math.PI / 2;
+    rotatedTex.needsUpdate = true;
+    const matRotated = new MeshStandardMaterial({ map: rotatedTex, roughness: 0.6 });
+    return { fanSideMat: matNormal, fanSideMatRotated: matRotated };
+  }, [fanSideTexture]);
+
+  useEffect(() => {
+    return () => {
+      fanSideMat.dispose();
+      fanSideMatRotated.map?.dispose();
+      fanSideMatRotated.dispose();
+    };
+  }, [fanSideMat, fanSideMatRotated]);
 
   const bladesRef = useRef<Group>(null);
 
@@ -55,6 +71,17 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
       return () => { fanBladesRefsZ.delete(currentRef); };
     }
   }, []);
+
+  const texturedMaterials = useMemo(() => ({
+    texMat0: new THREE.MeshStandardMaterial({ map: activeTexture, roughness: 0.4, metalness: 0.3, transparent: false, alphaTest: 0.5 }),
+    texMat1: new THREE.MeshStandardMaterial({ map: activeTexture, roughness: 0.4, metalness: 0.3, transparent: false, alphaTest: 0.5 })
+  }), [activeTexture]);
+
+  useEffect(() => {
+    return () => {
+      Object.values(texturedMaterials).forEach(mat => mat.dispose());
+    };
+  }, [texturedMaterials]);
 
   return (
     <group>
@@ -79,8 +106,8 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
         <boxGeometry args={[1, 1, 0.2]} />
         {!xrayMode && (
           <>
-            <primitive object={fanSideMat} attach="material-0" />
-            <primitive object={fanSideMat} attach="material-1" />
+            <primitive object={fanSideMatRotated} attach="material-0" />
+            <primitive object={fanSideMatRotated} attach="material-1" />
             <primitive object={fanSideMat} attach="material-2" />
             <primitive object={fanSideMat} attach="material-3" />
             <primitive object={materials.darkMetal} attach="material-4" />
@@ -93,7 +120,7 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
       {!xrayMode && (
         <mesh position={[0, 0, 0.101]}>
           <planeGeometry args={[1, 1]} />
-          <meshStandardMaterial map={activeTexture} roughness={0.4} metalness={0.3} transparent={false} alphaTest={0.5} />
+          <primitive object={texturedMaterials.texMat0} />
         </mesh>
       )}
       
@@ -109,7 +136,7 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
       {!xrayMode && (
         <mesh position={[0, 0, -0.101]} rotation={[0, Math.PI, 0]}>
           <planeGeometry args={[1, 1]} />
-          <meshStandardMaterial map={activeTexture} roughness={0.4} metalness={0.3} transparent={false} alphaTest={0.5} />
+          <primitive object={texturedMaterials.texMat1} />
         </mesh>
       )}
       
@@ -169,6 +196,16 @@ export const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string }) => {
     };
   }, [copperMat, sideMat, topMat, plateMat]);
 
+  const texturedMaterials = useMemo(() => ({
+    texMat0: new THREE.MeshStandardMaterial({ map: heatsinkTexture, metalness: 0.6, roughness: 0.4 })
+  }), [heatsinkTexture]);
+
+  useEffect(() => {
+    return () => {
+      Object.values(texturedMaterials).forEach(mat => mat.dispose());
+    };
+  }, [texturedMaterials]);
+
   return (
     <group scale={1.15} position={[0, 0, 0.0375]}>
       {/* Base Contact */}
@@ -209,7 +246,7 @@ export const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string }) => {
       {/* Top Cover */}
       <mesh position={[0, 0.51, 0.12]} material={xrayMode ? xrayMaterial : undefined}>
         <boxGeometry args={[1, 0.02, 0.54]} />
-        {!xrayMode && <meshStandardMaterial map={heatsinkTexture} metalness={0.6} roughness={0.4} />}
+        {!xrayMode && <primitive object={texturedMaterials.texMat0} />}
       </mesh>
     {/* Attached Fan */}
     <group position={[0, 0.1, 0.52]}>

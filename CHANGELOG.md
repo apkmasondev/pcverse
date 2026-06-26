@@ -1,5 +1,10 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 25 - Wdrożenie Poprawek z Audytu v4 (Etap 7) 🛠️
+
+### Optymalizacja Pamięci 
+- **Wielka Ekstrakcja Materiałów Teksturowanych**: Zrefaktoryzowano 10 plików geometrii komponentów PC (`*Geometry.tsx`). Usunięto wycieki pamięci związane z inline'owym tworzeniem materiałów `<meshStandardMaterial map={...} />`. Każda tekstura wykorzystuje teraz wyizolowany obiekt Three.js zapamiętywany przez `useMemo()`, który jest odpowiednio utylizowany przy pomocy jawnego polecenia `.dispose()` w Reactowych hakach cyklu życia `useEffect`. Ponadto poprawiono UV i orientację tekstur wentylatorów poprzez klonowanie materiałów (rotacja `Math.PI / 2`).
+
 ## Etap 24 - Wdrożenie Poprawek z Audytu v4 (Etap 6) 🛠️
 
 ### Optymalizacja Ładowania
