@@ -183,13 +183,11 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
             <cylinderGeometry args={[0.42, 0.42, 0.05, 32]} />
             {!xrayMode && <primitive object={materials.almostBlack} attach="material" />}
           </mesh>
-          <mesh material={xrayMode ? xrayMaterial : undefined}>
+          <mesh material={xrayMode ? xrayMaterial : materials.gpuDarkPlastic}>
             <boxGeometry args={[0.78, 0.05, 0.1]} />
-            {!xrayMode && <meshStandardMaterial color="#1a1a1a" roughness={0.4} />}
           </mesh>
-          <mesh rotation={[0, Math.PI / 2, 0]} material={xrayMode ? xrayMaterial : undefined}>
+          <mesh rotation={[0, Math.PI / 2, 0]} material={xrayMode ? xrayMaterial : materials.gpuDarkPlastic}>
             <boxGeometry args={[0.78, 0.05, 0.1]} />
-            {!xrayMode && <meshStandardMaterial color="#1a1a1a" roughness={0.4} />}
           </mesh>
         </group>
       ))}

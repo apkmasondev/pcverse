@@ -33,6 +33,11 @@ export const materials = {
   ioShieldMetal: new MeshStandardMaterial({ color: '#e5e7eb', metalness: 0.9, roughness: 0.3 }),
   redCable: new MeshStandardMaterial({ color: '#e94560', roughness: 0.7 }),
   blackCable: new MeshStandardMaterial({ color: '#111', roughness: 0.7 }),
+  
+  // N9 Stage 4 Extracted
+  cpuDarkCharcoal: new MeshStandardMaterial({ color: '#2a1f1a', roughness: 0.9 }),
+  cpuSilverMetal: new MeshStandardMaterial({ color: '#a0a4a8', metalness: 0.9, roughness: 0.4 }),
+  gpuDarkPlastic: new MeshStandardMaterial({ color: '#1a1a1a', roughness: 0.4 }),
 };
 
 export const xrayMaterial = new MeshStandardMaterial({

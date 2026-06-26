@@ -1,5 +1,11 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 22 - Wdrożenie Poprawek z Audytu v4 (Część 4) 🛠️
+
+### Architektura i Kod
+- **Masowa Refaktoryzacja Materiałów (DRY)**: Usunięto dziesiątki powtarzających się deklaracji inline `<meshStandardMaterial>` w komponentach `CPUGeometry`, `GPUGeometry` i `MotherboardGeometry`. Wcześniej ich obecność powodowała, że z każdym re-renderem React (np. po ruchu myszki lub zmianie trybu) generowane były nowe, identyczne instancje z punktu widzenia GPU. 
+Podstawowe definicje jednokolorowych materiałów przeniesiono do wspólnego słownika instancji (`cpuDarkCharcoal`, `cpuSilverMetal`, `gpuDarkPlastic`) zlokalizowanego w `materials.ts`, przypinając je za pomocą potężnego propa `primitive`. Radykalnie obniża to narzut na proces Garbage Collectora (GC) i oszczędza kolejne cenne megabajty w pamięci VRAM.
+
 ## Etap 22 - Wdrożenie Poprawek z Audytu v4 (Część 3) 🛠️
 
 ### Dostępność i UX (WCAG)

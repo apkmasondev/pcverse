@@ -465,7 +465,7 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
         {/* SPDIF Optical out */}
         <Mesh position={[-1.55, 0.75, -1.45]}>
           <boxGeometry args={[0.02, 0.04, 0.04]} />
-          <meshStandardMaterial color="#111" />
+          <primitive object={materials.pcbBlack} attach="material" />
         </Mesh>
       </group>
     </group>
