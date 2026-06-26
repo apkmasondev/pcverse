@@ -28,7 +28,6 @@ export const DeskScenery = () => {
         far={4}
         resolution={512}
         color="#000000"
-        frames={1}
       />
 
       {/* Blat Biurka */}
