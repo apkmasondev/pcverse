@@ -5,6 +5,7 @@ import { useRef, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { usePCSelection, usePCView } from '../../../hooks/usePC';
 import { useIsMobile } from '../../../hooks/useIsMobile';
+import { useBuildStore } from '../../../store/useBuildStore';
 import { Instances, Instance } from '@react-three/drei';
 import { XMesh as Mesh } from './XMesh';
 import { frontPanelShape, frontFrameShape, frontMeshShape, leftPanelShape } from './CaseShapes';
@@ -27,6 +28,7 @@ export const CasePanels = ({
   const { xrayMode } = usePCView();
   const { explodeStep } = usePCSelection();
   const isMobile = useIsMobile();
+  const buildMode = useBuildStore(state => state.buildMode);
   const bracketTexture = useTexture(bracketUrl);
 
   const [bracketMaterials, flippedTexture] = useMemo(() => {
@@ -66,10 +68,11 @@ export const CasePanels = ({
   useFrame((_state, delta) => {
     const FLY_DIST = 50.0;
     const HIDE_THRESHOLD = 35.0;
+    const isExplodedOrBuild = explodeStep >= 1 || buildMode;
 
     if (sideGlassRef.current && sideGlassMatRef.current) {
-      const targetX = explodeStep >= 1 ? FLY_DIST : 1.95; 
-      const targetOpacity = explodeStep >= 1 ? 0 : 0.25; 
+      const targetX = isExplodedOrBuild ? FLY_DIST : 1.95; 
+      const targetOpacity = isExplodedOrBuild ? 0 : 0.25; 
       
       if (Math.abs(sideGlassRef.current.position.x - targetX) < 0.005) {
         sideGlassRef.current.position.x = targetX;
@@ -79,12 +82,12 @@ export const CasePanels = ({
         sideGlassMatRef.current.opacity = MathUtils.lerp(sideGlassMatRef.current.opacity, targetOpacity, delta * 2.5);
       }
       
-      sideGlassRef.current.visible = !(explodeStep >= 1 && sideGlassRef.current.position.x > HIDE_THRESHOLD);
+      sideGlassRef.current.visible = !(isExplodedOrBuild && sideGlassRef.current.position.x > HIDE_THRESHOLD);
     }
     
     if (frontGlassRef.current && frontGlassMatRef.current) {
-      const targetZ = explodeStep >= 1 ? FLY_DIST : 1.95;
-      const targetOpacity = explodeStep >= 1 ? 0 : 0.25;
+      const targetZ = isExplodedOrBuild ? FLY_DIST : 1.95;
+      const targetOpacity = isExplodedOrBuild ? 0 : 0.25;
       
       if (Math.abs(frontGlassRef.current.position.z - targetZ) < 0.005) {
         frontGlassRef.current.position.z = targetZ;
@@ -94,18 +97,18 @@ export const CasePanels = ({
         frontGlassMatRef.current.opacity = MathUtils.lerp(frontGlassMatRef.current.opacity, targetOpacity, delta * 2.5);
       }
 
-      frontGlassRef.current.visible = !(explodeStep >= 1 && frontGlassRef.current.position.z > HIDE_THRESHOLD);
+      frontGlassRef.current.visible = !(isExplodedOrBuild && frontGlassRef.current.position.z > HIDE_THRESHOLD);
     }
     
     if (solidSideRef.current) {
-      const targetX = explodeStep >= 1 ? -FLY_DIST : 0;
+      const targetX = isExplodedOrBuild ? -FLY_DIST : 0;
       if (Math.abs(solidSideRef.current.position.x - targetX) < 0.005) {
         solidSideRef.current.position.x = targetX;
       } else {
         solidSideRef.current.position.x = MathUtils.lerp(solidSideRef.current.position.x, targetX, delta * 2.5);
       }
 
-      solidSideRef.current.visible = !(explodeStep >= 1 && solidSideRef.current.position.x < -HIDE_THRESHOLD);
+      solidSideRef.current.visible = !(isExplodedOrBuild && solidSideRef.current.position.x < -HIDE_THRESHOLD);
     }
   });
 

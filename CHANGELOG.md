@@ -18,6 +18,12 @@
 - **Zamykanie Escapem**: Wprowadzono globalny skrót klawiszowy `Escape` pozwalający na natychmiastowe i wygodne wyjście z Trybu Budowy.
 - **Dostępność Interfejsu (aria-live)**: Dodano dynamiczny region `aria-live="polite"` do komunikatu "Zamontuj: [Komponent]", wspierając obsługę interfejsu przez czytniki ekranowe.
 - **Zoptymalizowany Panel Informacyjny**: Panel detali (InfoPanel) automatycznie i natychmiastowo chowa się po aktywacji Trybu Budowy. Usunięto również nieużywane funkcje biblioteki `framer-motion`, odchudzając minimalnie rozmiar paczki.
+- **Ukrywanie paneli obudowy**: Naprawiono błąd polegający na tym, że panele boczne obudowy pozostawały widoczne w Trybie Budowy na złożonym komputerze. Teraz panele płynnie animują się na bok po włączeniu Trybu Budowy, używając tego samego mechanizmu co przy trybie "Wybuchu".
+
+### Poprawki Wizualne i Interakcje (v5 - Etap 5)
+- **Menu Hover (Zamiast Click)**: Zmieniono działanie głównych przycisków w menu bocznym (Tryb RGB, Otoczenie HDRi, Oświetlenie). Teraz sub-menu rozwijają się automatycznie po najechaniu kursorem (`onMouseEnter`), a znikają po zjechaniu (`onMouseLeave`).
+- **Niewidzialne Mostki CSS**: Wdrożono czysto techniczne rozwiązanie (bez użycia JS-owych `setTimeout`), zamieniając fizyczne marginesy na "mostki" z użyciem CSS paddingu. Zapobiega to przypadkowemu znikaniu menu podczas przesuwania kursora z przycisku na okienko.
+- **Ikona Trybu Budowy**: Zmieniono ikonę "Trybu Budowy" na czytelniejszy symbol Młotka (`Hammer` z `lucide-react`), aby lepiej oddać mechaniczny i konstrukcyjny charakter tego trybu.
 
 ### Optymalizacja Architektury i Wydajności (v5 - Etap 4)
 - **Chude Odświeżanie z Zustand (Wyeliminowanie H1)**: Przeprowadzono kompletną refaktoryzację zarządzania stanem (`usePC.tsx`). Zastąpiono wbudowane w Reacta dostawcy `Context API` wydajnymi sklepami (stores) z biblioteki **Zustand**.
