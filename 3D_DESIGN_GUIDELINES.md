@@ -139,4 +139,10 @@ const vec = new Vector3();
 ```
 
 ---
-Dbając o powyższe 8 filarów zagwarantujesz, że renderowana scena 3D pozostanie wolna od błędów wizualnych (glitchy) oraz zachowa stabilność pamięci i wydajność powyżej optymalnych 60 FPS na każdym urządzeniu.
+
+## 9. Zarządzanie Stanem i Unikanie Re-renderów Lawinowych
+**Problem:** Opieranie zmiennych 3D o wysokiej częstotliwości zmian (np. kolory RGB, animacje, tryby wyświetlania) o klasyczny `React.Context` powoduje pełne przebudowywanie kilkunastu komponentów naraz, zabijając FPS.
+**Rozwiązanie:** Dla izolowanych stanów 3D używaj wzorców z zewnętrznymi store'ami (Zustand/Jotai) pozwalających na subskrypcję pojedynczych wartości. Nigdy nie ładuj szybko zmieniających się flag (np. `explodeMode`) do wspólnego wora kontekstowego. Do efektów tymczasowych (duchy, hover) używaj globalnie wyeksportowanych materiałów z `materials.ts`, unikając tworzenia nowych obiektów w JSX.
+
+---
+Dbając o powyższe 9 filarów zagwarantujesz, że renderowana scena 3D pozostanie wolna od błędów wizualnych (glitchy) oraz zachowa stabilność pamięci i wydajność powyżej optymalnych 60 FPS na każdym urządzeniu.

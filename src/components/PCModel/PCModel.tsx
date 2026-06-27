@@ -11,7 +11,7 @@ import { CPUCoolerGeometry, FanGeometry } from './geometries/CPUCoolerGeometry';
 import { CableGeometry } from './CableGeometry';
 import { useRef, useState, useMemo, Suspense, memo } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Group, Color, Vector3 } from 'three';
+import { Group, Mesh, Color, Vector3 } from 'three';
 import { Html, useCursor, useTexture } from '@react-three/drei';
 import { motion, useReducedMotion } from 'framer-motion';
 import { xrayMaterial } from './materials';
@@ -21,6 +21,8 @@ import { usePCSelection, usePCRGB, usePCView, usePCUI } from '../../hooks/usePC'
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { GlobalErrorBoundary as ErrorBoundary } from '../ErrorBoundary';
 import { playHoverSound, playSelectSound } from '../../utils/audio';
+import { useBuildStore } from '../../store/useBuildStore';
+import { ghostMaterial } from './materials';
 import moboBackUrl from '../../assets/mobo_back_photo.webp';
 import caseBackUrl from '../../assets/case_back.webp';
 import caseBehindUrl from '../../assets/case_behind.webp';
@@ -56,9 +58,8 @@ const GEOMETRY_REGISTRY: Record<string, React.FC<GeometryProps>> = {
 const ProceduralGeometry = ({ data, baseColor, rgbColor }: { data: PCComponent, baseColor: Color, rgbColor: string }) => {
   const { xrayMode } = usePCView();
   
-  // Exact component matching to fix A2 (instead of .includes)
   const Component = GEOMETRY_REGISTRY[data.id];
-  
+
   if (Component) {
     // Special handling for fans
     if (['case_fan_1', 'case_fan_2', 'rear_fan_1', 'rear_fan_2'].includes(data.id)) {
@@ -86,15 +87,20 @@ const ProceduralGeometry = ({ data, baseColor, rgbColor }: { data: PCComponent, 
 
 const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: boolean }) => {
   const groupRef = useRef<Group>(null);
+  const ringRef = useRef<Mesh>(null);
   const [hovered, setHovered] = useState(false);
   const { selectedComponent, setSelectedComponent, explodeStep } = usePCSelection();
   const { rgbColor, rgbEnabled } = usePCRGB();
   const { xrayMode } = usePCView();
   const { showLabels, showInstructions } = usePCUI();
+  const { buildMode, currentStep, advanceStep } = useBuildStore();
   const effectiveRgbColor = rgbEnabled ? rgbColor : '#000000';
   const shouldReduceMotion = useReducedMotion();
   
-  useCursor(hovered && !isMobile);
+  const isUnbuilt = buildMode && data.buildOrder !== undefined && data.buildOrder >= currentStep;
+  const isCurrentStep = buildMode && data.buildOrder === currentStep;
+  
+  useCursor((hovered && !isMobile) || isCurrentStep);
   
   const isSelected = selectedComponent?.id === data.id;
   const targetPosition = useMemo(() => new Vector3(), []);
@@ -109,14 +115,14 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
     if (!groupRef.current) return;
 
 
-
-    const posArray = explodeStep === 2 ? data.explodedPosition : data.position;
+    const isExploded = buildMode ? isUnbuilt : (explodeStep === 2);
+    const posArray = isExploded ? data.explodedPosition : data.position;
     
     // Add a gentle, premium out-of-phase floating effect in the exploded view
     // AND a base lift to prevent clipping through the desk at the lowest point of the sine wave
     let floatOffset = 0;
     let explodeLift = 0;
-    if (explodeStep === 2) {
+    if (isExploded) {
       explodeLift = 0.15; // Minimalne podniesienie, by dolne nóżki nie wcinały się w skrzynkę
       if (!shouldReduceMotion) {
         const phase = data.id.split('').reduce((acc, char) => acc + char.charCodeAt(0) * 17, 0);
@@ -130,40 +136,60 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
     const targetScale = isSelected ? 1.05 : hovered ? 1.03 : 1.0;
     targetScale3.set(targetScale, targetScale, targetScale);
     groupRef.current.scale.lerp(targetScale3, delta * 8);
+
+    if (ringRef.current) {
+      ringRef.current.rotation.z += delta * 0.5;
+    }
   });
 
   const visual = useMemo(() => <ProceduralGeometry data={data} baseColor={baseColor} rgbColor={effectiveRgbColor} />, [data, baseColor, effectiveRgbColor]);
 
-  return (
-    <group
-      ref={groupRef}
-      position={data.position}
-      rotation={
-        (data.id === 'rear_fan_1' || data.id === 'rear_fan_2') ? [0, Math.PI / 2, 0] : 
+  const rotationArr = (data.id === 'rear_fan_1' || data.id === 'rear_fan_2') ? [0, Math.PI / 2, 0] : 
         data.id === 'psu' ? [0, Math.PI / 2, 0] : 
-        [0, 0, 0]
-      }
-      onClick={(e) => {
-        e.stopPropagation();
-        if (e.delta > 2) return; // Prevent selection when dragging the camera
-        if (selectedComponent?.id !== data.id) {
-          playSelectSound();
-        }
-        setSelectedComponent(data);
-      }}
-      onPointerOver={(e) => {
-        if (isMobile) return;
-        e.stopPropagation();
-        if (!hovered && selectedComponent?.id !== data.id) {
-          playHoverSound();
-        }
-        setHovered(true);
-      }}
-      onPointerOut={() => {
-        if (isMobile) return;
-        setHovered(false);
-      }}
-    >
+        [0, 0, 0];
+
+  return (
+    <group>
+      <group
+        ref={groupRef}
+        position={data.position}
+        rotation={rotationArr as any}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (e.delta > 2) return; // Prevent selection when dragging the camera
+          
+          if (buildMode) {
+            if (isCurrentStep) {
+              playSelectSound();
+              advanceStep();
+            }
+            return;
+          }
+
+          if (selectedComponent?.id !== data.id) {
+            playSelectSound();
+          }
+          setSelectedComponent(data);
+        }}
+        onPointerOver={(e) => {
+          if (isMobile) return;
+          e.stopPropagation();
+
+          if (!hovered && selectedComponent?.id !== data.id) {
+            playHoverSound();
+          }
+          setHovered(true);
+        }}
+        onPointerOut={() => {
+          if (isMobile) return;
+          setHovered(false);
+        }}
+      >
+        {isCurrentStep && (
+          <mesh ref={ringRef as any} material={ghostMaterial} position={[0, -data.geometryArgs[1]/2 - 0.4, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            <ringGeometry args={[Math.max(data.geometryArgs[0], data.geometryArgs[2]) * 0.4, Math.max(data.geometryArgs[0], data.geometryArgs[2]) * 0.6, 32]} />
+          </mesh>
+        )}
       <ErrorBoundary fallback={<mesh material={xrayMode ? xrayMaterial : undefined}><boxGeometry args={data.geometryArgs} />{!xrayMode && <meshStandardMaterial color={baseColor} />}</mesh>}>
         <Suspense fallback={<mesh material={xrayMode ? xrayMaterial : undefined}><boxGeometry args={data.geometryArgs} />{!xrayMode && <meshStandardMaterial color={baseColor} />}</mesh>}>
           {visual}
@@ -176,7 +202,11 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
         </Suspense>
       </ErrorBoundary>
       
-      {showLabels && !showInstructions && !selectedComponent && (!isMobile && (hovered || isSelected) || explodeStep === 2) && (
+      {showLabels && !showInstructions && !selectedComponent && (
+        buildMode 
+          ? (isUnbuilt || isCurrentStep)
+          : (!isMobile && (hovered || isSelected) || explodeStep === 2)
+      ) && (
         <Html 
           position={[0, data.geometryArgs[1] / 2, 0]}
           center
@@ -192,7 +222,7 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
             style={{ willChange: "transform, opacity" }}
           >
             <div 
-              className={`pointer-events-auto cursor-pointer px-4 py-2 rounded-xl rounded-br-sm border shadow-xl transition-all duration-300 ${hovered ? 'scale-105' : 'bg-black/60 border-white/20'}`}
+              className={`pointer-events-auto cursor-pointer whitespace-nowrap min-w-max px-4 py-2 rounded-xl rounded-br-sm border shadow-xl transition-all duration-300 ${hovered ? 'scale-105' : 'bg-black/60 border-white/20'}`}
               style={hovered ? { 
                 backgroundColor: `${rgbColor}40`,
                 borderColor: `${rgbColor}`, 
@@ -213,21 +243,25 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
               }}
               onClick={(e) => {
                 e.stopPropagation();
+                if (buildMode) {
+                  if (isCurrentStep) {
+                    playSelectSound();
+                    advanceStep();
+                  }
+                  return;
+                }
                 playSelectSound();
                 setSelectedComponent(data);
               }}
             >
-              <span className="font-bold tracking-wider text-sm whitespace-nowrap drop-shadow-md pointer-events-none">
-                {data.name.includes(' - ') ? (
-                  <>
-                    <span className="text-white">{data.name.split(' - ')[0]}</span>
-                    <span className="text-white/40 mx-1.5">-</span>
-                    <span className="text-white/70">{data.name.split(' - ').slice(1).join(' - ')}</span>
-                  </>
-                ) : (
-                  <span className="text-white">{data.name}</span>
-                )}
+              <div className="flex flex-col items-center text-center">
+              <span className="text-[10px] font-bold text-white/50 tracking-wider uppercase mb-0.5" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>
+                {isUnbuilt ? 'Oczekujący komponent' : data.name.split(' - ')[0]}
               </span>
+              <span className="text-sm font-black text-white leading-tight tracking-wide drop-shadow-md">
+                {isUnbuilt ? data.name.split(' - ')[0] : data.name.split(' - ')[1] || data.name}
+              </span>
+            </div>
             </div>
             <div className="relative flex flex-col items-center pointer-events-none">
               <div 
@@ -250,6 +284,7 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
         </Html>
       )}
     </group>
+    </group>
   );
 }, (prevProps, nextProps) => prevProps.data === nextProps.data && prevProps.isMobile === nextProps.isMobile);
 
@@ -257,6 +292,7 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
 export const PCModel = () => {
   const isMobile = useIsMobile();
   const groupRef = useRef<Group>(null);
+  const { buildMode, currentStep, maxSteps } = useBuildStore();
 
   useFrame((_, delta) => {
     fanBladesRefsZ.forEach(ref => {
@@ -272,7 +308,7 @@ export const PCModel = () => {
       {pcComponents.map((comp) => {
         return <ComponentMesh key={comp.id} data={comp} isMobile={isMobile} />;
       })}
-      <CableGeometry />
+      {(!buildMode || currentStep > maxSteps) && <CableGeometry />}
     </group>
   );
 };

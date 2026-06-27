@@ -79,16 +79,7 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
   const [pcRGBOn, setPcRGBOn] = useState(true);
   const [cursorLightOn, setCursorLightOn] = useState(true);
 
-  useEffect(() => {
-    if (envPreset === 'night') {
-      setAmbientOn(false);
-      setMainSpotOn(false);
-      setPcRGBOn(true);
-    } else if (envPreset === 'studio') {
-      setAmbientOn(true);
-      setMainSpotOn(true);
-    }
-  }, [envPreset]);
+
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 

@@ -3,6 +3,8 @@ import { usePCSelection, usePCRGB, usePCView, usePCUI, usePCLighting } from '../
 import { Layers, Focus, MousePointerClick, Scan, Wind, Palette, Sun, Tag, Info, X, Sparkles, Cloud, Lightbulb } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { playExplodeSound, playSelectSound, playAmbientSound, stopAmbientSound } from '../../utils/audio';
+import { useBuildStore } from '../../store/useBuildStore';
+import { pcComponents } from '../../data/components';
 
 const PRESETS = [
   { id: 'city', name: 'Cyberpunk', desc: 'Nocne miasto' },
@@ -25,7 +27,7 @@ const COLORS = [
 
 
 export const UI = () => {
-  const { explodeStep, toggleExploded, triggerCameraReset } = usePCSelection();
+  const { explodeStep, toggleExploded, triggerCameraReset, setSelectedComponent } = usePCSelection();
   const { rgbColor, setRgbColor, rgbEnabled, toggleRgbEnabled } = usePCRGB();
   const { xrayMode, toggleXrayMode, showAirflow, toggleAirflow, envPreset, setEnvPreset, showDesk, toggleDesk, showParticles, toggleParticles, showFog, toggleFog } = usePCView();
   const { showLabels, toggleLabels, showInstructions, setShowInstructions } = usePCUI();
@@ -34,6 +36,8 @@ export const UI = () => {
   const [showPalette, setShowPalette] = useState(false);
   const [showEnv, setShowEnv] = useState(false);
   const [showLights, setShowLights] = useState(false);
+  const { buildMode, currentStep, maxSteps, toggleBuildMode } = useBuildStore();
+  const currentComponent = pcComponents.find(c => c.buildOrder === currentStep);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowHint(false), 15000);
@@ -50,8 +54,12 @@ export const UI = () => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && showInstructions) {
-        setShowInstructions(false);
+      if (e.key === 'Escape') {
+        if (showInstructions) {
+          setShowInstructions(false);
+        } else if (useBuildStore.getState().buildMode) {
+          useBuildStore.getState().toggleBuildMode();
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -109,15 +117,89 @@ export const UI = () => {
           />
         )}
       </AnimatePresence>
-      <motion.div 
-        id="ui-controls"
-        role="region"
-        aria-label="Kontrolery aplikacji"
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="group fixed top-6 left-6 z-10 flex flex-col gap-2 p-2 bg-[#0a0a0a]/60 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-visible transition-all duration-500 w-[60px] hover:w-[220px]"
-      >
+
+      {/* Tryb Budowy UI Overylay */}
+      <AnimatePresence>
+        {buildMode && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-4 bg-[#0a0a0a]/80 backdrop-blur-3xl border border-indigo-500/30 p-6 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] w-[90%] max-w-md pointer-events-auto"
+          >
+            <div className="flex items-center justify-between w-full">
+              <span className="text-indigo-400 font-bold uppercase tracking-widest text-xs">Tryb Budowy</span>
+              <span className="text-slate-400 font-mono text-sm">{Math.min(currentStep, maxSteps)} / {maxSteps}</span>
+            </div>
+            
+            <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
+              <motion.div 
+                className="h-full bg-gradient-to-r from-indigo-500 to-purple-500"
+                initial={{ width: 0 }}
+                animate={{ width: `${(Math.min(currentStep, maxSteps) / maxSteps) * 100}%` }}
+                transition={{ duration: 0.5 }}
+              />
+            </div>
+
+            <div className="text-center w-full min-h-[60px] flex items-center justify-center" aria-live="polite">
+              <span className="text-xl font-medium text-white drop-shadow-md">
+                {currentStep > maxSteps ? (
+                  "Gratulacje! Komputer został złożony."
+                ) : (
+                  <>Zamontuj: <span className="text-indigo-300 font-bold">{currentComponent?.name.split(' - ')[0]}</span></>
+                )}
+              </span>
+            </div>
+            
+            {currentStep <= maxSteps && (
+              <p className="text-slate-400 text-sm text-center">Kliknij zaznaczony lewitujący komponent, aby go zamontować.</p>
+            )}
+
+            <button 
+              onClick={() => {
+                playSelectSound();
+                toggleBuildMode();
+              }}
+              className="mt-2 px-6 py-2 rounded-xl bg-white/10 hover:bg-red-500/20 text-white hover:text-red-400 transition-colors border border-transparent hover:border-red-500/30 font-medium w-full"
+            >
+              Zakończ Budowę
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {buildMode && currentComponent?.buildTip && currentStep <= maxSteps && (
+          <motion.div
+            initial={{ opacity: 0, x: -50, scale: 0.9 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: -50, scale: 0.9 }}
+            transition={{ type: "spring", damping: 20, stiffness: 300 }}
+            className="fixed top-6 left-6 z-50 w-[calc(100vw-3rem)] max-w-sm flex flex-col bg-[#0a0a0a]/80 backdrop-blur-3xl border border-indigo-500/30 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden pointer-events-auto"
+          >
+            <div className="flex items-center gap-3 bg-indigo-500/10 px-4 py-3 border-b border-indigo-500/20">
+              <div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-300">
+                <Sparkles size={16} />
+              </div>
+              <span className="text-indigo-300 font-bold uppercase tracking-wider text-xs">Porada Eksperta</span>
+            </div>
+            <div className="p-4 text-slate-300 text-[15px] text-center leading-relaxed">
+              {currentComponent.buildTip}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {!buildMode && (
+        <motion.div 
+          id="ui-controls"
+          role="region"
+          aria-label="Kontrolery aplikacji"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className={`group fixed top-6 left-6 z-10 flex flex-col gap-2 p-2 bg-[#0a0a0a]/60 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-visible transition-all duration-500 w-[60px] hover:w-[220px]`}
+        >
         <div className="relative flex items-center w-full h-11 rounded-xl overflow-hidden cursor-default">
           <div className="flex-shrink-0 w-[42px] h-[42px] flex items-center justify-center">
             <span className="w-2.5 h-2.5 rounded-full bg-indigo-400 animate-pulse shadow-[0_0_12px_rgba(99,102,241,0.8)]"></span>
@@ -160,6 +242,24 @@ export const UI = () => {
           </div>
           <span className="ml-1 font-medium text-sm text-slate-300 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             Zresetuj Widok
+          </span>
+        </motion.button>
+
+        <motion.button
+          aria-label="Tryb Budowy"
+          whileTap={{ scale: 0.95 }}
+          onClick={() => {
+            playSelectSound();
+            setSelectedComponent(null);
+            toggleBuildMode();
+          }}
+          className="relative flex items-center w-full h-11 rounded-xl bg-transparent border border-transparent transition-colors hover:bg-white/5 overflow-hidden"
+        >
+          <div className="flex-shrink-0 w-[42px] h-[42px] flex items-center justify-center text-slate-300 group-hover:text-indigo-400 transition-colors">
+            <Sparkles aria-hidden="true" size={20} />
+          </div>
+          <span className="ml-1 font-medium text-sm text-slate-300 group-hover:text-indigo-300 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300">
+            Tryb Budowy
           </span>
         </motion.button>
 
@@ -462,6 +562,7 @@ export const UI = () => {
           </span>
         </motion.button>
       </motion.div>
+      )}
 
       <AnimatePresence>
         {showHint && (
@@ -521,8 +622,6 @@ export const UI = () => {
                           <p className="font-semibold text-white/90 mb-2 border-b border-white/10 pb-1.5">Mysz i Klawiatura</p>
                           <ul className="space-y-2">
                             <li>• <strong className="text-white">Obrót:</strong> Lewy przycisk (LPM)</li>
-                            <li>• <strong className="text-white">Przesuwanie:</strong> Prawy przycisk (PPM)</li>
-                            <li>• <strong className="text-white">Ruch kamery:</strong> W, A, S, D</li>
                             <li>• <strong className="text-white">Zoom:</strong> Kółko myszy</li>
                             <li>• <strong className="text-white">Wyjście:</strong> Klawisz ESC</li>
                           </ul>
@@ -531,7 +630,6 @@ export const UI = () => {
                           <p className="font-semibold text-white/90 mb-2 border-b border-white/10 pb-1.5">Gesty Dotykowe</p>
                           <ul className="space-y-2">
                             <li>• <strong className="text-white">Obrót:</strong> Pojedynczy palec</li>
-                            <li>• <strong className="text-white">Przesuwanie:</strong> Dwa palce</li>
                             <li>• <strong className="text-white">Zoom:</strong> Uszczypnięcie ekranu</li>
                           </ul>
                         </div>
@@ -550,6 +648,16 @@ export const UI = () => {
                       <h3 className="text-base font-semibold text-white mb-1.5">Eksplozja (Teardown)</h3>
                       <p className="text-sm text-slate-300 leading-relaxed">
                         Przycisk <strong>"Rozłóż na Części"</strong> uruchamia animację rozsunięcia obudowy PC, pozwalając zbadanie budowy sprzętu od środka.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
+                    <Sparkles aria-hidden="true" className="text-indigo-400 shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="text-base font-semibold text-white mb-1.5">Tryb Budowy</h3>
+                      <p className="text-sm text-slate-300 leading-relaxed">
+                        Interaktywny symulator składania komputera. Aplikacja poprowadzi Cię krok po kroku przez optymalną kolejność montażu z dawką wiedzy teoretycznej.
                       </p>
                     </div>
                   </div>
@@ -603,6 +711,12 @@ export const UI = () => {
                       <Cloud aria-hidden="true" className="text-sky-400 shrink-0" />
                       <span className="text-sm text-slate-300 leading-tight"><strong>Mgła tła:</strong> Włącza klimatyczne wtapianie sceny w horyzont.</span>
                     </div>
+                  </div>
+                  
+                  <div className="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-center">
+                    <p className="text-sm text-indigo-200 leading-relaxed">
+                      🖥️ <strong className="text-indigo-100 font-semibold">Rekomendacja:</strong> Dla zachowania najwyższego poziomu imersji i profesjonalnego doświadczenia z aplikacji, zalecamy jej uruchamianie na poziomych ekranach (Desktop / Tablet).
+                    </p>
                   </div>
                 </div>
               </div>

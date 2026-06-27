@@ -48,3 +48,17 @@ export const xrayMaterial = new MeshStandardMaterial({
   transparent: true,
   opacity: 0.3
 });
+
+export const ghostMaterial = new MeshStandardMaterial({
+  color: 0x00ffff,
+  emissive: 0x00ffff,
+  emissiveIntensity: 2.0,
+  transparent: true,
+  opacity: 0.8,
+  depthWrite: false,
+  depthTest: true,
+  wireframe: false,
+  side: 2, // THREE.DoubleSide
+  blending: 2, // THREE.AdditiveBlending
+});
+

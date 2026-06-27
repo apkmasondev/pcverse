@@ -6,6 +6,7 @@ import { Vector2, Vector3, PointLight } from 'three';
 
 import { PCModel } from '../PCModel/PCModel';
 import { usePCSelection, usePCView, usePCLighting } from '../../hooks/usePC';
+import { useBuildStore } from '../../store/useBuildStore';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { GlobalErrorBoundary as ErrorBoundary } from '../ErrorBoundary';
 import { DeskScenery } from './DeskScenery';
@@ -58,6 +59,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
   const { selectedComponent, cameraResetTrigger, explodeStep } = usePCSelection();
   const { envPreset, showDesk, showParticles, showFog } = usePCView();
   const { ambientOn, mainSpotOn, pcRGBOn, cursorLightOn } = usePCLighting();
+  const { buildMode } = useBuildStore();
   const cameraControlsRef = useRef<CameraControls>(null);
   const { camera } = useThree();
   const reducedMotion = useReducedMotion();
@@ -96,40 +98,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
     }
   }, [selectedComponent, explodeStep, dofTarget]);
 
-  // Obsługa przesuwania na boki (Pan / Truck) za pomocą strzałek
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!cameraControlsRef.current) return;
-      // Nie blokujemy strzałek, jeśli user pisze w jakimś inpucie
-      if (document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA') return;
 
-      const speed = 0.5;
-      switch (e.key) {
-        case 'ArrowUp':
-        case 'w':
-        case 'W':
-          cameraControlsRef.current.forward(speed, true);
-          break;
-        case 'ArrowDown':
-        case 's':
-        case 'S':
-          cameraControlsRef.current.forward(-speed, true);
-          break;
-        case 'ArrowLeft':
-        case 'a':
-        case 'A':
-          cameraControlsRef.current.truck(-speed, 0, true);
-          break;
-        case 'ArrowRight':
-        case 'd':
-        case 'D':
-          cameraControlsRef.current.truck(speed, 0, true);
-          break;
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
 
   useEffect(() => {
     if (cameraControlsRef.current && !hasInitialized.current) {
@@ -218,6 +187,21 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
     }
   }, [cameraResetTrigger, camera]);
 
+  useEffect(() => {
+    if (buildMode && cameraControlsRef.current) {
+      if ('clearViewOffset' in camera) {
+        (camera as any).clearViewOffset();
+        camera.updateProjectionMatrix();
+      }
+      cameraControlsRef.current.reset(true);
+      cameraControlsRef.current.setLookAt(
+        0, 5.0, 25,
+        0, 1.36, 0,
+        true
+      );
+    }
+  }, [buildMode, camera]);
+
   return (
     <>
       <color attach="background" args={[bgColor]} />
@@ -273,13 +257,11 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
         )}
         {!isMobile && (
           <EffectComposer multisampling={4}>
-            {([
-              dofEnabled && !disableEffects && <DepthOfField key="dof" target={dofTarget} focalLength={0.05} bokehScale={8} height={700} />,
-              !disableEffects && <N8AO key="n8ao" aoRadius={0.5} intensity={2.0} distanceFalloff={0.5} quality="medium" halfRes />,
-              <Bloom key="bloom" luminanceThreshold={0.5} mipmapBlur intensity={1.5} />,
-              <Vignette key="vig" eskil={false} offset={0.1} darkness={0.9} />,
-              <ChromaticAberration key="ca" offset={new Vector2(0.0005, 0.0005)} radialModulation={false} modulationOffset={0} />
-            ] as any)}
+            {dofEnabled && !disableEffects && <DepthOfField key="dof" target={dofTarget} focalLength={0.05} bokehScale={8} height={700} />}
+            {!disableEffects && <N8AO key="n8ao" aoRadius={0.5} intensity={2.0} distanceFalloff={0.5} quality="medium" halfRes />}
+            <Bloom key="bloom" luminanceThreshold={0.5} mipmapBlur intensity={1.5} />
+            <Vignette key="vig" eskil={false} offset={0.1} darkness={0.9} />
+            <ChromaticAberration key="ca" offset={new Vector2(0.0005, 0.0005)} radialModulation={false} modulationOffset={0} />
           </EffectComposer>
         )}
       </React.Suspense>
@@ -294,6 +276,23 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
         dollySpeed={0.5}
         smoothTime={reducedMotion ? 0.05 : 0.4}
         draggingSmoothTime={reducedMotion ? 0.05 : 0.2}
+        mouseButtons={{
+          left: 1,
+          middle: 8,
+          right: 0,
+          wheel: 16
+        }}
+        touches={{
+          one: 32,
+          two: 256,
+          three: 0
+        }}
+        keys={{
+          up: 0,
+          down: 0,
+          left: 0,
+          right: 0
+        }}
       />
     </>
   );
@@ -315,6 +314,7 @@ export const Scene3D = () => {
       aria-hidden="true"
       onPointerDown={() => setHasInteracted(true)}
       onTouchStart={() => setHasInteracted(true)}
+      onContextMenu={(e) => e.preventDefault()}
     >
       {isMobile && !hasInteracted && (
         <div className="absolute inset-0 z-10 pointer-events-none flex items-center justify-center">

@@ -18,11 +18,14 @@ export interface PCComponent {
   }[];
   geometryArgs: [number, number, number];
   imageUrls: string[];
+  buildOrder?: number;
+  buildTip?: string;
 }
 
 export const pcComponents: PCComponent[] = [
   {
     id: "motherboard",
+    buildOrder: 1,
     name: "Płyta Główna - Motherboard",
     description: "Główna płytka drukowana, która łączy wszystkie komponenty ze sobą, stanowiąc kręgosłup komputera.",
     role: [
@@ -40,11 +43,13 @@ export const pcComponents: PCComponent[] = [
       { label: "Stabilność Zasilania (VRM)", value: 95 },
       { label: "Możliwości Rozbudowy", value: 85 }
     ],
+    buildTip: 'Przed włożeniem płyty do obudowy upewnij się, że wkręciłeś odpowiednie kołki dystansowe (stand-offs). Zabezpieczają one delikatne ścieżki na odwrocie laminatu przed bezpośrednim kontaktem z metalową obudową. Brak kołków oznacza natychmiastowe zwarcie i uszkodzenie sprzętu!',
     geometryArgs: [3, 4, 0.05],
     imageUrls: ["/images/components/motherboard.webp", "/images/components/motherboard_macro.webp", "/images/components/mb_alt.webp", "/images/components/motherboard_real.webp"],
   },
   {
     id: "cpu",
+    buildOrder: 2,
     name: "Procesor - CPU",
     description: "Główny układ obliczeniowy komputera, pełniący rolę jego elektronicznego mózgu.",
     role: [
@@ -53,7 +58,7 @@ export const pcComponents: PCComponent[] = [
       "Koordynuje działanie całego systemu, delegując wyspecjalizowane zadania do GPU i RAMu"
     ],
     funFact: "Współczesny procesor zawiera miliardy mikroskopijnych tranzystorów na powierzchni kilku centymetrów kwadratowych.",
-    position: [-0.42, 0.95, -1.7],
+    position: [-0.42, 0.95, -1.6],
     explodedPosition: [-2.54, 6.5, -2.6],
     color: "#e94560",
     perfImpact: { gaming: 25, ai: 20, productivity: 40 },
@@ -62,11 +67,13 @@ export const pcComponents: PCComponent[] = [
       { label: "Ilość Rdzeni / Wątków", value: 75 },
       { label: "Rozmiar Pamięci Cache", value: 85 }
     ],
+    buildTip: 'Złoty trójkąt w rogu procesora musi idealnie pokryć się z małym oznaczeniem na gnieździe płyty głównej. Nie używaj siły – procesor powinien swobodnie "wpaść" na swoje miejsce. Dopiero wtedy możesz bezpiecznie docisnąć i zablokować metalową dźwignię, unikając wygięcia delikatnych pinów.',
     geometryArgs: [0.8, 0.8, 0.05],
     imageUrls: ["/images/components/cpu.webp", "/images/components/cpu_macro.webp", "/images/components/cpu_alt.webp", "/images/components/cpu_real.webp"],
   },
   {
     id: "cpu_cooler",
+    buildOrder: 6,
     name: "Chłodzenie Procesora - CPU Cooler",
     description: "Rozprasza ciepło generowane przez procesor, zapobiegając przegrzaniu i spadkom wydajności (thermal throttling).",
     role: [
@@ -84,11 +91,13 @@ export const pcComponents: PCComponent[] = [
       { label: "Kultura Pracy (Głośność)", value: 85 },
       { label: "Stabilność Temperatury pod Obciążeniem", value: 90 }
     ],
+    buildTip: 'Nakładając pastę termoprzewodzącą (np. kroplę wielkości ziarenka grochu), pamiętaj o właściwym dokręcaniu chłodzenia. Śruby radiatora wkręcaj stopniowo, obracając je po trochu na krzyż (po przekątnej). Gwarantuje to równomierny nacisk na procesor i zapobiega powstawaniu bąbli powietrza.',
     geometryArgs: [1, 1.3, 0.8],
     imageUrls: ["/images/components/cooler.webp", "/images/components/cooler_macro.webp", "/images/components/cooler_alt.webp", "/images/components/cooler_real.webp"],
   },
   {
     id: "gpu",
+    buildOrder: 7,
     name: "Karta Graficzna - GPU",
     description: "Wyspecjalizowany procesor zaprojektowany do akceleracji renderowania grafiki oraz obliczeń równoległych.",
     role: [
@@ -101,11 +110,13 @@ export const pcComponents: PCComponent[] = [
     explodedPosition: [-9, 0.65, -3.25],
     color: "#6366f1",
     perfImpact: { gaming: 60, ai: 60, productivity: 15 },
+    buildTip: 'Karta graficzna to często najcięższy element w całym zestawie. Otwórz plastikowy zatrzask z prawej strony portu PCIe x16, a następnie wsuwaj kartę prostopadle, aż usłyszysz wyraźne kliknięcie zapadki. Na koniec mocno przykręć jej "śledzia" śrubami, by zapobiec opadaniu (tzw. GPU sag).',
     geometryArgs: [2.5, 0.5, 1.2],
     imageUrls: ["/images/components/gpu.webp", "/images/components/gpu_macro.webp", "/images/components/gpu_alt.webp", "/images/components/gpu_real.webp"],
   },
   {
     id: "ram_1",
+    buildOrder: 3,
     name: "Pamięć RAM - Memory Module",
     description: "Pamięć operacyjna o ultra-niskich opóźnieniach (rzędu nanosekund), używana przez procesor do przechowywania aktualnie działających programów.",
     role: [
@@ -118,11 +129,13 @@ export const pcComponents: PCComponent[] = [
     explodedPosition: [2.02, 7.15, -5.95],
     color: "#00b8a9",
     perfImpact: { gaming: 10, ai: 15, productivity: 20 },
+    buildTip: 'Aby aktywować tryb Dual Channel (co drastycznie zwiększa wydajność), pamięci należy montować parami w slotach A2 i B2 (drugi i czwarty od procesora). Między kościami musi zostać jeden wolny slot! Otwórz zatrzaski, wsuń kości i dociśnij je równomiernie, aż usłyszysz wyraźny "klik".',
     geometryArgs: [0.1, 1.2, 0.4],
     imageUrls: ["/images/components/ram.webp", "/images/components/ram_macro.webp", "/images/components/ram_alt.webp", "/images/components/ram_real.webp"],
   },
   {
     id: "ram_2",
+    buildOrder: 3,
     name: "Pamięć RAM - Memory Module",
     description: "Drugi moduł pamięci operacyjnej, pracujący w parze w celu maksymalizacji przepustowości.",
     role: [
@@ -135,11 +148,13 @@ export const pcComponents: PCComponent[] = [
     explodedPosition: [3.38, 7.15, -5.95],
     color: "#00b8a9",
     perfImpact: { gaming: 2, ai: 1, productivity: 5 },
+    buildTip: 'Aby aktywować tryb Dual Channel (co drastycznie zwiększa wydajność), pamięci należy montować parami w slotach A2 i B2 (drugi i czwarty od procesora). Między kościami musi zostać jeden wolny slot! Otwórz zatrzaski, wsuń kości i dociśnij je równomiernie, aż usłyszysz wyraźny "klik".',
     geometryArgs: [0.1, 1.2, 0.4],
     imageUrls: ["/images/components/ram.webp", "/images/components/ram_macro.webp", "/images/components/ram_alt.webp", "/images/components/ram_real.webp"],
   },
   {
     id: "ssd",
+    buildOrder: 4,
     name: "Dysk NVMe - SSD",
     description: "Ultraszybka pamięć masowa przechowująca system operacyjny, gry oraz wszystkie pliki użytkownika.",
     role: [
@@ -152,11 +167,13 @@ export const pcComponents: PCComponent[] = [
     explodedPosition: [5.85, 4, -2.6],
     color: "#f8b500",
     perfImpact: { gaming: 10, ai: 5, productivity: 15 },
+    buildTip: 'Dysk M.2 wsuwamy w port pod kątem około 30 stopni, a następnie delikatnie dociskamy do płyty i blokujemy śrubką. Jeśli Twoja płyta posiada dedykowany, aluminiowy radiator na dysk, bezwzględnie pamiętaj o ściągnięciu przezroczystej folii ochronnej z termopada przed jego przykręceniem!',
     geometryArgs: [0.2, 0.8, 0.05],
     imageUrls: ["/images/components/ssd.webp", "/images/components/ssd_macro.webp", "/images/components/ssd_alt.webp", "/images/components/ssd_real.webp"],
   },
   {
     id: "psu",
+    buildOrder: 5,
     name: "Zasilacz - PSU",
     description: "Konwertuje prąd przemienny z gniazdka na stabilny prąd stały, zasilając komputer.",
     role: [
@@ -174,12 +191,14 @@ export const pcComponents: PCComponent[] = [
       { label: "Efektywność Energetyczna", value: 92 },
       { label: "Redukcja Szumów", value: 95 }
     ],
+    buildTip: 'W zasilaczach modularnych najlepiej podpiąć wszystkie potrzebne przewody (ATX 24-pin, EPS 8-pin) przed włożeniem go do "piwnicy" obudowy. Pamiętaj też, by wentylator zasilacza skierować do dołu – dzięki temu będzie zaciągał z zewnątrz chłodne powietrze przez dolny filtr przeciwkurzowy.',
     geometryArgs: [1.8, 1, 1.5],
     imageUrls: ["/images/components/psu.webp", "/images/components/psu_macro.webp", "/images/components/psu_alt.webp", "/images/components/psu_real.webp"],
   },
 
   {
     id: "case_fan_1",
+    buildOrder: 9,
     name: "Wentylator Obudowy - Intake Fan 1",
     description: "Wentylator wtłaczający chłodne powietrze do wnętrza obudowy, tworzący nadciśnienie.",
     role: [
@@ -197,6 +216,7 @@ export const pcComponents: PCComponent[] = [
       { label: "Ciśnienie Statyczne", value: 70 },
       { label: "Kultura Pracy (Głośność)", value: 90 }
     ],
+    buildTip: 'Wentylatory tworzą główny obieg wiatru (Airflow). Zazwyczaj "ładna" strona z rotorem zaciąga powietrze, a tylna ze stelażem je tłoczy. Przednie wiatraki (Intake) zaciągają zimne powietrze z pokoju. Tylne i górne (Exhaust) wyrzucają wrzątek z budy na zewnątrz!',
     geometryArgs: [1.2, 1.2, 0.2],
     imageUrls: [
       '/images/components/fan.webp',
@@ -207,6 +227,7 @@ export const pcComponents: PCComponent[] = [
   },
   {
     id: "case_fan_2",
+    buildOrder: 9,
     name: "Wentylator Obudowy - Intake Fan 2",
     description: "Drugi wentylator wtłaczający chłodne powietrze do wnętrza obudowy.",
     role: [
@@ -223,6 +244,7 @@ export const pcComponents: PCComponent[] = [
       { label: "Ciśnienie Statyczne", value: 70 },
       { label: "Kultura Pracy (Głośność)", value: 90 }
     ],
+    buildTip: 'Wentylatory tworzą główny obieg wiatru (Airflow). Zazwyczaj "ładna" strona z rotorem zaciąga powietrze, a tylna ze stelażem je tłoczy. Przednie wiatraki (Intake) zaciągają zimne powietrze z pokoju. Tylne i górne (Exhaust) wyrzucają wrzątek z budy na zewnątrz!',
     geometryArgs: [1.2, 1.2, 0.2],
     imageUrls: [
       '/images/components/fan.webp',
@@ -233,6 +255,7 @@ export const pcComponents: PCComponent[] = [
   },
   {
     id: "rear_fan_1",
+    buildOrder: 9,
     name: "Wentylator Wyciągowy - Exhaust Fan 1",
     description: "Zainstalowany z tyłu obudowy wentylator odpowiedzialny za wyciąganie gorącego powietrza na zewnątrz systemu.",
     role: [
@@ -260,6 +283,7 @@ export const pcComponents: PCComponent[] = [
   },
   {
     id: "rear_fan_2",
+    buildOrder: 9,
     name: "Wentylator Wyciągowy - Exhaust Fan 2",
     description: "Drugi wentylator wyciągowy pracujący w parze na bocznej ramie.",
     role: [
@@ -309,6 +333,7 @@ export const pcComponents: PCComponent[] = [
   },
   {
     id: 'storage_hdd',
+    buildOrder: 8,
     name: "Dysk Twardy - HDD",
     description: 'Tradycyjny, magnetyczny nośnik danych o ogromnej pojemności. Używa fizycznych talerzy wirujących z prędkością tysięcy obrotów na minutę i głowicy odczytującej dane.',
     role: [
@@ -321,6 +346,7 @@ export const pcComponents: PCComponent[] = [
     explodedPosition: [6.8, 0, 1.5],
     color: "#4a6984",
     perfImpact: { gaming: 5, ai: 2, productivity: 30 },
+    buildTip: 'Tradycyjne dyski HDD posiadają kręcące się wewnątrz talerze i mechaniczną głowicę, co czyni je wrażliwymi na wibracje. Dlatego zawsze montuj je na dołączonych saniach wyposażonych w gumowe podkładki antywibracyjne. Wytłumi to irytujące buczenie przenoszone na stalowy szkielet obudowy.',
     geometryArgs: [1.0, 0.25, 1.4],
     imageUrls: [
       '/images/components/hdd_macro.webp',

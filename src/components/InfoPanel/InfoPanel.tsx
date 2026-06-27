@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { usePCSelection } from '../../hooks/usePC';
 import { useIsMobile } from '../../hooks/useIsMobile';
+import { useBuildStore } from '../../store/useBuildStore';
 import { 
   Cpu, 
   HardDrive, 
@@ -87,6 +88,7 @@ export const InfoPanel = () => {
   const { selectedComponent, setSelectedComponent } = usePCSelection();
   const [zoomedImageIndex, setZoomedImageIndex] = useState<number | null>(null);
   const isMobile = useIsMobile();
+  const { buildMode } = useBuildStore();
 
   useEffect(() => {
     setZoomedImageIndex(null);
@@ -127,6 +129,8 @@ export const InfoPanel = () => {
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [isMobile, selectedComponent, mouseX, mouseY]);
+
+  if (buildMode) return null;
 
   return (
     <>

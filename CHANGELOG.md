@@ -1,5 +1,30 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 28 - Interaktywny Tryb Budowy (Build Mode) 🛠️
+
+### Usprawnienia Edukacyjne i Interfejs
+- **Wskazówki Montażowe (Porada Eksperta)**: Przepisano od zera bazę wskazówek (`buildTip` w `components.ts`). Zamiast prostych zdań, dodano szczegółowe akapity uczące dobrych praktyk składania PC (m.in. jak wpinać pamięć RAM w Dual Channel, znaczenie kołków dystansowych na płycie głównej, prawidłowy obieg powietrza).
+- **Nowy Panel Porad (UI)**: Przeniesiono porady z dolnego, ciasnego menu do dedykowanego, eleganckiego okna w lewym górnym rogu ekranu (z użyciem efektu Glassmorphism i animacji wejścia z Framer Motion). Otwiera się automatycznie w Trybie Budowy. Zoptymalizowano jego rozmiar (`text-[15px]`, wyśrodkowanie) oraz dodano pełną responsywność pod ekrany smartfonów.
+- **Logika Montażu w Obudowie**: Poprawiono błąd, przez który zamontowane komponenty pozostawały zawieszone w powietrzu, jeśli Tryb Budowy aktywowano w trakcie "Wybuchu" (`explodeStep === 2`). Teraz wciśnięcie elementu automatycznie anuluje mu stan wybuchu i ściąga go na właściwe miejsce w obudowie.
+- **Odświeżenie Etykiet Komponentów**: Przywrócono prostokątny, jednowierszowy układ etykiet HTML (dodanie klas Tailwind `whitespace-nowrap min-w-max`) oraz wyśrodkowano w nich dwuwierszowy tekst, poprawiając estetykę etykiet w 3D.
+
+### Poprawki Audytowe (v5 - Etap 1)
+- **Kompletna Blokada Kamery (Critical Fix)**: Wyeliminowano lukę w zabezpieczeniach sterowania, usuwając martwy kod nasłuchujący klawiszy WSAD i strzałek, który omijał blokady interfejsu i pozwalał na ucieczkę kamery z wyznaczonego kadru.
+- **Wyeliminowanie Błędów Typowania i Ostrzeżeń**: Usunięto niebezpieczne rzutowania (`as any`) w postprocessingu (`EffectComposer`) na rzecz czystego renderowania warunkowego JSX.
+- **Blokada Menu Kontekstowego**: Zabezpieczono ekran Canvas przed przypadkowym wywoływaniem natywnego menu przeglądarki prawym przyciskiem myszy, poprawiając immersję podczas eksploracji sceny 3D.
+
+### UX Trybu Budowy (v5 - Etap 2)
+- **Etykiety Komponentów w Trybie Budowy**: Zmodyfikowano warunkowe renderowanie etykiet (`Html`). Od teraz nazwy komponentów (np. "Oczekujący komponent - Zasilacz") wyświetlają się nad lewitującymi elementami, ułatwiając użytkownikowi identyfikację części do zamontowania.
+- **Zamykanie Escapem**: Wprowadzono globalny skrót klawiszowy `Escape` pozwalający na natychmiastowe i wygodne wyjście z Trybu Budowy.
+- **Dostępność Interfejsu (aria-live)**: Dodano dynamiczny region `aria-live="polite"` do komunikatu "Zamontuj: [Komponent]", wspierając obsługę interfejsu przez czytniki ekranowe.
+- **Zoptymalizowany Panel Informacyjny**: Panel detali (InfoPanel) automatycznie i natychmiastowo chowa się po aktywacji Trybu Budowy. Usunięto również nieużywane funkcje biblioteki `framer-motion`, odchudzając minimalnie rozmiar paczki.
+- **Odciążenie Drzewa DOM**: Ukrywanie bocznego menu kontrolerów w Trybie Budowy odbywa się teraz w oparciu o pełne usuwanie z DOM (renderowanie warunkowe w React), a nie ukrywanie stylem CSS `hidden`.
+
+### Optymalizacja Pamięci i Zasobów (v5 - Etap 3)
+- **Eliminacja Wycieków w DeskScenery**: Usunięto tworzenie "w locie" powtarzalnych materiałów i geometrii (tzw. inline materials). Obiekty takie jak czarne ramki kubka, koszyk czy dywan używają teraz wyekstrahowanych poza komponent referencji lub wykorzystują `useMemo` oraz `dispose()` podczas niszczenia komponentu.
+- **Poprawa Efektów Pobocznych (Side-effects)**: W obiekcie `GPUGeometry` zastąpiono błędne wykorzystanie `useMemo` do mutowania tekstur poprawnym użyciem cyklu życia komponentu (`useEffect`).
+- **Czyszczenie Redundantnego Kodu**: Usunięto podwójny, niepotrzebny hook `useEffect` w głównym stanie aplikacji (`usePC.tsx`), co zapobiega zjawisku wielokrotnego re-renderowania świateł przy zmianie presetu środowiskowego.
+
 ## Etap 27 - Zaawansowane Sterowanie Oświetleniem 💡
 
 ### Nowe Funkcjonalności Oświetleniowe

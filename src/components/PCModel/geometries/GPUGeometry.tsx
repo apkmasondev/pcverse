@@ -25,7 +25,7 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
   const gpuFrontTexture = useTexture(gpuFrontUrl);
   const gpuIoTexture = useTexture(gpuIoUrl);
 
-  useMemo(() => {
+  useEffect(() => {
     gpuFrontTexture.colorSpace = SRGBColorSpace;
     gpuFrontTexture.wrapS = RepeatWrapping;
     gpuFrontTexture.wrapT = RepeatWrapping;

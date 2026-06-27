@@ -46,6 +46,12 @@ const energyCanTopMat = new THREE.MeshStandardMaterial({ color: '#d0d0d0', rough
 // Żółte Karteczki (Post-it)
 const postItGeo = new THREE.PlaneGeometry(1.2, 1.2);
 
+const blackMatDouble = new THREE.MeshStandardMaterial({ color: '#0f0f13', roughness: 0.2, metalness: 0.6, side: THREE.DoubleSide });
+const blackMatSingle = new THREE.MeshStandardMaterial({ color: '#0f0f13', roughness: 0.2, metalness: 0.6 });
+
+const crateGeo = new THREE.BoxGeometry(5, 2.0, 5);
+const rugGeo = new THREE.BoxGeometry(22, 12.375, 0.04);
+
 const ScatteredItems = () => {
   return (
     <group position={[0, 0.04, 0]}>
@@ -203,26 +209,26 @@ const DeskDetails = ({ reducedMotion }: { reducedMotion: boolean }) => {
         {/* Outer wall */}
         <mesh position={[0, 1, 0]}>
           <cylinderGeometry args={[0.8, 0.8, 2, 16, 1, true]} />
-          <meshStandardMaterial color="#0f0f13" roughness={0.2} metalness={0.6} side={THREE.DoubleSide} />
+          <primitive object={blackMatDouble} attach="material" />
         </mesh>
         {/* Inner wall for thickness */}
         <mesh position={[0, 1, 0]}>
           <cylinderGeometry args={[0.74, 0.74, 2, 16, 1, true]} />
-          <meshStandardMaterial color="#0f0f13" roughness={0.2} metalness={0.6} side={THREE.DoubleSide} />
+          <primitive object={blackMatDouble} attach="material" />
         </mesh>
         {/* Top Rim */}
         <mesh position={[0, 2, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <ringGeometry args={[0.74, 0.8, 16]} />
-          <meshStandardMaterial color="#0f0f13" roughness={0.2} metalness={0.6} side={THREE.DoubleSide} />
+          <primitive object={blackMatDouble} attach="material" />
         </mesh>
         {/* Bottom */}
         <mesh position={[0, 0.05, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <circleGeometry args={[0.8, 16]} />
-          <meshStandardMaterial color="#0f0f13" roughness={0.2} metalness={0.6} side={THREE.DoubleSide} />
+          <primitive object={blackMatDouble} attach="material" />
         </mesh>
         <mesh position={[0.8, 1, 0]} rotation={[0, 0, -Math.PI / 2]}>
           <torusGeometry args={[0.5, 0.15, 8, 16, Math.PI]} />
-          <meshStandardMaterial color="#0f0f13" roughness={0.2} metalness={0.6} />
+          <primitive object={blackMatSingle} attach="material" />
         </mesh>
         <mesh position={[0, 1, 0]} rotation={[0, 0, 0]}>
           <cylinderGeometry args={[0.81, 0.81, 1.3, 16, 1, true, -0.6, 1.2]} />
@@ -326,13 +332,20 @@ export const DeskScenery = () => {
     return () => mediaQuery.removeEventListener('change', handler);
   }, []);
 
+  const { rugMat, crateMat } = useMemo(() => ({
+    rugMat: new THREE.MeshStandardMaterial({ map: texRug, roughness: 0.9 }),
+    crateMat: new THREE.MeshStandardMaterial({ map: texCrate, roughness: 0.9, metalness: 0.0 })
+  }), [texRug, texCrate]);
+
   useEffect(() => {
     return () => {
       if (reflectorMeshRef.current?.material) {
         (reflectorMeshRef.current.material as THREE.Material).dispose();
       }
+      rugMat.dispose();
+      crateMat.dispose();
     };
-  }, []);
+  }, [rugMat, crateMat]);
 
   if (xrayMode || isMobile) return null;
 
@@ -355,15 +368,9 @@ export const DeskScenery = () => {
         />
       </mesh>
 
-      <mesh position={[0, 1.02, 0]}>
-        <boxGeometry args={[5, 2.0, 5]} />
-        <meshStandardMaterial map={texCrate} roughness={0.9} metalness={0.0} />
-      </mesh>
+      <mesh position={[0, 1.02, 0]} geometry={crateGeo} material={crateMat} />
 
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
-        <boxGeometry args={[22, 12.375, 0.04]} />
-        <meshStandardMaterial map={texRug} roughness={0.9} />
-      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} geometry={rugGeo} material={rugMat} />
 
       <Suspense fallback={null}>
         <DeskDetails reducedMotion={reducedMotion} />
