@@ -134,10 +134,10 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
   useEffect(() => {
     if (cameraControlsRef.current && !hasInitialized.current) {
       hasInitialized.current = true;
-      cameraControlsRef.current.setLookAt(0, 12, 35, 0, 0, 0, false);
+      cameraControlsRef.current.setLookAt(0, 13.36, 35, 0, 1.36, 0, false);
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          cameraControlsRef.current?.setLookAt(0, 3, 20, 0, 0, 0, true);
+          cameraControlsRef.current?.setLookAt(0, 4.36, 20, 0, 1.36, 0, true);
         });
       });
     }
