@@ -23,7 +23,7 @@ export const SSDGeometry = () => {
   }, [texturedMaterials]);
 
   return (
-    <group>
+    <group scale={[1.25, 1.25, 2.0]}>
       {/* M.2 PCB Background */}
       <mesh position={[0, 0, 0]} material={xrayMode ? xrayMaterial : undefined}>
         <boxGeometry args={[0.22, 0.8, 0.01]} />

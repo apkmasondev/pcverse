@@ -125,12 +125,12 @@ export const pcComponents: PCComponent[] = [
       "Traci wszystkie dane w momencie odłączenia zasilania"
     ],
     funFact: "Pamięć RAM jest około 100 000 razy szybsza od tradycyjnego dysku twardego HDD.",
-    position: [0.38, 0.95, -1.55],
+    position: [0.38, 0.86, -1.55],
     explodedPosition: [2.02, 7.15, -5.95],
     color: "#00b8a9",
     perfImpact: { gaming: 10, ai: 15, productivity: 20 },
     buildTip: 'Aby aktywować tryb Dual Channel (co drastycznie zwiększa wydajność), pamięci należy montować parami w slotach A2 i B2 (drugi i czwarty od procesora). Między kościami musi zostać jeden wolny slot! Otwórz zatrzaski, wsuń kości i dociśnij je równomiernie, aż usłyszysz wyraźny "klik".',
-    geometryArgs: [0.1, 1.2, 0.4],
+    geometryArgs: [0.5, 1.2, 0.6],
     imageUrls: ["/images/components/ram.webp", "/images/components/ram_macro.webp", "/images/components/ram_alt.webp", "/images/components/ram_real.webp"],
   },
   {
@@ -144,12 +144,12 @@ export const pcComponents: PCComponent[] = [
       "Redukuje zacinanie się w nowoczesnych grach"
     ],
     funFact: "Użycie dwóch kości RAM zamiast jednej dużej może zwiększyć wydajność procesora nawet o 15%.",
-    position: [0.66, 0.95, -1.55],
+    position: [0.66, 0.86, -1.55],
     explodedPosition: [3.38, 7.15, -5.95],
     color: "#00b8a9",
     perfImpact: { gaming: 2, ai: 1, productivity: 5 },
     buildTip: 'Aby aktywować tryb Dual Channel (co drastycznie zwiększa wydajność), pamięci należy montować parami w slotach A2 i B2 (drugi i czwarty od procesora). Między kościami musi zostać jeden wolny slot! Otwórz zatrzaski, wsuń kości i dociśnij je równomiernie, aż usłyszysz wyraźny "klik".',
-    geometryArgs: [0.1, 1.2, 0.4],
+    geometryArgs: [0.5, 1.2, 0.6],
     imageUrls: ["/images/components/ram.webp", "/images/components/ram_macro.webp", "/images/components/ram_alt.webp", "/images/components/ram_real.webp"],
   },
   {
@@ -168,7 +168,7 @@ export const pcComponents: PCComponent[] = [
     color: "#f8b500",
     perfImpact: { gaming: 10, ai: 5, productivity: 15 },
     buildTip: 'Dysk M.2 wsuwamy w port pod kątem około 30 stopni, a następnie delikatnie dociskamy do płyty i blokujemy śrubką. Jeśli Twoja płyta posiada dedykowany, aluminiowy radiator na dysk, bezwzględnie pamiętaj o ściągnięciu przezroczystej folii ochronnej z termopada przed jego przykręceniem!',
-    geometryArgs: [0.2, 0.8, 0.05],
+    geometryArgs: [0.28, 1.0, 0.02],
     imageUrls: ["/images/components/ssd.webp", "/images/components/ssd_macro.webp", "/images/components/ssd_alt.webp", "/images/components/ssd_real.webp"],
   },
   {

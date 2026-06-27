@@ -30,7 +30,7 @@ export const RAMGeometry = ({ rgbColor }: { rgbColor: string }) => {
   }, [texturedMaterials]);
 
   return (
-    <group>
+    <group scale={[1, 1.06, 1]}>
       {/* RAM PCB (Długa na osi Y, wpięta w płytę główną osiami Z) */}
       <Mesh position={[0, 0, 0]}>
         <boxGeometry args={[0.04, 1.7, 0.35]} />
