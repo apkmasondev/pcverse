@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { create } from 'zustand';
 import type { ReactNode } from 'react';
 import type { PCComponent } from '../data/components';
 
@@ -51,199 +51,86 @@ export interface PCLightingContextType {
   toggleCursorLight: () => void;
 }
 
-const PCSelectionContext = createContext<PCSelectionContextType | undefined>(undefined);
-const PCRGBContext = createContext<PCRGBContextType | undefined>(undefined);
-const PCViewContext = createContext<PCViewContextType | undefined>(undefined);
-const PCUIContext = createContext<PCUIContextType | undefined>(undefined);
-const PCLightingContext = createContext<PCLightingContextType | undefined>(undefined);
+let isAnimating = false;
+let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-export const PCProvider = ({ children }: { children: ReactNode }) => {
-  const [selectedComponent, setSelectedComponent] = useState<PCComponent | null>(null);
-  const [explodeStep, setExplodeStep] = useState(0);
-  const [cameraResetTrigger, setCameraResetTrigger] = useState(0);
-  const isAnimatingRef = useRef(false);
-
-  const [xrayMode, setXrayMode] = useState(false);
-  const [rgbColor, setRgbColor] = useState('#06b6d4'); // Default Cyan
-  const [rgbEnabled, setRgbEnabled] = useState(true);
-  const [showAirflow, setShowAirflow] = useState(false);
-  const [envPreset, setEnvPreset] = useState('city');
-  const [showLabels, setShowLabels] = useState(true);
-  const [showInstructions, setShowInstructions] = useState(false);
-  const [showDesk, setShowDesk] = useState(false);
-  const [showParticles, setShowParticles] = useState(false);
-  const [showFog, setShowFog] = useState(true);
-
-  const [ambientOn, setAmbientOn] = useState(true);
-  const [mainSpotOn, setMainSpotOn] = useState(true);
-  const [pcRGBOn, setPcRGBOn] = useState(true);
-  const [cursorLightOn, setCursorLightOn] = useState(true);
-
-
-
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, []);
-
-  const toggleExploded = useCallback(() => {
-    if (isAnimatingRef.current) return;
-    isAnimatingRef.current = true;
-    setSelectedComponent(null); 
-    
-    setExplodeStep(prev => {
-      if (prev === 0) {
-        timeoutRef.current = setTimeout(() => {
-          setExplodeStep(2);
-          isAnimatingRef.current = false;
+export const usePCSelection = create<PCSelectionContextType>((set) => ({
+  selectedComponent: null,
+  explodeStep: 0,
+  cameraResetTrigger: 0,
+  setSelectedComponent: (component) => set({ selectedComponent: component }),
+  triggerCameraReset: () => set((state) => ({ cameraResetTrigger: state.cameraResetTrigger + 1, selectedComponent: null })),
+  toggleExploded: () => {
+    if (isAnimating) return;
+    isAnimating = true;
+    set({ selectedComponent: null });
+    set((state) => {
+      if (state.explodeStep === 0) {
+        if (timeoutId) clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          set({ explodeStep: 2 });
+          isAnimating = false;
         }, 800);
-        return 1;
+        return { explodeStep: 1 };
       } else {
-        timeoutRef.current = setTimeout(() => {
-          setExplodeStep(0);
-          isAnimatingRef.current = false;
+        if (timeoutId) clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          set({ explodeStep: 0 });
+          isAnimating = false;
         }, 800);
-        return 1;
+        return { explodeStep: 1 };
       }
     });
-  }, []);
+  }
+}));
 
-  const triggerCameraReset = useCallback(() => {
-    setCameraResetTrigger((prev) => prev + 1);
-    setSelectedComponent(null);
-  }, []);
+export const usePCRGB = create<PCRGBContextType>((set) => ({
+  rgbColor: '#06b6d4',
+  setRgbColor: (color) => set({ rgbColor: color }),
+  rgbEnabled: true,
+  toggleRgbEnabled: () => set((state) => ({ rgbEnabled: !state.rgbEnabled }))
+}));
 
-  const toggleXrayMode = useCallback(() => setXrayMode((prev) => !prev), []);
-  const toggleAirflow = useCallback(() => setShowAirflow((prev) => !prev), []);
-  const toggleLabels = useCallback(() => setShowLabels((prev) => !prev), []);
-  const toggleRgbEnabled = useCallback(() => setRgbEnabled((prev) => !prev), []);
-  const toggleDesk = useCallback(() => setShowDesk((prev) => !prev), []);
-  const toggleParticles = useCallback(() => setShowParticles((prev) => !prev), []);
-  const toggleFog = useCallback(() => setShowFog((prev) => !prev), []);
-  const toggleAmbient = useCallback(() => setAmbientOn((prev) => !prev), []);
-  const toggleMainSpot = useCallback(() => setMainSpotOn((prev) => !prev), []);
-  const togglePcRGB = useCallback(() => setPcRGBOn((prev) => !prev), []);
-  const toggleCursorLight = useCallback(() => setCursorLightOn((prev) => !prev), []);
+export const usePCLighting = create<PCLightingContextType>((set) => ({
+  ambientOn: false,
+  mainSpotOn: false,
+  pcRGBOn: true,
+  cursorLightOn: true,
+  toggleAmbient: () => set((state) => ({ ambientOn: !state.ambientOn })),
+  toggleMainSpot: () => set((state) => ({ mainSpotOn: !state.mainSpotOn })),
+  togglePcRGB: () => set((state) => ({ pcRGBOn: !state.pcRGBOn })),
+  toggleCursorLight: () => set((state) => ({ cursorLightOn: !state.cursorLightOn }))
+}));
 
-  useEffect(() => {
-    if (envPreset === 'city') {
-      // Cyberpunk (Nocne miasto) - mrok i neony
-      setAmbientOn(false);
-      setMainSpotOn(false);
-      setPcRGBOn(true);
-      setCursorLightOn(true);
-    } else if (envPreset === 'studio') {
-      // Studio (Neutralne) - standard
-      setAmbientOn(true);
-      setMainSpotOn(true);
-      setPcRGBOn(false);
-      setCursorLightOn(false);
-    } else if (envPreset === 'dawn') {
-      // Świt (Ciepłe)
-      setAmbientOn(true);
-      setMainSpotOn(true);
-      setPcRGBOn(false);
-      setCursorLightOn(false);
-    } else if (envPreset === 'apartment') {
-      // Jasny pokój
-      setAmbientOn(true);
-      setMainSpotOn(true);
-      setPcRGBOn(false);
-      setCursorLightOn(false);
+export const usePCView = create<PCViewContextType>((set) => ({
+  xrayMode: false,
+  showAirflow: false,
+  envPreset: 'city',
+  showDesk: false,
+  showParticles: false,
+  showFog: true,
+  toggleXrayMode: () => set((state) => ({ xrayMode: !state.xrayMode })),
+  toggleAirflow: () => set((state) => ({ showAirflow: !state.showAirflow })),
+  setEnvPreset: (preset) => {
+    set({ envPreset: preset });
+    if (preset === 'city') {
+      usePCLighting.setState({ ambientOn: false, mainSpotOn: false, pcRGBOn: true, cursorLightOn: true });
+    } else {
+      usePCLighting.setState({ ambientOn: true, mainSpotOn: true, pcRGBOn: false, cursorLightOn: false });
     }
-  }, [envPreset]);
+  },
+  toggleDesk: () => set((state) => ({ showDesk: !state.showDesk })),
+  toggleParticles: () => set((state) => ({ showParticles: !state.showParticles })),
+  toggleFog: () => set((state) => ({ showFog: !state.showFog }))
+}));
 
-  const selectionValue = useMemo(() => ({
-    selectedComponent,
-    explodeStep,
-    cameraResetTrigger,
-    setSelectedComponent,
-    toggleExploded,
-    triggerCameraReset,
-  }), [
-    selectedComponent, explodeStep, cameraResetTrigger,
-    setSelectedComponent, toggleExploded, triggerCameraReset
-  ]);
+export const usePCUI = create<PCUIContextType>((set) => ({
+  showLabels: true,
+  showInstructions: false,
+  toggleLabels: () => set((state) => ({ showLabels: !state.showLabels })),
+  setShowInstructions: (show) => set({ showInstructions: show })
+}));
 
-  const rgbValue = useMemo(() => ({
-    rgbColor, setRgbColor, rgbEnabled, toggleRgbEnabled
-  }), [rgbColor, rgbEnabled, setRgbColor, toggleRgbEnabled]);
-
-  const viewValue = useMemo(() => ({
-    xrayMode, toggleXrayMode, showAirflow, toggleAirflow,
-    envPreset, setEnvPreset, showDesk, toggleDesk,
-    showParticles, toggleParticles, showFog, toggleFog
-  }), [
-    xrayMode, toggleXrayMode, showAirflow, toggleAirflow, 
-    envPreset, setEnvPreset, showDesk, toggleDesk, 
-    showParticles, toggleParticles, showFog, toggleFog
-  ]);
-
-  const uiValue = useMemo(() => ({
-    showLabels, toggleLabels, showInstructions, setShowInstructions
-  }), [showLabels, showInstructions, toggleLabels, setShowInstructions]);
-
-  const lightingValue = useMemo(() => ({
-    ambientOn, toggleAmbient,
-    mainSpotOn, toggleMainSpot,
-    pcRGBOn, togglePcRGB,
-    cursorLightOn, toggleCursorLight
-  }), [ambientOn, mainSpotOn, pcRGBOn, cursorLightOn, toggleAmbient, toggleMainSpot, togglePcRGB, toggleCursorLight]);
-
-  return (
-    <PCSelectionContext.Provider value={selectionValue}>
-      <PCRGBContext.Provider value={rgbValue}>
-        <PCViewContext.Provider value={viewValue}>
-          <PCUIContext.Provider value={uiValue}>
-            <PCLightingContext.Provider value={lightingValue}>
-              {children}
-            </PCLightingContext.Provider>
-          </PCUIContext.Provider>
-        </PCViewContext.Provider>
-      </PCRGBContext.Provider>
-    </PCSelectionContext.Provider>
-  );
-};
-
-export const usePCSelection = () => {
-  const context = useContext(PCSelectionContext);
-  if (context === undefined) {
-    throw new Error('usePCSelection must be used within a PCProvider');
-  }
-  return context;
-};
-
-export const usePCRGB = () => {
-  const context = useContext(PCRGBContext);
-  if (context === undefined) {
-    throw new Error('usePCRGB must be used within a PCProvider');
-  }
-  return context;
-};
-
-export const usePCView = () => {
-  const context = useContext(PCViewContext);
-  if (context === undefined) {
-    throw new Error('usePCView must be used within a PCProvider');
-  }
-  return context;
-};
-
-export const usePCUI = () => {
-  const context = useContext(PCUIContext);
-  if (context === undefined) {
-    throw new Error('usePCUI must be used within a PCProvider');
-  }
-  return context;
-};
-
-export const usePCLighting = () => {
-  const context = useContext(PCLightingContext);
-  if (context === undefined) {
-    throw new Error('usePCLighting must be used within a PCProvider');
-  }
-  return context;
+export const PCProvider = ({ children }: { children: ReactNode }) => {
+  return <>{children}</>;
 };

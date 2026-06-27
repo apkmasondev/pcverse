@@ -18,7 +18,13 @@
 - **Zamykanie Escapem**: Wprowadzono globalny skrót klawiszowy `Escape` pozwalający na natychmiastowe i wygodne wyjście z Trybu Budowy.
 - **Dostępność Interfejsu (aria-live)**: Dodano dynamiczny region `aria-live="polite"` do komunikatu "Zamontuj: [Komponent]", wspierając obsługę interfejsu przez czytniki ekranowe.
 - **Zoptymalizowany Panel Informacyjny**: Panel detali (InfoPanel) automatycznie i natychmiastowo chowa się po aktywacji Trybu Budowy. Usunięto również nieużywane funkcje biblioteki `framer-motion`, odchudzając minimalnie rozmiar paczki.
+
+### Optymalizacja Architektury i Wydajności (v5 - Etap 4)
+- **Chude Odświeżanie z Zustand (Wyeliminowanie H1)**: Przeprowadzono kompletną refaktoryzację zarządzania stanem (`usePC.tsx`). Zastąpiono wbudowane w Reacta dostawcy `Context API` wydajnymi sklepami (stores) z biblioteki **Zustand**.
+- **Granularne Subskrypcje w 3D**: `ComponentMesh` używa teraz selektorów Zustand, subskrybując wyłącznie ten stan, którego faktycznie potrzebuje. Rozwiązuje to uciążliwy problem znany jako "lawinowy re-render", zapobiegając przerysowywaniu się wszystkich 14 elementów komputera na ekranie przy każdej, nawet drobnej zmianie w aplikacji (np. przesunięcie slidera RGB).
+- **Izolacja Komponentów Reaktywnych**: Przeniesiono odczytywanie globalnych zmiennych `rgbColor` oraz `xrayMode` bezpośrednio w dół drzewa, do sub-komponentów `ProceduralGeometry` i `ComponentLabel`. Dzięki temu sama geometria 3D w React Three Fiber nie traci czasu na ponowne ewaluacje skomplikowanych animacji w `useFrame` podczas zmian kolorystyki, ucinając skoki klatek (jank) na urządzeniach mobilnych do absolutnego minimum.
 - **Odciążenie Drzewa DOM**: Ukrywanie bocznego menu kontrolerów w Trybie Budowy odbywa się teraz w oparciu o pełne usuwanie z DOM (renderowanie warunkowe w React), a nie ukrywanie stylem CSS `hidden`.
+- **Kompletne Wyczyszczenie Audytu v5 (Medium/Low)**: Załatano ostatnie wycieki pamięci materiałów w `DeskScenery` wynosząc je do `useMemo` i czyszcząc przy odmontowywaniu (`dispose()`). Dodano nową wygenerowaną ikonę `apple-touch-icon.png` dla systemu iOS oraz przeprowadzono kompresję ciężkich tekstur plakatów (np. kubek o wadze 550KB zredukowany drastycznie). Poprawiono literówki w kodzie i błędne rzutowania typów w Three.js.
 
 ### Optymalizacja Pamięci i Zasobów (v5 - Etap 3)
 - **Eliminacja Wycieków w DeskScenery**: Usunięto tworzenie "w locie" powtarzalnych materiałów i geometrii (tzw. inline materials). Obiekty takie jak czarne ramki kubka, koszyk czy dywan używają teraz wyekstrahowanych poza komponent referencji lub wykorzystują `useMemo` oraz `dispose()` podczas niszczenia komponentu.

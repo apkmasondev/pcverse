@@ -120,7 +120,7 @@ const DeskDetails = ({ reducedMotion }: { reducedMotion: boolean }) => {
     import.meta.env.BASE_URL + 'textures/posters/mb_side_short.webp'
   ]);
 
-  const { gpuBoxMaterials, moboBoxMaterials, energyCanMaterials, ramFloorMaterials, postItMaterials } = useMemo(() => {
+  const { gpuBoxMaterials, moboBoxMaterials, energyCanMaterials, ramFloorMaterials, postItMaterials, mugMaterial } = useMemo(() => {
     const texSideShortMirrored = texSideShort.clone();
     texSideShortMirrored.wrapS = THREE.RepeatWrapping;
     texSideShortMirrored.repeat.x = -1;
@@ -153,55 +153,38 @@ const DeskDetails = ({ reducedMotion }: { reducedMotion: boolean }) => {
         new THREE.MeshStandardMaterial({ map: texMbSideLong, roughness: 0.4 }),
       ],
       energyCanMaterials: [
-        new THREE.MeshStandardMaterial({ map: texEnergyCan, roughness: 0.2, metalness: 0.5 }),
+        new THREE.MeshStandardMaterial({ map: texEnergyCan, roughness: 0.3, metalness: 0.8 }),
+        energyCanTopMat,
         new THREE.MeshStandardMaterial({ map: texCanTop, roughness: 0.3, metalness: 0.8 }),
-        energyCanTopMat
       ],
       ramFloorMaterials: [
+        new THREE.MeshStandardMaterial({ map: texRamFloor, roughness: 0.5, metalness: 0.2 }),
         ramStickMat,
         ramStickMat,
-        new THREE.MeshStandardMaterial({ map: texRamFloor, roughness: 0.5, metalness: 0.6 }),
         ramStickMat,
-        new THREE.MeshStandardMaterial({ color: '#ffcc00', metalness: 1.0, roughness: 0.2 }),
-        ramStickMat
+        ramStickMat,
+        ramStickMat,
       ],
       postItMaterials: [
-        new THREE.MeshStandardMaterial({ map: texNote1, color: '#ffffff', roughness: 0.9, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }),
-        new THREE.MeshStandardMaterial({ map: texNote2, color: '#ffffff', roughness: 0.9, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 })
-      ]
+        new THREE.MeshStandardMaterial({ map: texNote1, roughness: 0.9 }),
+        new THREE.MeshStandardMaterial({ map: texNote2, roughness: 0.9 })
+      ],
+      mugMaterial: new THREE.MeshStandardMaterial({ map: texNewMug, emissiveMap: texNewMug, emissiveIntensity: 0.2, emissive: "#ffffff", polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 })
     };
-  }, [texGpuBox, texSideLong, texSideShort, texEnergyCan, texCanTop, texRamFloor, texNote1, texNote2, texMbBox, texMbSideLong, texMbSideShort]);
+  }, [texSideShort, texGpuBox, texSideLong, texEnergyCan, texCanTop, texRamFloor, texNote1, texNote2, texMbBox, texMbSideLong, texMbSideShort, texNewMug]);
 
   useEffect(() => {
     return () => {
-      const mirroredMap = (gpuBoxMaterials[0] as THREE.MeshStandardMaterial).map;
-      if (mirroredMap) mirroredMap.dispose();
-
-      const mbMirroredMap = (moboBoxMaterials[0] as THREE.MeshStandardMaterial).map;
-      if (mbMirroredMap) mbMirroredMap.dispose();
-
-      gpuBoxMaterials[0].dispose();
-      gpuBoxMaterials[1].dispose();
-      gpuBoxMaterials[2].dispose();
-      gpuBoxMaterials[4].dispose();
-      gpuBoxMaterials[5].dispose();
-
-      moboBoxMaterials[0].dispose();
-      moboBoxMaterials[1].dispose();
-      moboBoxMaterials[2].dispose();
-      moboBoxMaterials[4].dispose();
-      moboBoxMaterials[5].dispose();
-
-      energyCanMaterials[0].dispose();
-      energyCanMaterials[1].dispose();
-
-      ramFloorMaterials[2].dispose();
-      ramFloorMaterials[4].dispose();
-
+      gpuBoxMaterials.forEach((m) => { if (m !== gpuBoxSideMat) m.dispose(); });
+      moboBoxMaterials.forEach((m) => { if (m !== moboBoxSideMat) m.dispose(); });
+      energyCanMaterials.forEach((m) => { if (m !== energyCanTopMat) m.dispose(); });
+      ramFloorMaterials.forEach((m) => { if (m !== ramStickMat) m.dispose(); });
+      
       postItMaterials[0].dispose();
       postItMaterials[1].dispose();
+      mugMaterial.dispose();
     };
-  }, [gpuBoxMaterials, moboBoxMaterials, energyCanMaterials, ramFloorMaterials, postItMaterials]);
+  }, [gpuBoxMaterials, moboBoxMaterials, energyCanMaterials, ramFloorMaterials, postItMaterials, mugMaterial]);
 
   return (
     <>
@@ -232,7 +215,7 @@ const DeskDetails = ({ reducedMotion }: { reducedMotion: boolean }) => {
         </mesh>
         <mesh position={[0, 1, 0]} rotation={[0, 0, 0]}>
           <cylinderGeometry args={[0.81, 0.81, 1.3, 16, 1, true, -0.6, 1.2]} />
-          <meshStandardMaterial map={texNewMug} emissiveMap={texNewMug} emissiveIntensity={0.2} emissive="#ffffff" polygonOffset={true} polygonOffsetFactor={-1} polygonOffsetUnits={-1} />
+          <primitive object={mugMaterial} attach="material" />
         </mesh>
       </group>
 

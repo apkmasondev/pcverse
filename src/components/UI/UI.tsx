@@ -118,7 +118,7 @@ export const UI = () => {
         )}
       </AnimatePresence>
 
-      {/* Tryb Budowy UI Overylay */}
+      {/* Tryb Budowy UI Overlay */}
       <AnimatePresence>
         {buildMode && (
           <motion.div
