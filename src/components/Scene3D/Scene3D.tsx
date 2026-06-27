@@ -18,7 +18,7 @@ const envMap: Record<string, string> = {
 };
 
 const useReducedMotion = () => {
-  const [reducedMotion, setReducedMotion] = useState(() => 
+  const [reducedMotion, setReducedMotion] = useState(() =>
     typeof window !== 'undefined' ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false
   );
   useEffect(() => {
@@ -37,18 +37,18 @@ const CursorLight = () => {
   useFrame(({ raycaster, camera }, delta) => {
     if (lightRef.current) {
       // Place light slightly in front of the object the user is pointing at
-      const distance = camera.position.length() * 0.6; 
+      const distance = camera.position.length() * 0.6;
       raycaster.ray.at(distance, _vec.current);
       lightRef.current.position.lerp(_vec.current, 1 - Math.exp(-10 * delta)); // Make lerp frame-rate independent roughly
     }
   });
 
   return (
-    <pointLight 
-      ref={lightRef} 
-      intensity={3.5} 
-      distance={8} 
-      color="#c084fc" 
+    <pointLight
+      ref={lightRef}
+      intensity={3.5}
+      distance={8}
+      color="#c084fc"
       decay={2}
     />
   );
@@ -68,7 +68,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
 
   const dofTarget = useMemo(() => new Vector3(), []);
   const dofEnabled = !!selectedComponent;
-  
+
   const gridColors = useMemo(() => {
     switch (envPreset) {
       case 'city':
@@ -101,7 +101,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
       if (!cameraControlsRef.current) return;
       // Nie blokujemy strzałek, jeśli user pisze w jakimś inpucie
       if (document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA') return;
-      
+
       const speed = 0.5;
       switch (e.key) {
         case 'ArrowUp':
@@ -146,18 +146,18 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
     if (cameraControlsRef.current && selectedComponent) {
       const posArray = explodeStep === 2 ? selectedComponent.explodedPosition : selectedComponent.position;
       const targetVec = _tempVec.current.set(posArray[0], posArray[1], posArray[2]);
-      
+
       // Calculate vector from component to current camera
       const dir = _tempDir.current.copy(camera.position).sub(targetVec);
-      
+
       if (dir.lengthSq() < 0.001) {
         dir.set(0, 0.5, 1);
       }
       dir.normalize();
-      
+
       // Keep focal point exactly on the component so it rotates perfectly around its own center
       const focalPoint = _tempFocal.current.copy(targetVec);
-      
+
       // Set distance: 4 on desktop, 5.5 on mobile to fit the narrow screen better
       const dist = isMobile ? 5.5 : 4;
       const targetPos = targetVec.clone().add(dir.multiplyScalar(dist));
@@ -221,29 +221,29 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
     <>
       <color attach="background" args={[bgColor]} />
       {showFog && <fog attach="fog" args={[bgColor, 15, 60]} />}
-      
-      <ambientLight intensity={1.8} />
-      
+
+      <ambientLight intensity={1.2} />
+
       <PerspectiveCamera makeDefault position={[0, 3, 16]} fov={50} near={0.5} far={100} />
-      
+
       {!isMobile && !disableEffects && showParticles && !reducedMotion && (
         <>
           <Sparkles count={500} scale={30} size={4} speed={0.5} opacity={0.5} color={gridColors.sparkles} />
           <Stars radius={50} depth={50} count={3000} factor={3} saturation={0.5} fade speed={1.5} />
         </>
       )}
-      
-      <directionalLight 
-        position={[10, 20, 10]} 
-        intensity={3.5} 
+
+      <directionalLight
+        position={[10, 20, 10]}
+        intensity={3.5}
       />
       <directionalLight position={[-10, -10, -10]} intensity={2.0} color="#6366f1" />
       <spotLight position={[-10, 10, -10]} intensity={3.5} angle={0.3} penumbra={1} />
       <rectAreaLight position={[0, 3, 0]} width={5} height={5} intensity={5.0} color="#e0e7ff" rotation={[-Math.PI / 2, 0, 0]} />
       <pointLight position={[0, 0, 6]} intensity={15.0} color="#ffffff" distance={30} decay={2} />
-      
+
       {!isMobile && !disableEffects && <CursorLight />}
-      
+
       <React.Suspense fallback={null}>
         <group position={[0, 1.36, 0]}>
           <PCModel />
@@ -255,17 +255,17 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
         {showDesk && !isMobile ? (
           <DeskScenery />
         ) : (
-          <Grid 
-            position={[0, -4.1, 0]} 
-            args={[80, 80]} 
-            cellSize={1} 
-            cellThickness={1.2} 
-            cellColor={gridColors.cell} 
-            sectionSize={5} 
-            sectionThickness={2.0} 
-            sectionColor={gridColors.section} 
-            fadeDistance={40} 
-            fadeStrength={2} 
+          <Grid
+            position={[0, -4.1, 0]}
+            args={[80, 80]}
+            cellSize={1}
+            cellThickness={1.2}
+            cellColor={gridColors.cell}
+            sectionSize={5}
+            sectionThickness={2.0}
+            sectionColor={gridColors.section}
+            fadeDistance={40}
+            fadeStrength={2}
           />
         )}
         {!isMobile && (
@@ -280,11 +280,11 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
           </EffectComposer>
         )}
       </React.Suspense>
-      
-      <CameraControls 
+
+      <CameraControls
         ref={cameraControlsRef}
         makeDefault
-        minDistance={6} 
+        minDistance={6}
         maxDistance={40}
         minPolarAngle={0.2}
         maxPolarAngle={Math.PI / 2}
@@ -307,8 +307,8 @@ export const Scene3D = () => {
   const [disableEffects, setDisableEffects] = useState(false);
 
   return (
-    <div 
-      className="w-full h-[60vh] md:h-screen bg-[#050505] relative" 
+    <div
+      className="w-full h-[60vh] md:h-screen bg-[#050505] relative"
       aria-hidden="true"
       onPointerDown={() => setHasInteracted(true)}
       onTouchStart={() => setHasInteracted(true)}
@@ -322,15 +322,15 @@ export const Scene3D = () => {
       )}
       <Canvas
         gl={{ antialias: true }}
-        dpr={dpr} 
+        dpr={dpr}
         frameloop={isMobile ? 'demand' : 'always'}
         onPointerMissed={() => setSelectedComponent(null)}
       >
-        <PerformanceMonitor 
+        <PerformanceMonitor
           onDecline={() => {
             setDpr(1);
             setDisableEffects(true);
-          }} 
+          }}
           onIncline={() => {
             setDpr(isMobile ? 1 : [1, 2]);
             setDisableEffects(false);

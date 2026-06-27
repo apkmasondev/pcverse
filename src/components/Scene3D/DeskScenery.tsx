@@ -230,8 +230,8 @@ const DeskDetails = ({ reducedMotion }: { reducedMotion: boolean }) => {
         </mesh>
       </group>
 
-      <mesh geometry={moboBoxGeo} material={moboBoxMaterials} position={[-5.7, 0.35, -2.2]} rotation={[0, -0.15, 0]} castShadow receiveShadow />
-      <mesh geometry={gpuBoxGeo} material={gpuBoxMaterials} position={[-6.9, 0.35, 2.2]} rotation={[0, 0.25, 0]} castShadow receiveShadow />
+      <mesh geometry={moboBoxGeo} material={moboBoxMaterials} position={[-5.7, 0.35, -2.3]} rotation={[0, -0.15, 0]} castShadow receiveShadow />
+      <mesh geometry={gpuBoxGeo} material={gpuBoxMaterials} position={[-7.2, 0.35, 2.5]} rotation={[0, 0.25, 0]} castShadow receiveShadow />
 
       <Instances limit={10} geometry={ramStickGeo} material={ramFloorMaterials} castShadow frustumCulled={false}>
         <Instance position={[1.5, 0.04, 3.6]} rotation={[0, 0.5, 0]} />

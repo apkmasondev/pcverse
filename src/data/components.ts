@@ -32,7 +32,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Nowoczesne płyty główne mogą mieć ponad 10 warstw włókna szklanego i miedzianych ścieżek.",
     position: [-0.45, 0, -1.75],
-    explodedPosition: [-3.84, 0, -9.75],
+    explodedPosition: [-5.5, 1.5, -9.75],
     color: "#1a1a2e",
     perfImpact: { gaming: 5, ai: 5, productivity: 5 },
     customStats: [
@@ -98,7 +98,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Współczesne układy graficzne (GPU) są wykorzystywane nie tylko w grach, ale także jako potężne 'mózgi' dla sztucznej inteligencji, ponieważ potrafią przetwarzać tysiące operacji matematycznych jednocześnie.",
     position: [-0.25, -0.1, -1.15],
-    explodedPosition: [-6.5, 0.65, -3.25],
+    explodedPosition: [-9, 0.65, -3.25],
     color: "#6366f1",
     perfImpact: { gaming: 60, ai: 60, productivity: 15 },
     geometryArgs: [2.5, 0.5, 1.2],
@@ -149,7 +149,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Najnowsze dyski NVMe (w standardzie PCIe 5.0) osiągają oszałamiającą prędkość odczytu na poziomie przekraczającym 14 000 MB/s!",
     position: [-0.45, 0.35, -1.7],
-    explodedPosition: [5.85, 3.4, -2.6],
+    explodedPosition: [5.85, 4, -2.6],
     color: "#f8b500",
     perfImpact: { gaming: 10, ai: 5, productivity: 15 },
     geometryArgs: [0.2, 0.8, 0.05],
@@ -215,7 +215,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Dwa wentylatory z przodu pozwalają uzyskać pożądany przepływ przy niższych i cichszych obrotach.",
     position: [0.8, 0.8, 1.75],
-    explodedPosition: [4, 1.5, 5],
+    explodedPosition: [3.5, 1.5, 5],
     color: "#ffffff",
     perfImpact: { gaming: 10, ai: 10, productivity: 5 },
     customStats: [
@@ -232,8 +232,8 @@ export const pcComponents: PCComponent[] = [
     ]
   },
   {
-    id: "rear_fan",
-    name: "Wentylator Wyciągowy - Exhaust Fan",
+    id: "rear_fan_1",
+    name: "Wentylator Wyciągowy - Exhaust Fan 1",
     description: "Zainstalowany z tyłu obudowy wentylator odpowiedzialny za wyciąganie gorącego powietrza na zewnątrz systemu.",
     role: [
       "Bezpośrednio odbiera ciepło z okolic procesora",
@@ -242,7 +242,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Wyciąg ciepłego powietrza z tyłu jest kluczowy – gorące powietrze naturalnie unosi się do góry i gromadzi z tyłu obudowy.",
     position: [-1.8, 1.4, -0.4],
-    explodedPosition: [-5.2, 2.6, -0.52],
+    explodedPosition: [-6, 2.6, -0.52],
     color: "#ffffff",
     perfImpact: { gaming: 10, ai: 10, productivity: 5 },
     customStats: [
@@ -259,7 +259,7 @@ export const pcComponents: PCComponent[] = [
     ]
   },
   {
-    id: "side_fan_2",
+    id: "rear_fan_2",
     name: "Wentylator Wyciągowy - Exhaust Fan 2",
     description: "Drugi wentylator wyciągowy pracujący w parze na bocznej ramie.",
     role: [
@@ -269,7 +269,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Podwójne wentylatory pozwalają kręcić się wolniej przy zachowaniu tej samej wydajności, co obniża hałas.",
     position: [-1.8, 1.4, 0.8],
-    explodedPosition: [-5.2, 4.8, 1.04],
+    explodedPosition: [-6, 4.8, 1.04],
     color: "#ffffff",
     perfImpact: { gaming: 5, ai: 5, productivity: 2 },
     customStats: [
@@ -318,7 +318,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: 'Talerze w dysku HDD wirują tak szybko, że głowica odczytująca lewituje ledwie 2 nanometry nad nimi! To tak, jakby lecieć Boeingiem 747 milimetr nad ziemią.',
     position: [1.3, -2.18, -0.5],
-    explodedPosition: [7.8, 0, 6.2],
+    explodedPosition: [6.8, 0, 1.5],
     color: "#4a6984",
     perfImpact: { gaming: 5, ai: 2, productivity: 30 },
     geometryArgs: [1.0, 0.25, 1.4],

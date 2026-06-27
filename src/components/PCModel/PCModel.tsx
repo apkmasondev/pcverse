@@ -48,8 +48,8 @@ const GEOMETRY_REGISTRY: Record<string, React.FC<GeometryProps>> = {
   psu: PSUGeometry,
   case_fan_1: FanGeometry,
   case_fan_2: FanGeometry,
-  rear_fan: FanGeometry,
-  side_fan_2: FanGeometry,
+  rear_fan_1: FanGeometry,
+  rear_fan_2: FanGeometry,
   case: CaseGeometry,
 };
 
@@ -61,8 +61,8 @@ const ProceduralGeometry = ({ data, baseColor, rgbColor }: { data: PCComponent, 
   
   if (Component) {
     // Special handling for fans
-    if (['case_fan_1', 'case_fan_2', 'rear_fan', 'side_fan_2'].includes(data.id)) {
-      const isExhaust = data.id === 'rear_fan' || data.id === 'side_fan_2';
+    if (['case_fan_1', 'case_fan_2', 'rear_fan_1', 'rear_fan_2'].includes(data.id)) {
+      const isExhaust = data.id === 'rear_fan_1' || data.id === 'rear_fan_2';
       return <Component rgbColor={rgbColor} isExhaust={isExhaust} />;
     }
     
@@ -139,7 +139,7 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
       ref={groupRef}
       position={data.position}
       rotation={
-        (data.id === 'rear_fan' || data.id === 'side_fan_2') ? [0, Math.PI / 2, 0] : 
+        (data.id === 'rear_fan_1' || data.id === 'rear_fan_2') ? [0, Math.PI / 2, 0] : 
         data.id === 'psu' ? [0, Math.PI / 2, 0] : 
         [0, 0, 0]
       }
