@@ -210,22 +210,13 @@ export const CasePanels = ({
           ) : (
             <primitive object={bracketMaterials} attach="material" />
           )}
-          {[-0.55, -0.7, -0.85, -1.0, -1.15, -1.3].map((y, i) => (
+          {[-0.85, -1.0, -1.15, -1.3].map((y, i) => (
             <Instance key={i} position={[-1.97, y, -1.15]} />
           ))}
         </Instances>
         <group position={[-1.975, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
-          <Mesh>
+          <Mesh material={[texturedMaterials.texMat0, materials.grayMetal]}>
             <extrudeGeometry args={[leftPanelShape, extrudeOpts005]} />
-            <primitive object={materials.grayMetal} attach="material" />
-          </Mesh>
-          <Mesh position={[0, 0, 0.051]}>
-            <shapeGeometry args={[leftPanelShape]} />
-            <primitive object={texturedMaterials.texMat0} />
-          </Mesh>
-          <Mesh position={[0, 0, -0.001]}>
-            <shapeGeometry args={[leftPanelShape]} />
-            <primitive object={texturedMaterials.texMat1} />
           </Mesh>
         </group>
         <Mesh position={[-1.98, 1.4, 0.2]} rotation={[0, Math.PI / 2, 0]}>

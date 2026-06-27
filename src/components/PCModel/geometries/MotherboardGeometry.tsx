@@ -192,7 +192,7 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
 
           {/* Groove floor (dark) */}
           <Mesh position={[0, 0, 0.025]}>
-            <boxGeometry args={[0.04, 1.8, 0.01]} />
+            <boxGeometry args={[0.038, 1.78, 0.01]} />
             <primitive object={materials.deepBlack} attach="material" />
           </Mesh>
 
@@ -261,8 +261,8 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
           </Mesh>
 
           {/* Groove floor (dark) */}
-          <Mesh position={[0, 0, 0.02]}>
-            <boxGeometry args={[2.8, 0.07, 0.01]} />
+          <Mesh position={[0, 0, 0.025]}>
+            <boxGeometry args={[2.78, 0.068, 0.01]} />
             <primitive object={materials.deepBlack} attach="material" />
           </Mesh>
 

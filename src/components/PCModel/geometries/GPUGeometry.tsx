@@ -95,14 +95,14 @@ export const GPUGeometry = ({ rgbColor }: { rgbColor: string }) => {
       </mesh>
       {/* GPU IO Ports (HDMI & 3x DisplayPort) at Left Edge */}
       <group position={[-1.7, -0.15, 0]}>
-        <mesh position={[0, 0, -0.05]} material={xrayMode ? xrayMaterial : undefined}>
-          <boxGeometry args={[0.04, 0.38, 1.1]} />
+        <mesh position={[0, 0, -0.1]} material={xrayMode ? xrayMaterial : undefined}>
+          <boxGeometry args={[0.04, 0.38, 1.3]} />
           {!xrayMode && <primitive object={materials.roughDarkMetal} attach="material" />}
         </mesh>
         {/* GPU IO Texture Plane */}
         {!xrayMode && (
-          <mesh position={[-0.025, 0, -0.05]} rotation={[0, -Math.PI / 2, 0]}>
-            <planeGeometry args={[1.1, 0.38]} />
+          <mesh position={[-0.025, 0, -0.1]} rotation={[0, -Math.PI / 2, 0]}>
+            <planeGeometry args={[1.3, 0.38]} />
             <primitive object={texturedMaterials.texMat0} />
           </mesh>
         )}

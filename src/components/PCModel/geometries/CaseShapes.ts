@@ -31,8 +31,8 @@ export const leftPanelShape = (() => {
   const pcieHole = new Path();
   pcieHole.moveTo(-1.15 - 0.6, -1.42); // Extended downwards for 6 slots
   pcieHole.lineTo(-1.15 + 0.6, -1.42); // Extended downwards for 6 slots
-  pcieHole.lineTo(-1.15 + 0.6, -0.1 + 0.25);
-  pcieHole.lineTo(-1.15 - 0.6, -0.1 + 0.25);
+  pcieHole.lineTo(-1.15 + 0.6, -0.40); // Lowered top edge to fit GPU at Y = -0.455
+  pcieHole.lineTo(-1.15 - 0.6, -0.40); // Lowered top edge
   pcieHole.lineTo(-1.15 - 0.6, -1.42); // Extended downwards for 6 slots
   shape.holes.push(pcieHole);
 
