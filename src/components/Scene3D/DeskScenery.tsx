@@ -154,8 +154,8 @@ const DeskDetails = ({ reducedMotion }: { reducedMotion: boolean }) => {
       ],
       energyCanMaterials: [
         new THREE.MeshStandardMaterial({ map: texEnergyCan, roughness: 0.3, metalness: 0.8 }),
-        energyCanTopMat,
         new THREE.MeshStandardMaterial({ map: texCanTop, roughness: 0.3, metalness: 0.8 }),
+        energyCanTopMat,
       ],
       ramFloorMaterials: [
         ramStickMat,

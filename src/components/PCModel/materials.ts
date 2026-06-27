@@ -1,4 +1,4 @@
-import { MeshStandardMaterial } from 'three';
+import { MeshStandardMaterial, MeshPhysicalMaterial } from 'three';
 
 export const materials = {
   // Existing materials
@@ -49,15 +49,17 @@ export const xrayMaterial = new MeshStandardMaterial({
   opacity: 0.3
 });
 
-export const ghostMaterial = new MeshStandardMaterial({
-  color: 0x00ffff,
-  emissive: 0x00ffff,
-  emissiveIntensity: 2.0,
+export const ghostMaterial = new MeshPhysicalMaterial({
+  color: 0xffaa00, // Złoty (Premium Gold)
+  emissive: 0xffaa00,
+  emissiveIntensity: 0.5, // Delikatna emisja, nie wypalająca oczu
   transparent: true,
-  opacity: 0.8,
+  opacity: 0.9,
+  transmission: 0.8, // Szkło
+  roughness: 0.4, // Zmatowione/Oszronione
+  metalness: 0.2,
   depthWrite: false,
   depthTest: true,
-  wireframe: false,
   side: 2, // THREE.DoubleSide
   blending: 2, // THREE.AdditiveBlending
 });

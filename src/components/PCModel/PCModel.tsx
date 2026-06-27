@@ -145,10 +145,10 @@ const ComponentLabel = memo(({ data, hovered, isUnbuilt, isCurrentStep, isMobile
         >
           <div className="flex flex-col items-center text-center">
           <span className="text-[10px] font-bold text-white/50 tracking-wider uppercase mb-0.5" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>
-            {isUnbuilt ? 'Oczekujący komponent' : data.name.split(' - ')[0]}
+            {(isUnbuilt && isCurrentStep) ? 'Oczekujący komponent' : data.name.split(' - ')[0]}
           </span>
           <span className="text-sm font-black text-white leading-tight tracking-wide drop-shadow-md">
-            {isUnbuilt ? data.name.split(' - ')[0] : data.name.split(' - ')[1] || data.name}
+            {(isUnbuilt && isCurrentStep) ? data.name.split(' - ')[0] : data.name.split(' - ')[1] || data.name}
           </span>
         </div>
         </div>
@@ -234,6 +234,7 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
 
     if (ringRef.current) {
       ringRef.current.rotation.z += delta * 0.5;
+      ringRef.current.position.y = -data.geometryArgs[1] / 2 - 0.4 + Math.sin(_state.clock.elapsedTime * 3) * 0.05;
     }
   });
 
@@ -282,7 +283,7 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
       >
         {isCurrentStep && (
           <mesh ref={ringRef as any} material={ghostMaterial} position={[0, -data.geometryArgs[1]/2 - 0.4, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-            <ringGeometry args={[Math.max(data.geometryArgs[0], data.geometryArgs[2]) * 0.4, Math.max(data.geometryArgs[0], data.geometryArgs[2]) * 0.6, 32]} />
+            <torusGeometry args={[Math.max(data.geometryArgs[0], data.geometryArgs[2]) * 0.5, Math.max(data.geometryArgs[0], data.geometryArgs[2]) * 0.05, 16, 64]} />
           </mesh>
         )}
       <ErrorBoundary fallback={<mesh material={xrayMode ? xrayMaterial : undefined}><boxGeometry args={data.geometryArgs} />{!xrayMode && <meshStandardMaterial color={baseColor} />}</mesh>}>
