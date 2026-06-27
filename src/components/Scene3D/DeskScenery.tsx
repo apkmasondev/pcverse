@@ -124,6 +124,28 @@ const CorkBoard = () => {
   );
 };
 
+
+const Magazine = () => {
+  const texMag = useTexture(import.meta.env.BASE_URL + 'textures/posters/magazine.webp');
+
+  return (
+    <mesh
+      position={[-5, 0.02, 3]}
+      rotation={[-Math.PI / 2, 0, 0.25]}
+    >
+      <planeGeometry args={[1.5, 2.0]} />
+      <meshStandardMaterial
+        map={texMag}
+        roughness={0.2}
+        metalness={0.1}
+        polygonOffset={true}
+        polygonOffsetFactor={-1}
+        polygonOffsetUnits={-1}
+      />
+    </mesh>
+  );
+};
+
 const Door = () => {
   const texDoor = useTexture(import.meta.env.BASE_URL + 'textures/posters/door.webp');
   const doorMat = useMemo(() => new THREE.MeshStandardMaterial({ 
@@ -419,6 +441,7 @@ export const DeskScenery = () => {
         <DeskDetails reducedMotion={reducedMotion} />
         <AmbilightStrip />
         <CorkBoard />
+        <Magazine />
         <Door />
       </Suspense>
     </group>
