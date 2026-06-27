@@ -114,7 +114,7 @@ export const UI = () => {
         if (showInstructions) {
           setShowInstructions(false);
         } else if (useBuildStore.getState().buildMode) {
-          useBuildStore.getState().toggleBuildMode();
+          triggerLoading(useBuildStore.getState().toggleBuildMode);
         }
       }
     };

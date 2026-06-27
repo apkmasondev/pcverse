@@ -3,7 +3,7 @@
 ## Etap 29 - Oświetlenie Krawędziowe, Tablica i Optymalizacja Renderera 🎬
 
 ### Optymalizacja Wydajności (Shader Recompilation)
-- **Zarządzanie Ładowaniem Środowiska**: Rozwiązano problem 500-milisekundowych "zamrożeń" (stutteringu) ekranu występujących podczas fizycznego usuwania/dodawania mgły oraz źródeł światła z drzewa React. Wdrożono nowy, globalny stan `useAppLoading`, który przechwytuje żądania użytkownika (np. przełącznik głównego światła). Zamiast brutalnie usuwać światło w tym samym cyklu zegara, aplikacja wyzwala `LoadingScreen`, daje przeglądarce 150ms na wyrenderowanie paska postępu, a następnie dyskretnie w tle przebudowuje shadery WebGL z nową ilością świateł.
+- **Zarządzanie Ładowaniem Środowiska (Build Mode & Scenografia)**: Rozwiązano problem "zamrożeń" (stutteringu) ekranu występujących podczas fizycznego usuwania/dodawania ciężkich elementów (jak biurko czy mgła), a także przy wejściu w **Tryb Budowy** (gdzie masowo podmieniany jest materiał na `ghostMaterial`). Wdrożono globalny stan `useAppLoading`, który przechwytuje żądania użytkownika, wyzwala pełnoekranowy `LoadingScreen` i daje silnikowi czas na dyskretną przebudowę shaderów WebGL w tle. Zapewnia to idealnie płynny "UX premium".
 
 ### Rozbudowa Scenografii 3D
 - **Realistyczny Magazyn "Komputer Świr"**: Na dywanie obok komputera umieszczono fikcyjny magazyn komputerowy. Grafika została zaprojektowana w stylistyce realistycznej, poddana kompresji i przekonwertowana do zoptymalizowanego formatu `.webp`. Obiekt wykorzystuje `polygonOffset` by uniknąć zjawiska z-fighting na powierzchni dywanu.
