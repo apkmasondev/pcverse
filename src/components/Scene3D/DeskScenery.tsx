@@ -120,9 +120,13 @@ const DeskDetails = ({ reducedMotion }: { reducedMotion: boolean }) => {
     texSideShortMirrored.repeat.x = -1;
     texSideShortMirrored.needsUpdate = true;
 
+    texMbSideShort.center.set(0.5, 0.5);
+    texMbSideShort.rotation = Math.PI / 2;
+    texMbSideShort.needsUpdate = true;
+
     const texMbSideShortMirrored = texMbSideShort.clone();
-    texMbSideShortMirrored.wrapS = THREE.RepeatWrapping;
-    texMbSideShortMirrored.repeat.x = -1;
+    texMbSideShortMirrored.wrapT = THREE.RepeatWrapping; // Use wrapT because it's rotated
+    texMbSideShortMirrored.repeat.y = -1; // Flip on Y since it's rotated 90 deg
     texMbSideShortMirrored.needsUpdate = true;
 
     return {
@@ -226,16 +230,16 @@ const DeskDetails = ({ reducedMotion }: { reducedMotion: boolean }) => {
         </mesh>
       </group>
 
-      <mesh geometry={moboBoxGeo} material={moboBoxMaterials} position={[-6.2, 0.35, -1.6]} rotation={[0, -0.15, 0]} castShadow receiveShadow />
-      <mesh geometry={gpuBoxGeo} material={gpuBoxMaterials} position={[-6.5, 0.34, 2]} rotation={[0, 0.25, 0]} castShadow receiveShadow />
-      
+      <mesh geometry={moboBoxGeo} material={moboBoxMaterials} position={[-5.7, 0.35, -2.2]} rotation={[0, -0.15, 0]} castShadow receiveShadow />
+      <mesh geometry={gpuBoxGeo} material={gpuBoxMaterials} position={[-6.9, 0.35, 2.2]} rotation={[0, 0.25, 0]} castShadow receiveShadow />
+
       <Instances limit={10} geometry={ramStickGeo} material={ramFloorMaterials} castShadow frustumCulled={false}>
         <Instance position={[1.5, 0.04, 3.6]} rotation={[0, 0.5, 0]} />
         <Instance position={[1.8, 0.04, 4.1]} rotation={[0, 0.7, 0]} />
       </Instances>
 
       <mesh geometry={energyCanGeo} material={energyCanMaterials} position={[5.5, 0.74, 2.5]} rotation={[0, 0.5, 0]} castShadow />
-      
+
       <mesh geometry={postItGeo} material={postItMaterials[0]} position={[-2.2, 0.1, 4.8]} rotation={[-Math.PI / 2, 0, 0.2]} receiveShadow />
       <mesh geometry={postItGeo} material={postItMaterials[1]} position={[3.5, 0.1, 5.4]} rotation={[-Math.PI / 2, 0, -0.1]} receiveShadow />
 
@@ -311,8 +315,8 @@ export const DeskScenery = () => {
 
   const isMobile = useIsMobile();
   const reflectorMeshRef = useRef<THREE.Mesh>(null);
-  
-  const [reducedMotion, setReducedMotion] = useState(() => 
+
+  const [reducedMotion, setReducedMotion] = useState(() =>
     typeof window !== 'undefined' ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false
   );
   useEffect(() => {
