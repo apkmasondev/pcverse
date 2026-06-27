@@ -305,7 +305,7 @@ export const UI = () => {
                   </button>
                 ))}
                 
-                <div className="h-px bg-white/10 my-1 w-full" />
+                <div className="hidden md:block h-px bg-white/10 my-1 w-full" />
                 
                 <button
                   aria-label="Przełącz Biurko"
@@ -314,7 +314,7 @@ export const UI = () => {
                     toggleDesk();
                     setShowEnv(false);
                   }}
-                  className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${showDesk ? 'bg-amber-500/20 text-amber-300 font-bold' : 'text-slate-300 hover:bg-white/10 hover:text-white'}`}
+                  className={`hidden md:block text-left px-3 py-2 rounded-lg text-sm transition-colors ${showDesk ? 'bg-amber-500/20 text-amber-300 font-bold' : 'text-slate-300 hover:bg-white/10 hover:text-white'}`}
                 >
                   <div className="font-medium">Tryb Scenografii</div>
                   <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">{showDesk ? 'Cyber-Biurko (Wł)' : 'Cyber-Biurko (Wył)'}</div>
@@ -442,7 +442,7 @@ export const UI = () => {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                 {/* Lewa Kolumna - Sterowanie */}
                 <div className="flex flex-col gap-4">
-                  <div className="flex items-start gap-4 p-5 rounded-2xl bg-white/[0.02] border border-white/[0.05] h-full">
+                  <div className="flex items-start gap-4 p-5 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
                     <MousePointerClick aria-hidden="true" className="text-indigo-400 shrink-0 mt-1" />
                     <div className="w-full">
                       <h3 className="text-lg font-semibold text-white mb-4">Sterowanie i Interakcja</h3>
@@ -473,10 +473,7 @@ export const UI = () => {
                       </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Prawa Kolumna - Opcje i Legenda */}
-                <div className="flex flex-col gap-4">
                   <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
                     <Layers aria-hidden="true" className="text-indigo-400 shrink-0 mt-0.5" />
                     <div>
@@ -486,6 +483,10 @@ export const UI = () => {
                       </p>
                     </div>
                   </div>
+                </div>
+
+                {/* Prawa Kolumna - Opcje i Legenda */}
+                <div className="flex flex-col gap-4">
 
                   <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
                     <Sun aria-hidden="true" className="text-amber-400 shrink-0 mt-0.5" />
@@ -493,12 +494,17 @@ export const UI = () => {
                       <h3 className="text-base font-semibold text-white mb-1.5">Otoczenie i Cyber-Scenografia</h3>
                       <p className="text-sm text-slate-300 leading-relaxed">
                         Zmienia globalne oświetlenie. Aktywuj <strong>"Tryb Scenografii"</strong>, by postawić sprzęt na biurku z fotorealistycznymi odbiciami.
-                        <span className="text-amber-400/90 block mt-1.5 text-xs">⚠️ <strong>Uwaga:</strong> Scenografia podwaja ilość renderowanych detali (wymagane GPU).</span>
+                        <span className="text-amber-400/90 block mt-2 text-xs">⚠️ <strong>Uwaga:</strong> Scenografia podwaja ilość renderowanych detali (wymagane GPU).</span>
+                        <span className="text-sky-300 block mt-1.5 text-xs">📱 <strong>Urządzenia mobilne:</strong> Ze względu na proporcje pionowych ekranów i ograniczenia wydajności, na wąskich ekranach sceneria nie wyświetli się.</span>
                       </p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
+                    <div className="col-span-full flex items-center justify-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
+                      <Focus aria-hidden="true" className="text-indigo-400 shrink-0" />
+                      <span className="text-sm text-slate-300 leading-tight"><strong>Zresetuj:</strong> Przywraca domyślny kąt kamery i resetuje przybliżenie.</span>
+                    </div>
                     <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
                       <Scan aria-hidden="true" className="text-cyan-400 shrink-0" />
                       <span className="text-sm text-slate-300 leading-tight"><strong>Hologram:</strong> Prześwietla wszystkie podzespoły PC.</span>
@@ -522,10 +528,6 @@ export const UI = () => {
                     <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
                       <Cloud aria-hidden="true" className="text-sky-400 shrink-0" />
                       <span className="text-sm text-slate-300 leading-tight"><strong>Mgła tła:</strong> Włącza klimatyczne wtapianie sceny w horyzont.</span>
-                    </div>
-                    <div className="col-span-full flex items-center justify-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
-                      <Focus aria-hidden="true" className="text-indigo-400 shrink-0" />
-                      <span className="text-sm text-slate-300 leading-tight"><strong>Zresetuj:</strong> Przywraca domyślny kąt kamery i resetuje przybliżenie.</span>
                     </div>
                   </div>
                 </div>

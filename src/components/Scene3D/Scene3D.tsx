@@ -252,7 +252,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
           <Environment files={envMap[envPreset] || envMap.studio} environmentIntensity={1.5} />
         </ErrorBoundary>
 
-        {showDesk ? (
+        {showDesk && !isMobile ? (
           <DeskScenery />
         ) : (
           <Grid 
