@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { CameraControls, Environment, PerspectiveCamera, Sparkles, PerformanceMonitor, Grid, Stars } from '@react-three/drei';
+import { CameraControls, Environment, PerspectiveCamera, Sparkles, PerformanceMonitor, Grid, Stars, Preload } from '@react-three/drei';
 import { EffectComposer, Bloom, N8AO, Vignette, ChromaticAberration, DepthOfField } from '@react-three/postprocessing';
 import { Vector2, Vector3, PointLight } from 'three';
 
@@ -335,6 +335,7 @@ export const Scene3D = () => {
         >
           <SceneContent isMobile={isMobile} disableEffects={disableEffects} />
         </PerformanceMonitor>
+        <Preload all />
       </Canvas>
     </div>
   );
