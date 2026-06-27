@@ -130,7 +130,7 @@ export const pcComponents: PCComponent[] = [
     color: "#00b8a9",
     perfImpact: { gaming: 10, ai: 15, productivity: 20 },
     buildTip: 'Aby aktywować tryb Dual Channel (co drastycznie zwiększa wydajność), pamięci należy montować parami w slotach A2 i B2 (drugi i czwarty od procesora). Między kościami musi zostać jeden wolny slot! Otwórz zatrzaski, wsuń kości i dociśnij je równomiernie, aż usłyszysz wyraźny "klik".',
-    geometryArgs: [0.5, 1.2, 0.6],
+    geometryArgs: [0.5, 1.2, 0.8],
     imageUrls: ["/images/components/ram.webp", "/images/components/ram_macro.webp", "/images/components/ram_alt.webp", "/images/components/ram_real.webp"],
   },
   {
@@ -149,7 +149,7 @@ export const pcComponents: PCComponent[] = [
     color: "#00b8a9",
     perfImpact: { gaming: 2, ai: 1, productivity: 5 },
     buildTip: 'Aby aktywować tryb Dual Channel (co drastycznie zwiększa wydajność), pamięci należy montować parami w slotach A2 i B2 (drugi i czwarty od procesora). Między kościami musi zostać jeden wolny slot! Otwórz zatrzaski, wsuń kości i dociśnij je równomiernie, aż usłyszysz wyraźny "klik".',
-    geometryArgs: [0.5, 1.2, 0.6],
+    geometryArgs: [0.5, 1.2, 0.8],
     imageUrls: ["/images/components/ram.webp", "/images/components/ram_macro.webp", "/images/components/ram_alt.webp", "/images/components/ram_real.webp"],
   },
   {
@@ -163,12 +163,12 @@ export const pcComponents: PCComponent[] = [
       "Łączy się bezpośrednio z szyną PCIe dla maksymalnej prędkości"
     ],
     funFact: "Najnowsze dyski NVMe (w standardzie PCIe 5.0) osiągają oszałamiającą prędkość odczytu na poziomie przekraczającym 14 000 MB/s!",
-    position: [-0.42, 0.35, -1.7],
+    position: [-0.42, 0.35, -1.8],
     explodedPosition: [5.85, 4, -2.6],
     color: "#f8b500",
     perfImpact: { gaming: 10, ai: 5, productivity: 15 },
     buildTip: 'Dysk M.2 wsuwamy w port pod kątem około 30 stopni, a następnie delikatnie dociskamy do płyty i blokujemy śrubką. Jeśli Twoja płyta posiada dedykowany, aluminiowy radiator na dysk, bezwzględnie pamiętaj o ściągnięciu przezroczystej folii ochronnej z termopada przed jego przykręceniem!',
-    geometryArgs: [0.28, 1.0, 0.02],
+    geometryArgs: [0.4, 1.2, 0.8],
     imageUrls: ["/images/components/ssd.webp", "/images/components/ssd_macro.webp", "/images/components/ssd_alt.webp", "/images/components/ssd_real.webp"],
   },
   {
