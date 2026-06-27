@@ -137,6 +137,28 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
   const togglePcRGB = useCallback(() => setPcRGBOn((prev) => !prev), []);
   const toggleCursorLight = useCallback(() => setCursorLightOn((prev) => !prev), []);
 
+  useEffect(() => {
+    if (envPreset === 'city') {
+      // Cyberpunk (Nocne miasto) - mrok i neony
+      setAmbientOn(false);
+      setMainSpotOn(false);
+      setPcRGBOn(true);
+      setCursorLightOn(true);
+    } else if (envPreset === 'studio') {
+      // Studio (Neutralne) - standard
+      setAmbientOn(true);
+      setMainSpotOn(true);
+    } else if (envPreset === 'dawn') {
+      // Świt (Ciepłe)
+      setAmbientOn(true);
+      setMainSpotOn(true);
+    } else if (envPreset === 'apartment') {
+      // Jasny pokój
+      setAmbientOn(true);
+      setMainSpotOn(true);
+    }
+  }, [envPreset]);
+
   const selectionValue = useMemo(() => ({
     selectedComponent,
     explodeStep,
