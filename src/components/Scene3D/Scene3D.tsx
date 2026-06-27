@@ -257,7 +257,9 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
         )}
         {!isMobile && (
           <EffectComposer multisampling={4}>
+            {/* @ts-expect-error EffectComposer strict types don't allow booleans for conditional rendering */}
             {dofEnabled && !disableEffects && <DepthOfField key="dof" target={dofTarget} focalLength={0.05} bokehScale={8} height={700} />}
+            {/* @ts-expect-error EffectComposer strict types don't allow booleans for conditional rendering */}
             {!disableEffects && <N8AO key="n8ao" aoRadius={0.5} intensity={2.0} distanceFalloff={0.5} quality="medium" halfRes />}
             <Bloom key="bloom" luminanceThreshold={0.5} mipmapBlur intensity={1.5} />
             <Vignette key="vig" eskil={false} offset={0.1} darkness={0.9} />
@@ -286,12 +288,6 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
           one: 32,
           two: 256,
           three: 0
-        }}
-        keys={{
-          up: 0,
-          down: 0,
-          left: 0,
-          right: 0
         }}
       />
     </>
