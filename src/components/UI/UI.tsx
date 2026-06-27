@@ -538,7 +538,7 @@ export const UI = () => {
                     aria-label="Przełącz Biurko"
                     onClick={() => {
                       playSelectSound();
-                      toggleDesk();
+                      triggerLoading(toggleDesk);
                       setShowEnv(false);
                     }}
                     className={`hidden md:block text-left px-3 py-2 rounded-lg text-sm transition-colors ${showDesk ? "bg-amber-500/20 text-amber-300 font-bold" : "text-slate-300 hover:bg-white/10 hover:text-white"}`}
