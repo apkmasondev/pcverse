@@ -103,10 +103,10 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
   useEffect(() => {
     if (cameraControlsRef.current && !hasInitialized.current) {
       hasInitialized.current = true;
-      cameraControlsRef.current.setLookAt(0, 13.36, 35, 0, 1.36, 0, false);
+      cameraControlsRef.current.setLookAt(0, 13.36, 35, 0, 1, 0, false);
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          cameraControlsRef.current?.setLookAt(0, 4.36, 20, 0, 1.36, 0, true);
+          cameraControlsRef.current?.setLookAt(0, 2.5, 20, 0, 0.7, 0, true);
         });
       });
     }
@@ -157,8 +157,8 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
       }
       // Płynny powrót kamery na środek
       cameraControlsRef.current?.setLookAt(
-        0, 4.36, 20,
-        0, 1.36, 0,
+        0, 2.5, 20,
+        0, 0.7, 0,
         true
       );
     }
@@ -180,8 +180,8 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
       }
       cameraControlsRef.current.reset(true);
       cameraControlsRef.current.setLookAt(
-        0, 4.36, 20,
-        0, 1.36, 0,
+        0, 2.5, 20,
+        0, 0.7, 0,
         true
       );
     }
@@ -196,7 +196,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
       cameraControlsRef.current.reset(true);
       cameraControlsRef.current.setLookAt(
         0, 5.0, 25,
-        0, 1.36, 0,
+        0, 0.7, 0,
         true
       );
     }
