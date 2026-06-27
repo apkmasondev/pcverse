@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import { useEffect, useMemo, useRef, useState, Suspense } from 'react';
 import { MeshReflectorMaterial, Float, useTexture, Instances, Instance } from '@react-three/drei';
-import { usePCView } from '../../hooks/usePC';
+import { useFrame } from '@react-three/fiber';
+import { usePCView, usePCRGB } from '../../hooks/usePC';
 import { useIsMobile } from '../../hooks/useIsMobile';
 
 // --- Zgodnie z AUDYTEM (Etap 20) ---
@@ -51,6 +52,77 @@ const blackMatSingle = new THREE.MeshStandardMaterial({ color: '#0f0f13', roughn
 
 const crateGeo = new THREE.BoxGeometry(5, 2.0, 5);
 const rugGeo = new THREE.BoxGeometry(22, 12.375, 0.04);
+
+const AmbilightStrip = () => {
+  const groupRef = useRef<THREE.Group>(null);
+  const rgbColor = usePCRGB((state: any) => state.rgbColor);
+  const rgbEnabled = usePCRGB((state: any) => state.rgbEnabled);
+  const targetColor = useRef(new THREE.Color(rgbColor));
+  const targetIntensity = useRef(3);
+
+  useFrame((_, delta) => {
+    if (!groupRef.current) return;
+    targetColor.current.set(rgbColor);
+    targetIntensity.current = THREE.MathUtils.lerp(targetIntensity.current, rgbEnabled ? 3 : 0, delta * 10);
+    
+    groupRef.current.children.forEach((child) => {
+      if ((child as THREE.PointLight).isLight) {
+        const light = child as THREE.PointLight;
+        light.color.lerp(targetColor.current, delta * 5);
+        light.intensity = targetIntensity.current;
+      }
+    });
+  });
+
+  return (
+    <group ref={groupRef}>
+      <pointLight position={[0, 2, -24]} distance={40} intensity={3} color={rgbColor} />
+      <pointLight position={[0, 2, 24]} distance={40} intensity={3} color={rgbColor} />
+      <pointLight position={[-24, 2, 0]} distance={40} intensity={3} color={rgbColor} />
+      <pointLight position={[24, 2, 0]} distance={40} intensity={3} color={rgbColor} />
+    </group>
+  );
+};
+
+const Poster = ({ tex, position, rotation, size }: { tex: THREE.Texture, position: [number, number, number], rotation?: [number, number, number], size: number }) => {
+  return (
+    <group position={position} rotation={rotation || [0, 0, 0]}>
+      <mesh>
+        <planeGeometry args={[size + 0.2, size + 0.2]} />
+        <meshBasicMaterial color="#000000" />
+      </mesh>
+      <mesh>
+        <planeGeometry args={[size, size]} />
+        <meshStandardMaterial map={tex} emissiveMap={tex} emissiveIntensity={0.2} emissive="#ffffff" polygonOffset={true} polygonOffsetFactor={-1} polygonOffsetUnits={-1} />
+      </mesh>
+    </group>
+  );
+};
+
+const CorkBoard = () => {
+  const texCork = useTexture(import.meta.env.BASE_URL + 'textures/posters/corkboard.webp');
+  const corkMat = useMemo(() => new THREE.MeshStandardMaterial({ 
+    map: texCork, 
+    roughness: 1, 
+    polygonOffset: true, 
+    polygonOffsetFactor: -1, 
+    polygonOffsetUnits: -1 
+  }), [texCork]);
+  
+  return (
+    <Float speed={1} rotationIntensity={0.05} floatIntensity={0.2}>
+      <group position={[-25, 10, 0]} rotation={[0, Math.PI / 2, 0]}>
+        <mesh>
+          <planeGeometry args={[16.2, 10.2]} />
+          <meshBasicMaterial color="#000000" />
+        </mesh>
+        <mesh material={corkMat}>
+          <planeGeometry args={[16, 10]} />
+        </mesh>
+      </group>
+    </Float>
+  );
+};
 
 const ScatteredItems = () => {
   return (
@@ -236,59 +308,17 @@ const DeskDetails = ({ reducedMotion }: { reducedMotion: boolean }) => {
 
       <group position={[0, 12, -25]}>
         <Float speed={reducedMotion ? 0 : 1.5} rotationIntensity={reducedMotion ? 0 : 0.05} floatIntensity={reducedMotion ? 0 : 0.2}>
-          <mesh position={[-12, 0, 2]} rotation={[0, 0.2, 0]}>
-            <planeGeometry args={[8, 8]} />
-            <meshStandardMaterial map={texCPU} emissiveMap={texCPU} emissiveIntensity={0.2} emissive="#ffffff" />
-            <mesh position={[0, 0, -0.01]}>
-              <planeGeometry args={[8.2, 8.2]} />
-              <meshBasicMaterial color="#000000" />
-            </mesh>
-          </mesh>
-          <mesh position={[0, 1.5, 0]}>
-            <planeGeometry args={[9, 9]} />
-            <meshStandardMaterial map={texOS} emissiveMap={texOS} emissiveIntensity={0.2} emissive="#ffffff" />
-            <mesh position={[0, 0, -0.01]}>
-              <planeGeometry args={[9.2, 9.2]} />
-              <meshBasicMaterial color="#000000" />
-            </mesh>
-          </mesh>
-          <mesh position={[12, 0, 2]} rotation={[0, -0.2, 0]}>
-            <planeGeometry args={[8, 8]} />
-            <meshStandardMaterial map={texIO} emissiveMap={texIO} emissiveIntensity={0.2} emissive="#ffffff" />
-            <mesh position={[0, 0, -0.01]}>
-              <planeGeometry args={[8.2, 8.2]} />
-              <meshBasicMaterial color="#000000" />
-            </mesh>
-          </mesh>
+          <Poster tex={texCPU} position={[-12, 0, 2]} rotation={[0, 0.2, 0]} size={8} />
+          <Poster tex={texOS} position={[0, 1.5, 0]} size={9} />
+          <Poster tex={texIO} position={[12, 0, 2]} rotation={[0, -0.2, 0]} size={8} />
         </Float>
       </group>
 
       <group position={[0, 12, 25]} rotation={[0, Math.PI, 0]}>
         <Float speed={reducedMotion ? 0 : 1.5} rotationIntensity={reducedMotion ? 0 : 0.05} floatIntensity={reducedMotion ? 0 : 0.2}>
-          <mesh position={[-12, 0, 2]} rotation={[0, 0.2, 0]}>
-            <planeGeometry args={[8, 8]} />
-            <meshStandardMaterial map={texBug} emissiveMap={texBug} emissiveIntensity={0.2} emissive="#ffffff" />
-            <mesh position={[0, 0, -0.01]}>
-              <planeGeometry args={[8.2, 8.2]} />
-              <meshBasicMaterial color="#000000" />
-            </mesh>
-          </mesh>
-          <mesh position={[0, 1.5, 0]}>
-            <planeGeometry args={[9, 9]} />
-            <meshStandardMaterial map={texRam} emissiveMap={texRam} emissiveIntensity={0.2} emissive="#ffffff" />
-            <mesh position={[0, 0, -0.01]}>
-              <planeGeometry args={[9.2, 9.2]} />
-              <meshBasicMaterial color="#000000" />
-            </mesh>
-          </mesh>
-          <mesh position={[12, 0, 2]} rotation={[0, -0.2, 0]}>
-            <planeGeometry args={[8, 8]} />
-            <meshStandardMaterial map={texSpag} emissiveMap={texSpag} emissiveIntensity={0.2} emissive="#ffffff" />
-            <mesh position={[0, 0, -0.01]}>
-              <planeGeometry args={[8.2, 8.2]} />
-              <meshBasicMaterial color="#000000" />
-            </mesh>
-          </mesh>
+          <Poster tex={texBug} position={[-12, 0, 2]} rotation={[0, 0.2, 0]} size={8} />
+          <Poster tex={texRam} position={[0, 1.5, 0]} size={9} />
+          <Poster tex={texSpag} position={[12, 0, 2]} rotation={[0, -0.2, 0]} size={8} />
         </Float>
       </group>
     </>
@@ -357,6 +387,8 @@ export const DeskScenery = () => {
 
       <Suspense fallback={null}>
         <DeskDetails reducedMotion={reducedMotion} />
+        <AmbilightStrip />
+        <CorkBoard />
       </Suspense>
     </group>
   );
