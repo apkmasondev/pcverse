@@ -148,14 +148,20 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
       // Studio (Neutralne) - standard
       setAmbientOn(true);
       setMainSpotOn(true);
+      setPcRGBOn(false);
+      setCursorLightOn(false);
     } else if (envPreset === 'dawn') {
       // Świt (Ciepłe)
       setAmbientOn(true);
       setMainSpotOn(true);
+      setPcRGBOn(false);
+      setCursorLightOn(false);
     } else if (envPreset === 'apartment') {
       // Jasny pokój
       setAmbientOn(true);
       setMainSpotOn(true);
+      setPcRGBOn(false);
+      setCursorLightOn(false);
     }
   }, [envPreset]);
 
