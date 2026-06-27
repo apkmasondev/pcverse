@@ -94,6 +94,7 @@ const ComponentLabel = memo(({ data, hovered, isUnbuilt, isCurrentStep, isMobile
   const buildMode = useBuildStore(state => state.buildMode);
   const advanceStep = useBuildStore(state => state.advanceStep);
 
+  const shouldHighlight = hovered || (buildMode && isCurrentStep);
   return (
     <Html 
       position={[0, data.geometryArgs[1] / 2, 0]}
@@ -110,8 +111,8 @@ const ComponentLabel = memo(({ data, hovered, isUnbuilt, isCurrentStep, isMobile
         style={{ willChange: "transform, opacity" }}
       >
         <div 
-          className={`pointer-events-auto cursor-pointer whitespace-nowrap min-w-max px-4 py-2 rounded-xl rounded-br-sm border shadow-xl transition-all duration-300 ${hovered ? 'scale-105' : 'bg-black/60 border-white/20'}`}
-          style={hovered ? { 
+          className={`pointer-events-auto cursor-pointer whitespace-nowrap min-w-max px-4 py-2 rounded-xl rounded-br-sm border shadow-xl transition-all duration-300 ${shouldHighlight ? 'scale-105' : 'bg-black/60 border-white/20'}`}
+          style={shouldHighlight ? { 
             backgroundColor: `${effectiveRgbColor}40`,
             borderColor: `${effectiveRgbColor}`, 
             boxShadow: `0 0 15px ${effectiveRgbColor}60`
@@ -153,15 +154,15 @@ const ComponentLabel = memo(({ data, hovered, isUnbuilt, isCurrentStep, isMobile
         </div>
         <div className="relative flex flex-col items-center pointer-events-none">
           <div 
-            className={`w-px h-16 transition-all duration-300 ${!hovered ? 'bg-gradient-to-b from-white/40 to-white/5' : ''}`}
-            style={hovered ? {
+            className={`w-px h-16 transition-all duration-300 ${!shouldHighlight ? 'bg-gradient-to-b from-white/40 to-white/5' : ''}`}
+            style={shouldHighlight ? {
               backgroundColor: effectiveRgbColor,
               boxShadow: `0 0 10px ${effectiveRgbColor}`
             } : undefined}
           />
           <div 
-            className={`absolute -bottom-1 w-2 h-2 rounded-full border transition-all duration-300 ${!hovered ? 'border-white/40 bg-black/80' : ''}`}
-            style={hovered ? {
+            className={`absolute -bottom-1 w-2 h-2 rounded-full border transition-all duration-300 ${!shouldHighlight ? 'border-white/40 bg-black/80' : ''}`}
+            style={shouldHighlight ? {
               borderColor: effectiveRgbColor,
               backgroundColor: `${effectiveRgbColor}40`,
               boxShadow: `0 0 8px ${effectiveRgbColor}`

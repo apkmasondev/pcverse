@@ -158,9 +158,9 @@ const DeskDetails = ({ reducedMotion }: { reducedMotion: boolean }) => {
         new THREE.MeshStandardMaterial({ map: texCanTop, roughness: 0.3, metalness: 0.8 }),
       ],
       ramFloorMaterials: [
+        ramStickMat,
+        ramStickMat,
         new THREE.MeshStandardMaterial({ map: texRamFloor, roughness: 0.5, metalness: 0.2 }),
-        ramStickMat,
-        ramStickMat,
         ramStickMat,
         ramStickMat,
         ramStickMat,
@@ -179,7 +179,7 @@ const DeskDetails = ({ reducedMotion }: { reducedMotion: boolean }) => {
       moboBoxMaterials.forEach((m) => { if (m !== moboBoxSideMat) m.dispose(); });
       energyCanMaterials.forEach((m) => { if (m !== energyCanTopMat) m.dispose(); });
       ramFloorMaterials.forEach((m) => { if (m !== ramStickMat) m.dispose(); });
-      
+
       postItMaterials[0].dispose();
       postItMaterials[1].dispose();
       mugMaterial.dispose();
@@ -223,8 +223,8 @@ const DeskDetails = ({ reducedMotion }: { reducedMotion: boolean }) => {
       <mesh geometry={gpuBoxGeo} material={gpuBoxMaterials} position={[-7.2, 0.35, 2.5]} rotation={[0, 0.25, 0]} castShadow receiveShadow />
 
       <Instances limit={10} geometry={ramStickGeo} material={ramFloorMaterials} castShadow frustumCulled={false}>
-        <Instance position={[1.5, 0.04, 3.6]} rotation={[0, 0.5, 0]} />
-        <Instance position={[1.8, 0.04, 4.1]} rotation={[0, 0.7, 0]} />
+        <Instance position={[1.1, 0.04, 4.7]} rotation={[0, 0.5, 0]} />
+        <Instance position={[1.9, 0.04, 5]} rotation={[0, 0.7, 0]} />
       </Instances>
 
       <mesh geometry={energyCanGeo} material={energyCanMaterials} position={[5.5, 0.74, 2.5]} rotation={[0, 0.5, 0]} castShadow />
