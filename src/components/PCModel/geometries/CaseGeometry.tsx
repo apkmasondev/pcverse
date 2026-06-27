@@ -68,16 +68,16 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
     canvas.height = 32;
     const ctx = canvas.getContext('2d');
     if (ctx) {
-      ctx.fillStyle = '#ffffff'; 
+      ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, 32, 32);
       ctx.fillStyle = '#000000';
-      
+
       const drawDot = (x: number, y: number) => {
         ctx.beginPath();
         ctx.arc(x, y, 7, 0, Math.PI * 2);
         ctx.fill();
       };
-      
+
       // Staggered honeycomb-like dot pattern
       drawDot(8, 8);
       drawDot(24, 8);
@@ -89,7 +89,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
     texture.wrapS = RepeatWrapping;
     texture.wrapT = RepeatWrapping;
     texture.repeat.set(20, 20); // Scale the mesh grill for the top
-    
+
     return texture;
   }, []);
 
@@ -99,16 +99,16 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
     canvas.height = 32;
     const ctx = canvas.getContext('2d');
     if (ctx) {
-      ctx.fillStyle = '#ffffff'; 
+      ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, 32, 32);
       ctx.fillStyle = '#000000';
-      
+
       const drawDot = (x: number, y: number) => {
         ctx.beginPath();
         ctx.arc(x, y, 6.5, 0, Math.PI * 2);
         ctx.fill();
       };
-      
+
       // Same pattern, slightly different hole size for exhaust
       drawDot(8, 8);
       drawDot(24, 8);
@@ -120,7 +120,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
     texture.wrapS = RepeatWrapping;
     texture.wrapT = RepeatWrapping;
     texture.repeat.set(8, 8); // Less dense for back/side panels
-    
+
     return texture;
   }, []);
 
@@ -180,7 +180,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
         <shapeGeometry args={[backPanelShape]} />
         <primitive object={texturedMaterials.texMat1} />
       </Mesh>
-      
+
 
 
       {/* Top Panel (Solid Frame) */}
@@ -191,9 +191,9 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
       {/* Top Panel (Mesh grill inside the frame) */}
       <Mesh position={[0, 2.45, 0]} raycast={() => null}>
         <boxGeometry args={[3.6, 0.02, 3.6]} />
-        <meshStandardMaterial 
-          alphaMap={meshTexture} 
-          transparent={true} 
+        <meshStandardMaterial
+          alphaMap={meshTexture}
+          transparent={true}
           color="#4a4d54"
           metalness={0.8}
           roughness={0.3}
@@ -204,13 +204,13 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
       {/* PSU Back panel with honeycomb mesh cutout */}
       <Mesh position={[0, -1.91, -2.01]} raycast={() => null}>
         <planeGeometry args={[1.5, 0.78]} />
-        <meshStandardMaterial 
-          color="#4a4d54" 
-          roughness={0.3} 
-          metalness={0.85} 
-          alphaMap={backMeshTexture} 
-          transparent={true} 
-          side={DoubleSide} 
+        <meshStandardMaterial
+          color="#4a4d54"
+          roughness={0.3}
+          metalness={0.85}
+          alphaMap={backMeshTexture}
+          transparent={true}
+          side={DoubleSide}
         />
       </Mesh>
 
@@ -257,7 +257,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
           <cylinderGeometry args={[0.05, 0.05, 0.01, 32]} />
           <primitive object={materials.darkShinyMetal} attach="material" />
         </Mesh>
-        
+
         {/* USB Ports */}
         {[-0.2, -0.4].map(xOffset => (
           <Mesh key={`usb-${xOffset}`} position={[xOffset, -0.005, 0]}>
@@ -270,26 +270,26 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
       {/* PSU Bottom Ventilation Mesh (Visible from below) */}
       <Mesh position={[-1.2, -2.405, -0.8]} rotation={[Math.PI / 2, 0, 0]} raycast={() => null}>
         <planeGeometry args={[1.45, 1.45]} />
-        <meshStandardMaterial 
+        <meshStandardMaterial
           color="#1e1e24"
           roughness={0.3}
           metalness={0.85}
-          alphaMap={backMeshTexture} 
-          transparent={true} 
-          side={DoubleSide} 
+          alphaMap={backMeshTexture}
+          transparent={true}
+          side={DoubleSide}
         />
       </Mesh>
       {/* PSU Bottom Ventilation Mesh (Visible from inside case) */}
       <Mesh position={[-1.2, -2.39, -0.8]} rotation={[Math.PI / 2, 0, 0]} raycast={() => null}>
         <planeGeometry args={[1.45, 1.45]} />
-        <meshStandardMaterial 
-          color="#151515" 
-          alphaMap={backMeshTexture} 
-          transparent={true} 
-          side={DoubleSide} 
+        <meshStandardMaterial
+          color="#151515"
+          alphaMap={backMeshTexture}
+          transparent={true}
+          side={DoubleSide}
         />
       </Mesh>
-      
+
       {/* Motherboard Tray with Standoffs (Gwinty) and Routing Holes */}
       <group position={[0, 0, -1.825]}>
         {/* Main Tray */}
@@ -302,17 +302,21 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
           <shapeGeometry args={[moboTrayShape]} />
           <primitive object={texturedMaterials.texMat4} />
         </Mesh>
-        
+
         {/* Raised Standoffs (Gwinty) for Motherboard */}
-        {[-1.3, -0.45, 0.4].flatMap((x, i) => (
-          [-1.85, 0, 1.85].map((y, j) => (
-            <Mesh key={`standoff-${i}-${j}`} position={[x, y, 0.035]} rotation={[Math.PI / 2, 0, 0]}>
-              <cylinderGeometry args={[0.03, 0.03, 0.07, 16]} />
-              <primitive object={materials.copper} attach="material" />
-            </Mesh>
-          ))
+        {[-1.8, -0.4, 1].flatMap((x, i) => (
+          [-1.85, -0.05, 1.85].map((y, j) => {
+            // Usuwamy środkowy dolny gwint
+            if (x === -0.4 && y === -1.85) return null;
+            return (
+              <Mesh key={`standoff-${i}-${j}`} position={[x, y, 0.035]} rotation={[Math.PI / 2, 0, 0]}>
+                <cylinderGeometry args={[0.03, 0.03, 0.07, 16]} />
+                <primitive object={materials.copper} attach="material" />
+              </Mesh>
+            );
+          })
         ))}
-        
+
         {/* Cable Routing Rubber Grommets */}
         {[-1.0, 0, 1.0].map((y, i) => (
           <Mesh key={`grommet-${i}`} position={[1.4, y, 0.03]}>
@@ -332,19 +336,19 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
       {/* CPU Cooler Backplate Mesh Cutout (on the Back Panel, directly behind the CPU) */}
       <Mesh position={[-0.45, 1.0, -2.01]} raycast={() => null}>
         <planeGeometry args={[1.4, 1.4]} />
-        <meshStandardMaterial 
-          color="#151515" 
-          alphaMap={backMeshTexture} 
-          transparent={true} 
-          side={DoubleSide} 
+        <meshStandardMaterial
+          color="#151515"
+          alphaMap={backMeshTexture}
+          transparent={true}
+          side={DoubleSide}
         />
       </Mesh>
 
-      <CasePanels 
-        frontMeshTexture={frontMeshTexture} 
-        caseBackTexture={caseBackTexture} 
-        caseInteriorTexture={caseInteriorTexture} 
-        backMeshTexture={backMeshTexture} 
+      <CasePanels
+        frontMeshTexture={frontMeshTexture}
+        caseBackTexture={caseBackTexture}
+        caseInteriorTexture={caseInteriorTexture}
+        backMeshTexture={backMeshTexture}
       />
 
       {/* Frame Posts */}
@@ -356,22 +360,22 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
           </Mesh>
         ))
       ))}
-      
+
       {/* Internal Premium RGB Ambient Lighting - hide in X-Ray mode */}
       {!xrayMode && (
         <>
-          <pointLight 
-            position={[0, 1.2, -0.8]} 
-            intensity={3.0} 
-            distance={6} 
-            color="#6366f1" 
+          <pointLight
+            position={[0, 1.2, -0.8]}
+            intensity={3.0}
+            distance={6}
+            color="#6366f1"
             decay={1.8}
           />
-          <pointLight 
-            position={[0, -0.8, -0.6]} 
-            intensity={2.5} 
-            distance={5} 
-            color="#ec4899" 
+          <pointLight
+            position={[0, -0.8, -0.6]}
+            intensity={2.5}
+            distance={5}
+            color="#ec4899"
             decay={1.8}
           />
         </>
