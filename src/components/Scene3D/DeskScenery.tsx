@@ -124,6 +124,36 @@ const CorkBoard = () => {
   );
 };
 
+const Door = () => {
+  const texDoor = useTexture(import.meta.env.BASE_URL + 'textures/posters/door.webp');
+  const doorMat = useMemo(() => new THREE.MeshStandardMaterial({ 
+    map: texDoor, 
+    roughness: 0.8, 
+    polygonOffset: true, 
+    polygonOffsetFactor: -1, 
+    polygonOffsetUnits: -1 
+  }), [texDoor]);
+  
+  // Zakładamy proporcje 1:2 dla klasycznych drzwi. Wysokość 22 oznacza Y=11 dla idealnego styku z podłogą (Y=0)
+  const width = 11;
+  const height = 22;
+  const border = 0.4;
+  
+  return (
+    <group position={[25, height / 2, -2]} rotation={[0, -Math.PI / 2, 0]}>
+      {/* Czarna futryna pod spodem, korzystamy z polygonOffset by uniknąć Z-Fighting */}
+      <mesh>
+        <planeGeometry args={[width + border, height + border]} />
+        <meshBasicMaterial color="#000000" />
+      </mesh>
+      {/* Tekstura drzwi na wierzchu */}
+      <mesh material={doorMat}>
+        <planeGeometry args={[width, height]} />
+      </mesh>
+    </group>
+  );
+};
+
 const ScatteredItems = () => {
   return (
     <group position={[0, 0.04, 0]}>
@@ -389,6 +419,7 @@ export const DeskScenery = () => {
         <DeskDetails reducedMotion={reducedMotion} />
         <AmbilightStrip />
         <CorkBoard />
+        <Door />
       </Suspense>
     </group>
   );

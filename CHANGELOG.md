@@ -3,6 +3,7 @@
 ## Etap 29 - Oświetlenie Krawędziowe i Tablica Korkowa (Scenografia) 🎬
 
 ### Rozbudowa Scenografii 3D
+- **Drzwi (Prawa Ściana)**: Wdrożono model proceduralnych drzwi z własną teksturą użytkownika (door.webp). Osadzenie drzwi na osi Y zostało matematycznie wyrównane z podłogą, eliminując efekt lewitacji. Zastosowano również zoptymalizowaną czarną futrynę (polygonOffset).
 - **Tablica Korkowa**: Dodano wygenerowaną teksturę tablicy korkowej na lewej ścianie pokoju, wypełnioną notatkami i schematami budowy PC.
 - **Optymalizacja Z-Fighting (Plakaty)**: Zrezygnowano z mikroskopijnego przesunięcia (Z = -0.01) dla ramek plakatów i tablicy korkowej. Wyabstrahowano nowy komponent `<Poster>` używający sprzętowego parametru `polygonOffset`, eliminując Z-Fighting w pełni natywnie w WebGL zgodnie z audytem kodowym.
 
