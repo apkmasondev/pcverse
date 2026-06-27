@@ -5,6 +5,7 @@ import {
   usePCView,
   usePCUI,
   usePCLighting,
+  useAppLoading,
 } from "../../hooks/usePC";
 import {
   Layers,
@@ -84,6 +85,7 @@ export const UI = () => {
     cursorLightOn,
     toggleCursorLight,
   } = usePCLighting();
+  const { triggerLoading } = useAppLoading();
   const [showHint, setShowHint] = useState(true);
   const [showPalette, setShowPalette] = useState(false);
   const [showEnv, setShowEnv] = useState(false);
@@ -594,10 +596,10 @@ export const UI = () => {
                   <div className="p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col gap-2 shadow-2xl">
                   <button
                     aria-pressed={ambientOn}
-                    onClick={() => {
-                      playSelectSound();
-                      toggleAmbient();
-                    }}
+                      onClick={() => {
+                        playSelectSound();
+                        triggerLoading(toggleAmbient);
+                      }}
                     className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${ambientOn ? "bg-yellow-500/20 text-yellow-300 font-bold" : "text-slate-300 hover:bg-white/10 hover:text-white"}`}
                   >
                     <div className="font-medium">Światło Pokoju</div>
@@ -607,10 +609,10 @@ export const UI = () => {
                   </button>
                   <button
                     aria-pressed={mainSpotOn}
-                    onClick={() => {
-                      playSelectSound();
-                      toggleMainSpot();
-                    }}
+                      onClick={() => {
+                        playSelectSound();
+                        triggerLoading(toggleMainSpot);
+                      }}
                     className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${mainSpotOn ? "bg-yellow-500/20 text-yellow-300 font-bold" : "text-slate-300 hover:bg-white/10 hover:text-white"}`}
                   >
                     <div className="font-medium">Główny Reflektor</div>
@@ -620,10 +622,10 @@ export const UI = () => {
                   </button>
                   <button
                     aria-pressed={pcRGBOn}
-                    onClick={() => {
-                      playSelectSound();
-                      togglePcRGB();
-                    }}
+                      onClick={() => {
+                        playSelectSound();
+                        triggerLoading(togglePcRGB);
+                      }}
                     className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${pcRGBOn ? "bg-purple-500/20 text-purple-300 font-bold" : "text-slate-300 hover:bg-white/10 hover:text-white"}`}
                   >
                     <div className="font-medium">Tylna Poświata RGB</div>
@@ -633,10 +635,10 @@ export const UI = () => {
                   </button>
                   <button
                     aria-pressed={cursorLightOn}
-                    onClick={() => {
-                      playSelectSound();
-                      toggleCursorLight();
-                    }}
+                      onClick={() => {
+                        playSelectSound();
+                        triggerLoading(toggleCursorLight);
+                      }}
                     className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${cursorLightOn ? "bg-cyan-500/20 text-cyan-300 font-bold" : "text-slate-300 hover:bg-white/10 hover:text-white"}`}
                   >
                     <div className="font-medium">Latarka Kursora</div>
@@ -693,7 +695,7 @@ export const UI = () => {
             whileTap={{ scale: 0.95 }}
             onClick={() => {
               playSelectSound();
-              toggleFog();
+              triggerLoading(toggleFog);
             }}
             className={`relative flex items-center w-full h-11 rounded-xl transition-all overflow-hidden ${showFog ? "bg-sky-500/20 border border-sky-500/50 shadow-[0_0_15px_rgba(14,165,233,0.3)]" : "bg-transparent border border-transparent hover:bg-white/5"}`}
           >
