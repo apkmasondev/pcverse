@@ -5,7 +5,7 @@ import { EffectComposer, Bloom, N8AO, Vignette, ChromaticAberration, DepthOfFiel
 import { Vector2, Vector3, PointLight } from 'three';
 
 import { PCModel } from '../PCModel/PCModel';
-import { usePCSelection, usePCView } from '../../hooks/usePC';
+import { usePCSelection, usePCView, usePCLighting } from '../../hooks/usePC';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { GlobalErrorBoundary as ErrorBoundary } from '../ErrorBoundary';
 import { DeskScenery } from './DeskScenery';
@@ -57,6 +57,7 @@ const CursorLight = () => {
 const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disableEffects?: boolean }) => {
   const { selectedComponent, cameraResetTrigger, explodeStep } = usePCSelection();
   const { envPreset, showDesk, showParticles, showFog } = usePCView();
+  const { ambientOn, mainSpotOn, pcRGBOn, cursorLightOn } = usePCLighting();
   const cameraControlsRef = useRef<CameraControls>(null);
   const { camera } = useThree();
   const reducedMotion = useReducedMotion();
@@ -222,7 +223,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
       <color attach="background" args={[bgColor]} />
       {showFog && <fog attach="fog" args={[bgColor, 15, 60]} />}
 
-      <ambientLight intensity={1.2} />
+      {ambientOn && <ambientLight intensity={1.2} />}
 
       <PerspectiveCamera makeDefault position={[0, 3, 16]} fov={50} near={0.5} far={100} />
 
@@ -233,16 +234,18 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
         </>
       )}
 
-      <directionalLight
-        position={[10, 20, 10]}
-        intensity={3.5}
-      />
-      <directionalLight position={[-10, -10, -10]} intensity={2.0} color="#6366f1" />
-      <spotLight position={[-10, 10, -10]} intensity={3.5} angle={0.3} penumbra={1} />
-      <rectAreaLight position={[0, 3, 0]} width={5} height={5} intensity={5.0} color="#e0e7ff" rotation={[-Math.PI / 2, 0, 0]} />
-      <pointLight position={[0, 0, 6]} intensity={15.0} color="#ffffff" distance={30} decay={2} />
+      {mainSpotOn && (
+        <directionalLight
+          position={[10, 20, 10]}
+          intensity={3.5}
+        />
+      )}
+      {pcRGBOn && <directionalLight position={[-10, -10, -10]} intensity={2.0} color="#6366f1" />}
+      {mainSpotOn && <spotLight position={[-10, 10, -10]} intensity={3.5} angle={0.3} penumbra={1} />}
+      {ambientOn && <rectAreaLight position={[0, 3, 0]} width={5} height={5} intensity={5.0} color="#e0e7ff" rotation={[-Math.PI / 2, 0, 0]} />}
+      {pcRGBOn && <pointLight position={[0, 0, 6]} intensity={15.0} color="#ffffff" distance={30} decay={2} />}
 
-      {!isMobile && !disableEffects && <CursorLight />}
+      {!isMobile && !disableEffects && cursorLightOn && <CursorLight />}
 
       <React.Suspense fallback={null}>
         <group position={[0, 1.36, 0]}>

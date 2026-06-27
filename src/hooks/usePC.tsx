@@ -40,10 +40,22 @@ export interface PCUIContextType {
   setShowInstructions: (show: boolean) => void;
 }
 
+export interface PCLightingContextType {
+  ambientOn: boolean;
+  toggleAmbient: () => void;
+  mainSpotOn: boolean;
+  toggleMainSpot: () => void;
+  pcRGBOn: boolean;
+  togglePcRGB: () => void;
+  cursorLightOn: boolean;
+  toggleCursorLight: () => void;
+}
+
 const PCSelectionContext = createContext<PCSelectionContextType | undefined>(undefined);
 const PCRGBContext = createContext<PCRGBContextType | undefined>(undefined);
 const PCViewContext = createContext<PCViewContextType | undefined>(undefined);
 const PCUIContext = createContext<PCUIContextType | undefined>(undefined);
+const PCLightingContext = createContext<PCLightingContextType | undefined>(undefined);
 
 export const PCProvider = ({ children }: { children: ReactNode }) => {
   const [selectedComponent, setSelectedComponent] = useState<PCComponent | null>(null);
@@ -61,6 +73,22 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
   const [showDesk, setShowDesk] = useState(false);
   const [showParticles, setShowParticles] = useState(false);
   const [showFog, setShowFog] = useState(true);
+
+  const [ambientOn, setAmbientOn] = useState(true);
+  const [mainSpotOn, setMainSpotOn] = useState(true);
+  const [pcRGBOn, setPcRGBOn] = useState(true);
+  const [cursorLightOn, setCursorLightOn] = useState(true);
+
+  useEffect(() => {
+    if (envPreset === 'night') {
+      setAmbientOn(false);
+      setMainSpotOn(false);
+      setPcRGBOn(true);
+    } else if (envPreset === 'studio') {
+      setAmbientOn(true);
+      setMainSpotOn(true);
+    }
+  }, [envPreset]);
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -104,6 +132,10 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
   const toggleDesk = useCallback(() => setShowDesk((prev) => !prev), []);
   const toggleParticles = useCallback(() => setShowParticles((prev) => !prev), []);
   const toggleFog = useCallback(() => setShowFog((prev) => !prev), []);
+  const toggleAmbient = useCallback(() => setAmbientOn((prev) => !prev), []);
+  const toggleMainSpot = useCallback(() => setMainSpotOn((prev) => !prev), []);
+  const togglePcRGB = useCallback(() => setPcRGBOn((prev) => !prev), []);
+  const toggleCursorLight = useCallback(() => setCursorLightOn((prev) => !prev), []);
 
   const selectionValue = useMemo(() => ({
     selectedComponent,
@@ -135,12 +167,21 @@ export const PCProvider = ({ children }: { children: ReactNode }) => {
     showLabels, toggleLabels, showInstructions, setShowInstructions
   }), [showLabels, showInstructions, toggleLabels, setShowInstructions]);
 
+  const lightingValue = useMemo(() => ({
+    ambientOn, toggleAmbient,
+    mainSpotOn, toggleMainSpot,
+    pcRGBOn, togglePcRGB,
+    cursorLightOn, toggleCursorLight
+  }), [ambientOn, mainSpotOn, pcRGBOn, cursorLightOn, toggleAmbient, toggleMainSpot, togglePcRGB, toggleCursorLight]);
+
   return (
     <PCSelectionContext.Provider value={selectionValue}>
       <PCRGBContext.Provider value={rgbValue}>
         <PCViewContext.Provider value={viewValue}>
           <PCUIContext.Provider value={uiValue}>
-            {children}
+            <PCLightingContext.Provider value={lightingValue}>
+              {children}
+            </PCLightingContext.Provider>
           </PCUIContext.Provider>
         </PCViewContext.Provider>
       </PCRGBContext.Provider>
@@ -176,6 +217,14 @@ export const usePCUI = () => {
   const context = useContext(PCUIContext);
   if (context === undefined) {
     throw new Error('usePCUI must be used within a PCProvider');
+  }
+  return context;
+};
+
+export const usePCLighting = () => {
+  const context = useContext(PCLightingContext);
+  if (context === undefined) {
+    throw new Error('usePCLighting must be used within a PCProvider');
   }
   return context;
 };

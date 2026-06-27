@@ -242,7 +242,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Wyciąg ciepłego powietrza z tyłu jest kluczowy – gorące powietrze naturalnie unosi się do góry i gromadzi z tyłu obudowy.",
     position: [-1.8, 1.4, -0.4],
-    explodedPosition: [-6, 2.6, -0.52],
+    explodedPosition: [-6.3, 2.6, -0.52],
     color: "#ffffff",
     perfImpact: { gaming: 10, ai: 10, productivity: 5 },
     customStats: [
@@ -269,7 +269,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Podwójne wentylatory pozwalają kręcić się wolniej przy zachowaniu tej samej wydajności, co obniża hałas.",
     position: [-1.8, 1.4, 0.8],
-    explodedPosition: [-6, 4.8, 1.04],
+    explodedPosition: [-6, 5, 1.04],
     color: "#ffffff",
     perfImpact: { gaming: 5, ai: 5, productivity: 2 },
     customStats: [

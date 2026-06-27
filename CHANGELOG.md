@@ -1,5 +1,17 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 27 - Zaawansowane Sterowanie Oświetleniem 💡
+
+### Nowe Funkcjonalności Oświetleniowe
+- **System Zarządzania Światłem (Lighting Control)**: Wdrożono nowy, wydajny kontekst Reactowy (`PCLightingContext` w `usePC.tsx`) oddzielający stan oświetlenia od globalnego widoku PC. Dzięki temu przełączanie świateł nie powoduje kaskadowego re-renderowania całej zaawansowanej geometrii komputera, eliminując ryzyko przycięć. 
+- **Opcje Oświetlenia w UI**: W panelu bocznym dodano nową dedykowaną zakładkę "Oświetlenie" (ikona Żarówki), zawierającą cztery niezależne wyłączniki: 
+  - *Światło Pokoju* (kontroluje ambient i rectAreaLight), 
+  - *Główny Reflektor* (kontroluje directional i spotLight), 
+  - *Tylna Poświata RGB* (kontroluje niebieską kontrę od dołu oraz tylny pointLight dla klimatu), 
+  - *Latarka Kursora* (kierunkowe, pływające fioletowe oświetlenie za myszką).
+- **Integracja z Otoczeniem (HDRi)**: System oświetlenia jest w pełni modularny. Dla potęgowania "nocnego klimatu", wybór otoczenia "Cyberpunk" automatycznie zgasza ambient i główny reflektor, maksymalnie eksponując tylną poświatę i "Latarkę Kursora".
+- **Optymalizacja Instrukcji**: Zaktualizowano legendę/instrukcję (`UI.tsx`), wprowadzając nowy przycisk "Oświetlenie" w taki sposób, by zachować pełną symetrię i dwukolumnowy układ siatki na większych ekranach.
+
 ## Etap 26 - Optymalizacja Etykiet i Detali Scenografii 🛠️
 
 ### Ulepszenia Interfejsu i Narzędzi

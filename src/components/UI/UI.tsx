@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { usePCSelection, usePCRGB, usePCView, usePCUI } from '../../hooks/usePC';
-import { Layers, Focus, MousePointerClick, Scan, Wind, Palette, Sun, Tag, Info, X, Sparkles, Cloud } from 'lucide-react';
+import { usePCSelection, usePCRGB, usePCView, usePCUI, usePCLighting } from '../../hooks/usePC';
+import { Layers, Focus, MousePointerClick, Scan, Wind, Palette, Sun, Tag, Info, X, Sparkles, Cloud, Lightbulb } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { playExplodeSound, playSelectSound, playAmbientSound, stopAmbientSound } from '../../utils/audio';
 
@@ -29,9 +29,11 @@ export const UI = () => {
   const { rgbColor, setRgbColor, rgbEnabled, toggleRgbEnabled } = usePCRGB();
   const { xrayMode, toggleXrayMode, showAirflow, toggleAirflow, envPreset, setEnvPreset, showDesk, toggleDesk, showParticles, toggleParticles, showFog, toggleFog } = usePCView();
   const { showLabels, toggleLabels, showInstructions, setShowInstructions } = usePCUI();
+  const { ambientOn, toggleAmbient, mainSpotOn, toggleMainSpot, pcRGBOn, togglePcRGB, cursorLightOn, toggleCursorLight } = usePCLighting();
   const [showHint, setShowHint] = useState(true);
   const [showPalette, setShowPalette] = useState(false);
   const [showEnv, setShowEnv] = useState(false);
+  const [showLights, setShowLights] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowHint(false), 15000);
@@ -206,6 +208,7 @@ export const UI = () => {
               playSelectSound();
               setShowPalette(!showPalette);
               setShowEnv(false);
+              setShowLights(false);
             }}
             className={`relative flex items-center w-full h-11 rounded-xl transition-all overflow-hidden ${showPalette || rgbEnabled ? 'bg-purple-500/20 border border-purple-500/50 shadow-[0_0_15px_rgba(168,85,247,0.3)]' : 'bg-transparent border border-transparent hover:bg-white/5'}`}
           >
@@ -270,6 +273,7 @@ export const UI = () => {
               playSelectSound();
               setShowEnv(!showEnv);
               setShowPalette(false);
+              setShowLights(false);
             }}
             className={`relative flex items-center w-full h-11 rounded-xl transition-all overflow-hidden ${showEnv ? 'bg-amber-500/20 border border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.3)]' : 'bg-transparent border border-transparent hover:bg-white/5'}`}
           >
@@ -318,6 +322,72 @@ export const UI = () => {
                 >
                   <div className="font-medium">Tryb Scenografii</div>
                   <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">{showDesk ? 'Cyber-Biurko (Wł)' : 'Cyber-Biurko (Wył)'}</div>
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        <div className="relative">
+          <motion.button
+            aria-label="Oświetlenie"
+            aria-pressed={showLights}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => {
+              playSelectSound();
+              setShowLights(!showLights);
+              setShowEnv(false);
+              setShowPalette(false);
+            }}
+            className={`relative flex items-center w-full h-11 rounded-xl transition-all overflow-hidden ${showLights ? 'bg-yellow-500/20 border border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.3)]' : 'bg-transparent border border-transparent hover:bg-white/5'}`}
+          >
+            <div className={`flex-shrink-0 w-[42px] h-[42px] flex items-center justify-center transition-all duration-500 ${showLights ? 'text-yellow-400 scale-110' : 'text-slate-300'}`}>
+              <Lightbulb aria-hidden="true" size={20} />
+            </div>
+            <span className="ml-1 font-medium text-sm text-slate-300 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              Oświetlenie
+            </span>
+          </motion.button>
+          
+          <AnimatePresence>
+            {showLights && (
+              <motion.div
+                initial={{ opacity: 0, x: -10, scale: 0.95 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, x: -10, scale: 0.95 }}
+                className="absolute top-0 left-[50px] md:left-full ml-2 md:ml-4 p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col gap-2 z-50 w-52"
+              >
+                <button
+                  aria-pressed={ambientOn}
+                  onClick={() => { playSelectSound(); toggleAmbient(); }}
+                  className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${ambientOn ? 'bg-yellow-500/20 text-yellow-300 font-bold' : 'text-slate-300 hover:bg-white/10 hover:text-white'}`}
+                >
+                  <div className="font-medium">Światło Pokoju</div>
+                  <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">{ambientOn ? '(Włączone)' : '(Wyłączone)'}</div>
+                </button>
+                <button
+                  aria-pressed={mainSpotOn}
+                  onClick={() => { playSelectSound(); toggleMainSpot(); }}
+                  className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${mainSpotOn ? 'bg-yellow-500/20 text-yellow-300 font-bold' : 'text-slate-300 hover:bg-white/10 hover:text-white'}`}
+                >
+                  <div className="font-medium">Główny Reflektor</div>
+                  <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">{mainSpotOn ? '(Włączony)' : '(Wyłączony)'}</div>
+                </button>
+                <button
+                  aria-pressed={pcRGBOn}
+                  onClick={() => { playSelectSound(); togglePcRGB(); }}
+                  className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${pcRGBOn ? 'bg-purple-500/20 text-purple-300 font-bold' : 'text-slate-300 hover:bg-white/10 hover:text-white'}`}
+                >
+                  <div className="font-medium">Tylna Poświata RGB</div>
+                  <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">{pcRGBOn ? '(Włączona)' : '(Wyłączona)'}</div>
+                </button>
+                <button
+                  aria-pressed={cursorLightOn}
+                  onClick={() => { playSelectSound(); toggleCursorLight(); }}
+                  className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${cursorLightOn ? 'bg-cyan-500/20 text-cyan-300 font-bold' : 'text-slate-300 hover:bg-white/10 hover:text-white'}`}
+                >
+                  <div className="font-medium">Latarka Kursora</div>
+                  <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">{cursorLightOn ? '(Włączona)' : '(Wyłączona)'}</div>
                 </button>
               </motion.div>
             )}
@@ -518,6 +588,10 @@ export const UI = () => {
                       <span className="text-sm text-slate-300 leading-tight"><strong>RGB:</strong> Sterowanie podświetleniem części.</span>
                     </div>
                     <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
+                      <Lightbulb aria-hidden="true" className="text-yellow-400 shrink-0" />
+                      <span className="text-sm text-slate-300 leading-tight"><strong>Oświetlenie:</strong> Kontrola świateł i reflektorów.</span>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
                       <Tag aria-hidden="true" className="text-emerald-400 shrink-0" />
                       <span className="text-sm text-slate-300 leading-tight"><strong>Etykiety:</strong> Włącza lub wyłącza nazwy w 3D.</span>
                     </div>
@@ -525,7 +599,7 @@ export const UI = () => {
                       <Sparkles aria-hidden="true" className="text-amber-400 shrink-0" />
                       <span className="text-sm text-slate-300 leading-tight"><strong>Pył / Iskry:</strong> Przełącza efekty cząsteczkowe 3D.</span>
                     </div>
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
+                    <div className="col-span-full flex items-center justify-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
                       <Cloud aria-hidden="true" className="text-sky-400 shrink-0" />
                       <span className="text-sm text-slate-300 leading-tight"><strong>Mgła tła:</strong> Włącza klimatyczne wtapianie sceny w horyzont.</span>
                     </div>
