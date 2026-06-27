@@ -32,6 +32,9 @@ const pastePlungerGeo = new THREE.CylinderGeometry(0.03, 0.03, 0.4, 8);
 const gpuBoxGeo = new THREE.BoxGeometry(3, 0.6, 2.0);
 const gpuBoxSideMat = new THREE.MeshStandardMaterial({ color: '#090a0c', roughness: 0.8 });
 
+const moboBoxGeo = new THREE.BoxGeometry(3.5, 0.7, 3.2);
+const moboBoxSideMat = new THREE.MeshStandardMaterial({ color: '#13151a', roughness: 0.9 });
+
 // RAM (przygotowane pod teksturę)
 const ramStickGeo = new THREE.BoxGeometry(1.75, 0.04, 0.32);
 const ramStickMat = new THREE.MeshStandardMaterial({ color: '#1a1c20', roughness: 0.7, metalness: 0.3 }); // Zostanie zastąpiony po dodaniu tekstury
@@ -90,7 +93,7 @@ const ScatteredItems = () => {
 
 
 const DeskDetails = ({ reducedMotion }: { reducedMotion: boolean }) => {
-  const [texIO, texCPU, texOS, texBug, texNewMug, texRam, texSpag, texGpuBox, texSideLong, texSideShort, texEnergyCan, texCanTop, texRamFloor, texNote1, texNote2] = useTexture([
+  const [texIO, texCPU, texOS, texBug, texNewMug, texRam, texSpag, texGpuBox, texSideLong, texSideShort, texEnergyCan, texCanTop, texRamFloor, texNote1, texNote2, texMbBox, texMbSideLong, texMbSideShort] = useTexture([
     import.meta.env.BASE_URL + 'textures/posters/poster_io.webp',
     import.meta.env.BASE_URL + 'textures/posters/poster_cpu_war.webp',
     import.meta.env.BASE_URL + 'textures/posters/poster_os_war.webp',
@@ -105,14 +108,22 @@ const DeskDetails = ({ reducedMotion }: { reducedMotion: boolean }) => {
     import.meta.env.BASE_URL + 'textures/posters/can_top.webp',
     import.meta.env.BASE_URL + 'textures/posters/ram_floor.webp',
     import.meta.env.BASE_URL + 'textures/posters/note1.webp',
-    import.meta.env.BASE_URL + 'textures/posters/note2.webp'
+    import.meta.env.BASE_URL + 'textures/posters/note2.webp',
+    import.meta.env.BASE_URL + 'textures/posters/mb_box.webp',
+    import.meta.env.BASE_URL + 'textures/posters/mb_side_long.webp',
+    import.meta.env.BASE_URL + 'textures/posters/mb_side_short.webp'
   ]);
 
-  const { gpuBoxMaterials, energyCanMaterials, ramFloorMaterials, postItMaterials } = useMemo(() => {
+  const { gpuBoxMaterials, moboBoxMaterials, energyCanMaterials, ramFloorMaterials, postItMaterials } = useMemo(() => {
     const texSideShortMirrored = texSideShort.clone();
     texSideShortMirrored.wrapS = THREE.RepeatWrapping;
     texSideShortMirrored.repeat.x = -1;
     texSideShortMirrored.needsUpdate = true;
+
+    const texMbSideShortMirrored = texMbSideShort.clone();
+    texMbSideShortMirrored.wrapS = THREE.RepeatWrapping;
+    texMbSideShortMirrored.repeat.x = -1;
+    texMbSideShortMirrored.needsUpdate = true;
 
     return {
       gpuBoxMaterials: [
@@ -122,6 +133,14 @@ const DeskDetails = ({ reducedMotion }: { reducedMotion: boolean }) => {
         gpuBoxSideMat,
         new THREE.MeshStandardMaterial({ map: texSideLong, roughness: 0.4 }),
         new THREE.MeshStandardMaterial({ map: texSideLong, roughness: 0.4 }),
+      ],
+      moboBoxMaterials: [
+        new THREE.MeshStandardMaterial({ map: texMbSideShortMirrored, roughness: 0.4 }),
+        new THREE.MeshStandardMaterial({ map: texMbSideShort, roughness: 0.4 }),
+        new THREE.MeshStandardMaterial({ map: texMbBox, roughness: 0.4 }),
+        moboBoxSideMat,
+        new THREE.MeshStandardMaterial({ map: texMbSideLong, roughness: 0.4 }),
+        new THREE.MeshStandardMaterial({ map: texMbSideLong, roughness: 0.4 }),
       ],
       energyCanMaterials: [
         new THREE.MeshStandardMaterial({ map: texEnergyCan, roughness: 0.2, metalness: 0.5 }),
@@ -141,18 +160,27 @@ const DeskDetails = ({ reducedMotion }: { reducedMotion: boolean }) => {
         new THREE.MeshStandardMaterial({ map: texNote2, color: '#ffffff', roughness: 0.9, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 })
       ]
     };
-  }, [texGpuBox, texSideLong, texSideShort, texEnergyCan, texCanTop, texRamFloor, texNote1, texNote2]);
+  }, [texGpuBox, texSideLong, texSideShort, texEnergyCan, texCanTop, texRamFloor, texNote1, texNote2, texMbBox, texMbSideLong, texMbSideShort]);
 
   useEffect(() => {
     return () => {
       const mirroredMap = (gpuBoxMaterials[0] as THREE.MeshStandardMaterial).map;
       if (mirroredMap) mirroredMap.dispose();
 
+      const mbMirroredMap = (moboBoxMaterials[0] as THREE.MeshStandardMaterial).map;
+      if (mbMirroredMap) mbMirroredMap.dispose();
+
       gpuBoxMaterials[0].dispose();
       gpuBoxMaterials[1].dispose();
       gpuBoxMaterials[2].dispose();
       gpuBoxMaterials[4].dispose();
       gpuBoxMaterials[5].dispose();
+
+      moboBoxMaterials[0].dispose();
+      moboBoxMaterials[1].dispose();
+      moboBoxMaterials[2].dispose();
+      moboBoxMaterials[4].dispose();
+      moboBoxMaterials[5].dispose();
 
       energyCanMaterials[0].dispose();
       energyCanMaterials[1].dispose();
@@ -163,7 +191,7 @@ const DeskDetails = ({ reducedMotion }: { reducedMotion: boolean }) => {
       postItMaterials[0].dispose();
       postItMaterials[1].dispose();
     };
-  }, [gpuBoxMaterials, energyCanMaterials, ramFloorMaterials, postItMaterials]);
+  }, [gpuBoxMaterials, moboBoxMaterials, energyCanMaterials, ramFloorMaterials, postItMaterials]);
 
   return (
     <>
@@ -198,7 +226,8 @@ const DeskDetails = ({ reducedMotion }: { reducedMotion: boolean }) => {
         </mesh>
       </group>
 
-      <mesh geometry={gpuBoxGeo} material={gpuBoxMaterials} position={[-6.5, 0.34, 2]} rotation={[0, 0.25, 0]} castShadow />
+      <mesh geometry={moboBoxGeo} material={moboBoxMaterials} position={[-6.2, 0.35, -1.6]} rotation={[0, -0.15, 0]} castShadow receiveShadow />
+      <mesh geometry={gpuBoxGeo} material={gpuBoxMaterials} position={[-6.5, 0.34, 2]} rotation={[0, 0.25, 0]} castShadow receiveShadow />
       
       <Instances limit={10} geometry={ramStickGeo} material={ramFloorMaterials} castShadow frustumCulled={false}>
         <Instance position={[1.5, 0.04, 3.6]} rotation={[0, 0.5, 0]} />

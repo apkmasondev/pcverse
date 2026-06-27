@@ -43,6 +43,8 @@
 ## Etap 22 - Wdrożenie Poprawek z Audytu v4 (Część 4) 🛠️
 
 ### Architektura i Kod
+- **Scenografia: Pudełko Płyty Głównej (Motherboard Box)**: Dodano model pudełka po płycie głównej na wirtualnym biurku tuż za pudełkiem po karcie graficznej.
+- **Customowe Tekstury (User-provided)**: Zaaplikowano dostarczone przez użytkownika dedykowane tekstury pudełka płyty głównej (`mb_box.webp`, `mb_side_long.webp`, `mb_side_short.webp`) przy użyciu zaawansowanego mapowania (klonowanie `repeat.x = -1` z zachowaniem instancjonowania) podobnego do pudełka GPU. To nadaje scenografii niesamowitego, personalizowanego realizmu.
 - **Masowa Refaktoryzacja Materiałów (DRY)**: Usunięto dziesiątki powtarzających się deklaracji inline `<meshStandardMaterial>` w komponentach `CPUGeometry`, `GPUGeometry` i `MotherboardGeometry`. Wcześniej ich obecność powodowała, że z każdym re-renderem React (np. po ruchu myszki lub zmianie trybu) generowane były nowe, identyczne instancje z punktu widzenia GPU. 
 Podstawowe definicje jednokolorowych materiałów przeniesiono do wspólnego słownika instancji (`cpuDarkCharcoal`, `cpuSilverMetal`, `gpuDarkPlastic`) zlokalizowanego w `materials.ts`, przypinając je za pomocą potężnego propa `primitive`. Radykalnie obniża to narzut na proces Garbage Collectora (GC) i oszczędza kolejne cenne megabajty w pamięci VRAM.
 
