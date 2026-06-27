@@ -103,7 +103,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
   useEffect(() => {
     if (cameraControlsRef.current && !hasInitialized.current) {
       hasInitialized.current = true;
-      cameraControlsRef.current.setLookAt(0, 13.36, 35, 0, 1, 0, false);
+      cameraControlsRef.current.setLookAt(0, 13.36, 35, 0, 0.7, 0, false);
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           cameraControlsRef.current?.setLookAt(0, 2.5, 20, 0, 0.7, 0, true);
