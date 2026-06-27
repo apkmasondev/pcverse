@@ -2,19 +2,24 @@ import { useProgress } from '@react-three/drei';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { useState, useEffect } from 'react';
+import { useAppLoading } from '../../hooks/usePC';
 
 export const LoadingScreen = () => {
   const { progress, active } = useProgress();
+  const { isManualLoading } = useAppLoading();
   const [show, setShow] = useState(true);
 
-  useEffect(() => {
-    if (active) {
+useEffect(() => {
+    if (active || isManualLoading) {
       setShow(true);
-    } else if (!active && progress === 100) {
-      const timer = setTimeout(() => setShow(false), 800); // 800ms delay for shader compilation
+    } else if (!active && !isManualLoading && progress === 100) {
+      const timer = setTimeout(() => setShow(false), 800);
+      return () => clearTimeout(timer);
+    } else if (!active && !isManualLoading) {
+      const timer = setTimeout(() => setShow(false), 800);
       return () => clearTimeout(timer);
     }
-  }, [active, progress]);
+  }, [active, progress, isManualLoading]);
 
   return (
     <AnimatePresence>

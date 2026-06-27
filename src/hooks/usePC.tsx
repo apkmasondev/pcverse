@@ -51,6 +51,23 @@ export interface PCLightingContextType {
   toggleCursorLight: () => void;
 }
 
+
+export interface AppLoadingContextType {
+  isManualLoading: boolean;
+  triggerLoading: (callback: () => void) => void;
+}
+
+export const useAppLoading = create<AppLoadingContextType>((set) => ({
+  isManualLoading: false,
+  triggerLoading: (callback) => {
+    set({ isManualLoading: true });
+    setTimeout(() => {
+      callback();
+      setTimeout(() => set({ isManualLoading: false }), 800);
+    }, 150);
+  }
+}));
+
 let isAnimating = false;
 let timeoutId: ReturnType<typeof setTimeout> | null = null;
 

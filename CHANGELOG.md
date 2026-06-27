@@ -1,6 +1,9 @@
 # Dziennik Zmian (Changelog)
 
-## Etap 29 - Oświetlenie Krawędziowe i Tablica Korkowa (Scenografia) 🎬
+## Etap 29 - Oświetlenie Krawędziowe, Tablica i Optymalizacja Renderera 🎬
+
+### Optymalizacja Wydajności (Shader Recompilation)
+- **Zarządzanie Ładowaniem Środowiska**: Rozwiązano problem 500-milisekundowych "zamrożeń" (stutteringu) ekranu występujących podczas fizycznego usuwania/dodawania mgły oraz źródeł światła z drzewa React. Wdrożono nowy, globalny stan `useAppLoading`, który przechwytuje żądania użytkownika (np. przełącznik głównego światła). Zamiast brutalnie usuwać światło w tym samym cyklu zegara, aplikacja wyzwala `LoadingScreen`, daje przeglądarce 150ms na wyrenderowanie paska postępu, a następnie dyskretnie w tle przebudowuje shadery WebGL z nową ilością świateł.
 
 ### Rozbudowa Scenografii 3D
 - **Drzwi (Prawa Ściana)**: Wdrożono model proceduralnych drzwi z własną teksturą użytkownika (door.webp). Osadzenie drzwi na osi Y zostało matematycznie wyrównane z podłogą, eliminując efekt lewitacji. Zastosowano również zoptymalizowaną czarną futrynę (polygonOffset).
