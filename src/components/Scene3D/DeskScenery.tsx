@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { useEffect, useMemo, useRef, useState, Suspense } from 'react';
+import { useEffect, useMemo, useRef, Suspense } from 'react';
 import { MeshReflectorMaterial, Float, useTexture, Instances, Instance } from '@react-three/drei';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { useFrame } from '@react-three/fiber';
