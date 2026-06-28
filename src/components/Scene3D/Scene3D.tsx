@@ -19,18 +19,6 @@ const envMap: Record<string, string> = {
   apartment: import.meta.env.BASE_URL + 'environments/lebombo_1k.hdr'
 };
 
-// Dedykowane kody akcji dla biblioteki camera-controls (używane przez drei)
-// Używamy tego mapowania aby uniknąć używania "magicznych numerów" w kodzie
-const CAMERA_ACTION = {
-  NONE: 0,
-  ROTATE: 1,
-  TRUCK: 2,
-  DOLLY: 8,
-  ZOOM: 16,
-  TOUCH_ROTATE: 32,
-  TOUCH_DOLLY: 256
-} as const;
-
 const CursorLight = () => {
   const lightRef = useRef<PointLight>(null);
   const _vec = useRef(new Vector3());
@@ -277,15 +265,10 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
         smoothTime={reducedMotion ? 0.05 : 0.4}
         draggingSmoothTime={reducedMotion ? 0.05 : 0.2}
         mouseButtons={{
-          left: CAMERA_ACTION.ROTATE,
-          middle: CAMERA_ACTION.DOLLY,
-          right: CAMERA_ACTION.NONE,
-          wheel: CAMERA_ACTION.ZOOM
-        }}
-        touches={{
-          one: CAMERA_ACTION.TOUCH_ROTATE,
-          two: CAMERA_ACTION.TOUCH_DOLLY,
-          three: CAMERA_ACTION.NONE
+          left: 1,
+          middle: 8,
+          right: 0,
+          wheel: 16
         }}
       />
     </>
