@@ -270,11 +270,6 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
           right: 0,
           wheel: 16
         }}
-        touches={{
-          one: 32,
-          two: 256,
-          three: 0
-        }}
       />
     </>
   );

@@ -242,9 +242,10 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
     targetScale3.set(targetScale, targetScale, targetScale);
     groupRef.current.scale.lerp(targetScale3, delta * 8);
 
+    const ringOffsetY = data.id === 'gpu' ? 0.9 : 0.4;
     if (ringRef.current) {
       ringRef.current.rotation.z += delta * 0.5;
-      ringRef.current.position.y = -data.geometryArgs[1] / 2 - 0.4 + Math.sin(_state.clock.elapsedTime * 3) * 0.05;
+      ringRef.current.position.y = -data.geometryArgs[1] / 2 - ringOffsetY + Math.sin(_state.clock.elapsedTime * 3) * 0.05;
     }
   });
 
@@ -292,7 +293,7 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
         }}
       >
         {isCurrentStep && (
-          <mesh ref={ringRef} material={ghostMaterial} position={[0, -data.geometryArgs[1]/2 - 0.4, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <mesh ref={ringRef} material={ghostMaterial} position={[0, -data.geometryArgs[1]/2 - (data.id === 'gpu' ? 0.9 : 0.4), 0]} rotation={[-Math.PI / 2, 0, 0]}>
             <torusGeometry args={[Math.max(data.geometryArgs[0], data.geometryArgs[2]) * 0.5, Math.max(data.geometryArgs[0], data.geometryArgs[2]) * 0.05, 16, 64]} />
           </mesh>
         )}

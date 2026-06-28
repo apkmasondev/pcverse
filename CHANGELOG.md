@@ -1,6 +1,14 @@
 # Dziennik Zmian (Changelog)
 
-## Etap 32 - Audyt v6: Dekompozycja UI i Naprawa Szkła 🧩
+## Etap 32 - Audyt v6: Dekompozycja UI, Polerowanie Trybu Budowy i Mobile UX 🧩
+
+### Polerowanie Trybu Budowy (UX i UI)
+- **Ekran Finałowy Premium**: Przebudowano ekran ukończenia budowy PC (`BuildModeOverlay.tsx`). Dodano ekstremalny *glassmorphism* (rozmyte bursztynowe tło), mieniący się złoty gradient na tekście, animowaną ikonę lewitującego procesora oraz nowy, interaktywny przycisk "Uruchom System". Wprowadzono też element grywalizacji: *"Osiągnięto poziom: Ekspert PC"*.
+- **Korekta Wizualna Pierścienia**: Odsunięto w dół o 0.5 jednostki wskazujący pierścień holograficzny (Holo Ring) w trybie budowy specjalnie dla karty graficznej (GPU), aby zapobiec przenikaniu animacji z potężnymi wentylatorami chłodzenia.
+
+### Optymalizacja Mobile i WebGL (Sterowanie)
+- **Naprawa gestów na telefonach**: Dodano klasę `touch-none` do głównego kontenera otaczającego `<Canvas>`, całkowicie blokując domyślne przewijanie ekranu smartfona i wymuszając obsługę gestów przez silnik 3D.
+- **Czystość Kodu Kontrolera**: Usunięto "magiczne numery" (hardkodowane mapowania `touches={{ one: 32... }}`) z `CameraControls`, wymuszając na bibliotece użycie natywnych, wbudowanych mechanizmów dla urządzeń mobilnych (1 palec: Obrót, 2 palce: Pinch-to-Zoom). Równolegle utrzymano blokadę przesuwania dla prawego przycisku myszy (`mouseButtons={{ right: 0 }}`) na desktopach, zapobiegając ucieczce modelu poza kadr.
 
 ### Architektura UI i Modularyzacja (M6)
 - **Rozbicie monolitycznego komponentu UI.tsx**: Zgodnie z audytem kodu v6 (Etap M6) gigantyczny plik `UI.tsx` (prawie 1200 linii) został rozebrany na części pierwsze. Od teraz pełni on jedynie rolę lekkiego kompozytora dla wydzielonych podkomponentów:
