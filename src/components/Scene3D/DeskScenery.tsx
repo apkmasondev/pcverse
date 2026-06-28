@@ -65,7 +65,7 @@ const AmbilightStrip = () => {
     if (!groupRef.current) return;
     targetColor.current.set(rgbColor);
     targetIntensity.current = THREE.MathUtils.lerp(targetIntensity.current, rgbEnabled ? 3 : 0, delta * 10);
-    
+
     groupRef.current.children.forEach((child) => {
       if ((child as THREE.PointLight).isLight) {
         const light = child as THREE.PointLight;
@@ -108,14 +108,14 @@ const Poster = ({ tex, position, rotation, size }: { tex: THREE.Texture, positio
 
 const CorkBoard = () => {
   const texCork = useTexture(import.meta.env.BASE_URL + 'textures/posters/corkboard.webp');
-  const corkMat = useMemo(() => new THREE.MeshStandardMaterial({ 
-    map: texCork, 
-    roughness: 1, 
-    polygonOffset: true, 
-    polygonOffsetFactor: -1, 
-    polygonOffsetUnits: -1 
+  const corkMat = useMemo(() => new THREE.MeshStandardMaterial({
+    map: texCork,
+    roughness: 1,
+    polygonOffset: true,
+    polygonOffsetFactor: -1,
+    polygonOffsetUnits: -1
   }), [texCork]);
-  
+
   useEffect(() => {
     return () => corkMat.dispose();
   }, [corkMat]);
@@ -157,21 +157,49 @@ const Magazine = () => {
       rotation={[-Math.PI / 2, 0, 0.25]}
       material={magMat}
     >
-      <planeGeometry args={[1.5, 2.0]} />
+      <planeGeometry args={[2.25, 3.0]} />
     </mesh>
+  );
+};
+
+const CPUProp = () => {
+  const texCPU = useTexture(import.meta.env.BASE_URL + 'textures/posters/cplu_floor.jpg');
+  const cpuMat = useMemo(() => new THREE.MeshStandardMaterial({
+    map: texCPU,
+    roughness: 0.3,
+    metalness: 0.5,
+    polygonOffset: true,
+    polygonOffsetFactor: -1,
+    polygonOffsetUnits: -1
+  }), [texCPU]);
+
+  useEffect(() => {
+    return () => cpuMat.dispose();
+  }, [cpuMat]);
+
+  return (
+    <group position={[8.5, 0.02, -2.0]} rotation={[-Math.PI / 2, 0, 0.15]}>
+      <mesh>
+        <boxGeometry args={[0.8, 0.8, 0.04]} />
+        <meshStandardMaterial color="#1a3d24" roughness={0.8} />
+      </mesh>
+      <mesh material={cpuMat} position={[0, 0, 0.021]}>
+        <planeGeometry args={[0.8, 0.8]} />
+      </mesh>
+    </group>
   );
 };
 
 const Door = () => {
   const texDoor = useTexture(import.meta.env.BASE_URL + 'textures/posters/door.webp');
-  const doorMat = useMemo(() => new THREE.MeshStandardMaterial({ 
-    map: texDoor, 
-    roughness: 0.8, 
-    polygonOffset: true, 
-    polygonOffsetFactor: -1, 
-    polygonOffsetUnits: -1 
+  const doorMat = useMemo(() => new THREE.MeshStandardMaterial({
+    map: texDoor,
+    roughness: 0.8,
+    polygonOffset: true,
+    polygonOffsetFactor: -1,
+    polygonOffsetUnits: -1
   }), [texDoor]);
-  
+
   useEffect(() => {
     return () => doorMat.dispose();
   }, [doorMat]);
@@ -180,7 +208,7 @@ const Door = () => {
   const width = 11;
   const height = 22;
   const border = 0.4;
-  
+
   return (
     <group position={[25, height / 2, -2]} rotation={[0, -Math.PI / 2, 0]}>
       {/* Czarna futryna pod spodem, korzystamy z polygonOffset by uniknąć Z-Fighting */}
@@ -467,6 +495,7 @@ export const DeskScenery = () => {
         <AmbilightStrip />
         <CorkBoard />
         <Magazine />
+        <CPUProp />
         <Door />
       </Suspense>
     </group>
