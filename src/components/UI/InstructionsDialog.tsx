@@ -56,24 +56,43 @@ export const InstructionsDialog = ({ showInstructions, setShowInstructions }: In
                       Sterowanie Kamerą
                     </h3>
                     <div className="flex flex-col gap-3">
-                      <p className="text-sm text-slate-300 leading-relaxed flex items-center gap-2">
-                        <kbd className="px-2 py-1 bg-black/40 rounded border border-white/20 text-xs font-semibold">
-                          LPM
-                        </kbd>{" "}
-                        Obrót kamery (Orbit)
-                      </p>
-                      <p className="text-sm text-slate-300 leading-relaxed flex items-center gap-2">
-                        <kbd className="px-2 py-1 bg-black/40 rounded border border-white/20 text-xs font-semibold">
-                          PPM
-                        </kbd>{" "}
-                        Przesunięcie kamery (Pan)
-                      </p>
-                      <p className="text-sm text-slate-300 leading-relaxed flex items-center gap-2">
-                        <kbd className="px-2 py-1 bg-black/40 rounded border border-white/20 text-xs font-semibold">
-                          Scroll
-                        </kbd>{" "}
-                        Przybliżanie / Oddalanie (Zoom)
-                      </p>
+                      {/* Komputer */}
+                      <div className="flex flex-col gap-2 mb-2">
+                        <div className="text-xs text-indigo-400 font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                          🖥️ Komputer (Mysz)
+                        </div>
+                        <p className="text-sm text-slate-300 leading-relaxed flex items-center gap-2">
+                          <kbd className="px-2 py-1 bg-black/40 rounded border border-white/20 text-xs font-semibold">
+                            LPM
+                          </kbd>{" "}
+                          Obrót kamery (Orbit)
+                        </p>
+                        <p className="text-sm text-slate-300 leading-relaxed flex items-center gap-2">
+                          <kbd className="px-2 py-1 bg-black/40 rounded border border-white/20 text-xs font-semibold">
+                            Scroll
+                          </kbd>{" "}
+                          Przybliżanie / Oddalanie (Zoom)
+                        </p>
+                      </div>
+
+                      {/* Mobilne */}
+                      <div className="flex flex-col gap-2">
+                        <div className="text-xs text-indigo-400 font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                          📱 Urządzenia Mobilne (Dotyk)
+                        </div>
+                        <p className="text-sm text-slate-300 leading-relaxed flex items-center gap-2">
+                          <kbd className="px-2 py-1 bg-black/40 rounded border border-white/20 text-xs font-semibold">
+                            Przeciągnięcie
+                          </kbd>{" "}
+                          Obrót kamery (Orbit)
+                        </p>
+                        <p className="text-sm text-slate-300 leading-relaxed flex items-center gap-2">
+                          <kbd className="px-2 py-1 bg-black/40 rounded border border-white/20 text-xs font-semibold">
+                            Uszczypnięcie
+                          </kbd>{" "}
+                          Przybliżanie (Zoom)
+                        </p>
+                      </div>
                       <p className="text-sm text-slate-400 leading-relaxed mt-2 p-3 bg-black/20 rounded-lg border border-white/5">
                         Kliknij (lub dotknij) dowolny podzespół komputera, by
                         wyświetlić panel detali. W trybie powiększenia galerii
