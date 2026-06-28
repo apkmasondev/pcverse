@@ -1,5 +1,20 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 32 - Audyt v6: Dekompozycja UI i Naprawa Szkła 🧩
+
+### Architektura UI i Modularyzacja (M6)
+- **Rozbicie monolitycznego komponentu UI.tsx**: Zgodnie z audytem kodu v6 (Etap M6) gigantyczny plik `UI.tsx` (prawie 1200 linii) został rozebrany na części pierwsze. Od teraz pełni on jedynie rolę lekkiego kompozytora dla wydzielonych podkomponentów:
+  - `BuildModeOverlay.tsx` - Dolny pasek postępu i nawigacji Trybu Budowy.
+  - `BuildModeExpertPanels.tsx` - Telemetria i sprzętowe porady eksperta.
+  - `InstructionsDialog.tsx` - Główny panel informacyjny (zgodny z WCAG i pułapkami focusa).
+  - `SidebarControls.tsx` - Obejmuje lewy panel akcji, w tym rozwijane menu (Modale) dla Palety RGB, HDRi i Oświetlenia sceny.
+- Taka struktura ułatwia utrzymanie logiki interfejsu 2D w ryzach bez "spaghetti code".
+
+### Optymalizacja Renderingu (Materiały WebGL)
+- **Problem "niewidzialnego mesh'a" za szybą**: Naprawiono błąd załamującego światło szkła obudowy (`transmission: 1.0`), które ze względów optymalizacyjnych nie wyświetlało przezroczystych materiałów z tyłu.
+- Na powierzchniach kratek wentylacyjnych obudowy (CaseGeometry i CasePanels) zmieniono mapowanie "dziurek" z pełnej przezroczystości (`transparent={true}`) na twarde odcięcie w shaderach kompilacji (`transparent={false}` z parametrem `alphaTest={0.5}`).
+- Dzięki temu siatki wentylacyjne i maskownice z dziurkami renderują się perfekcyjnie w głębi za szkłem komputera, dodając fotorealizmu widokowi bocznemu, przy zerowym wpływie na klikalność (Raycasting) podzespołów.
+
 ## Etap 31 - Audyt v6: Wycieki Materiałów i Zgodność React 19 Strict Mode 🧹
 
 ### Optymalizacja Pamięci (VRAM)
