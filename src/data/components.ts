@@ -69,7 +69,7 @@ export const pcComponents: PCComponent[] = [
         specs: "LGA 1851, Thunderbolt 5, 24+1+2 Phases"
       }
     ],
-    geometryArgs: [3, 4, 0.05],
+    geometryArgs: [3, 4.4, 0.05],
     imageUrls: ["/images/components/motherboard.webp", "/images/components/motherboard_macro.webp", "/images/components/mb_alt.webp", "/images/components/motherboard_real.webp"],
   },
   {
@@ -109,7 +109,7 @@ export const pcComponents: PCComponent[] = [
         specs: "Arrow Lake, 24 Rdzenie, 5.7 GHz, Intel AI Boost NPU"
       }
     ],
-    geometryArgs: [0.8, 0.8, 0.05],
+    geometryArgs: [0.8, 0.9, 0.05],
     imageUrls: ["/images/components/cpu.webp", "/images/components/cpu_macro.webp", "/images/components/cpu_alt.webp", "/images/components/cpu_real.webp"],
   },
   {
@@ -229,7 +229,7 @@ export const pcComponents: PCComponent[] = [
         specs: "64GB (2x32GB), DDR5-8200 MT/s, XMP 3.0"
       }
     ],
-    geometryArgs: [0.5, 1.9, 0.8],
+    geometryArgs: [0.5, 1.95, 0.8],
     imageUrls: ["/images/components/ram.webp", "/images/components/ram_macro.webp", "/images/components/ram_alt.webp", "/images/components/ram_real.webp"],
   },
   {
@@ -269,7 +269,7 @@ export const pcComponents: PCComponent[] = [
         specs: "64GB (2x32GB), DDR5-8200 MT/s, XMP 3.0"
       }
     ],
-    geometryArgs: [0.5, 1.9, 0.8],
+    geometryArgs: [0.5, 1.95, 0.8],
     imageUrls: ["/images/components/ram.webp", "/images/components/ram_macro.webp", "/images/components/ram_alt.webp", "/images/components/ram_real.webp"],
   },
   {
@@ -537,7 +537,7 @@ export const pcComponents: PCComponent[] = [
       parameter: "Gwint 6-32. Uważać by nie zgnieść gumowych damperów"
     },
     exampleSpecs: [{ brand: "Seagate", model: "IronWolf Pro 24TB", specs: "SATA 6Gb/s, 7200 RPM, Zapis CMR" }, { brand: "WD", model: "Red Pro 24TB", specs: "Optymalizowany pod NAS, Technologia OptiNAND" }],
-    geometryArgs: [1.0, 0.25, 1.4],
+    geometryArgs: [1.0, 0.45, 1.4],
     imageUrls: [
       '/images/components/hdd_macro.webp',
       '/images/components/hdd_alt.webp',
