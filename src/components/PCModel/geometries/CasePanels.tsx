@@ -151,7 +151,8 @@ export const CasePanels = ({
           <meshStandardMaterial 
             color="#151515" 
             alphaMap={frontMeshTexture} 
-            transparent={true} 
+            transparent={false}
+            alphaTest={0.5}
             side={DoubleSide} 
             metalness={0.8}
             roughness={0.3}
@@ -227,7 +228,8 @@ export const CasePanels = ({
           <meshStandardMaterial 
             color="#151515" 
             alphaMap={backMeshTexture} 
-            transparent={true} 
+            transparent={false}
+            alphaTest={0.5}
             side={DoubleSide} 
           />
         </Mesh>
@@ -236,7 +238,8 @@ export const CasePanels = ({
           <meshStandardMaterial 
             color="#151515" 
             alphaMap={backMeshTexture} 
-            transparent={true} 
+            transparent={false}
+            alphaTest={0.5}
             side={DoubleSide} 
           />
         </Mesh>

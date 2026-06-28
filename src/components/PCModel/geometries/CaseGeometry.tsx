@@ -193,7 +193,8 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
         <boxGeometry args={[3.6, 0.02, 3.6]} />
         <meshStandardMaterial
           alphaMap={meshTexture}
-          transparent={true}
+          transparent={false}
+          alphaTest={0.5}
           color="#4a4d54"
           metalness={0.8}
           roughness={0.3}
@@ -209,7 +210,8 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
           roughness={0.3}
           metalness={0.85}
           alphaMap={backMeshTexture}
-          transparent={true}
+          transparent={false}
+          alphaTest={0.5}
           side={DoubleSide}
         />
       </Mesh>
@@ -275,7 +277,8 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
           roughness={0.3}
           metalness={0.85}
           alphaMap={backMeshTexture}
-          transparent={true}
+          transparent={false}
+          alphaTest={0.5}
           side={DoubleSide}
         />
       </Mesh>
@@ -285,7 +288,8 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
         <meshStandardMaterial
           color="#151515"
           alphaMap={backMeshTexture}
-          transparent={true}
+          transparent={false}
+          alphaTest={0.5}
           side={DoubleSide}
         />
       </Mesh>
@@ -339,7 +343,8 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
         <meshStandardMaterial
           color="#151515"
           alphaMap={backMeshTexture}
-          transparent={true}
+          transparent={false}
+          alphaTest={0.5}
           side={DoubleSide}
         />
       </Mesh>
