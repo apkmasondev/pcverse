@@ -20,6 +20,15 @@ export interface PCComponent {
   imageUrls: string[];
   buildOrder?: number;
   buildTip?: string;
+  expertDetails?: {
+    tool: string;
+    parameter: string;
+  };
+  exampleSpecs?: {
+    brand: string;
+    model: string;
+    specs: string;
+  }[];
 }
 
 export const pcComponents: PCComponent[] = [
@@ -43,7 +52,23 @@ export const pcComponents: PCComponent[] = [
       { label: "Stabilność Zasilania (VRM)", value: 95 },
       { label: "Możliwości Rozbudowy", value: 85 }
     ],
-    buildTip: 'Przed włożeniem płyty do obudowy upewnij się, że wkręciłeś odpowiednie kołki dystansowe (stand-offs). Zabezpieczają one delikatne ścieżki na odwrocie laminatu przed bezpośrednim kontaktem z metalową obudową. Brak kołków oznacza natychmiastowe zwarcie i uszkodzenie sprzętu!',
+    buildTip: 'Przed włożeniem płyty do obudowy upewnij się, że posiadasz odpowiednie kołki dystansowe (stand-offs). Zabezpieczają one delikatne ścieżki na odwrocie laminatu przed bezpośrednim kontaktem z metalową obudową i zwarciem.',
+    expertDetails: {
+      tool: "Wkrętak krzyżakowy (Phillips #2)",
+      parameter: "Śruby 6-32 lub M3. Moment: Delikatny opór (Hand-tight)"
+    },
+    exampleSpecs: [
+      {
+        brand: "ASUS",
+        model: "ROG Crosshair X870E Hero",
+        specs: "AM5, PCIe 5.0, Wi-Fi 7, 20+2+2 Power Stages"
+      },
+      {
+        brand: "GIGABYTE",
+        model: "Z890 AORUS XTREME",
+        specs: "LGA 1851, Thunderbolt 5, 24+1+2 Phases"
+      }
+    ],
     geometryArgs: [3, 4, 0.05],
     imageUrls: ["/images/components/motherboard.webp", "/images/components/motherboard_macro.webp", "/images/components/mb_alt.webp", "/images/components/motherboard_real.webp"],
   },
@@ -67,7 +92,23 @@ export const pcComponents: PCComponent[] = [
       { label: "Ilość Rdzeni / Wątków", value: 75 },
       { label: "Rozmiar Pamięci Cache", value: 85 }
     ],
-    buildTip: 'Złoty trójkąt w rogu procesora musi idealnie pokryć się z małym oznaczeniem na gnieździe płyty głównej. Nie używaj siły – procesor powinien swobodnie "wpaść" na swoje miejsce. Dopiero wtedy możesz bezpiecznie docisnąć i zablokować metalową dźwignię, unikając wygięcia delikatnych pinów.',
+    buildTip: 'Złoty trójkąt w rogu procesora musi idealnie pokryć się z małym oznaczeniem na gnieździe płyty głównej. Nie używaj siły – procesor musi sam grawitacyjnie "wpaść" na miejsce by uniknąć wygięcia delikatnych pinów pod spodem.',
+    expertDetails: {
+      tool: "Dłonie (Brak narzędzi)",
+      parameter: "Zerowa siła ucisku, wyrównanie znaczników"
+    },
+    exampleSpecs: [
+      {
+        brand: "AMD",
+        model: "Ryzen 9 9950X3D2 (Dual Edition)",
+        specs: "Zen 5, 16 Rdzeni / 32 Wątki, 128MB 3D V-Cache"
+      },
+      {
+        brand: "Intel",
+        model: "Core Ultra 9 285K",
+        specs: "Arrow Lake, 24 Rdzenie, 5.7 GHz, Intel AI Boost NPU"
+      }
+    ],
     geometryArgs: [0.8, 0.8, 0.05],
     imageUrls: ["/images/components/cpu.webp", "/images/components/cpu_macro.webp", "/images/components/cpu_alt.webp", "/images/components/cpu_real.webp"],
   },
@@ -91,7 +132,23 @@ export const pcComponents: PCComponent[] = [
       { label: "Kultura Pracy (Głośność)", value: 85 },
       { label: "Stabilność Temperatury pod Obciążeniem", value: 90 }
     ],
-    buildTip: 'Nakładając pastę termoprzewodzącą (np. kroplę wielkości ziarenka grochu), pamiętaj o właściwym dokręcaniu chłodzenia. Śruby radiatora wkręcaj stopniowo, obracając je po trochu na krzyż (po przekątnej). Gwarantuje to równomierny nacisk na procesor i zapobiega powstawaniu bąbli powietrza.',
+    buildTip: 'Nałóż najwyższej jakości pastę termoprzewodzącą (kropla wielkości groszku). Ważne jest równomierne dokręcanie chłodzenia, by rozprowadzić pastę po całym odpromienniku ciepła (IHS) bez powstawania bąbli powietrza.',
+    expertDetails: {
+      tool: "Wkrętak krzyżakowy (Phillips #2)",
+      parameter: "Śruby sprężynowe. Dokręcać na krzyż (X) do oporu"
+    },
+    exampleSpecs: [
+      {
+        brand: "Lian Li (AIO Ciecz)",
+        model: "Galahad II LCD 360",
+        specs: "Pompa Asetek 8. Gen, Wentylatory TL, Ekran IPS 2.88\""
+      },
+      {
+        brand: "Noctua (Powietrze)",
+        model: "NH-D15 G2",
+        specs: "Asymetryczny Dual-Tower, 8 Ciepłowodów, 2x 140mm"
+      }
+    ],
     geometryArgs: [1, 1.3, 0.8],
     imageUrls: ["/images/components/cooler.webp", "/images/components/cooler_macro.webp", "/images/components/cooler_alt.webp", "/images/components/cooler_real.webp"],
   },
@@ -110,8 +167,29 @@ export const pcComponents: PCComponent[] = [
     explodedPosition: [-9, 0.65, -3.25],
     color: "#6366f1",
     perfImpact: { gaming: 60, ai: 60, productivity: 15 },
-    buildTip: 'Karta graficzna to często najcięższy element w całym zestawie. Otwórz plastikowy zatrzask z prawej strony portu PCIe x16, a następnie wsuwaj kartę prostopadle, aż usłyszysz wyraźne kliknięcie zapadki. Na koniec mocno przykręć jej "śledzia" śrubami, by zapobiec opadaniu (tzw. GPU sag).',
-    geometryArgs: [2.5, 0.5, 1.2],
+    customStats: [
+      { label: "Rdzenie Obliczeniowe", value: 95 },
+      { label: "Przepustowość VRAM", value: 90 },
+      { label: "Zapotrzebowanie na Moc", value: 85 }
+    ],
+    buildTip: 'Najcięższy element zestawu. Zawsze upewnij się, że plastikowy zatrzask z prawej strony portu PCIe x16 jest otwarty, a karta przy wsuwaniu wydaje satysfakcjonujące kliknięcie.',
+    expertDetails: {
+      tool: "Wkrętak krzyżakowy (Phillips #2)",
+      parameter: "Śruby 6-32 UNC. Wymagane mocne dociśnięcie śledzia"
+    },
+    exampleSpecs: [
+      {
+        brand: "NVIDIA",
+        model: "GeForce RTX 5090 Founders Edition",
+        specs: "Architektura Blackwell, 32GB GDDR7, DLSS 4.5"
+      },
+      {
+        brand: "AMD",
+        model: "Radeon RX 9070 XT",
+        specs: "Architektura RDNA 4, 24GB GDDR6, FSR 4.0"
+      }
+    ],
+    geometryArgs: [2.2, 0.4, 1.4],
     imageUrls: ["/images/components/gpu.webp", "/images/components/gpu_macro.webp", "/images/components/gpu_alt.webp", "/images/components/gpu_real.webp"],
   },
   {
@@ -129,8 +207,29 @@ export const pcComponents: PCComponent[] = [
     explodedPosition: [2.02, 7.15, -5.95],
     color: "#00b8a9",
     perfImpact: { gaming: 10, ai: 15, productivity: 20 },
+    customStats: [
+      { label: "Prędkość Taktowania (MT/s)", value: 85 },
+      { label: "Niskie Opóźnienia (CL)", value: 80 },
+      { label: "Przepustowość", value: 90 }
+    ],
     buildTip: 'Aby aktywować tryb Dual Channel (co drastycznie zwiększa wydajność), pamięci należy montować parami w slotach A2 i B2 (drugi i czwarty od procesora). Między kościami musi zostać jeden wolny slot! Otwórz zatrzaski, wsuń kości i dociśnij je równomiernie, aż usłyszysz wyraźny "klik".',
-    geometryArgs: [0.5, 1.2, 0.8],
+    expertDetails: {
+      tool: "Dłonie (Brak narzędzi)",
+      parameter: "Równomierny obustronny nacisk aż do zatrzaśnięcia"
+    },
+    exampleSpecs: [
+      {
+        brand: "G.Skill",
+        model: "Trident Z5 Neo RGB",
+        specs: "64GB (2x32GB), DDR5-8000 MT/s, Ultra-low CL38"
+      },
+      {
+        brand: "Corsair",
+        model: "Dominator Titanium",
+        specs: "64GB (2x32GB), DDR5-8200 MT/s, XMP 3.0"
+      }
+    ],
+    geometryArgs: [0.5, 1.9, 0.8],
     imageUrls: ["/images/components/ram.webp", "/images/components/ram_macro.webp", "/images/components/ram_alt.webp", "/images/components/ram_real.webp"],
   },
   {
@@ -148,8 +247,29 @@ export const pcComponents: PCComponent[] = [
     explodedPosition: [3.38, 7.15, -5.95],
     color: "#00b8a9",
     perfImpact: { gaming: 2, ai: 1, productivity: 5 },
-    buildTip: 'Aby aktywować tryb Dual Channel (co drastycznie zwiększa wydajność), pamięci należy montować parami w slotach A2 i B2 (drugi i czwarty od procesora). Między kościami musi zostać jeden wolny slot! Otwórz zatrzaski, wsuń kości i dociśnij je równomiernie, aż usłyszysz wyraźny "klik".',
-    geometryArgs: [0.5, 1.2, 0.8],
+    customStats: [
+      { label: "Prędkość Taktowania (MT/s)", value: 85 },
+      { label: "Niskie Opóźnienia (CL)", value: 80 },
+      { label: "Przepustowość", value: 90 }
+    ],
+    buildTip: 'Dla poprawnej aktywacji trybu Dual Channel, obsadzaj sloty A2 i B2 (drugi i czwarty od procesora). Zawsze nasłuchuj charakterystycznego "klikania" po obu stronach modułu.',
+    expertDetails: {
+      tool: "Dłonie (Brak narzędzi)",
+      parameter: "Równomierny obustronny nacisk wzdłuż osi"
+    },
+    exampleSpecs: [
+      {
+        brand: "G.Skill",
+        model: "Trident Z5 Neo RGB",
+        specs: "64GB (2x32GB), DDR5-8000 MT/s, Ultra-low CL38"
+      },
+      {
+        brand: "Corsair",
+        model: "Dominator Titanium",
+        specs: "64GB (2x32GB), DDR5-8200 MT/s, XMP 3.0"
+      }
+    ],
+    geometryArgs: [0.5, 1.9, 0.8],
     imageUrls: ["/images/components/ram.webp", "/images/components/ram_macro.webp", "/images/components/ram_alt.webp", "/images/components/ram_real.webp"],
   },
   {
@@ -167,7 +287,28 @@ export const pcComponents: PCComponent[] = [
     explodedPosition: [5.85, 4, -2.6],
     color: "#f8b500",
     perfImpact: { gaming: 10, ai: 5, productivity: 15 },
-    buildTip: 'Dysk M.2 wsuwamy w port pod kątem około 30 stopni, a następnie delikatnie dociskamy do płyty i blokujemy śrubką. Jeśli Twoja płyta posiada dedykowany, aluminiowy radiator na dysk, bezwzględnie pamiętaj o ściągnięciu przezroczystej folii ochronnej z termopada przed jego przykręceniem!',
+    customStats: [
+      { label: "Prędkość Odczytu", value: 95 },
+      { label: "Prędkość Zapisu", value: 90 },
+      { label: "Trwałość (TBW)", value: 80 }
+    ],
+    buildTip: 'Kluczem jest odpowiedni kąt wsunięcia (ok. 30 stopni). Jeśli instalujesz dysk pod masywnym radiatorem dostarczonym wraz z płytą, zdejmij najpierw z niego ochronną warstwę plastiku.',
+    expertDetails: {
+      tool: "Wkrętak precyzyjny (Phillips #0)",
+      parameter: "Śruba M2x3mm. Minimalny moment, ryzyko pęknięcia PCB"
+    },
+    exampleSpecs: [
+      {
+        brand: "Crucial",
+        model: "T705 PCIe Gen5 NVMe",
+        specs: "Odczyt: 14,500 MB/s, Zapis: 12,700 MB/s, 232-Layer NAND"
+      },
+      {
+        brand: "Samsung",
+        model: "990 PRO Gen4",
+        specs: "Odczyt: 7,450 MB/s, Zapis: 6,900 MB/s, V-NAND TLC"
+      }
+    ],
     geometryArgs: [0.4, 1.2, 0.8],
     imageUrls: ["/images/components/ssd.webp", "/images/components/ssd_macro.webp", "/images/components/ssd_alt.webp", "/images/components/ssd_real.webp"],
   },
@@ -191,7 +332,23 @@ export const pcComponents: PCComponent[] = [
       { label: "Efektywność Energetyczna", value: 92 },
       { label: "Redukcja Szumów", value: 95 }
     ],
-    buildTip: 'W zasilaczach modularnych najlepiej podpiąć wszystkie potrzebne przewody (ATX 24-pin, EPS 8-pin) przed włożeniem go do "piwnicy" obudowy. Pamiętaj też, by wentylator zasilacza skierować do dołu – dzięki temu będzie zaciągał z zewnątrz chłodne powietrze przez dolny filtr przeciwkurzowy.',
+    buildTip: 'Zasilacz ułóż tak, aby jego wentylator skierowany był bezpośrednio w stronę wlotu powietrza z filtrem w obudowie. Podpinaj potężne wiązki kablowe na płasko przed ostatecznym osadzeniem bloku.',
+    expertDetails: {
+      tool: "Wkrętak krzyżakowy (Phillips #2)",
+      parameter: "4x śruby 6-32 UNC na stelażu tylnym. Przełącznik I/O na 0"
+    },
+    exampleSpecs: [
+      {
+        brand: "Seasonic",
+        model: "Prime ATX 3.1 TX-1600",
+        specs: "1600W, Certyfikat 80+ Titanium, Natywne złącza 12V-2x6"
+      },
+      {
+        brand: "Corsair",
+        model: "AX1600i",
+        specs: "1600W, Cyfrowe zasilanie DSP, Wentylator FDB"
+      }
+    ],
     geometryArgs: [1.8, 1, 1.5],
     imageUrls: ["/images/components/psu.webp", "/images/components/psu_macro.webp", "/images/components/psu_alt.webp", "/images/components/psu_real.webp"],
   },
@@ -216,7 +373,12 @@ export const pcComponents: PCComponent[] = [
       { label: "Ciśnienie Statyczne", value: 70 },
       { label: "Kultura Pracy (Głośność)", value: 90 }
     ],
-    buildTip: 'Wentylatory tworzą główny obieg wiatru (Airflow). Zazwyczaj "ładna" strona z rotorem zaciąga powietrze, a tylna ze stelażem je tłoczy. Przednie wiatraki (Intake) zaciągają zimne powietrze z pokoju. Tylne i górne (Exhaust) wyrzucają wrzątek z budy na zewnątrz!',
+    buildTip: 'Przód komputera działa jak płuca. Frontowa, wyeksponowana część wentylatora musi patrzeć na pokój, aby zaciągać do wnętrza rześkie, niefiltrowane powietrze, budując nadciśnienie.',
+    expertDetails: {
+      tool: "Wkrętak krzyżakowy (Phillips #2)",
+      parameter: "Śruby samogwintujące. Do oporu i zaprzestania ślizgu"
+    },
+    exampleSpecs: [{ brand: "Noctua", model: "NF-A14x25 G2 PWM", specs: "140mm, Sterrox LCP, 0.5mm clearance" }, { brand: "Phanteks", model: "T30-120", specs: "120mm x 30mm, 3000 RPM, Ogromne ciśnienie" }],
     geometryArgs: [1.2, 1.2, 0.2],
     imageUrls: [
       '/images/components/fan.webp',
@@ -244,7 +406,12 @@ export const pcComponents: PCComponent[] = [
       { label: "Ciśnienie Statyczne", value: 70 },
       { label: "Kultura Pracy (Głośność)", value: 90 }
     ],
-    buildTip: 'Wentylatory tworzą główny obieg wiatru (Airflow). Zazwyczaj "ładna" strona z rotorem zaciąga powietrze, a tylna ze stelażem je tłoczy. Przednie wiatraki (Intake) zaciągają zimne powietrze z pokoju. Tylne i górne (Exhaust) wyrzucają wrzątek z budy na zewnątrz!',
+    buildTip: 'Kolejny element płuc (Intake). Zadbaj, aby kable łączące oświetlenie i obroty wychodziły blisko tacki tylnej, by ułatwić zarządzanie okablowaniem.',
+    expertDetails: {
+      tool: "Wkrętak krzyżakowy (Phillips #2)",
+      parameter: "Śruby samogwintujące. Do oporu i zaprzestania ślizgu"
+    },
+    exampleSpecs: [{ brand: "Noctua", model: "NF-A14x25 G2 PWM", specs: "140mm, Sterrox LCP, 0.5mm clearance" }, { brand: "Phanteks", model: "T30-120", specs: "120mm x 30mm, 3000 RPM, Ogromne ciśnienie" }],
     geometryArgs: [1.2, 1.2, 0.2],
     imageUrls: [
       '/images/components/fan.webp',
@@ -273,6 +440,12 @@ export const pcComponents: PCComponent[] = [
       { label: "Ciśnienie Statyczne", value: 70 },
       { label: "Kultura Pracy (Głośność)", value: 90 }
     ],
+    buildTip: 'Tył komputera to tzw. Exhaust. Brzydsza strona ze wspornikami silnika musi być skierowana na zewnątrz, by móc aktywnie odsysać powietrze ugotowane przez procesor.',
+    expertDetails: {
+      tool: "Wkrętak krzyżakowy (Phillips #2)",
+      parameter: "Śruby samogwintujące lub antywibracyjne kołki silikonowe"
+    },
+    exampleSpecs: [{ brand: "Noctua", model: "NF-A14x25 G2 PWM", specs: "140mm, Sterrox LCP, 0.5mm clearance" }, { brand: "Phanteks", model: "T30-120", specs: "120mm x 30mm, 3000 RPM, Ogromne ciśnienie" }],
     geometryArgs: [1.2, 1.2, 0.2],
     imageUrls: [
       '/images/components/fan.webp',
@@ -301,6 +474,12 @@ export const pcComponents: PCComponent[] = [
       { label: "Ciśnienie Statyczne", value: 70 },
       { label: "Kultura Pracy (Głośność)", value: 90 }
     ],
+    buildTip: 'Zbalansowany wyciąg ciepła. Pilnuj, by nie zbudować większego ciągu wylotowego niż dolotowego, by uniknąć wciągania kurzu szczelinami blach.',
+    expertDetails: {
+      tool: "Wkrętak krzyżakowy (Phillips #2)",
+      parameter: "Śruby samogwintujące lub antywibracyjne kołki silikonowe"
+    },
+    exampleSpecs: [{ brand: "Noctua", model: "NF-A14x25 G2 PWM", specs: "140mm, Sterrox LCP, 0.5mm clearance" }, { brand: "Phanteks", model: "T30-120", specs: "120mm x 30mm, 3000 RPM, Ogromne ciśnienie" }],
     geometryArgs: [1.2, 1.2, 0.2],
     imageUrls: [
       '/images/components/fan.webp',
@@ -328,6 +507,7 @@ export const pcComponents: PCComponent[] = [
       { label: "Wyciszenie Wnętrza", value: 75 },
       { label: "Kultura Pracy", value: 85 }
     ],
+    exampleSpecs: [{ brand: "HYTE", model: "Y70 Touch Infinite", specs: "Dwukomorowa, Szkło bez słupków, Ekran 4K" }, { brand: "Lian Li", model: "O11 Vision", specs: "Brak słupków, 3 panele ze szkła hartowanego" }],
     geometryArgs: [4, 5, 2],
     imageUrls: ["/images/components/case.webp", "/images/components/case_macro.webp", "/images/components/case_alt.webp", "/images/components/case_real.webp"],
   },
@@ -346,7 +526,17 @@ export const pcComponents: PCComponent[] = [
     explodedPosition: [6.8, 0, 1.5],
     color: "#4a6984",
     perfImpact: { gaming: 5, ai: 2, productivity: 30 },
-    buildTip: 'Tradycyjne dyski HDD posiadają kręcące się wewnątrz talerze i mechaniczną głowicę, co czyni je wrażliwymi na wibracje. Dlatego zawsze montuj je na dołączonych saniach wyposażonych w gumowe podkładki antywibracyjne. Wytłumi to irytujące buczenie przenoszone na stalowy szkielet obudowy.',
+    customStats: [
+      { label: "Pojemność Magazynowa", value: 95 },
+      { label: "Trwałość Archiwalna", value: 90 },
+      { label: "Odporność na Wibracje", value: 60 }
+    ],
+    buildTip: 'Te dyski to staroszkolne urządzenia mechaniczne wrażliwe na przeciążenia. Zawsze korzystaj z dołączonych podkładek antywibracyjnych w saneczkach, by wyciszyć ich naturalne stukanie i wibracje.',
+    expertDetails: {
+      tool: "Wkrętak krzyżakowy (Phillips #2) lub zatrzaski",
+      parameter: "Gwint 6-32. Uważać by nie zgnieść gumowych damperów"
+    },
+    exampleSpecs: [{ brand: "Seagate", model: "IronWolf Pro 24TB", specs: "SATA 6Gb/s, 7200 RPM, Zapis CMR" }, { brand: "WD", model: "Red Pro 24TB", specs: "Optymalizowany pod NAS, Technologia OptiNAND" }],
     geometryArgs: [1.0, 0.25, 1.4],
     imageUrls: [
       '/images/components/hdd_macro.webp',

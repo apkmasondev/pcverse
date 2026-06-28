@@ -1,5 +1,16 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 30 - Zaawansowana Telemetria i Rynkowe Alternatywy 📊
+
+### Tryb Ekspercki: Oczyszczenie Danych i Telemetria
+- Rozszerzono model danych komponentów o pełne parametry techniczne i unikalne zalecenia montażowe.
+- Usunięto dublujące się informacje tekstowe pomiędzy Poradami Eksperta (`buildTip`) a dedykowanym panelem Narzędzi (`expertDetails`). Porady skupiają się teraz wyłącznie na procesie i "gotchas" montażu, a panel narzędzi na surowych parametrach (np. typie śrubokręta i momencie obrotowym).
+- Zintegrowano panel **Telemetrii**, który wyświetla spersonalizowane statystyki dla każdego podzespołu w UI, korzystając z paska animowanego z kolorem cyjanu (cyjan-500).
+
+### Nowy Moduł "Przykładowe Modele (2026)"
+- Przebudowano strukturę danych wprowadzając wieloelementową listę rynkowych rywali (`exampleSpecs`), pobierając topowe urządzenia na świecie na stan z połowy 2026 roku.
+- Wdrożono nowy, odseparowany panel UI (szmaragdowy z ikoną układu scalonego), wyświetlany poniżej okna Telemetrii. Panel konfrontuje obok siebie najpotężniejsze rynkowe opcje (np. NVIDIA RTX 5090 vs AMD RX 9070 XT, Intel Core Ultra 9 285K vs AMD Ryzen 9 9950X3D2), dając środowisku 3D edukacyjny walor przewodnika zakupowego dla hobbystów.
+
 ## Etap 29 - Oświetlenie Krawędziowe, Tablica i Optymalizacja Renderera 🎬
 
 ### Optymalizacja Wydajności (Shader Recompilation)
