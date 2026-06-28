@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useBuildStore } from "../../store/useBuildStore";
+import { usePCSelection, usePCLighting } from "../../hooks/usePC";
 import { pcComponents } from "../../data/components";
 import { playSelectSound } from "../../utils/audio";
 import { Cpu, Power } from "lucide-react";
@@ -23,16 +24,46 @@ export const BuildModeOverlay = () => {
           }`}
         >
           {isComplete && (
-            <div className="absolute inset-0 bg-amber-500/5 rounded-3xl pointer-events-none blur-2xl" />
+            <motion.div
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: "spring", stiffness: 200, damping: 15 }}
+              className="absolute -top-12 bg-[#0a0a0a] border-2 border-amber-500 p-4 rounded-full shadow-[0_0_30px_rgba(245,158,11,0.6)]"
+            >
+              <Cpu className="text-amber-400 animate-pulse" size={32} />
+            </motion.div>
           )}
 
-          <div className="flex items-center justify-between w-full relative z-10">
-            <span className={`font-bold uppercase tracking-widest text-xs ${isComplete ? 'text-amber-400' : 'text-indigo-400'}`}>
-              Tryb Budowy
-            </span>
-            <span className="text-slate-400 font-mono text-sm">
-              {Math.min(currentStep, maxSteps)} / {maxSteps}
-            </span>
+          <div className="w-full">
+            <div className="flex justify-between items-end mb-2">
+              <span className="text-indigo-400 font-bold uppercase tracking-widest text-xs">
+                {isComplete ? "Status Systemu" : "Tryb Budowy"}
+              </span>
+              <span className="text-white font-mono text-sm opacity-50">
+                {Math.min(currentStep, maxSteps)} / {maxSteps}
+              </span>
+            </div>
+            
+            <h2 className="text-white font-bold text-xl leading-tight">
+              {isComplete ? (
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500">
+                  Gratulacje! Złożono PC
+                </span>
+              ) : (
+                currentComponent?.name || "Montaż..."
+              )}
+            </h2>
+            
+            {isComplete && (
+              <div className="mt-3 flex items-center justify-center gap-2">
+                <span className="inline-flex relative">
+                  <span className="absolute inset-0 bg-amber-500/20 rounded-full blur-md"></span>
+                  <span className="relative text-amber-300 text-xs font-semibold uppercase tracking-wider border border-amber-500/30 px-3 py-1 rounded-full bg-amber-500/10 backdrop-blur-md">
+                    ✨ Osiągnięto poziom: Ekspert PC
+                  </span>
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden relative z-10">
@@ -95,6 +126,10 @@ export const BuildModeOverlay = () => {
             onClick={() => {
               playSelectSound();
               toggleBuildMode();
+              if (isComplete) {
+                usePCSelection.setState({ explodeStep: 0 });
+                usePCLighting.setState({ pcRGBOn: true });
+              }
             }}
             className={`mt-2 px-6 py-3 rounded-xl transition-all font-bold w-full relative overflow-hidden group flex items-center justify-center gap-2 ${
               isComplete
