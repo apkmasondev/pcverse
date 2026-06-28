@@ -1,5 +1,29 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 31 - Audyt v6: Wycieki Materiałów i Zgodność React 19 Strict Mode 🧹
+
+### Optymalizacja Pamięci (VRAM)
+- Zgodnie ze wskazaniami audytu kodu v6 (Etap A), wyeliminowano wycieki pamięci w obrębie Scenografii Biurka (`DeskScenery.tsx`).
+- Dodano manualne czyszczenie pamięci karty graficznej (`dispose()`) w hooku `useEffect` dla proceduralnie generowanych materiałów (`MeshStandardMaterial` z dynamiczną teksturą) w komponentach `Poster`, `CorkBoard`, `Magazine` i `Door`.
+
+### Zgodność z React 19 (Side Effects w useMemo)
+- Zgodnie z audytem v6 (Etap B), w komponencie `CaseGeometry.tsx` wyeliminowano antywzorzec użycia `useMemo` do mutowania obiektów tekstur (side effects).
+- Zmieniono bloki kodu ustawiające właściwości `colorSpace`, `wrapS`, `wrapT`, `repeat` i `offset` tekstur obudowy na hooki `useEffect`. Zapewnia to pełną zgodność z zasadami komponentów pure w React 19 Strict Mode i zapobiega niezamierzonemu, podwójnemu aplikowaniu modyfikacji na obiekty.
+
+### Dostępność (WCAG)
+- Zgodnie z audytem v6 (Etap E), dodano własność `aria-live="polite"` dla kontenera paneli dynamicznych Trybu Budowy (Prawa Strona), by poprawnie informować czytniki ekranowe o ich pojawieniu się.
+- Uzupełniono atrybuty `aria-pressed` na przyciskach typu toggle dla Etykiet, Cząsteczek (Pyłu), Mgły i Biurka.
+
+### Czystość Kodu i Typowania (TypeScript)
+- **Etap D i F (Z audytu v6)**: Usunięto całkowicie martwy kod wrappera `<PCProvider>` z plików `App.tsx` oraz `usePC.tsx`.
+- Usunięto 6 wystąpień niebezpiecznego rzutowania `(camera as any)` na metodach manipulacji widokiem w `Scene3D.tsx`, używając bezpiecznego sprawdzenia instancji `camera instanceof THREE.PerspectiveCamera`.
+- Wyeliminowano kilkanaście antywzorców z nadużywaniem typu `any` (np. jawne typowanie Propsów `ComponentLabel`, tuple dla wektora `rotationArr`, usunięcie `[key: string]: any` z `GeometryProps`, jawny selektor w `AmbilightStrip` oraz precyzyjne typowanie referencji `ringRef`). W efekcie projekt osiągnął 100% Type-Safety dla propsów komponentów.
+- **Etap L4 (Z audytu v6)**: Wyekstrahowano zduplikowaną implementację `useReducedMotion` (z plików `Scene3D.tsx` i `DeskScenery.tsx`) do pojedynczego, reużywalnego hooka `src/hooks/useReducedMotion.ts`.
+
+### Optymalizacja Działania Aplikacji
+- **Etap M1 (Z audytu v6)**: Wdrożono progresywne ładowanie tekstur scenografii w `DeskScenery.tsx`. Ogromny pakiet 18 tekstur (ok. 3.5 MB) blokował wcześniej renderowanie po włączeniu biurka, powodując widoczne zacięcie (tzw. render freeze). Rozdzielono to na dwie równoległe granice `<Suspense>`: błyskawiczne ładowanie fundamentów (blat, dywan, główna skrzynia) w `<DeskEssentials>` oraz asynchroniczne doczytywanie drobnych detali w tle. 
+- **Etap L6 (Z audytu v6)**: Uproszczono i zoptymalizowano zduplikowaną logikę wygaszania ekranu powitalnego w `LoadingScreen.tsx`.
+
 ## Etap 30 - Zaawansowana Telemetria i Rynkowe Alternatywy 📊
 
 ### Tryb Ekspercki: Oczyszczenie Danych i Telemetria

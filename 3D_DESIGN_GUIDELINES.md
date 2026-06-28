@@ -118,7 +118,17 @@ import { materials } from '../materials';
   <primitive object={materials.darkMetal} attach="material" />
 </mesh>
 ```
-W ostateczności, w przypadku proceduralnych kolorów, deklaruj materiały po za komponentem lub używaj hooka `useMemo`.
+W ostateczności, w przypadku proceduralnych kolorów, deklaruj materiały po za komponentem lub używaj hooka `useMemo`. 
+**UWAGA KRYTYCZNA:** Jeśli tworzysz materiał w `useMemo` (np. przypisując dynamiczne tekstury załadowane przez `useTexture`), musisz **zawsze** dodać `useEffect` czyszczący ten materiał przy odmontowaniu komponentu, aby uniknąć wycieków pamięci VRAM (Zgłoszenie z audytu v6: H2, M3, M4):
+
+```tsx
+const myMat = useMemo(() => new MeshStandardMaterial({ map: myTex }), [myTex]);
+
+useEffect(() => {
+  // Funkcja czyszcząca wywoływana przy Unmount
+  return () => myMat.dispose();
+}, [myMat]);
+```
 
 ## 8. Optymalizacja Importów z Three.js (Tree-Shaking)
 **Problem:** Używanie dzikiej karty `import * as THREE from 'three'` sprawia, że narzędzia do bundlowania (jak Vite/Rollup) nie potrafią efektywnie wyciąć nieużywanego kodu (tree-shaking). Prowadzi to do drastycznego powiększenia finalnego rozmiaru aplikacji, obciążając pamięć RAM i czas ładowania przeglądarki użytkownika, ponieważ importowana jest cała potężna biblioteka Three.js, nawet jeśli używamy z niej tylko obiektu `Vector3`.

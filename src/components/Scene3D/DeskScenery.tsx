@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { useEffect, useMemo, useRef, useState, Suspense } from 'react';
 import { MeshReflectorMaterial, Float, useTexture, Instances, Instance } from '@react-three/drei';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { useFrame } from '@react-three/fiber';
 import { usePCView, usePCRGB } from '../../hooks/usePC';
 import { useIsMobile } from '../../hooks/useIsMobile';
@@ -55,8 +56,8 @@ const rugGeo = new THREE.BoxGeometry(22, 12.375, 0.04);
 
 const AmbilightStrip = () => {
   const groupRef = useRef<THREE.Group>(null);
-  const rgbColor = usePCRGB((state: any) => state.rgbColor);
-  const rgbEnabled = usePCRGB((state: any) => state.rgbEnabled);
+  const rgbColor = usePCRGB(state => state.rgbColor);
+  const rgbEnabled = usePCRGB(state => state.rgbEnabled);
   const targetColor = useRef(new THREE.Color(rgbColor));
   const targetIntensity = useRef(3);
 
@@ -85,15 +86,21 @@ const AmbilightStrip = () => {
 };
 
 const Poster = ({ tex, position, rotation, size }: { tex: THREE.Texture, position: [number, number, number], rotation?: [number, number, number], size: number }) => {
+  const mat = useMemo(() => new THREE.MeshStandardMaterial({
+    map: tex, emissiveMap: tex, emissiveIntensity: 0.2, emissive: "#ffffff", polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1
+  }), [tex]);
+  useEffect(() => {
+    return () => mat.dispose();
+  }, [mat]);
+
   return (
     <group position={position} rotation={rotation || [0, 0, 0]}>
       <mesh>
         <planeGeometry args={[size + 0.2, size + 0.2]} />
         <meshBasicMaterial color="#000000" />
       </mesh>
-      <mesh>
+      <mesh material={mat}>
         <planeGeometry args={[size, size]} />
-        <meshStandardMaterial map={tex} emissiveMap={tex} emissiveIntensity={0.2} emissive="#ffffff" polygonOffset={true} polygonOffsetFactor={-1} polygonOffsetUnits={-1} />
       </mesh>
     </group>
   );
@@ -109,6 +116,10 @@ const CorkBoard = () => {
     polygonOffsetUnits: -1 
   }), [texCork]);
   
+  useEffect(() => {
+    return () => corkMat.dispose();
+  }, [corkMat]);
+
   return (
     <Float speed={1} rotationIntensity={0.05} floatIntensity={0.2}>
       <group position={[-25, 10, 0]} rotation={[0, Math.PI / 2, 0]}>
@@ -127,21 +138,26 @@ const CorkBoard = () => {
 
 const Magazine = () => {
   const texMag = useTexture(import.meta.env.BASE_URL + 'textures/posters/magazine.webp');
+  const magMat = useMemo(() => new THREE.MeshStandardMaterial({
+    map: texMag,
+    roughness: 0.2,
+    metalness: 0.1,
+    polygonOffset: true,
+    polygonOffsetFactor: -1,
+    polygonOffsetUnits: -1
+  }), [texMag]);
+
+  useEffect(() => {
+    return () => magMat.dispose();
+  }, [magMat]);
 
   return (
     <mesh
       position={[-5, 0.02, 3]}
       rotation={[-Math.PI / 2, 0, 0.25]}
+      material={magMat}
     >
       <planeGeometry args={[1.5, 2.0]} />
-      <meshStandardMaterial
-        map={texMag}
-        roughness={0.2}
-        metalness={0.1}
-        polygonOffset={true}
-        polygonOffsetFactor={-1}
-        polygonOffsetUnits={-1}
-      />
     </mesh>
   );
 };
@@ -156,6 +172,10 @@ const Door = () => {
     polygonOffsetUnits: -1 
   }), [texDoor]);
   
+  useEffect(() => {
+    return () => doorMat.dispose();
+  }, [doorMat]);
+
   // Zakładamy proporcje 1:2 dla klasycznych drzwi. Wysokość 22 oznacza Y=11 dla idealnego styku z podłogą (Y=0)
   const width = 11;
   const height = 22;
@@ -377,25 +397,11 @@ const DeskDetails = ({ reducedMotion }: { reducedMotion: boolean }) => {
   );
 };
 
-export const DeskScenery = () => {
-  const { xrayMode } = usePCView();
+export const DeskEssentials = () => {
   const [texRug, texCrate] = useTexture([
     import.meta.env.BASE_URL + 'textures/posters/desk_rug.webp',
     import.meta.env.BASE_URL + 'textures/posters/wood_crate.webp'
   ]);
-
-  const isMobile = useIsMobile();
-  const reflectorMeshRef = useRef<THREE.Mesh>(null);
-
-  const [reducedMotion, setReducedMotion] = useState(() =>
-    typeof window !== 'undefined' ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false
-  );
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
-    mediaQuery.addEventListener('change', handler);
-    return () => mediaQuery.removeEventListener('change', handler);
-  }, []);
 
   const { rugMat, crateMat } = useMemo(() => ({
     rugMat: new THREE.MeshStandardMaterial({ map: texRug, roughness: 0.9 }),
@@ -404,13 +410,32 @@ export const DeskScenery = () => {
 
   useEffect(() => {
     return () => {
-      if (reflectorMeshRef.current?.material) {
-        (reflectorMeshRef.current.material as THREE.Material).dispose();
-      }
       rugMat.dispose();
       crateMat.dispose();
     };
   }, [rugMat, crateMat]);
+
+  return (
+    <>
+      <mesh position={[0, 1.02, 0]} geometry={crateGeo} material={crateMat} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} geometry={rugGeo} material={rugMat} />
+    </>
+  );
+};
+
+export const DeskScenery = () => {
+  const { xrayMode } = usePCView();
+  const isMobile = useIsMobile();
+  const reflectorMeshRef = useRef<THREE.Mesh>(null);
+  const reducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    return () => {
+      if (reflectorMeshRef.current?.material) {
+        (reflectorMeshRef.current.material as THREE.Material).dispose();
+      }
+    };
+  }, []);
 
   if (xrayMode || isMobile) return null;
 
@@ -433,9 +458,9 @@ export const DeskScenery = () => {
         />
       </mesh>
 
-      <mesh position={[0, 1.02, 0]} geometry={crateGeo} material={crateMat} />
-
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} geometry={rugGeo} material={rugMat} />
+      <Suspense fallback={null}>
+        <DeskEssentials />
+      </Suspense>
 
       <Suspense fallback={null}>
         <DeskDetails reducedMotion={reducedMotion} />

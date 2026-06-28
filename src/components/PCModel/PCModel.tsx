@@ -35,7 +35,8 @@ import caseFanUrl from '../../assets/case_fan_rgb.webp';
 
 export interface GeometryProps {
   rgbColor: string;
-  [key: string]: any;
+  isExhaust?: boolean;
+  rgbEnabled?: boolean;
 }
 
 const GEOMETRY_REGISTRY: Record<string, React.FC<GeometryProps>> = {
@@ -84,8 +85,17 @@ const ProceduralGeometry = memo(({ data, baseColor }: { data: PCComponent, baseC
   );
 });
 
+interface ComponentLabelProps {
+  data: PCComponent;
+  hovered: boolean;
+  isUnbuilt: boolean;
+  isCurrentStep: boolean;
+  isMobile: boolean;
+  setHovered: (h: boolean) => void;
+}
+
 // --- Extract Component Label to prevent RGB-based re-renders in ComponentMesh ---
-const ComponentLabel = memo(({ data, hovered, isUnbuilt, isCurrentStep, isMobile, setHovered }: any) => {
+const ComponentLabel = memo(({ data, hovered, isUnbuilt, isCurrentStep, isMobile, setHovered }: ComponentLabelProps) => {
   const rgbColor = usePCRGB(state => state.rgbColor);
   const rgbEnabled = usePCRGB(state => state.rgbEnabled);
   const effectiveRgbColor = rgbEnabled ? rgbColor : '#000000';
@@ -240,7 +250,7 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
 
   const visual = useMemo(() => <ProceduralGeometry data={data} baseColor={baseColor} />, [data, baseColor]);
 
-  const rotationArr = (data.id === 'rear_fan_1' || data.id === 'rear_fan_2') ? [0, Math.PI / 2, 0] : 
+  const rotationArr: [number, number, number] = (data.id === 'rear_fan_1' || data.id === 'rear_fan_2') ? [0, Math.PI / 2, 0] : 
         data.id === 'psu' ? [0, Math.PI / 2, 0] : 
         [0, 0, 0];
 
@@ -249,7 +259,7 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
       <group
         ref={groupRef}
         position={data.position}
-        rotation={rotationArr as [number, number, number]}
+        rotation={rotationArr}
         onClick={(e) => {
           e.stopPropagation();
           if (e.delta > 2) return; // Prevent selection when dragging the camera
@@ -282,7 +292,7 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
         }}
       >
         {isCurrentStep && (
-          <mesh ref={ringRef as any} material={ghostMaterial} position={[0, -data.geometryArgs[1]/2 - 0.4, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <mesh ref={ringRef} material={ghostMaterial} position={[0, -data.geometryArgs[1]/2 - 0.4, 0]} rotation={[-Math.PI / 2, 0, 0]}>
             <torusGeometry args={[Math.max(data.geometryArgs[0], data.geometryArgs[2]) * 0.5, Math.max(data.geometryArgs[0], data.geometryArgs[2]) * 0.05, 16, 64]} />
           </mesh>
         )}

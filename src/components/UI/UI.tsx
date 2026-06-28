@@ -302,7 +302,7 @@ export const UI = () => {
         </AnimatePresence>
       </div>
 
-      <div className="fixed top-6 right-6 z-50 flex flex-col gap-4 pointer-events-none items-end">
+      <div className="fixed top-6 right-6 z-50 flex flex-col gap-4 pointer-events-none items-end" aria-live="polite">
         <AnimatePresence>
           {buildMode && currentComponent?.customStats && currentStep <= maxSteps && (
             <motion.div
@@ -644,6 +644,7 @@ export const UI = () => {
 
                   <button
                     aria-label="Przełącz Biurko"
+                    aria-pressed={showDesk}
                     onClick={() => {
                       playSelectSound();
                       triggerLoading(toggleDesk);
@@ -762,6 +763,7 @@ export const UI = () => {
 
           <motion.button
             aria-label="Ukryj lub pokaż etykiety"
+            aria-pressed={showLabels}
             whileTap={{ scale: 0.95 }}
             onClick={() => {
               playSelectSound();
@@ -781,6 +783,7 @@ export const UI = () => {
 
           <motion.button
             aria-label="Efekty cząsteczkowe (Pył)"
+            aria-pressed={showParticles}
             whileTap={{ scale: 0.95 }}
             onClick={() => {
               playSelectSound();
@@ -800,6 +803,7 @@ export const UI = () => {
 
           <motion.button
             aria-label="Mgła tła"
+            aria-pressed={showFog}
             whileTap={{ scale: 0.95 }}
             onClick={() => {
               playSelectSound();

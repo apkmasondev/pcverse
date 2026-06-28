@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import type { ReactNode } from 'react';
 import type { PCComponent } from '../data/components';
 
 export interface PCSelectionContextType {
@@ -148,6 +147,3 @@ export const usePCUI = create<PCUIContextType>((set) => ({
   setShowInstructions: (show) => set({ showInstructions: show })
 }));
 
-export const PCProvider = ({ children }: { children: ReactNode }) => {
-  return <>{children}</>;
-};

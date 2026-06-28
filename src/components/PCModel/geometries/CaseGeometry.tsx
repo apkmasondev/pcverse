@@ -30,7 +30,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
   const caseBottomTexture = useTexture(caseBottomUrl);
   const caseInteriorTexture = useTexture(caseInteriorUrl);
 
-  useMemo(() => {
+  useEffect(() => {
     // Correctly scale caseInteriorTexture for the 3.8 x 4.8 panels
     caseInteriorTexture.colorSpace = SRGBColorSpace;
     caseInteriorTexture.wrapS = ClampToEdgeWrapping;
@@ -41,7 +41,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
     caseInteriorTexture.updateMatrix();
   }, [caseInteriorTexture]);
 
-  useMemo(() => {
+  useEffect(() => {
     caseBackTexture.colorSpace = SRGBColorSpace;
     caseBackTexture.repeat.set(1 / 3.9, 1 / 5.0);
     caseBackTexture.offset.set(1.95 / 3.9, 2.5 / 5.0);

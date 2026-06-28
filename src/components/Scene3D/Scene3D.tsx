@@ -2,33 +2,21 @@ import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { CameraControls, Environment, PerspectiveCamera, Sparkles, PerformanceMonitor, Grid, Stars, Preload } from '@react-three/drei';
 import { EffectComposer, Bloom, N8AO, Vignette, ChromaticAberration, DepthOfField } from '@react-three/postprocessing';
+import * as THREE from 'three';
 import { Vector2, Vector3, PointLight } from 'three';
-
 import { PCModel } from '../PCModel/PCModel';
 import { usePCSelection, usePCView, usePCLighting } from '../../hooks/usePC';
 import { useBuildStore } from '../../store/useBuildStore';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { GlobalErrorBoundary as ErrorBoundary } from '../ErrorBoundary';
 import { DeskScenery } from './DeskScenery';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
 
 const envMap: Record<string, string> = {
   studio: import.meta.env.BASE_URL + 'environments/studio_small_03_1k.hdr',
   city: import.meta.env.BASE_URL + 'environments/potsdamer_platz_1k.hdr',
   dawn: import.meta.env.BASE_URL + 'environments/kiara_1_dawn_1k.hdr',
   apartment: import.meta.env.BASE_URL + 'environments/lebombo_1k.hdr'
-};
-
-const useReducedMotion = () => {
-  const [reducedMotion, setReducedMotion] = useState(() =>
-    typeof window !== 'undefined' ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false
-  );
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
-    mediaQuery.addEventListener('change', handler);
-    return () => mediaQuery.removeEventListener('change', handler);
-  }, []);
-  return reducedMotion;
 };
 
 const CursorLight = () => {
@@ -139,20 +127,20 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
       );
 
       // Epic UI/UX: Shift the entire camera frustum so the component avoids UI panels
-      if ('setViewOffset' in camera) {
+      if (camera instanceof THREE.PerspectiveCamera) {
         if (isMobile) {
           // On mobile, UI is at the bottom, so shift the component UP by 25%
-          (camera as any).setViewOffset(window.innerWidth, window.innerHeight, 0, window.innerHeight * 0.25, window.innerWidth, window.innerHeight);
+          camera.setViewOffset(window.innerWidth, window.innerHeight, 0, window.innerHeight * 0.25, window.innerWidth, window.innerHeight);
         } else {
           // On desktop, UI is on the right, so shift the component LEFT by 25%
-          (camera as any).setViewOffset(window.innerWidth, window.innerHeight, window.innerWidth * 0.25, 0, window.innerWidth, window.innerHeight);
+          camera.setViewOffset(window.innerWidth, window.innerHeight, window.innerWidth * 0.25, 0, window.innerWidth, window.innerHeight);
         }
         camera.updateProjectionMatrix();
       }
     } else if (!selectedComponent) {
       // Reset view offset when panel closes
-      if ('clearViewOffset' in camera) {
-        (camera as any).clearViewOffset();
+      if (camera instanceof THREE.PerspectiveCamera && camera.view) {
+        camera.clearViewOffset();
         camera.updateProjectionMatrix();
       }
       // Płynny powrót kamery na środek
@@ -165,8 +153,8 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
 
     return () => {
       // Cleanup: reset view offset when unmounting
-      if ('clearViewOffset' in camera) {
-        (camera as any).clearViewOffset();
+      if (camera instanceof THREE.PerspectiveCamera && camera.view) {
+        camera.clearViewOffset();
         camera.updateProjectionMatrix();
       }
     };
@@ -174,8 +162,8 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
 
   useEffect(() => {
     if (cameraControlsRef.current && cameraResetTrigger > 0) {
-      if ('clearViewOffset' in camera) {
-        (camera as any).clearViewOffset();
+      if (camera instanceof THREE.PerspectiveCamera && camera.view) {
+        camera.clearViewOffset();
         camera.updateProjectionMatrix();
       }
       cameraControlsRef.current.reset(true);
@@ -189,8 +177,8 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
 
   useEffect(() => {
     if (buildMode && cameraControlsRef.current) {
-      if ('clearViewOffset' in camera) {
-        (camera as any).clearViewOffset();
+      if (camera instanceof THREE.PerspectiveCamera && camera.view) {
+        camera.clearViewOffset();
         camera.updateProjectionMatrix();
       }
       cameraControlsRef.current.reset(true);

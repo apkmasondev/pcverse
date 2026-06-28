@@ -12,10 +12,7 @@ export const LoadingScreen = () => {
 useEffect(() => {
     if (active || isManualLoading) {
       setShow(true);
-    } else if (!active && !isManualLoading && progress === 100) {
-      const timer = setTimeout(() => setShow(false), 800);
-      return () => clearTimeout(timer);
-    } else if (!active && !isManualLoading) {
+    } else {
       const timer = setTimeout(() => setShow(false), 800);
       return () => clearTimeout(timer);
     }
