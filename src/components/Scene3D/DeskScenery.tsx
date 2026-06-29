@@ -457,6 +457,53 @@ export const DeskEssentials = () => {
   );
 };
 
+export const LoftWalls = () => {
+  const tex = useTexture(import.meta.env.BASE_URL + 'images/red_brick.webp');
+  
+  const mat = useMemo(() => {
+    const clonedTex = tex.clone();
+    clonedTex.wrapS = THREE.RepeatWrapping;
+    clonedTex.wrapT = THREE.RepeatWrapping;
+    clonedTex.repeat.set(12, 6);
+    
+    return new THREE.MeshStandardMaterial({
+      color: '#ffffff',
+      map: clonedTex,
+      bumpMap: clonedTex,
+      bumpScale: 0.1,
+      roughness: 0.95,
+      metalness: 0.05
+    });
+  }, [tex]);
+
+  useEffect(() => {
+    return () => {
+      mat.map?.dispose();
+      mat.dispose();
+    };
+  }, [mat]);
+
+  return (
+    <group position={[0, 10, 0]}>
+      {/* Tylna ściana - cofnięta za plakat (Z=-26.0) */}
+      <mesh position={[0, 0, -26.0]} receiveShadow>
+        <planeGeometry args={[60, 30]} />
+        <primitive object={mat} attach="material" />
+      </mesh>
+      {/* Lewa ściana - cofnięta za tablicę (X=-25.5) */}
+      <mesh position={[-25.5, 0, 0]} rotation={[0, Math.PI / 2, 0]} receiveShadow>
+        <planeGeometry args={[60, 30]} />
+        <primitive object={mat} attach="material" />
+      </mesh>
+      {/* Prawa ściana - cofnięta za drzwi (X=25.5) */}
+      <mesh position={[25.5, 0, 0]} rotation={[0, -Math.PI / 2, 0]} receiveShadow>
+        <planeGeometry args={[60, 30]} />
+        <primitive object={mat} attach="material" />
+      </mesh>
+    </group>
+  );
+};
+
 export const DeskScenery = () => {
   const xrayMode = usePCView(state => state.xrayMode);
   const isMobile = useIsMobile();
@@ -503,6 +550,7 @@ export const DeskScenery = () => {
         <Magazine />
         <CPUProp />
         <Door />
+        <LoftWalls />
       </Suspense>
     </group>
   );
