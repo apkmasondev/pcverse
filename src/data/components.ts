@@ -88,7 +88,7 @@ export const pcComponents: PCComponent[] = [
     color: "#e94560",
     perfImpact: { gaming: 25, ai: 20, productivity: 40 },
     customStats: [
-      { label: "Częstotliwość Taktowania (Ghz)", value: 80 },
+      { label: "Taktowanie (GHz)", value: 80 },
       { label: "Ilość Rdzeni / Wątków", value: 75 },
       { label: "Rozmiar Pamięci Cache", value: 85 }
     ],
