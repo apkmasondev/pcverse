@@ -504,6 +504,54 @@ export const LoftWalls = () => {
   );
 };
 
+export const SkylightCeiling = () => {
+  const glassMat = useMemo(() => new THREE.MeshStandardMaterial({
+    color: '#aaccff',
+    transparent: true,
+    opacity: 0.2,
+    roughness: 0.1,
+    metalness: 0.9,
+    side: THREE.DoubleSide,
+    depthWrite: false
+  }), []);
+
+  const frameMat = useMemo(() => new THREE.MeshStandardMaterial({
+    color: '#1a1a1c',
+    roughness: 0.8,
+    metalness: 0.8
+  }), []);
+
+  // Znacznie pogrubione w osi Y (wysokość 1.2), by mocno wystawały z góry i z dołu
+  const beamGeoX = useMemo(() => new THREE.BoxGeometry(60, 1.2, 0.6), []);
+  const beamGeoZ = useMemo(() => new THREE.BoxGeometry(0.6, 1.2, 60), []);
+
+  useEffect(() => {
+    return () => {
+      glassMat.dispose();
+      frameMat.dispose();
+      beamGeoX.dispose();
+      beamGeoZ.dispose();
+    };
+  }, [glassMat, frameMat, beamGeoX, beamGeoZ]);
+
+  return (
+    <group position={[0, 25, 0]}>
+      {/* Szklana tafla */}
+      <mesh rotation={[Math.PI / 2, 0, 0]} material={glassMat}>
+        <planeGeometry args={[60, 60]} />
+      </mesh>
+
+      {/* Loftowe szprosy metalowe używające InstancedMesh dla wydajności */}
+      <Instances limit={5} geometry={beamGeoX} material={frameMat} frustumCulled={false}>
+        {[-20, -10, 0, 10, 20].map((z, i) => <Instance key={`x-${i}`} position={[0, 0, z]} />)}
+      </Instances>
+      <Instances limit={5} geometry={beamGeoZ} material={frameMat} frustumCulled={false}>
+        {[-20, -10, 0, 10, 20].map((x, i) => <Instance key={`z-${i}`} position={[x, 0, 0]} />)}
+      </Instances>
+    </group>
+  );
+};
+
 export const DeskScenery = () => {
   const xrayMode = usePCView(state => state.xrayMode);
   const isMobile = useIsMobile();
@@ -523,7 +571,7 @@ export const DeskScenery = () => {
   return (
     <group position={[0, -4.1, 0]}>
       <mesh ref={reflectorMeshRef} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
-        <planeGeometry args={[50, 50]} />
+        <planeGeometry args={[60, 60]} />
         <MeshReflectorMaterial
           blur={[300, 100]}
           resolution={512}
@@ -551,6 +599,7 @@ export const DeskScenery = () => {
         <CPUProp />
         <Door />
         <LoftWalls />
+        <SkylightCeiling />
       </Suspense>
     </group>
   );

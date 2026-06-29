@@ -375,19 +375,17 @@ export const PCModel = () => {
   const { invalidate } = useThree();
 
   useFrame((_, delta) => {
-    let needsInvalidate = false;
+    // Na desktopie i tak renderujemy 60fps (frameloop="always").
+    // Na mobile (frameloop="demand") usunięcie invalidate() z wiatraków pozwala faktycznie
+    // oszczędzać baterię. Wiatraki będą się obracać tylko podczas ruchu kamery.
     const rotationSpeed = showAirflow ? 25 : 10;
     
     fanBladesRefsZ.forEach(ref => {
       ref.rotation.z += delta * rotationSpeed;
-      needsInvalidate = true;
     });
     fanBladesRefsY.forEach(ref => {
       ref.rotation.y += delta * rotationSpeed;
-      needsInvalidate = true;
     });
-    
-    if (needsInvalidate) invalidate();
   });
 
   return (

@@ -1,5 +1,9 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 37 - Poprawki Wydajności z Audytu v9 🚀
+
+- **Prawdziwe Oszczędzanie Baterii na Mobile (Frameloop)**: Usunięto błąd logiczny z `PCModel.tsx`, który za sprawą ciągłej animacji wiatraków wymuszał pełen render 60 FPS (`invalidate()`) w każdej klatce. Dzięki temu na smartfonach parametr `frameloop="demand"` w końcu działa poprawnie – kiedy użytkownik nie dotyka ekranu, silnik GPU całkowicie się usypia, redukując drenaż baterii niemal do zera. Animacje kręcących się elementów na telefonach aktywują się tylko podczas interakcji.
+
 ## Etap 36 - Audyt v8: Optymalizacje Mobile i Animacji 🚀
 
 - **Animacje WebGL na Mobile**: Zoptymalizowano pętlę renderującą (`invalidate()` w `useFrame`), co zapobiega zamrażaniu się komponentów 3D oraz wiatraków w trybie `frameloop="demand"` oszczędzającym baterię.

@@ -283,7 +283,7 @@ export const pcComponents: PCComponent[] = [
       "Łączy się bezpośrednio z szyną PCIe dla maksymalnej prędkości"
     ],
     funFact: "Najnowsze dyski NVMe (w standardzie PCIe 5.0) osiągają oszałamiającą prędkość odczytu na poziomie przekraczającym 14 000 MB/s!",
-    position: [-0.42, 0.35, -1.8],
+    position: [-0.7, -0.5, -1.75],
     explodedPosition: [7, 4, -2.6],
     color: "#f8b500",
     perfImpact: { gaming: 10, ai: 5, productivity: 15 },

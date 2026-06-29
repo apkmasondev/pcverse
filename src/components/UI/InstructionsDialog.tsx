@@ -157,16 +157,15 @@ export const InstructionsDialog = ({ showInstructions, setShowInstructions }: In
                     </h3>
                     <p className="text-sm text-slate-300 leading-relaxed">
                       Zmienia globalne oświetlenie. Aktywuj{" "}
-                      <strong>"Tryb Scenografii"</strong>, by postawić sprzęt
-                      na biurku z fotorealistycznymi odbiciami.
+                      <strong>"Tryb Scenografii"</strong>, by przenieść się
+                      do loftowego pokoju ze szklanym dachem.
                       <span className="text-amber-400/90 block mt-2 text-xs">
-                        ⚠️ <strong>Uwaga:</strong> Scenografia podwaja ilość
-                        renderowanych detali (wymagane GPU).
+                        ⚠️ <strong>Uwaga:</strong> Opcja obciąża kartę graficzną.
+                        W celu zachowania płynności jest automatycznie blokowana na słabszych układach graficznych.
                       </span>
                       <span className="text-sky-300 block mt-1.5 text-xs">
-                        📱 <strong>Urządzenia mobilne:</strong> Ze względu na
-                        proporcje pionowych ekranów i ograniczenia wydajności,
-                        na wąskich ekranach sceneria nie wyświetli się.
+                        📱 <strong>Urządzenia mobilne:</strong> Funkcja niedostępna
+                        z powodów wydajnościowych i braku optymalizacji dla ekranów pionowych.
                       </span>
                     </p>
                   </div>
@@ -260,9 +259,9 @@ export const InstructionsDialog = ({ showInstructions, setShowInstructions }: In
                     <strong className="text-indigo-100 font-semibold">
                       Rekomendacja:
                     </strong>{" "}
-                    Dla zachowania najwyższego poziomu imersji i
-                    profesjonalnego doświadczenia z aplikacji, zalecamy jej
-                    uruchamianie na poziomych ekranach (Desktop / Tablet).
+                    W celu uzyskania pełnej immersji oraz najwyższej wygody obsługi
+                    trybu budowy, zalecamy korzystanie z aplikacji na szerokich ekranach
+                    (Komputer PC / Tablet).
                   </p>
                 </div>
               </div>
