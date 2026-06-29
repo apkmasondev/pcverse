@@ -169,7 +169,7 @@ export const SidebarControls = () => {
             setSelectedComponent(null);
             toggleBuildMode();
           }}
-          className="relative flex items-center w-full h-11 rounded-xl bg-transparent border border-transparent transition-colors hover:bg-white/5 overflow-hidden"
+          className="relative flex items-center w-full h-11 rounded-xl bg-transparent border border-transparent transition-colors hover:bg-white/5 overflow-hidden max-md:opacity-30 max-md:cursor-not-allowed max-md:pointer-events-none"
         >
           <div className="flex-shrink-0 w-[42px] h-[42px] flex items-center justify-center text-slate-300 group-hover:text-indigo-400 transition-colors">
             <Hammer aria-hidden="true" size={20} />
