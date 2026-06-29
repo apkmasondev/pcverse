@@ -349,7 +349,7 @@ export const SidebarControls = () => {
                 <div className="hidden md:block h-px bg-white/10 my-1 w-full" />
 
                 <button
-                  title={isLowEndGPU ? "Niedostępne dla zintegrowanych kart graficznych" : "Pokaż scenografię"}
+                  title={isLowEndGPU ? "Niedostępne ze względu na spadki płynności (FPS)" : "Pokaż scenografię"}
                   disabled={isLowEndGPU}
                   onClick={() => {
                     if (!isLowEndGPU) {
