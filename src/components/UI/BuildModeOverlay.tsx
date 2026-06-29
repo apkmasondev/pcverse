@@ -55,7 +55,7 @@ export const BuildModeOverlay = () => {
             )}
           </div>
 
-          <div className="w-full max-w-sm h-1.5 xl:h-2 bg-black/40 backdrop-blur-md rounded-full overflow-hidden mb-4 xl:mb-6 shadow-[0_2px_10px_rgba(0,0,0,0.8)] border border-white/5">
+          <div className="w-full max-w-sm h-1.5 xl:h-2 bg-black/40 backdrop-blur-md rounded-full overflow-hidden mb-4 xl:mb-6 shadow-[0_4px_15px_rgba(0,0,0,0.8)] border border-white/20">
             <motion.div
               className={`h-full ${isComplete ? 'bg-gradient-to-r from-amber-400 to-orange-500 shadow-[0_0_15px_rgba(245,158,11,1)]' : 'bg-gradient-to-r from-indigo-500 to-purple-500 shadow-[0_0_15px_rgba(99,102,241,1)]'}`}
               initial={{ width: 0 }}
