@@ -339,6 +339,7 @@ export const Scene3D = () => {
   const [hasInteracted, setHasInteracted] = useState(false);
   const [dpr, setDpr] = useState<number | [number, number]>(isMobile ? 1 : [1, 2]);
   const [disableEffects, setDisableEffects] = useState(false);
+  const setLowEndGPU = usePCView(state => state.setLowEndGPU);
   const isLowEndGPU = usePCView(state => state.isLowEndGPU);
 
   return (
@@ -366,6 +367,7 @@ export const Scene3D = () => {
           onDecline={() => {
             setDpr(1);
             setDisableEffects(true);
+            setLowEndGPU(true);
           }}
           onIncline={() => {
             setDpr(isLowEndGPU || isMobile ? 1 : [1, 2]);
