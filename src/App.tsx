@@ -5,6 +5,21 @@ import { InfoPanel } from './components/InfoPanel/InfoPanel';
 import { GlobalErrorBoundary } from './components/ErrorBoundary';
 import { LoadingScreen } from './components/LoadingScreen/LoadingScreen';
 
+const FallbackLoader = () => (
+  <div className="absolute inset-0 z-[9999] flex flex-col items-center justify-center bg-[#050505] text-white">
+    <div className="relative w-80 max-w-[80vw] flex flex-col items-center">
+      <h1 className="text-4xl font-extrabold tracking-widest mb-2 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-500 animate-pulse">
+        PCVERSE
+      </h1>
+      <p className="text-sm text-slate-300 tracking-widest uppercase mb-8">
+        Ładowanie silnika WebGL...
+      </p>
+      <div className="w-8 h-8 border-2 border-indigo-500/30 border-t-cyan-400 rounded-full animate-spin" />
+      <div className="absolute -inset-10 bg-indigo-500/10 blur-[100px] -z-10 rounded-full" />
+    </div>
+  </div>
+);
+
 function App() {
 
   return (
@@ -20,7 +35,7 @@ function App() {
           <a href="#info-panel" className="block py-2 outline-none focus:ring-2 focus:ring-indigo-500">Przejdź do panelu informacji</a>
         </nav>
 
-        <Suspense fallback={null}>
+        <Suspense fallback={<FallbackLoader />}>
           <Scene3D />
         </Suspense>
         <UI />

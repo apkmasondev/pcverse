@@ -9,10 +9,10 @@ import { PSUGeometry } from './geometries/PSUGeometry';
 import { CaseGeometry } from './geometries/CaseGeometry';
 import { CPUCoolerGeometry, FanGeometry } from './geometries/CPUCoolerGeometry';
 import { CableGeometry } from './CableGeometry';
-import { useRef, useState, useMemo, Suspense, memo } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useRef, useMemo, Suspense, memo, useEffect } from 'react';
+import { useFrame, useThree } from '@react-three/fiber';
 import { Group, Mesh, Color, Vector3 } from 'three';
-import { Html, useCursor, useTexture } from '@react-three/drei';
+import { Html, useTexture } from '@react-three/drei';
 import { motion, useReducedMotion } from 'framer-motion';
 import { xrayMaterial } from './materials';
 import { pcComponents } from '../../data/components';
@@ -87,15 +87,17 @@ const ProceduralGeometry = memo(({ data, baseColor }: { data: PCComponent, baseC
 
 interface ComponentLabelProps {
   data: PCComponent;
-  hovered: boolean;
   isUnbuilt: boolean;
   isCurrentStep: boolean;
   isMobile: boolean;
-  setHovered: (h: boolean) => void;
+  explodeStep: number;
 }
 
 // --- Extract Component Label to prevent RGB-based re-renders in ComponentMesh ---
-const ComponentLabel = memo(({ data, hovered, isUnbuilt, isCurrentStep, isMobile, setHovered }: ComponentLabelProps) => {
+const ComponentLabel = memo(({ data, isUnbuilt, isCurrentStep, isMobile, explodeStep }: ComponentLabelProps) => {
+  const isHovered = usePCUI(state => state.hoveredComponentId === data.id);
+  const setHoveredComponentId = usePCUI(state => state.setHoveredComponentId);
+  
   const rgbColor = usePCRGB(state => state.rgbColor);
   const rgbEnabled = usePCRGB(state => state.rgbEnabled);
   const effectiveRgbColor = rgbEnabled ? rgbColor : '#000000';
@@ -104,7 +106,13 @@ const ComponentLabel = memo(({ data, hovered, isUnbuilt, isCurrentStep, isMobile
   const buildMode = useBuildStore(state => state.buildMode);
   const advanceStep = useBuildStore(state => state.advanceStep);
 
-  const shouldHighlight = hovered || (buildMode && isCurrentStep);
+  const shouldHighlight = isHovered || (buildMode && isCurrentStep);
+  const isVisible = buildMode 
+    ? (isUnbuilt || isCurrentStep)
+    : (!isMobile && isHovered) || explodeStep === 2;
+
+  if (!isVisible) return null;
+
   return (
     <Html 
       position={[0, data.geometryArgs[1] / 2, 0]}
@@ -121,7 +129,7 @@ const ComponentLabel = memo(({ data, hovered, isUnbuilt, isCurrentStep, isMobile
         style={{ willChange: "transform, opacity" }}
       >
         <div 
-          className={`pointer-events-auto cursor-pointer whitespace-nowrap min-w-max px-4 py-2 rounded-xl rounded-br-sm border shadow-xl transition-all duration-300 ${shouldHighlight ? 'scale-105' : 'bg-black/60 border-white/20'}`}
+          className={`${isMobile ? 'pointer-events-none' : 'pointer-events-auto cursor-pointer'} whitespace-nowrap min-w-max px-4 py-2 rounded-xl rounded-br-sm border shadow-xl transition-all duration-300 ${shouldHighlight ? 'scale-105' : 'bg-black/60 border-white/20'}`}
           style={shouldHighlight ? { 
             backgroundColor: `${effectiveRgbColor}40`,
             borderColor: `${effectiveRgbColor}`, 
@@ -130,15 +138,15 @@ const ComponentLabel = memo(({ data, hovered, isUnbuilt, isCurrentStep, isMobile
           onPointerEnter={(e) => {
             if (isMobile) return;
             e.stopPropagation();
-            if (!hovered) {
+            if (!isHovered) {
               playHoverSound();
             }
-            setHovered(true);
+            setHoveredComponentId(data.id);
           }}
           onPointerLeave={(e) => {
             if (isMobile) return;
             e.stopPropagation();
-            setHovered(false);
+            setHoveredComponentId(null);
           }}
           onClick={(e) => {
             e.stopPropagation();
@@ -189,7 +197,6 @@ const ComponentLabel = memo(({ data, hovered, isUnbuilt, isCurrentStep, isMobile
 const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: boolean }) => {
   const groupRef = useRef<Group>(null);
   const ringRef = useRef<Mesh>(null);
-  const [hovered, setHovered] = useState(false);
   
   // ZUSTAND SELECTORS
   const isSelected = usePCSelection(state => state.selectedComponent?.id === data.id);
@@ -209,7 +216,14 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
   const isUnbuilt = buildMode && data.buildOrder !== undefined && data.buildOrder >= currentStep;
   const isCurrentStep = buildMode && data.buildOrder === currentStep;
   
-  useCursor((hovered && !isMobile) || isCurrentStep);
+  const { invalidate } = useThree();
+  
+  useEffect(() => {
+    if (isCurrentStep && !isMobile) {
+      document.body.style.cursor = 'pointer';
+      return () => { document.body.style.cursor = 'auto'; };
+    }
+  }, [isCurrentStep, isMobile]);
   
   const targetPosition = useMemo(() => new Vector3(), []);
   const targetScale3 = useMemo(() => new Vector3(), []);
@@ -217,11 +231,13 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
   
   const maxDim = data.geometryArgs ? Math.max(...data.geometryArgs) : 1;
   const baseLift = Math.max(0.02, Math.min(0.15, 0.1 / maxDim));
-  const liftOffset = hovered && !isSelected ? baseLift : 0;
   
   useFrame((_state, delta) => {
     if (!groupRef.current) return;
     const dt = Math.min(delta, 0.05);
+
+    const isHovered = usePCUI.getState().hoveredComponentId === data.id;
+    const liftOffset = isHovered && !isSelected ? baseLift : 0;
 
     const isExploded = buildMode ? isUnbuilt : (explodeStep === 2);
     const posArray = isExploded ? data.explodedPosition : data.position;
@@ -238,26 +254,39 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
 
     targetPosition.set(posArray[0], posArray[1] + liftOffset + floatOffset + explodeLift, posArray[2]);
     const distPos = groupRef.current.position.distanceTo(targetPosition);
+    let needsInvalidate = false;
+    
     if (distPos > 0.001) {
       groupRef.current.position.lerp(targetPosition, dt * 5);
+      needsInvalidate = true;
     } else if (distPos > 0) {
       groupRef.current.position.copy(targetPosition);
+      needsInvalidate = true;
     }
     
-    const targetScale = isSelected ? 1.05 : hovered ? 1.03 : 1.0;
+    const targetScale = isSelected ? 1.05 : isHovered ? 1.03 : 1.0;
     targetScale3.set(targetScale, targetScale, targetScale);
     const distScale = groupRef.current.scale.distanceTo(targetScale3);
     if (distScale > 0.001) {
       groupRef.current.scale.lerp(targetScale3, dt * 8);
+      needsInvalidate = true;
     } else if (distScale > 0) {
       groupRef.current.scale.copy(targetScale3);
+      needsInvalidate = true;
     }
 
     const ringOffsetY = data.id === 'gpu' ? 0.9 : 0.4;
     if (ringRef.current) {
       ringRef.current.rotation.z += dt * 0.5;
       ringRef.current.position.y = -data.geometryArgs[1] / 2 - ringOffsetY + Math.sin(_state.clock.elapsedTime * 3) * 0.05;
+      needsInvalidate = true;
     }
+    
+    if (isExploded && !shouldReduceMotion) {
+      needsInvalidate = true; // Zróżnicowany (asynchroniczny) floatOffset wymaga ciągłego renderowania klatek
+    }
+
+    if (needsInvalidate) invalidate();
   });
 
   const visual = useMemo(() => <ProceduralGeometry data={data} baseColor={baseColor} />, [data, baseColor]);
@@ -292,15 +321,18 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
         onPointerOver={(e) => {
           if (isMobile) return;
           e.stopPropagation();
+          document.body.style.cursor = 'pointer';
 
-          if (!hovered && !isSelected) {
+          const currentHovered = usePCUI.getState().hoveredComponentId;
+          if (currentHovered !== data.id && !isSelected) {
             playHoverSound();
           }
-          setHovered(true);
+          usePCUI.getState().setHoveredComponentId(data.id);
         }}
         onPointerOut={() => {
           if (isMobile) return;
-          setHovered(false);
+          document.body.style.cursor = 'auto';
+          usePCUI.getState().setHoveredComponentId(null);
         }}
       >
         {isCurrentStep && (
@@ -321,17 +353,12 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
       </ErrorBoundary>
       
       {showLabels && !showInstructions && !isSelected && (
-        buildMode 
-          ? (isUnbuilt || isCurrentStep)
-          : (!isMobile && (hovered || isSelected) || explodeStep === 2)
-      ) && (
         <ComponentLabel 
           data={data}
-          hovered={hovered}
           isUnbuilt={isUnbuilt}
           isCurrentStep={isCurrentStep}
           isMobile={isMobile}
-          setHovered={setHovered}
+          explodeStep={explodeStep}
         />
       )}
     </group>
@@ -344,14 +371,23 @@ export const PCModel = () => {
   const isMobile = useIsMobile();
   const groupRef = useRef<Group>(null);
   const { buildMode, currentStep, maxSteps } = useBuildStore();
+  const showAirflow = usePCView(state => state.showAirflow);
+  const { invalidate } = useThree();
 
   useFrame((_, delta) => {
+    let needsInvalidate = false;
+    const rotationSpeed = showAirflow ? 25 : 10;
+    
     fanBladesRefsZ.forEach(ref => {
-      ref.rotation.z += delta * 15;
+      ref.rotation.z += delta * rotationSpeed;
+      needsInvalidate = true;
     });
     fanBladesRefsY.forEach(ref => {
-      ref.rotation.y += delta * 15;
+      ref.rotation.y += delta * rotationSpeed;
+      needsInvalidate = true;
     });
+    
+    if (needsInvalidate) invalidate();
   });
 
   return (

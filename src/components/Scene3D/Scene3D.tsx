@@ -121,6 +121,32 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
   const _tempVec = useRef(new Vector3());
   const _tempDir = useRef(new Vector3());
   const _tempFocal = useRef(new Vector3());
+  const targetOffset = useRef({ x: 0, y: 0 });
+  const currentOffset = useRef({ x: 0, y: 0 });
+
+  useFrame((state, delta) => {
+    const dt = Math.min(delta, 0.05);
+    const cx = currentOffset.current.x;
+    const cy = currentOffset.current.y;
+    const tx = targetOffset.current.x;
+    const ty = targetOffset.current.y;
+    
+    if (Math.abs(cx - tx) > 0.5 || Math.abs(cy - ty) > 0.5) {
+      currentOffset.current.x = THREE.MathUtils.lerp(cx, tx, dt * 5);
+      currentOffset.current.y = THREE.MathUtils.lerp(cy, ty, dt * 5);
+      
+      const { innerWidth, innerHeight } = window;
+      if (state.camera instanceof THREE.PerspectiveCamera) {
+        state.camera.setViewOffset(innerWidth, innerHeight, currentOffset.current.x, currentOffset.current.y, innerWidth, innerHeight);
+        state.camera.updateProjectionMatrix();
+        state.invalidate();
+      }
+    } else if (tx === 0 && ty === 0 && state.camera instanceof THREE.PerspectiveCamera && state.camera.view && state.camera.view.enabled) {
+        state.camera.clearViewOffset();
+        state.camera.updateProjectionMatrix();
+        state.invalidate();
+    }
+  });
 
   const dofTarget = useMemo(() => new Vector3(), []);
   const dofEnabled = !!selectedComponent;
@@ -194,20 +220,14 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
       // Epic UI/UX: Shift the entire camera frustum so the component avoids UI panels
       if (camera instanceof THREE.PerspectiveCamera) {
         if (isMobile) {
-          // On mobile, UI is at the bottom, so shift the component UP by 25%
-          camera.setViewOffset(window.innerWidth, window.innerHeight, 0, window.innerHeight * 0.25, window.innerWidth, window.innerHeight);
+          targetOffset.current = { x: 0, y: window.innerHeight * 0.25 };
         } else {
-          // On desktop, UI is on the right, so shift the component LEFT by 25%
-          camera.setViewOffset(window.innerWidth, window.innerHeight, window.innerWidth * 0.25, 0, window.innerWidth, window.innerHeight);
+          targetOffset.current = { x: window.innerWidth * 0.25, y: 0 };
         }
-        camera.updateProjectionMatrix();
       }
     } else if (!selectedComponent) {
-      // Reset view offset when panel closes
-      if (camera instanceof THREE.PerspectiveCamera && camera.view) {
-        camera.clearViewOffset();
-        camera.updateProjectionMatrix();
-      }
+      // Płynny powrót offsetu
+      targetOffset.current = { x: 0, y: 0 };
       // Płynny powrót kamery na środek
       cameraControlsRef.current?.setLookAt(
         0, 2.5, 20,
@@ -227,6 +247,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
 
   useEffect(() => {
     if (cameraControlsRef.current && cameraResetTrigger > 0) {
+      targetOffset.current = { x: 0, y: 0 };
       if (camera instanceof THREE.PerspectiveCamera && camera.view) {
         camera.clearViewOffset();
         camera.updateProjectionMatrix();
@@ -242,6 +263,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
 
   useEffect(() => {
     if (buildMode && cameraControlsRef.current) {
+      targetOffset.current = { x: 0, y: 0 };
       if (camera instanceof THREE.PerspectiveCamera && camera.view) {
         camera.clearViewOffset();
         camera.updateProjectionMatrix();
@@ -342,6 +364,20 @@ export const Scene3D = () => {
   const setLowEndGPU = usePCView(state => state.setLowEndGPU);
   const isLowEndGPU = usePCView(state => state.isLowEndGPU);
 
+  const [frameloop, setFrameloop] = useState<'always' | 'demand' | 'never'>(isMobile ? 'demand' : 'always');
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        setFrameloop('never');
+      } else {
+        setFrameloop(isMobile ? 'demand' : 'always');
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [isMobile]);
+
   return (
     <div
       className="w-full h-[60vh] md:h-screen bg-[#050505] relative"
@@ -360,7 +396,7 @@ export const Scene3D = () => {
       <Canvas
         gl={{ antialias: !isLowEndGPU }}
         dpr={isLowEndGPU ? 1 : dpr}
-        frameloop={isMobile ? 'demand' : 'always'}
+        frameloop={frameloop}
         onPointerMissed={() => setSelectedComponent(null)}
       >
         <PerformanceMonitor

@@ -1,6 +1,16 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 36 - Audyt v8: Optymalizacje Mobile i Animacji 🚀
+
+- **Animacje WebGL na Mobile**: Zoptymalizowano pętlę renderującą (`invalidate()` w `useFrame`), co zapobiega zamrażaniu się komponentów 3D oraz wiatraków w trybie `frameloop="demand"` oszczędzającym baterię.
+- **Interfejs Dotykowy (Pointer Events)**: Całkowicie wyłączono chwytanie dotyku (`pointer-events: none`) dla etykiet HTML nad modelami 3D oraz dla podpowiedzi "Kliknij podzespół" na urządzeniach mobilnych. Pozwala to na płynne obracanie kamery palcem bez uderzania w "niewidzialną ścianę".
+- **Płynny Powrót Kamery**: Zastąpiono błyskawiczny skok kadru (`clearViewOffset`) maślaną animacją `lerp` dla parametru `viewOffset` przy zamykaniu paneli detali komponentów.
+- **Optymalizacja VDOM (Hover)**: Całkowicie wyeliminowano re-rendery komponentu `ComponentMesh` podczas najeżdżania kursorem na obiekty 3D. Stan hovered przeniesiono do globalnego store (bez subskrypcji w parencie) i odczytywany jest natywnie z pominięciem Reacta prosto w `useFrame`, co potężnie odciąża główny wątek przy szybkich ruchach myszką.
+- **Ratunkowy Loader (Suspense Fallback)**: Dodano miniaturowy, niezależny od silnika 3D spinner awaryjny ładujący się przed głównym ekranem ładowania. Wyświetla się on podczas powolnego pobierania paczki JavaScript dla `Scene3D`, chroniąc użytkowników słabych sieci (3G/Edge) przed patrzeniem na całkowicie czarny ekran.
+- **Ochrona przed Utratą Kontekstu WebGL (Mobile/PWA)**: Wdrożono nasłuchiwanie zdarzenia `visibilitychange`. Kiedy użytkownik przełącza się na inną aplikację na telefonie i zrzuca przeglądarkę do tła, pętla renderująca (`frameloop`) ulega bezwzględnemu zawieszeniu (`never`). Chroni to aplikację przed potężnym wyciekiem pamięci GPU i wymuszoną awarią "Context Loss" po powrocie do zakładki.
+
 ## Etap 35 - Audyt v7: Optymalizacje Draw Calls i Dostępność 🚀
+
 - **Redukcja Re-renderów (Zustand Atomic Selectors)**: Przeprowadzono refaktoryzację wewnątrz komponentów renderujących trójwymiarową geometrię (`MotherboardGeometry`, `GPUGeometry`, `CPUGeometry` itd.). Subskrypcje globalnego stanu rozbito na pojedyncze zmienne (np. `usePCRGB(s => s.rgbColor)`), co zapobiega bezpodstawnemu odświeżaniu nieaktywnych komponentów i gwałtownie poprawia płynność.
 - **Adaptive Performance (Dynamiczna Jakość)**: Zastąpiono statyczne wykrywanie GPU po nazwie na rzecz wbudowanego komponentu `<PerformanceMonitor>`. Aplikacja teraz na żywo mierzy płynność (FPS) i w locie wyłącza agresywne efekty (jak `RectAreaLight` czy Bloom), jeśli odnotuje spadek wydajności (niezależnie od tego, czy urządzenie to iPhone, Mac, czy budżetowy PC). Gwarantuje to perfekcyjny "idealny balans między jakością obrazu a FPS".
 - **Responsywny Interfejs (Tryb Budowy)**: Przeprojektowano panele Trybu Budowy (telemetria, porady, pasek postępu) pod kątem mniejszych ekranów i tabletów. Zamiast sztucznego skalowania CSS, wdrożono twarde, responsywne limity szerokości, redukcję marginesów wewnętrznych (`padding`) oraz zmniejszono rozmiar czcionek i ikon, wykorzystując dedykowane breakpointy Tailwind (`xl:`). Zapewnia to wzorową czytelność modelu 3D na ekranach laptopów. Zablokowano również możliwość uruchomienia Trybu Budowy na smartfonach w pionie (`max-md`) za pomocą czystego CSS (`pointer-events-none`), bez długu technologicznego.
@@ -12,7 +22,13 @@
 - **Instancjonowanie Obiektów (Redukcja Draw Calls)**: Znacząco obniżono narzut procesora na komunikację z kartą graficzną. Setki powtarzalnych elementów, takich jak kondensatory VRM i żeberka radiatora (`MotherboardGeometry`) oraz łopatki wentylatorów (`CPUCoolerGeometry`), złączono w obiekty instancji (`XInstances`). Powyższy zabieg łączy potężną liczbę operacji renderowania (Draw Calls) do zaledwie kilku.
 - **Wsparcie WCAG (Etykiety HTMl)**: Interaktywne siatki 3D podzespołów komputera generują teraz własne, dostępne dla czytników etykiety za pomocą `<Html>` (aria-live). Zrezygnowano z biblioteki `@react-three/a11y`, ponieważ w środowisku React 19 Strict Mode powodowała ona awarię ("Cannot update an unmounted root") ze względu na błędy w cyklu życia komponentów w tej bibliotece.
 
+## Etap 34 - Optymalizacja Renderowania i Pętli Animacji 🚀
+
+- **Redukcja Re-renderów (Zustand Atomic Selectors):** Przeprowadzono gruntowną refaktoryzację komponentów `SidebarControls`, `Scene3D`, `DeskScenery` i `PCModel`. Zamiast destrukturnizować pełne obiekty stanu, komponenty teraz celowo subskrybują pojedyncze prymitywy (atomic selectors). To całkowicie eliminuje ukryte "puste przebiegi" silnika Reacta, gdy zmieniały się zmienne w sklepie niezwiązane z wyrenderowanym widokiem.
+- **Usunięcie Paradoksu Zenona (Usypianie Klatek):** Rozwiązano problem ciągłego, nieskończonego wyliczania funkcji `lerp` przy animacjach (CursorLight, pozycjonowanie komponentów). Dodano próg odcięcia (dystans < 0.001), po którym obiekty bezwzględnie przyjmują pozycję docelową. Skutkuje to możliwością idealnego wejścia rdzenia GPU i CPU w tryb spoczynku (idle) po zakończeniu animacji.
+
 ## Etap 33 - Optymalizacja Oświetlenia i Pamięci 💡
+
 - **Poprawa Stabilności na Słabszym Sprzęcie:** Zastąpiono ekstremalnie ciężki obiekt `rectAreaLight` (Światło Pokoju) lżejszym `hemisphereLight` w trybie standardowym (bez biurka), skutecznie usuwając najczęstszą przyczynę craszowania WebGL na zintegrowanych kartach graficznych i smartfonach.
 - **Optymalizacja Wewnętrznych Świateł (RGB):** Od teraz wewnętrzne światła obudowy (różowe i fioletowe pointLight) są sprzężone z przyciskiem "Tryb RGB". Wyłączenie efektów RGB na panelu deaktywuje najcięższe światła poprawiając zauważalnie płynność klatkowania.
 - **Eliminacja Stutteringu i Rozbłysków (Shader Recompilation):** Przebudowano warunkowe renderowanie wszystkich świateł w `Scene3D` oraz `CaseGeometry` ze zmiennych logicznych na sztywną manipulację parametrem `intensity={0}`. Eliminuje to potężny spadek wydajności (przeładowanie shaderów przy zmianie liczby świateł).
@@ -25,20 +41,20 @@
 - **Wyłączenie Scenografii dla Słabszych Maszyn:** Jeżeli detektor wykryje słabszy zintegrowany sprzęt graficzny (APU/Mobile), interaktywna scenografia (Cyber-Biurko) jest domyślnie blokowana. Aplikacja uniemożliwia jej włączenie, dodając estetyczny komunikat w interfejsie ("Niedostępne dla zintegrowanych kart graficznych"), co definitywnie chroni przeglądarkę przed zamrożeniem z powodu natłoku siatek 3D i cieni.
 - **Zgodność z React 19 (Strict Mode):** Naprawiono ukryty błąd i anty-wzorzec (wskazany przez audyt), uciekając z `useMemo` i przenosząc procedurę rotacji oraz przesuwania tekstur UV (modyfikacja zjawisk pobocznych, tzw. side-effects) do kontrolowanego hooka `useEffect`.
 
-## Etap 34 - Optymalizacja Renderowania i Pętli Animacji 🚀
-- **Redukcja Re-renderów (Zustand Atomic Selectors):** Przeprowadzono gruntowną refaktoryzację komponentów `SidebarControls`, `Scene3D`, `DeskScenery` i `PCModel`. Zamiast destrukturnizować pełne obiekty stanu, komponenty teraz celowo subskrybują pojedyncze prymitywy (atomic selectors). To całkowicie eliminuje ukryte "puste przebiegi" silnika Reacta, gdy zmieniały się zmienne w sklepie niezwiązane z wyrenderowanym widokiem.
-- **Usunięcie Paradoksu Zenona (Usypianie Klatek):** Rozwiązano problem ciągłego, nieskończonego wyliczania funkcji `lerp` przy animacjach (CursorLight, pozycjonowanie komponentów). Dodano próg odcięcia (dystans < 0.001), po którym obiekty bezwzględnie przyjmują pozycję docelową. Skutkuje to możliwością idealnego wejścia rdzenia GPU i CPU w tryb spoczynku (idle) po zakończeniu animacji.
 ## Etap 32 - Audyt v6: Dekompozycja UI, Polerowanie Trybu Budowy i Mobile UX 🧩
 
 ### Polerowanie Trybu Budowy (UX i UI)
+
 - **Ekran Finałowy Premium**: Przebudowano ekran ukończenia budowy PC (`BuildModeOverlay.tsx`). Dodano ekstremalny *glassmorphism* (rozmyte bursztynowe tło), mieniący się złoty gradient na tekście, animowaną ikonę lewitującego procesora oraz nowy, interaktywny przycisk "Uruchom System". Wprowadzono też element grywalizacji: *"Osiągnięto poziom: Ekspert PC"*.
 - **Korekta Wizualna Pierścienia**: Odsunięto w dół o 0.5 jednostki wskazujący pierścień holograficzny (Holo Ring) w trybie budowy specjalnie dla karty graficznej (GPU), aby zapobiec przenikaniu animacji z potężnymi wentylatorami chłodzenia.
 
 ### Optymalizacja Mobile i WebGL (Sterowanie)
+
 - **Naprawa gestów na telefonach**: Dodano klasę `touch-none` do głównego kontenera otaczającego `<Canvas>`, całkowicie blokując domyślne przewijanie ekranu smartfona i wymuszając obsługę gestów przez silnik 3D.
 - **Czystość Kodu Kontrolera**: Usunięto "magiczne numery" (hardkodowane mapowania `touches={{ one: 32... }}`) z `CameraControls`, wymuszając na bibliotece użycie natywnych, wbudowanych mechanizmów dla urządzeń mobilnych (1 palec: Obrót, 2 palce: Pinch-to-Zoom). Równolegle utrzymano blokadę przesuwania dla prawego przycisku myszy (`mouseButtons={{ right: 0 }}`) na desktopach, zapobiegając ucieczce modelu poza kadr.
 
 ### Architektura UI i Modularyzacja (M6)
+
 - **Rozbicie monolitycznego komponentu UI.tsx**: Zgodnie z audytem kodu v6 (Etap M6) gigantyczny plik `UI.tsx` (prawie 1200 linii) został rozebrany na części pierwsze. Od teraz pełni on jedynie rolę lekkiego kompozytora dla wydzielonych podkomponentów:
   - `BuildModeOverlay.tsx` - Dolny pasek postępu i nawigacji Trybu Budowy.
   - `BuildModeExpertPanels.tsx` - Telemetria i sprzętowe porady eksperta.
@@ -47,6 +63,7 @@
 - Taka struktura ułatwia utrzymanie logiki interfejsu 2D w ryzach bez "spaghetti code".
 
 ### Optymalizacja Renderingu (Materiały WebGL)
+
 - **Problem "niewidzialnego mesh'a" za szybą**: Naprawiono błąd załamującego światło szkła obudowy (`transmission: 1.0`), które ze względów optymalizacyjnych nie wyświetlało przezroczystych materiałów z tyłu.
 - Na powierzchniach kratek wentylacyjnych obudowy (CaseGeometry i CasePanels) zmieniono mapowanie "dziurek" z pełnej przezroczystości (`transparent={true}`) na twarde odcięcie w shaderach kompilacji (`transparent={false}` z parametrem `alphaTest={0.5}`).
 - Dzięki temu siatki wentylacyjne i maskownice z dziurkami renderują się perfekcyjnie w głębi za szkłem komputera, dodając fotorealizmu widokowi bocznemu, przy zerowym wpływie na klikalność (Raycasting) podzespołów.
@@ -54,69 +71,81 @@
 ## Etap 31 - Audyt v6: Wycieki Materiałów i Zgodność React 19 Strict Mode 🧹
 
 ### Optymalizacja Pamięci (VRAM)
+
 - Zgodnie ze wskazaniami audytu kodu v6 (Etap A), wyeliminowano wycieki pamięci w obrębie Scenografii Biurka (`DeskScenery.tsx`).
 - Dodano manualne czyszczenie pamięci karty graficznej (`dispose()`) w hooku `useEffect` dla proceduralnie generowanych materiałów (`MeshStandardMaterial` z dynamiczną teksturą) w komponentach `Poster`, `CorkBoard`, `Magazine` i `Door`.
 
 ### Zgodność z React 19 (Side Effects w useMemo)
+
 - Zgodnie z audytem v6 (Etap B), w komponencie `CaseGeometry.tsx` wyeliminowano antywzorzec użycia `useMemo` do mutowania obiektów tekstur (side effects).
 - Zmieniono bloki kodu ustawiające właściwości `colorSpace`, `wrapS`, `wrapT`, `repeat` i `offset` tekstur obudowy na hooki `useEffect`. Zapewnia to pełną zgodność z zasadami komponentów pure w React 19 Strict Mode i zapobiega niezamierzonemu, podwójnemu aplikowaniu modyfikacji na obiekty.
 
 ### Dostępność (WCAG)
+
 - Zgodnie z audytem v6 (Etap E), dodano własność `aria-live="polite"` dla kontenera paneli dynamicznych Trybu Budowy (Prawa Strona), by poprawnie informować czytniki ekranowe o ich pojawieniu się.
 - Uzupełniono atrybuty `aria-pressed` na przyciskach typu toggle dla Etykiet, Cząsteczek (Pyłu), Mgły i Biurka.
 
 ### Czystość Kodu i Typowania (TypeScript)
+
 - **Etap D i F (Z audytu v6)**: Usunięto całkowicie martwy kod wrappera `<PCProvider>` z plików `App.tsx` oraz `usePC.tsx`.
 - Usunięto 6 wystąpień niebezpiecznego rzutowania `(camera as any)` na metodach manipulacji widokiem w `Scene3D.tsx`, używając bezpiecznego sprawdzenia instancji `camera instanceof THREE.PerspectiveCamera`.
 - Wyeliminowano kilkanaście antywzorców z nadużywaniem typu `any` (np. jawne typowanie Propsów `ComponentLabel`, tuple dla wektora `rotationArr`, usunięcie `[key: string]: any` z `GeometryProps`, jawny selektor w `AmbilightStrip` oraz precyzyjne typowanie referencji `ringRef`). W efekcie projekt osiągnął 100% Type-Safety dla propsów komponentów.
 - **Etap L4 (Z audytu v6)**: Wyekstrahowano zduplikowaną implementację `useReducedMotion` (z plików `Scene3D.tsx` i `DeskScenery.tsx`) do pojedynczego, reużywalnego hooka `src/hooks/useReducedMotion.ts`.
 
 ### Optymalizacja Działania Aplikacji
-- **Etap M1 (Z audytu v6)**: Wdrożono progresywne ładowanie tekstur scenografii w `DeskScenery.tsx`. Ogromny pakiet 18 tekstur (ok. 3.5 MB) blokował wcześniej renderowanie po włączeniu biurka, powodując widoczne zacięcie (tzw. render freeze). Rozdzielono to na dwie równoległe granice `<Suspense>`: błyskawiczne ładowanie fundamentów (blat, dywan, główna skrzynia) w `<DeskEssentials>` oraz asynchroniczne doczytywanie drobnych detali w tle. 
+
+- **Etap M1 (Z audytu v6)**: Wdrożono progresywne ładowanie tekstur scenografii w `DeskScenery.tsx`. Ogromny pakiet 18 tekstur (ok. 3.5 MB) blokował wcześniej renderowanie po włączeniu biurka, powodując widoczne zacięcie (tzw. render freeze). Rozdzielono to na dwie równoległe granice `<Suspense>`: błyskawiczne ładowanie fundamentów (blat, dywan, główna skrzynia) w `<DeskEssentials>` oraz asynchroniczne doczytywanie drobnych detali w tle.
 - **Etap L6 (Z audytu v6)**: Uproszczono i zoptymalizowano zduplikowaną logikę wygaszania ekranu powitalnego w `LoadingScreen.tsx`.
 
 ## Etap 30 - Zaawansowana Telemetria i Rynkowe Alternatywy 📊
 
 ### Tryb Ekspercki: Oczyszczenie Danych i Telemetria
+
 - Rozszerzono model danych komponentów o pełne parametry techniczne i unikalne zalecenia montażowe.
 - Usunięto dublujące się informacje tekstowe pomiędzy Poradami Eksperta (`buildTip`) a dedykowanym panelem Narzędzi (`expertDetails`). Porady skupiają się teraz wyłącznie na procesie i "gotchas" montażu, a panel narzędzi na surowych parametrach (np. typie śrubokręta i momencie obrotowym).
 - Zintegrowano panel **Telemetrii**, który wyświetla spersonalizowane statystyki dla każdego podzespołu w UI, korzystając z paska animowanego z kolorem cyjanu (cyjan-500).
 
 ### Nowy Moduł "Przykładowe Modele (2026)"
+
 - Przebudowano strukturę danych wprowadzając wieloelementową listę rynkowych rywali (`exampleSpecs`), pobierając topowe urządzenia na świecie na stan z połowy 2026 roku.
 - Wdrożono nowy, odseparowany panel UI (szmaragdowy z ikoną układu scalonego), wyświetlany poniżej okna Telemetrii. Panel konfrontuje obok siebie najpotężniejsze rynkowe opcje (np. NVIDIA RTX 5090 vs AMD RX 9070 XT, Intel Core Ultra 9 285K vs AMD Ryzen 9 9950X3D2), dając środowisku 3D edukacyjny walor przewodnika zakupowego dla hobbystów.
 
 ## Etap 29 - Oświetlenie Krawędziowe, Tablica i Optymalizacja Renderera 🎬
 
 ### Optymalizacja Wydajności (Shader Recompilation)
+
 - **Zarządzanie Ładowaniem Środowiska (Build Mode & Scenografia)**: Rozwiązano problem "zamrożeń" (stutteringu) ekranu występujących podczas fizycznego usuwania/dodawania ciężkich elementów (jak biurko czy mgła), a także przy wejściu w **Tryb Budowy** (gdzie masowo podmieniany jest materiał na `ghostMaterial`). Wdrożono globalny stan `useAppLoading`, który przechwytuje żądania użytkownika, wyzwala pełnoekranowy `LoadingScreen` i daje silnikowi czas na dyskretną przebudowę shaderów WebGL w tle. Zapewnia to idealnie płynny "UX premium".
 
 ### Rozbudowa Scenografii 3D
+
 - **Realistyczny Magazyn "Komputer Świr"**: Na dywanie obok komputera umieszczono fikcyjny magazyn komputerowy. Grafika została zaprojektowana w stylistyce realistycznej, poddana kompresji i przekonwertowana do zoptymalizowanego formatu `.webp`. Obiekt wykorzystuje `polygonOffset` by uniknąć zjawiska z-fighting na powierzchni dywanu.
 - **Drzwi (Prawa Ściana)**: Wdrożono model proceduralnych drzwi z własną teksturą użytkownika (door.webp). Osadzenie drzwi na osi Y zostało matematycznie wyrównane z podłogą, eliminując efekt lewitacji. Zastosowano również zoptymalizowaną czarną futrynę (polygonOffset).
 - **Tablica Korkowa**: Dodano wygenerowaną teksturę tablicy korkowej na lewej ścianie pokoju, wypełnioną notatkami i schematami budowy PC.
 - **Optymalizacja Z-Fighting (Plakaty)**: Zrezygnowano z mikroskopijnego przesunięcia (Z = -0.01) dla ramek plakatów i tablicy korkowej. Wyabstrahowano nowy komponent `<Poster>` używający sprzętowego parametru `polygonOffset`, eliminując Z-Fighting w pełni natywnie w WebGL zgodnie z audytem kodowym.
 
 ### Dynamiczne Oświetlenie Krawędziowe (Ambilight)
+
 - **Bezcielesna Poświata LED**: Zastąpiono "brzydki", fizyczny żółty pasek z tyłu biurka zaawansowanym systemem 4 dynamicznych punktów świetlnych (`<pointLight>`) ułożonych na krawędziach podłogi. Zapewnia to miękką, realistyczną poświatę światła padającą na pokój.
 - **Płynne Animacje Lerp**: Podpięto poświatę pokoju pod globalny stan podświetlenia obudowy PC. Gdy RGB w komputerze zostaje wyłączone, światła na ścianach wygaszają się do zera z użyciem płynnej matematycznej interpolacji (`THREE.MathUtils.lerp`).
 - **Wydajność Pętli Frame**: Wszystkie 4 krawędziowe światła aktualizują się wewnątrz jednej zoptymalizowanej pętli renderowania `useFrame`, oszczędzając zasoby procesora.
 
-
 ## Etap 28 - Interaktywny Tryb Budowy (Build Mode) 🛠️
 
 ### Usprawnienia Edukacyjne i Interfejs
+
 - **Wskazówki Montażowe (Porada Eksperta)**: Przepisano od zera bazę wskazówek (`buildTip` w `components.ts`). Zamiast prostych zdań, dodano szczegółowe akapity uczące dobrych praktyk składania PC (m.in. jak wpinać pamięć RAM w Dual Channel, znaczenie kołków dystansowych na płycie głównej, prawidłowy obieg powietrza).
 - **Nowy Panel Porad (UI)**: Przeniesiono porady z dolnego, ciasnego menu do dedykowanego, eleganckiego okna w lewym górnym rogu ekranu (z użyciem efektu Glassmorphism i animacji wejścia z Framer Motion). Otwiera się automatycznie w Trybie Budowy. Zoptymalizowano jego rozmiar (`text-[15px]`, wyśrodkowanie) oraz dodano pełną responsywność pod ekrany smartfonów.
 - **Logika Montażu w Obudowie**: Poprawiono błąd, przez który zamontowane komponenty pozostawały zawieszone w powietrzu, jeśli Tryb Budowy aktywowano w trakcie "Wybuchu" (`explodeStep === 2`). Teraz wciśnięcie elementu automatycznie anuluje mu stan wybuchu i ściąga go na właściwe miejsce w obudowie.
 - **Odświeżenie Etykiet Komponentów**: Przywrócono prostokątny, jednowierszowy układ etykiet HTML (dodanie klas Tailwind `whitespace-nowrap min-w-max`) oraz wyśrodkowano w nich dwuwierszowy tekst, poprawiając estetykę etykiet w 3D.
 
 ### Poprawki Audytowe (v5 - Etap 1)
+
 - **Kompletna Blokada Kamery (Critical Fix)**: Wyeliminowano lukę w zabezpieczeniach sterowania, usuwając martwy kod nasłuchujący klawiszy WSAD i strzałek, który omijał blokady interfejsu i pozwalał na ucieczkę kamery z wyznaczonego kadru.
 - **Wyeliminowanie Błędów Typowania i Ostrzeżeń**: Usunięto niebezpieczne rzutowania (`as any`) w postprocessingu (`EffectComposer`) na rzecz czystego renderowania warunkowego JSX.
 - **Blokada Menu Kontekstowego**: Zabezpieczono ekran Canvas przed przypadkowym wywoływaniem natywnego menu przeglądarki prawym przyciskiem myszy, poprawiając immersję podczas eksploracji sceny 3D.
 
 ### UX Trybu Budowy (v5 - Etap 2)
+
 - **Etykiety Komponentów w Trybie Budowy**: Zmodyfikowano warunkowe renderowanie etykiet (`Html`). Od teraz nazwy komponentów (np. "Oczekujący komponent - Zasilacz") wyświetlają się nad lewitującymi elementami, ułatwiając użytkownikowi identyfikację części do zamontowania.
 - **Zamykanie Escapem**: Wprowadzono globalny skrót klawiszowy `Escape` pozwalający na natychmiastowe i wygodne wyjście z Trybu Budowy.
 - **Dostępność Interfejsu (aria-live)**: Dodano dynamiczny region `aria-live="polite"` do komunikatu "Zamontuj: [Komponent]", wspierając obsługę interfejsu przez czytniki ekranowe.
@@ -124,6 +153,7 @@
 - **Ukrywanie paneli obudowy**: Naprawiono błąd polegający na tym, że panele boczne obudowy pozostawały widoczne w Trybie Budowy na złożonym komputerze. Teraz panele płynnie animują się na bok po włączeniu Trybu Budowy, używając tego samego mechanizmu co przy trybie "Wybuchu".
 
 ### Poprawki Wizualne i Interakcje (v5 - Etap 5)
+
 - **Menu Hover (Zamiast Click)**: Zmieniono działanie głównych przycisków w menu bocznym (Tryb RGB, Otoczenie HDRi, Oświetlenie). Teraz sub-menu rozwijają się automatycznie po najechaniu kursorem (`onMouseEnter`), a znikają po zjechaniu (`onMouseLeave`).
 - **Niewidzialne Mostki CSS**: Wdrożono czysto techniczne rozwiązanie (bez użycia JS-owych `setTimeout`), zamieniając fizyczne marginesy na "mostki" z użyciem CSS paddingu. Zapobiega to przypadkowemu znikaniu menu podczas przesuwania kursora z przycisku na okienko.
 - **Ikona Trybu Budowy**: Zmieniono ikonę "Trybu Budowy" na czytelniejszy symbol Młotka (`Hammer` z `lucide-react`), aby lepiej oddać mechaniczny i konstrukcyjny charakter tego trybu.
@@ -133,6 +163,7 @@
 - **Korekta Gabarytów RAM i SSD**: Kości RAM zostały precyzyjnie dopasowane do fizycznych slotów płyty głównej (wydłużenie w osi Y o 6% oraz korekta osadzenia wzdłużnego). Dysk SSD powiększono sprzętowo (o 25% wszerz i wzdłuż oraz pogrubiono dwukrotnie), by był bardziej widoczny, wraz ze skorelowaną zmianą rozmiaru złotego hologramu.
 
 ### Optymalizacja Architektury i Wydajności (v5 - Etap 4)
+
 - **Chude Odświeżanie z Zustand (Wyeliminowanie H1)**: Przeprowadzono kompletną refaktoryzację zarządzania stanem (`usePC.tsx`). Zastąpiono wbudowane w Reacta dostawcy `Context API` wydajnymi sklepami (stores) z biblioteki **Zustand**.
 - **Granularne Subskrypcje w 3D**: `ComponentMesh` używa teraz selektorów Zustand, subskrybując wyłącznie ten stan, którego faktycznie potrzebuje. Rozwiązuje to uciążliwy problem znany jako "lawinowy re-render", zapobiegając przerysowywaniu się wszystkich 14 elementów komputera na ekranie przy każdej, nawet drobnej zmianie w aplikacji (np. przesunięcie slidera RGB).
 - **Izolacja Komponentów Reaktywnych**: Przeniesiono odczytywanie globalnych zmiennych `rgbColor` oraz `xrayMode` bezpośrednio w dół drzewa, do sub-komponentów `ProceduralGeometry` i `ComponentLabel`. Dzięki temu sama geometria 3D w React Three Fiber nie traci czasu na ponowne ewaluacje skomplikowanych animacji w `useFrame` podczas zmian kolorystyki, ucinając skoki klatek (jank) na urządzeniach mobilnych do absolutnego minimum.
@@ -140,6 +171,7 @@
 - **Kompletne Wyczyszczenie Audytu v5 (Medium/Low)**: Załatano ostatnie wycieki pamięci materiałów w `DeskScenery` wynosząc je do `useMemo` i czyszcząc przy odmontowywaniu (`dispose()`). Dodano nową wygenerowaną ikonę `apple-touch-icon.png` dla systemu iOS oraz przeprowadzono kompresję ciężkich tekstur plakatów (np. kubek o wadze 550KB zredukowany drastycznie). Poprawiono literówki w kodzie i błędne rzutowania typów w Three.js.
 
 ### Optymalizacja Pamięci i Zasobów (v5 - Etap 3)
+
 - **Eliminacja Wycieków w DeskScenery**: Usunięto tworzenie "w locie" powtarzalnych materiałów i geometrii (tzw. inline materials). Obiekty takie jak czarne ramki kubka, koszyk czy dywan używają teraz wyekstrahowanych poza komponent referencji lub wykorzystują `useMemo` oraz `dispose()` podczas niszczenia komponentu.
 - **Poprawa Efektów Pobocznych (Side-effects)**: W obiekcie `GPUGeometry` zastąpiono błędne wykorzystanie `useMemo` do mutowania tekstur poprawnym użyciem cyklu życia komponentu (`useEffect`).
 - **Czyszczenie Redundantnego Kodu**: Usunięto podwójny, niepotrzebny hook `useEffect` w głównym stanie aplikacji (`usePC.tsx`), co zapobiega zjawisku wielokrotnego re-renderowania świateł przy zmianie presetu środowiskowego.
@@ -147,11 +179,12 @@
 ## Etap 27 - Zaawansowane Sterowanie Oświetleniem 💡
 
 ### Nowe Funkcjonalności Oświetleniowe
-- **System Zarządzania Światłem (Lighting Control)**: Wdrożono nowy, wydajny kontekst Reactowy (`PCLightingContext` w `usePC.tsx`) oddzielający stan oświetlenia od globalnego widoku PC. Dzięki temu przełączanie świateł nie powoduje kaskadowego re-renderowania całej zaawansowanej geometrii komputera, eliminując ryzyko przycięć. 
-- **Opcje Oświetlenia w UI**: W panelu bocznym dodano nową dedykowaną zakładkę "Oświetlenie" (ikona Żarówki), zawierającą cztery niezależne wyłączniki: 
-  - *Światło Pokoju* (kontroluje ambient i rectAreaLight), 
-  - *Główny Reflektor* (kontroluje directional i spotLight), 
-  - *Tylna Poświata RGB* (kontroluje niebieską kontrę od dołu oraz tylny pointLight dla klimatu), 
+
+- **System Zarządzania Światłem (Lighting Control)**: Wdrożono nowy, wydajny kontekst Reactowy (`PCLightingContext` w `usePC.tsx`) oddzielający stan oświetlenia od globalnego widoku PC. Dzięki temu przełączanie świateł nie powoduje kaskadowego re-renderowania całej zaawansowanej geometrii komputera, eliminując ryzyko przycięć.
+- **Opcje Oświetlenia w UI**: W panelu bocznym dodano nową dedykowaną zakładkę "Oświetlenie" (ikona Żarówki), zawierającą cztery niezależne wyłączniki:
+  - *Światło Pokoju* (kontroluje ambient i rectAreaLight),
+  - *Główny Reflektor* (kontroluje directional i spotLight),
+  - *Tylna Poświata RGB* (kontroluje niebieską kontrę od dołu oraz tylny pointLight dla klimatu),
   - *Latarka Kursora* (kierunkowe, pływające fioletowe oświetlenie za myszką).
 - **Integracja z Otoczeniem (HDRi)**: System oświetlenia jest w pełni modularny. Dla potęgowania "nocnego klimatu", wybór otoczenia "Cyberpunk" automatycznie zgasza ambient i główny reflektor, maksymalnie eksponując tylną poświatę i "Latarkę Kursora".
 - **Optymalizacja Instrukcji**: Zaktualizowano legendę/instrukcję (`UI.tsx`), wprowadzając nowy przycisk "Oświetlenie" w taki sposób, by zachować pełną symetrię i dwukolumnowy układ siatki na większych ekranach.
@@ -159,17 +192,20 @@
 ## Etap 26 - Optymalizacja Etykiet i Detali Scenografii 🛠️
 
 ### Ulepszenia Interfejsu i Narzędzi
+
 - **Redesign Modalu Instrukcji**: Całkowicie przebudowano główne okno informacyjne aplikacji (`UI.tsx`). Zastąpiono pojedynczą, przewijaną listę nowoczesnym layoutem dwukolumnowym (CSS Grid `lg:grid-cols-2`). Poszerzono modal (`max-w-5xl`), co na komputerach całkowicie eliminuje potrzebę paska przewijania, poprawiając czytelność i nadając oknu "desktopowy" charakter. Zoptymalizowano ułożenie przycisków w siatce (grid), dodając wyróżnienie na sekcję o "Sterowaniu i Interakcji".
 - **Balans Legendy i Ostrzeżenie Mobile**: W instrukcji przeniesiono blok "Eksplozja (Teardown)" do lewej kolumny, idealnie balansując układ obu kolumn. Dodano ostrzeżenie o wyłączeniu Trybu Scenografii na smartfonach ze względu na wymogi wydajnościowe i proporcje ekranu. Ponadto uporządkowano listę przycisków w legendzie (przesuwając "Zresetuj" na samą górę) by w 100% odzwierciedlała układ głównego paska bocznego.
 - **Mgła Tła (Atmospheric Fog)**: Dodano nowy przycisk do menu "Otoczenie i Cyber-Scenografia" pozwalający na ręczne sterowanie globalną mgłą 3D (`<fog>`). Dodano również wyraźne ostrzeżenie w instrukcji o wysokich wymaganiach sprzętowych trybu Scenografii (MeshReflectorMaterial).
 
 ### Optymalizacja Wydajności (Performance)
+
 - **Hard Limit dla Scenografii na Mobile**: Nałożono ograniczenie (`!isMobile`) zapobiegające uruchamianiu i renderowaniu fotorealistycznego biurka (`DeskScenery`) na urządzeniach mobilnych, zabezpieczając starsze telefony przed zacięciami i drenażem baterii. Ponadto ukryto przełącznik dla biurka dla wąskich ekranów.
 - **Kompaktowy Render Etykiet**: Ostatecznie rozwiązano kwestię stylizacji etykiet. Zrezygnowano zarówno z kosztownego rozmycia Gaussa (`backdrop-blur-xl`), jak i brzydkich "smolistych" kwadratów, decydując się na eleganckie, w 100% płynne półprzezroczyste czarne tło (`bg-black/60`). Dodano również obsługę `occlude={true}`, ale ostatecznie wycofano ją z uwagi na agresywną blokadę raycastingu przez szybę obudowy komputera, powracając do renderowania na wierzchu (Overlay) dla poprawnej czytelności etykiet zza zamkniętej obudowy.
 - **Rozwiązanie Compositor Bottleneck**: Skrypt w pełni eliminuje klatkowanie podczas operowania kamerą wokół gęsto opisanych komponentów PC. Wyłączono przechwytywanie eventów przez niewidoczne, nadrzędne warstwy wstrzykiwane przez `<Html>` (`pointer-events-none`).
 - **Odchudzanie Pamięci**: Zoptymalizowano teksturę kubka (`new_mug_screen.webp`), radykalnie zmniejszając jej wagę.
 
 ### Poprawki Wizualne i Bezpieczeństwo Kodu
+
 - **Blokada Kamery (Horizon Limit)**: Wprowadzono fizyczną blokadę wychylenia kamery `maxPolarAngle={Math.PI / 2}` w komponencie `CameraControls`, dzięki czemu użytkownik nie może już "wpaść pod siatkę/blat" psując sobie perspektywę i optykę sceny.
 - **Optymalizacja Trybu Rozłożonego (Exploded View)**: Dostrojono finalne koordynaty (`explodedPosition`) dla obudowy, zasilacza, wentylatorów i innych komponentów. Dzięki temu wszystkie elementy perfekcyjnie komponują się ze zblokowaną w poprzednim kroku kamerą, zapobiegając wcinaniu się dolnych części w wirtualną podłogę.
 - **Fizyczność Ceramiki**: Znacząco ulepszono model 3D kubka w `DeskScenery`. Konstrukcja otrzymała podwójną ściankę (wewnętrzny cylinder) i górny brzeg (torus), eliminując fałszywy wygląd cienkiego "papieru".
@@ -177,13 +213,15 @@
 
 ## Etap 25 - Wdrożenie Poprawek z Audytu v4 (Etap 7) 🛠️
 
-### Optymalizacja Pamięci 
+### Optymalizacja Pamięci
+
 - **Wielka Ekstrakcja Materiałów Teksturowanych**: Zrefaktoryzowano 10 plików geometrii komponentów PC (`*Geometry.tsx`). Usunięto wycieki pamięci związane z inline'owym tworzeniem materiałów `<meshStandardMaterial map={...} />`. Każda tekstura wykorzystuje teraz wyizolowany obiekt Three.js zapamiętywany przez `useMemo()`, który jest odpowiednio utylizowany przy pomocy jawnego polecenia `.dispose()` w Reactowych hakach cyklu życia `useEffect`. Ponadto poprawiono UV i orientację tekstur wentylatorów poprzez klonowanie materiałów (rotacja `Math.PI / 2`).
 
 ## Etap 24 - Wdrożenie Poprawek z Audytu v4 (Etap 6) 🛠️
 
 ### Optymalizacja Ładowania
-- **Progresywne Ładowanie (Suspense)**: Drastycznie zmniejszono efekt blokowania ("zacinania") całej aplikacji podczas pierwszego ładowania Cyber-Biurka. Komponent `DeskScenery` został rozbity na dwa mniejsze: 
+
+- **Progresywne Ładowanie (Suspense)**: Drastycznie zmniejszono efekt blokowania ("zacinania") całej aplikacji podczas pierwszego ładowania Cyber-Biurka. Komponent `DeskScenery` został rozbity na dwa mniejsze:
   - Główny (ładujący tylko podstawowe tekstury: blat i dywan).
   - Leniwy (`DeskDetails` ładujący całą resztę 15 ciężkich tekstur, takich jak plakaty, pudełka i detale).
   Dzięki temu komputer nie znika, a biurko wyświetla się ułamek sekundy wcześniej, pozwalając na dynamiczne "wskakiwanie" detali bez przerywania działania interfejsu.
@@ -191,6 +229,7 @@
 ## Etap 23 - Wdrożenie Poprawek z Audytu v4 (Etap 5) 🛠️
 
 ### Dostępność i Oczyszczanie Kodu
+
 - **Lepsze Wsparcie dla Czytników Ekranowych**: Rozbudowano komponent `UI.tsx` o dynamiczne flagi `aria-pressed` informujące o aktywności trybów specjalnych (X-Ray, Airflow). Dodano również specjalny niewidoczny region tekstowy `aria-live="polite"`, który bezprzewodowo informuje czytniki o każdorazowej zmianie stanu środowiska (np. "Hologram włączony").
 - **Dostępność CSS (Reduced Motion)**: Zabezpieczono animacje pulsowania (`animate-pulse`) i podskakiwania (`animate-bounce`) w CSS dla osób z wrażliwością na ruch. Respektują one teraz natywną flagę systemu operacyjnego `prefers-reduced-motion: reduce`.
 - **Zabezpieczenie Środowiska DEV**: Zaimplementowano warunkowe czyszczenie `.dispose()` dla ciężkich tekstur proceduralnych obudowy PC. Zabezpiecza to kod produkcyjny przed wyciekami, ale szanuje system HMR (Hot Module Replacement) Vite ułatwiający prace deweloperskie bez efektu "znikających paneli".
@@ -199,24 +238,28 @@
 ## Etap 22 - Wdrożenie Poprawek z Audytu v4 (Część 4) 🛠️
 
 ### Architektura i Kod
+
 - **Scenografia: Pudełko Płyty Głównej (Motherboard Box)**: Dodano model pudełka po płycie głównej na wirtualnym biurku tuż za pudełkiem po karcie graficznej.
 - **Customowe Tekstury (User-provided)**: Zaaplikowano dostarczone przez użytkownika dedykowane tekstury pudełka płyty głównej (`mb_box.webp`, `mb_side_long.webp`, `mb_side_short.webp`) przy użyciu zaawansowanego mapowania (klonowanie `repeat.x = -1` z zachowaniem instancjonowania) podobnego do pudełka GPU. To nadaje scenografii niesamowitego, personalizowanego realizmu.
-- **Masowa Refaktoryzacja Materiałów (DRY)**: Usunięto dziesiątki powtarzających się deklaracji inline `<meshStandardMaterial>` w komponentach `CPUGeometry`, `GPUGeometry` i `MotherboardGeometry`. Wcześniej ich obecność powodowała, że z każdym re-renderem React (np. po ruchu myszki lub zmianie trybu) generowane były nowe, identyczne instancje z punktu widzenia GPU. 
+- **Masowa Refaktoryzacja Materiałów (DRY)**: Usunięto dziesiątki powtarzających się deklaracji inline `<meshStandardMaterial>` w komponentach `CPUGeometry`, `GPUGeometry` i `MotherboardGeometry`. Wcześniej ich obecność powodowała, że z każdym re-renderem React (np. po ruchu myszki lub zmianie trybu) generowane były nowe, identyczne instancje z punktu widzenia GPU.
 Podstawowe definicje jednokolorowych materiałów przeniesiono do wspólnego słownika instancji (`cpuDarkCharcoal`, `cpuSilverMetal`, `gpuDarkPlastic`) zlokalizowanego w `materials.ts`, przypinając je za pomocą potężnego propa `primitive`. Radykalnie obniża to narzut na proces Garbage Collectora (GC) i oszczędza kolejne cenne megabajty w pamięci VRAM.
 
 ## Etap 22 - Wdrożenie Poprawek z Audytu v4 (Część 3) 🛠️
 
 ### Dostępność i UX (WCAG)
+
 - **Redukcja Animacji**: Wdrożono globalną detekcję `prefers-reduced-motion: reduce`. Użytkownicy z odpowiednimi ustawieniami systemowymi otrzymają błyskawiczne (nie animowane) płynne przejścia kamery. Wyłączono u nich również rozpraszające pływające plakaty (komponent `Float`) w Cyber-Biurku oraz gęste efekty cząsteczkowe (`Sparkles`, `Stars`).
 - **Tagi ARIA**: Dodano `role="region"` i opisy `aria-label` w kluczowych częściach DOM (jak `<main>` w `App.tsx` oraz cały interfejs nawigacji w `UI.tsx`). Ułatwi to odczyt aplikacji i nawigację z użyciem czytników ekranowych.
 - **Renderowanie warunkowe WebGL**: Skrypt weryfikujący wsparcie przeglądarki pod kątem WebGL2 został przeniesiony prosto do tagu `<head>` w `index.html`. Interfejs błędu oznaczający brak WebGL jest teraz stylizowany lokalnie i pokazywany bez potrzeby ładownia dziesiątek megabajtów bundli w React, kompletnie pozbawiając użytkownika denerwującego "mrugania" ekranu po awaryjnym starcie React.
 
 ### Poprawione / Zoptymalizowane
+
 - **Zarządzanie Pamięcią i VRAM**: Część 2 wycieków. Zabezpieczono kolejne elementy infrastruktury 3D, dopisując brakujące metody `.dispose()` do szklanych osłon komputera (`frontGlassMatRef` i `sideGlassMatRef`) oraz zaawansowanego materiału odblaskowego na głównym biurku (`MeshReflectorMaterial`). Dzięki temu przełączanie widoku X-Ray oraz Scenografii jest w 100% zoptymalizowane pod kątem zużycia pamięci.
 - **Bezpieczeństwo Postprocessingu**: Całkowicie wyeliminowano niebezpieczne rzutowania typów (`as any`) przy potężnych efektach wewnątrz warstwy `EffectComposer` (głębia ostrości `DepthOfField` oraz cieniowanie przestrzenne `N8AO`). Kod wykorzystuje teraz bezpieczne renderowanie warunkowe `&&`.
 - **Kompresja (Pojemność)**: Odchudzono nadmiernie powiększoną teksturę na inteligentnym kubku (`new_mug_screen.webp`), redukując jej wagę z ponad 560 KB do minimalnych wartości akceptowalnych dla detali tła. Wpływa to bezpośrednio na szybszy czas pierwszej interakcji.
 
 ### Poprawione / Zoptymalizowane
+
 - **Zarządzanie Pamięcią i VRAM**: Rozwiązano krytyczne wycieki materiałów w klasach geometrii. Zrefaktoryzowano wbudowane instrukcje tworzące `meshStandardMaterial` z suwakiem `rgbColor` w komponentach `RAMGeometry` i `PSUGeometry`, wynosząc je do instancji referencyjnych wewnątrz hooków `useMemo` oraz `useEffect`. Każdy materiał jest teraz poprawnie czyszczony w fazie demontażu komponentu wywołaniem metody `.dispose()`.
 - **Globalny Mesh w RAM**: Usunięto przestarzały, własny mechanizm renderujący siatki dla prześwietlenia komponentu (X-Ray Mode) w obiekcie modułów pamięci `RAMGeometry`, podmieniając go na centralnie zdefiniowany zoptymalizowany element `XMesh`.
 - **Czyszczenie Skrytych Referencji**: Wprowadzono bezpieczniki uwalniające z pamięci klonowaną dynamicznie teksturę bocznej obudowy w komponencie dysku twardego (`HDDGeometry`) oraz generowaną w sposób proceduralny geometrię bloku IHS na płycie chłodzenia procesora w kodzie `CPUGeometry.tsx`. Ogranicza to "puchnięcie" aplikacji w cyklach HMR (Hot Module Replacement) w przypadku prac programistycznych.
@@ -225,6 +268,7 @@ Podstawowe definicje jednokolorowych materiałów przeniesiono do wspólnego sł
 ## Etap 21 - Rozbudowa Scenografii i AI Plakaty ☕
 
 ### Dodane / Poprawione
+
 - **Nowe Plakaty w Scenografii**: Dodano nową, lewitującą ścianę po przeciwnej stronie biurka (za plecami kamery). Wygenerowano za pomocą AI i zaimplementowano trzy nowe nerdowskie, cyberpunkowe plakaty ("IT IS NOT A BUG, IT IS A FEATURE", "DOWNLOAD MORE RAM", "SPAGHETTI CODE"). Plakaty zostały bezstratnie skompresowane do formatu `.webp`.
 - **Hollow Mug (Prawdziwy Kubek)**: Przebudowano geometrię kubka na biurku z litego bloku na puste w środku naczynie przy pomocy obustronnych (`DoubleSide`) materiałów, znacznie zwiększając realizm bez spadku wydajności.
 - **Aktualizacja Scenografii**: Znacząco powiększono wymiary podkładki na biurku (tureckiego dywanu) i zmieniono jej budowę z płaskiego arkusza na pełnoprawny obiekt 3D nadając mu fizyczną grubość. Podmieniono również wyświetlacz kubka na zupełnie nowy motyw "NO RISK NO FUN".
@@ -240,11 +284,12 @@ Podstawowe definicje jednokolorowych materiałów przeniesiono do wspólnego sł
 ## Etap 20 - Wielki Audyt Kodowy i Dostępność 🚀
 
 ### Poprawione / Zoptymalizowane
+
 - **Zarządzanie Wydajnością (Efekty Cząsteczkowe)**: Wprowadzono w głównym interfejsie nową opcję włączania i wyłączania efektów cząsteczkowych (np. "kosmicznego pyłu"). Zgodnie z rygorystycznymi wytycznymi optymalizacji, efekty przestrzenne `<Sparkles>` oraz `<Stars>` są teraz domyślnie wyłączone, co gwarantuje najwyższą płynność (FPS) na najsłabszych urządzeniach i eliminuje nadmierny fill rate.
 - **Zarządzanie Pamięcią i VRAM**: Wyeliminowano krytyczne wycieki pamięci materiałów w R3F. Zabezpieczono komponenty `MotherboardGeometry`, `GPUGeometry`, `CaseGeometry` oraz `CPUCoolerGeometry` hookiem `useMemo` dla współdzielonych referencji i wdrożono wymuszone czyszczenie `dispose()` dla dynamicznie generowanej siatki na obiekcie 2D Canvas.
 - **Audio Memory Leaks**: Poprawiono architekturę modułu dźwiękowego. Dźwięki hover (najechania), kliknięcia oraz dekonstrukcji precyzyjnie odłączają teraz swoje węzły (`oscillator.disconnect()`) po zakończeniu odtwarzania, likwidując problem "osieroconych" procesów audio w tle.
 - **Wydajność Renderingu**: Przebudowano logikę hooka `useIsMobile`, eliminując nadmiarowe aktualizacje stanu (Layout Shifts) powodujące kosztowne przebudowy głównego drzewa komponentów Reacta. Dodano również adaptacyjne zarządzanie pętlą `frameloop` ("demand" vs "always") dla urządzeń mobilnych.
-- **Dostępność i Standardy WCAG**: 
+- **Dostępność i Standardy WCAG**:
   - Wdrożono rygorystyczny "Focus Trap" na modalu z instrukcjami, co zatrzymuje obieg klawisza `Tab` w obrębie panelu.
   - Naprawiono ukryte linki "Skip to content" (dodano identyfikatory `#ui-controls` i `#info-panel`), ułatwiając nawigację czytnikom ekranowym i użytkownikom klawiatury.
 - **Optymalizacja Reacta**: Oczyszczono konsolę z komunikatów ostrzegawczych (React Warnings) używając `Array.flatMap()` zamiast podwójnie zagnieżdżonego `.map()` przy generowaniu dziesiątek portów i ram w obudowie.
@@ -253,6 +298,7 @@ Podstawowe definicje jednokolorowych materiałów przeniesiono do wspólnego sł
 ## Etap 19 - Cyber-Scenografia i Plakaty 🖼️
 
 ### Dodane / Poprawione
+
 - **Fotorealistyczne Cyber-Biurko**: Zastąpiono starą siatkę (Grid) fizycznym blatem z zaawansowanym materiałem `MeshReflectorMaterial`. Blat precyzyjnie odbija spód komputera, dodając ogromnej głębi i realizmu godnego silników klasy AAA.
 - **Optymalizacja Cieni (`ContactShadows`)**: Wdrożono "wypiekanie" (baking) cieni uziemiających za pomocą flagi `frames={1}`. Usunęło to błąd z "ciągnącymi się smugami cienia" podczas animacji rozkładania komputera na części (Explode) i drastycznie podniosło wydajność aplikacji (FPS).
 - **Galeria Plakatów PC**: Wzbogacono tło wirtualnego pokoju o potężne, lewitujące plakaty tematyczne. Skrypty graficzne AI wygenerowały obrazy: *Wojna CPU (Intel vs AMD)*, *Wojna OS (Windows vs Linux)* oraz klasyczny koszmar *Don't forget the I/O Shield*.
@@ -261,15 +307,18 @@ Podstawowe definicje jednokolorowych materiałów przeniesiono do wspólnego sł
 ## Etap 18 - Audyt, Optymalizacja i Stabilizacja Wydania (Release Candidate)
 
 ### Dodane / Poprawione
+
 - **Eliminacja Wycieków Pamięci (VRAM)**: Wprowadzono skrupulatne czyszczenie zasobów (`dispose()`) dla ręcznie klonowanych tekstur w obudowie oraz nowo tworzonych instancji materiałów (Bracket), zabezpieczając sprzęt mobilny przed przepełnieniem pamięci karty graficznej.
 - **Koniec "Zombie Oscylatorów" Audio**: Przebudowano logikę sterującą odtwarzaniem ambientowego szumu (Airflow). Twarde rozłączanie (`disconnect`) i czyszczenie buforów wyeliminowało błąd, który powodował nakładanie się dźwięków w nieskończoność przy szybkim przeklikiwaniu przycisków.
 - **Odciążenie GPU (Współdzielenie Materiałów)**: Usunięto setki zduplikowanych deklaracji materiałów "w locie" (np. RAM, sloty PCIe, kable). Przebudowano je tak, aby korzystały ze scentralizowanej bazy współdzielonych instancji (`materials.ts`), redukując liczbę shaderów na karcie graficznej.
 - **Zrównoważony Postprocessing**: Poprawiono nasłuchiwacz `PerformanceMonitor` tak, by przy spadkach płynności deaktywował jedynie najcięższe efekty (Głębia Ostrości `DepthOfField` oraz Globalne Cieniowanie `N8AO`). Dzięki temu aplikacja działa płynnie, ale zachowuje swój flagowy styl (np. urokliwy Bloom).
 - **Zgodność ze Standardami WCAG (Dostępność)**: Dokończono proces wdrażania dostępności: ukryto ikonki SVG dla czytników ekranowych (`aria-hidden`), dodano nawigację klawiaturową typu *skip link*, podbito kontrast pomniejszych opisów tekstowych na ciemnym tle oraz w pełni spolszczono komunikaty rzucane przez `GlobalErrorBoundary` w przypadku awarii renderera.
 - **Etykiety Informacyjne (HUD)**: Zrekonstruowano algorytm pozycjonowania "dymków" z nazwami komponentów. Etykiety nie uciekają już do wnętrza 3D, a punkty celownicze (kropki) i linie łączące zawsze celują precyzyjnie w górną krawędź opisywanego sprzętu (np. CPU Cooler), niezależnie od kąta kamery.
+
 ## Etap 17 - Przebudowa UI i Nawigacji
 
 ### Dodane / Poprawione
+
 - **Nowy boczny panel nawigacyjny**: Wdrożono opcję rozszerzającego się paska bocznego (Sidebar), który grupuje wszystkie narzędzia i przyciski w jednym eleganckim miejscu z lewej strony ekranu. Poprawiono zachowanie wyskakujących menu (RGB i HDRi) na urządzeniach mobilnych, zapobiegając ucinaniu interfejsu (menu wysuwa się płynnie obok ikon, przykrywając tekst na małych ekranach).
 - **Zoptymalizowana Modalna Instrukcja**: Przebudowano okno instrukcji wprowadzając podział na mysz/klawiaturę i gesty mobilne. Usunięto błąd ucinania okna na małych ekranach (brak przewijania) poprzez wymuszenie `max-h-[90vh]` oraz `overflow-y-auto`. Zaktualizowano wszystkie opisy narzędzi dla pełnej spójności (m.in. tryb Hologramu).
 - **Integracja Logo**: Wbudowano logo PCVerse bezpośrednio w nagłówek rozsuwanego panelu bocznego, ze zaktualizowanym gradientem dla tekstu dopasowanym do motywu interfejsu.
@@ -278,11 +327,11 @@ Podstawowe definicje jednokolorowych materiałów przeniesiono do wspólnego sł
 - **Wizualizacje 3D (Z-fighting)**: Zlikwidowano usterki wizualne (tzw. Z-fighting) pojawiające się na styku slotów PCIe na płycie głównej poprzez obniżenie wysokości czarnego wypełnienia o 0.01 jednostki. Zoptymalizowano wymiary styku karty graficznej i tylnego panelu I/O aby zapobiegać kolizji brył 3D.
 - **Ulepszone wentylatory (X-Ray)**: Zrekonstruowano modele fizycznych śmigieł wentylatorów (obudowy i coolera CPU) w trybie prześwietlenia (X-Ray). Zamiast surowego układu z dwóch krzyżujących się belek, renderowana jest płynna, 8-ramienna gwiazda wokół zaokrąglonego huba, dopasowując realizm do pozostałych komponentów.
 
-
 ## Etap 16 - Audyt i Ostatnie Szlify Przed Wersją Finalną
 
 ### Poprawione / Zoptymalizowane
-- **Efekty Wolumetryczne i Cząsteczkowe (Zgodne z Audytem)**: 
+
+- **Efekty Wolumetryczne i Cząsteczkowe (Zgodne z Audytem)**:
   - Wdrożono mgłę środowiskową (`<fog>`), która nadaje głębi układowi współrzędnych 3D (obiekty znikające na krawędzi sceny) bez spadków wydajności.
   - Zaktualizowano Cząsteczki (`<Sparkles>`) na dynamiczne "cyber-pyłki", dopasowujące barwy (miedziane, cyjan, szare) do wybranego presetu oświetlenia. Efekt ten, za pomocą instancjonowania sprzętowego, pozostaje ukryty na urządzeniach mobilnych oszczędzając baterię.
 - **Dynamiczna Siatka (Grid)**: Wzbogacono tło środowiska 3D o potężną, zanikającą siatkę (Grid oparty na shaderach z biblioteki `drei`). Kolorystyka siatki dynamicznie adaptuje się do wybranego otoczenia (`envPreset`), oferując spójny, profesjonalny wygląd dla każdego trybu (np. miedziane barwy dla Świtu, neonowo-niebieskie dla Cyberpunku).
@@ -293,7 +342,7 @@ Podstawowe definicje jednokolorowych materiałów przeniesiono do wspólnego sł
 - **Optymalizacja Materiałów**: Znacznie zredukowano ilość unikalnych instancji `meshStandardMaterial` poprzez współdzielenie referencji do predefiniowanych materiałów (np. `darkMetal`). Skutkuje to mniejszym narzutem na procesor.
 - **Preloading Tekstur**: Wdrożono funkcję wstępnego ładowania (`useTexture.preload()`) dla tekstur podświetlanych wentylatorów RGB, całkowicie eliminując wizualne zacięcia ("pop-in") podczas pierwszej zmiany kolorów.
 - **Wycieki pamięci w React (Timeouts)**: Zabezpieczono asynchroniczne funkcje czasu (setTimeout) odpowiedzialne za animację rozkładania (Teardown). Chroni to stan aplikacji przed błędem w przypadku szybkiego zamknięcia podglądu.
-- **Cykl życia silnika Audio**: Naprawiono niekontrolowane pozostawanie w pamięci i odtwarzanie dźwięków w tle po wyłączeniu nawiewu (odseparowanie oscylatorów). 
+- **Cykl życia silnika Audio**: Naprawiono niekontrolowane pozostawanie w pamięci i odtwarzanie dźwięków w tle po wyłączeniu nawiewu (odseparowanie oscylatorów).
 - **Zabezpieczenie fokusu klawiatury**: Modale zostały w pełni dostosowane do standardów WCAG poprzez wymuszenie izolacji (focus trap za pomocą `aria-modal="true"` i `role="dialog"`).
 - **Dostępność (Wrażliwość na ruch)**: Zintegrowano obsługę `prefers-reduced-motion`. Użytkownicy z włączonym ograniczeniem ruchu w systemie (Windows/macOS) nie widzą już animacji lewitacji podzespołów ani cząsteczek powietrza (Airflow).
 - **Responsywność na najmniejszych ekranach**: Dodano elastyczne ograniczenia szerokości (`max-width: calc(100vw - 4.5rem)`) dla wyskakujących okien (Flyout) w menu RGB i środowiska, co zapobiega ucinaniu interfejsu na bardzo wąskich urządzeniach (np. stare modele iPhone).
@@ -313,9 +362,11 @@ Podstawowe definicje jednokolorowych materiałów przeniesiono do wspólnego sł
   - Usunięto nieaktywne, zduplikowane odnośniki z ukrytej nawigacji.
   - Naprawiono warunkowe renderowanie postprocessingu (Głębia Ostrości).
 - **Utrzymanie Kodu**: Oznaczono jako przestarzały (`@deprecated`) ogólny hak `usePC` na korzyść rozdzielonych stanów (`usePCSelection` / `usePCSettings`) wraz ze stosownym ostrzeżeniem środowiskowym.
+
 ## Etap 15 - Audyt Optymalizacji, UX i Fizyki
 
 ### Dodane / Poprawione
+
 - **Fizyka obrotu wentylatorów**: Zoptymalizowano system obrotu wirtualnych śmigieł. Wyeliminowano problem nieprawidłowej osi obrotu zasilacza (PSU) oraz karty graficznej (GPU) po restrukturyzacji pętli `useFrame`. Stworzono dedykowane sety `fanBladesRefsY` oraz `fanBladesRefsZ` dla uniknięcia opóźnień asynchronicznych w React Three Fiber.
 - **Optymalizacja renderowania środowiska**: Zoptymalizowano proces przypisywania mapy otoczenia (`envMap`) poprzez jej pre-kalkulację przed renderowaniem głównego drzewa komponentów, stabilizując pętlę renderowania.
 - **Dostępność i SEO (WCAG)**: Dodano unikalne i deskryptywne atrybuty `aria-label` do wszystkich przycisków interfejsu (m.in. nawigacji, zamykania instrukcji). Zwiększono kontrast kolorystyczny podrzędnych tekstów w interfejsie.
@@ -332,11 +383,13 @@ Podstawowe definicje jednokolorowych materiałów przeniesiono do wspólnego sł
 ## Etap 14 - Detale konstrukcyjne (Złącza i krawędzie)
 
 ### Dodane
+
 - **Tekstura spodu karty graficznej**: Zintegrowano nową grafikę `gpu_bottom.webp` na krawędzi karty graficznej przylegającej do złącza PCIe (płyty głównej).
 - **Tekstura portów HDD**: Wdrożono nową grafikę `hdd_ports.webp` na tylną krawędź dysku HDD, gdzie podpinane są kable. Użytkownik ręcznie dostosował współrzędne fizycznych, plastikowo-złotych wtyków, by lepiej komponowały się z tłem.
 - **Tekstura frontu HDD**: Zaaplikowano finalną grafikę `hdd_behind.webp` na całkowicie przednią (przeciwległą do portów) krawędź dysku HDD, kończąc tym samym oteksturowanie wszystkich 6 ścian dysku.
 
 ### Poprawione / Zmienione
+
 - **Wydłużenie złącza PCIe**: Znacząco zwiększono głębokość wystawania złotych pinów PCIe z karty graficznej (z `0.05` na `0.15`), aby sprawiały wrażenie masywniejszych i mocniej "siedzących" w płycie głównej.
 - **Odwrócenie tekstury spodu GPU**: Obrócono płaszczyznę `gpu_bottom.webp` o 180 stopni (dodatkowe `Math.PI` na osi Z) zgodnie z wytycznymi.
 

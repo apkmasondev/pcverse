@@ -19,10 +19,23 @@ export const UI = () => {
   const { buildMode } = useBuildStore();
   const [showHint, setShowHint] = useState(true);
 
-  // Ukrycie hintu po czasie
+  // Ukrycie hintu po czasie lub interakcji
   useEffect(() => {
-    const timer = setTimeout(() => setShowHint(false), 15000);
-    return () => clearTimeout(timer);
+    let timer: ReturnType<typeof setTimeout>;
+    
+    const handleFirstInteraction = () => {
+      setShowHint(false);
+      window.removeEventListener('pointerdown', handleFirstInteraction);
+      clearTimeout(timer);
+    };
+
+    timer = setTimeout(handleFirstInteraction, 15000);
+    window.addEventListener('pointerdown', handleFirstInteraction, { once: true });
+    
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('pointerdown', handleFirstInteraction);
+    };
   }, []);
 
   // Dźwięk przepływu powietrza
@@ -101,8 +114,7 @@ export const UI = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             transition={{ delay: 2, duration: 0.8 }}
-            className="fixed bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 px-6 py-3 bg-black/70 backdrop-blur-xl border border-white/10 rounded-full text-slate-300 text-sm z-30 cursor-pointer shadow-2xl pointer-events-auto"
-            onClick={() => setShowHint(false)}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 px-6 py-3 bg-black/70 backdrop-blur-xl border border-white/10 rounded-full text-slate-300 text-sm z-30 shadow-2xl pointer-events-none"
           >
             <MousePointerClick
               aria-hidden="true"

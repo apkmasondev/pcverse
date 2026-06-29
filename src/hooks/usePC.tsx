@@ -39,6 +39,8 @@ export interface PCUIContextType {
   toggleLabels: () => void;
   showInstructions: boolean;
   setShowInstructions: (show: boolean) => void;
+  hoveredComponentId: string | null;
+  setHoveredComponentId: (id: string | null) => void;
 }
 
 export interface PCLightingContextType {
@@ -147,7 +149,9 @@ export const usePCView = create<PCViewContextType>((set) => ({
 export const usePCUI = create<PCUIContextType>((set) => ({
   showLabels: true,
   showInstructions: false,
+  hoveredComponentId: null,
   toggleLabels: () => set((state) => ({ showLabels: !state.showLabels })),
-  setShowInstructions: (show) => set({ showInstructions: show })
+  setShowInstructions: (show) => set({ showInstructions: show }),
+  setHoveredComponentId: (id) => set({ hoveredComponentId: id })
 }));
 
