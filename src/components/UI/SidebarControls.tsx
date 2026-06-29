@@ -10,6 +10,8 @@ import {
 } from "../../hooks/usePC";
 import { useBuildStore } from "../../store/useBuildStore";
 import { playExplodeSound, playSelectSound } from "../../utils/audio";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import { useReducedMotion } from "../../hooks/useReducedMotion";
 import {
   Layers,
   Focus,
@@ -67,6 +69,8 @@ export const SidebarControls = () => {
   const showFog = usePCView(state => state.showFog);
   const toggleFog = usePCView(state => state.toggleFog);
   const isLowEndGPU = usePCView(state => state.isLowEndGPU);
+  const isMobile = useIsMobile();
+  const reducedMotion = useReducedMotion();
 
   const showLabels = usePCUI(state => state.showLabels);
   const toggleLabels = usePCUI(state => state.toggleLabels);
@@ -435,12 +439,13 @@ export const SidebarControls = () => {
                   <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">{pcRGBOn ? "(Włączona)" : "(Wyłączona)"}</div>
                 </button>
                 <button
-                  aria-pressed={cursorLightOn}
-                  onClick={() => { playSelectSound(); triggerLoading(toggleCursorLight); }}
-                  className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${cursorLightOn ? "bg-cyan-500/20 text-cyan-300 font-bold" : "text-slate-300 hover:bg-white/10 hover:text-white"}`}
+                  title={isMobile ? "Niedostępne na urządzeniach dotykowych" : "Latarka Kursora"}
+                  disabled={isMobile}
+                  onClick={() => { if (!isMobile) { playSelectSound(); triggerLoading(toggleCursorLight); } }}
+                  className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${isMobile ? 'opacity-30 cursor-not-allowed bg-[#1a1a1a] border border-white/5 text-slate-500' : (cursorLightOn ? "bg-cyan-500/20 text-cyan-300 font-bold" : "text-slate-300 hover:bg-white/10 hover:text-white")}`}
                 >
-                  <div className="font-medium">Latarka Kursora</div>
-                  <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">{cursorLightOn ? "(Włączona)" : "(Wyłączona)"}</div>
+                  <div className="font-medium whitespace-nowrap">Latarka Kursora</div>
+                  <div className="text-[10px] mt-0.5 opacity-70 leading-tight">{isMobile ? "(Niedostępna)" : (cursorLightOn ? "(Włączona)" : "(Wyłączona)")}</div>
                 </button>
                 </div>
               </motion.div>
@@ -468,18 +473,21 @@ export const SidebarControls = () => {
 
         <motion.button
           aria-label="Efekty cząsteczkowe (Pył)"
-          aria-pressed={showParticles}
-          whileTap={{ scale: 0.95 }}
+          title={(isLowEndGPU || isMobile || reducedMotion) ? "Niedostępne ze względu na wydajność" : "Efekty cząsteczkowe"}
+          disabled={isLowEndGPU || isMobile || reducedMotion}
+          whileTap={!(isLowEndGPU || isMobile || reducedMotion) ? { scale: 0.95 } : undefined}
           onClick={() => {
-            playSelectSound();
-            toggleParticles();
+            if (!(isLowEndGPU || isMobile || reducedMotion)) {
+              playSelectSound();
+              toggleParticles();
+            }
           }}
-          className={`relative flex items-center w-full h-11 rounded-xl transition-all overflow-hidden ${showParticles ? "bg-amber-500/20 border border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.3)]" : "bg-transparent border border-transparent hover:bg-white/5"}`}
+          className={`relative flex items-center w-full h-11 rounded-xl transition-all overflow-hidden ${(isLowEndGPU || isMobile || reducedMotion) ? "opacity-30 cursor-not-allowed" : (showParticles ? "bg-amber-500/20 border border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.3)]" : "bg-transparent border border-transparent hover:bg-white/5")}`}
         >
-          <div className={`flex-shrink-0 w-[42px] h-[42px] flex items-center justify-center transition-all duration-500 ${showParticles ? "text-amber-400 scale-110" : "text-slate-300"}`}>
+          <div className={`flex-shrink-0 w-[42px] h-[42px] flex items-center justify-center transition-all duration-500 ${(isLowEndGPU || isMobile || reducedMotion) ? "text-slate-500" : (showParticles ? "text-amber-400 scale-110" : "text-slate-300")}`}>
             <Sparkles aria-hidden="true" size={20} />
           </div>
-          <span className="ml-1 font-medium text-sm text-slate-300 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <span className={`ml-1 font-medium text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${(isLowEndGPU || isMobile || reducedMotion) ? "text-slate-500" : "text-slate-300"}`}>
             Efekty cząsteczkowe
           </span>
         </motion.button>
