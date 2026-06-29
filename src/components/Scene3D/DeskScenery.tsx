@@ -59,7 +59,7 @@ const AmbilightStrip = () => {
   const rgbColor = usePCRGB(state => state.rgbColor);
   const rgbEnabled = usePCRGB(state => state.rgbEnabled);
   const targetColor = useRef(new THREE.Color(rgbColor));
-  const targetIntensity = useRef(3);
+  const targetIntensity = useRef(0);
 
   useFrame((_, delta) => {
     if (!groupRef.current) return;
@@ -77,10 +77,10 @@ const AmbilightStrip = () => {
 
   return (
     <group ref={groupRef}>
-      <pointLight position={[0, 2, -24]} distance={40} intensity={3} color={rgbColor} />
-      <pointLight position={[0, 2, 24]} distance={40} intensity={3} color={rgbColor} />
-      <pointLight position={[-24, 2, 0]} distance={40} intensity={3} color={rgbColor} />
-      <pointLight position={[24, 2, 0]} distance={40} intensity={3} color={rgbColor} />
+      <pointLight position={[0, 2, -24]} distance={40} intensity={0} color={rgbColor} />
+      <pointLight position={[0, 2, 24]} distance={40} intensity={0} color={rgbColor} />
+      <pointLight position={[-24, 2, 0]} distance={40} intensity={0} color={rgbColor} />
+      <pointLight position={[24, 2, 0]} distance={40} intensity={0} color={rgbColor} />
     </group>
   );
 };
