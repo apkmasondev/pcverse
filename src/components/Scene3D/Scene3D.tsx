@@ -261,7 +261,9 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
   }, [cameraResetTrigger, camera]);
 
   useEffect(() => {
-    if (buildMode && cameraControlsRef.current) {
+    if (!cameraControlsRef.current) return;
+
+    if (buildMode) {
       targetOffset.current = { x: 0, y: 0 };
       if (camera instanceof THREE.PerspectiveCamera && camera.view) {
         camera.clearViewOffset();
@@ -270,6 +272,14 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
       cameraControlsRef.current.reset(true);
       cameraControlsRef.current.setLookAt(
         0, 5.0, 25,
+        0, 0.7, 0,
+        true
+      );
+    } else if (hasInitialized.current) {
+      // Płynny powrót po wyjściu z Trybu Budowy
+      targetOffset.current = { x: 0, y: 0 };
+      cameraControlsRef.current.setLookAt(
+        0, 2.5, 20,
         0, 0.7, 0,
         true
       );
