@@ -17,7 +17,7 @@ export const BuildModeOverlay = () => {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 50 }}
-          className={`fixed bottom-10 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-4 bg-[#0a0a0a]/80 backdrop-blur-3xl border p-6 rounded-3xl w-[90%] max-w-md pointer-events-auto transition-all duration-700 ${
+          className={`fixed bottom-4 xl:bottom-10 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 xl:gap-4 bg-[#0a0a0a]/80 backdrop-blur-3xl border p-4 xl:p-6 rounded-3xl w-[90%] max-w-[320px] xl:max-w-md pointer-events-auto transition-all duration-700 ${
             isComplete
               ? "border-amber-500/50 shadow-[0_0_50px_rgba(245,158,11,0.25)]"
               : "border-indigo-500/30 shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
@@ -35,16 +35,16 @@ export const BuildModeOverlay = () => {
           )}
 
           <div className="w-full">
-            <div className="flex justify-between items-end mb-2">
-              <span className="text-indigo-400 font-bold uppercase tracking-widest text-xs">
+            <div className="flex justify-between items-end mb-1 xl:mb-2">
+              <span className="text-indigo-400 font-bold uppercase tracking-widest text-[10px] xl:text-xs">
                 {isComplete ? "Status Systemu" : "Tryb Budowy"}
               </span>
-              <span className="text-white font-mono text-sm opacity-50">
+              <span className="text-white font-mono text-xs xl:text-sm opacity-50">
                 {Math.min(currentStep, maxSteps)} / {maxSteps}
               </span>
             </div>
             
-            <h2 className="text-white font-bold text-xl leading-tight">
+            <h2 className="text-white font-bold text-lg xl:text-xl leading-tight">
               {isComplete ? (
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500">
                   Gratulacje! Złożono PC
@@ -55,10 +55,10 @@ export const BuildModeOverlay = () => {
             </h2>
             
             {isComplete && (
-              <div className="mt-3 flex items-center justify-center gap-2">
+              <div className="mt-2 xl:mt-3 flex items-center justify-center gap-2">
                 <span className="inline-flex relative">
                   <span className="absolute inset-0 bg-amber-500/20 rounded-full blur-md"></span>
-                  <span className="relative text-amber-300 text-xs font-semibold uppercase tracking-wider border border-amber-500/30 px-3 py-1 rounded-full bg-amber-500/10 backdrop-blur-md">
+                  <span className="relative text-amber-300 text-[10px] xl:text-xs font-semibold uppercase tracking-wider border border-amber-500/30 px-2 py-1 xl:px-3 xl:py-1 rounded-full bg-amber-500/10 backdrop-blur-md">
                     ✨ Osiągnięto poziom: Ekspert PC
                   </span>
                 </span>
@@ -103,8 +103,8 @@ export const BuildModeOverlay = () => {
                 </div>
               </motion.div>
             ) : (
-              <div className="min-h-[60px] flex items-center justify-center">
-                <span className="text-xl font-medium text-white drop-shadow-md">
+              <div className="min-h-[40px] xl:min-h-[60px] flex items-center justify-center">
+                <span className="text-base xl:text-xl font-medium text-white drop-shadow-md">
                   Zamontuj:{" "}
                   <span className="text-indigo-300 font-bold">
                     {currentComponent?.name.split(" - ")[0]}
@@ -115,7 +115,7 @@ export const BuildModeOverlay = () => {
           </div>
 
           {!isComplete && (
-            <p className="text-slate-400 text-sm text-center relative z-10">
+            <p className="text-slate-400 text-xs xl:text-sm text-center relative z-10">
               Kliknij zaznaczony lewitujący komponent, aby go zamontować.
             </p>
           )}
@@ -131,7 +131,7 @@ export const BuildModeOverlay = () => {
                 usePCLighting.setState({ pcRGBOn: true });
               }
             }}
-            className={`mt-2 px-6 py-3 rounded-xl transition-all font-bold w-full relative overflow-hidden group flex items-center justify-center gap-2 ${
+            className={`mt-1 xl:mt-2 px-4 py-2 xl:px-6 xl:py-3 rounded-lg xl:rounded-xl transition-all font-bold text-sm xl:text-base w-full relative overflow-hidden group flex items-center justify-center gap-2 ${
               isComplete
                 ? "bg-amber-500/20 text-amber-300 border border-amber-500/50 hover:bg-amber-500/30 hover:text-amber-200 hover:shadow-[0_0_20px_rgba(245,158,11,0.4)]"
                 : "bg-white/10 text-white hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/30 border border-transparent"
