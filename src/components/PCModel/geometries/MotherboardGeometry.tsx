@@ -45,16 +45,15 @@ export const MotherboardGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string
   const m2HeatsinkTexture = useTexture(m2HeatsinkUrl);
 
   const rgbMaterial = useMemo(() => {
-    return new MeshStandardMaterial({ emissiveIntensity: 0, toneMapped: false });
+    return new MeshStandardMaterial({ color: 0x000000, emissiveIntensity: 0, toneMapped: false });
   }, []);
 
   useEffect(() => {
-    rgbMaterial.color.set(rgbColor);
     rgbMaterial.emissive.set(rgbColor);
   }, [rgbColor, rgbMaterial]);
 
   useFrame((_, delta) => {
-    rgbMaterial.emissiveIntensity = THREE.MathUtils.lerp(rgbMaterial.emissiveIntensity, rgbEnabled ? 1.5 : 0, delta * 5);
+    rgbMaterial.emissiveIntensity = THREE.MathUtils.lerp(rgbMaterial.emissiveIntensity, rgbEnabled ? 3.0 : 0, delta * 5);
   });
 
   useEffect(() => {

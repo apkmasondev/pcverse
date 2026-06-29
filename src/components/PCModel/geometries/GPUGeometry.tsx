@@ -45,23 +45,20 @@ export const GPUGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string, rgbEna
     };
   }, []);
 
-  const rgbMat15 = useMemo(() => new MeshStandardMaterial({ emissiveIntensity: 0, toneMapped: false }), []);
-  const rgbMat10 = useMemo(() => new MeshStandardMaterial({ emissiveIntensity: 0, toneMapped: false }), []);
-  const rgbMat25 = useMemo(() => new MeshStandardMaterial({ emissiveIntensity: 0, toneMapped: false }), []);
+  const rgbMat15 = useMemo(() => new MeshStandardMaterial({ color: 0x000000, emissiveIntensity: 0, toneMapped: false }), []);
+  const rgbMat10 = useMemo(() => new MeshStandardMaterial({ color: 0x000000, emissiveIntensity: 0, toneMapped: false }), []);
+  const rgbMat25 = useMemo(() => new MeshStandardMaterial({ color: 0x000000, emissiveIntensity: 0, toneMapped: false }), []);
 
   useEffect(() => {
-    rgbMat15.color.set(rgbColor);
     rgbMat15.emissive.set(rgbColor);
-    rgbMat10.color.set(rgbColor);
     rgbMat10.emissive.set(rgbColor);
-    rgbMat25.color.set(rgbColor);
     rgbMat25.emissive.set(rgbColor);
   }, [rgbColor, rgbMat15, rgbMat10, rgbMat25]);
 
   useFrame((_, delta) => {
-    rgbMat15.emissiveIntensity = THREE.MathUtils.lerp(rgbMat15.emissiveIntensity, rgbEnabled ? 1.5 : 0, delta * 5);
-    rgbMat10.emissiveIntensity = THREE.MathUtils.lerp(rgbMat10.emissiveIntensity, rgbEnabled ? 1.0 : 0, delta * 5);
-    rgbMat25.emissiveIntensity = THREE.MathUtils.lerp(rgbMat25.emissiveIntensity, rgbEnabled ? 2.5 : 0, delta * 5);
+    rgbMat15.emissiveIntensity = THREE.MathUtils.lerp(rgbMat15.emissiveIntensity, rgbEnabled ? 2.5 : 0, delta * 5);
+    rgbMat10.emissiveIntensity = THREE.MathUtils.lerp(rgbMat10.emissiveIntensity, rgbEnabled ? 1.5 : 0, delta * 5);
+    rgbMat25.emissiveIntensity = THREE.MathUtils.lerp(rgbMat25.emissiveIntensity, rgbEnabled ? 3.5 : 0, delta * 5);
   });
 
   useEffect(() => {

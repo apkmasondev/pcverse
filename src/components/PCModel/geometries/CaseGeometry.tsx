@@ -154,13 +154,12 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
     };
   }, [meshTexture, backMeshTexture, frontMeshTexture]);
 
-  const rgbMaterial = useMemo(() => new MeshStandardMaterial({ emissiveIntensity: 0, toneMapped: false }), []);
+  const rgbMaterial = useMemo(() => new MeshStandardMaterial({ color: 0x000000, emissiveIntensity: 0, toneMapped: false }), []);
   useEffect(() => {
-    rgbMaterial.color.set(effectiveRgbColor);
     rgbMaterial.emissive.set(effectiveRgbColor);
   }, [effectiveRgbColor, rgbMaterial]);
   useFrame((_, delta) => {
-    rgbMaterial.emissiveIntensity = THREE.MathUtils.lerp(rgbMaterial.emissiveIntensity, rgbEnabled ? 2 : 0, delta * 5);
+    rgbMaterial.emissiveIntensity = THREE.MathUtils.lerp(rgbMaterial.emissiveIntensity, rgbEnabled ? 3.0 : 0, delta * 5);
   });
   useEffect(() => {
     return () => rgbMaterial.dispose();

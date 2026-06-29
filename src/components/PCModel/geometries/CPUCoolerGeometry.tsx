@@ -33,15 +33,14 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
   const torusRadius = isCaseFan ? 0.47 : 0.455;
   const torusTube = isCaseFan ? 0.028 : 0.027;
   
-  const rgbMaterial = useMemo(() => new MeshStandardMaterial({ emissiveIntensity: 0, toneMapped: false }), []);
+  const rgbMaterial = useMemo(() => new MeshStandardMaterial({ color: 0x000000, emissiveIntensity: 0, toneMapped: false }), []);
   
   useEffect(() => {
-    rgbMaterial.color.set(rgbColor);
     rgbMaterial.emissive.set(rgbColor);
   }, [rgbColor, rgbMaterial]);
 
   useFrame((_, delta) => {
-    rgbMaterial.emissiveIntensity = THREE.MathUtils.lerp(rgbMaterial.emissiveIntensity, rgbEnabled ? 3 : 0, delta * 5);
+    rgbMaterial.emissiveIntensity = THREE.MathUtils.lerp(rgbMaterial.emissiveIntensity, rgbEnabled ? 4.0 : 0, delta * 5);
   });
 
   useEffect(() => {

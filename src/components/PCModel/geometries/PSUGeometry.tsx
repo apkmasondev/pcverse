@@ -33,14 +33,13 @@ export const PSUGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string, rgbEna
     }
   }, []);
 
-  const rgbMat = useMemo(() => new MeshStandardMaterial({ emissiveIntensity: 0, toneMapped: false }), []);
+  const rgbMat = useMemo(() => new MeshStandardMaterial({ color: 0x000000, emissiveIntensity: 0, toneMapped: false }), []);
   useEffect(() => {
-    rgbMat.color.set(rgbColor);
     rgbMat.emissive.set(rgbColor);
   }, [rgbColor, rgbMat]);
 
   useFrame((_, delta) => {
-    rgbMat.emissiveIntensity = THREE.MathUtils.lerp(rgbMat.emissiveIntensity, rgbEnabled ? 2 : 0, delta * 5);
+    rgbMat.emissiveIntensity = THREE.MathUtils.lerp(rgbMat.emissiveIntensity, rgbEnabled ? 3.0 : 0, delta * 5);
   });
 
   useEffect(() => () => rgbMat.dispose(), [rgbMat]);
