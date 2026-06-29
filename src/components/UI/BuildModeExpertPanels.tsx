@@ -159,7 +159,7 @@ export const BuildModeExpertPanels = () => {
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 50, scale: 0.9 }}
               transition={{ type: "spring", damping: 20, stiffness: 300, delay: 0.1 }}
-              className="group w-[40px] hover:w-[220px] focus:w-[220px] xl:w-[48px] xl:hover:w-[260px] focus:w-[260px] max-h-[40px] xl:max-h-[48px] hover:max-h-[600px] focus:max-h-[600px] overflow-hidden flex flex-col items-end bg-black/20 hover:bg-black/60 focus:bg-black/60 backdrop-blur-md border-r-2 border-fuchsia-500/70 rounded-l-xl shadow-[-20px_0_30px_rgba(0,0,0,0.2)] pointer-events-auto transition-all duration-500 ease-out cursor-pointer focus:outline-none"
+              className="group w-[40px] hover:w-[220px] focus:w-[220px] xl:w-[48px] xl:hover:w-[260px] xl:focus:w-[260px] max-h-[40px] xl:max-h-[48px] hover:max-h-[600px] focus:max-h-[600px] overflow-hidden flex flex-col items-end bg-black/20 hover:bg-black/60 focus:bg-black/60 backdrop-blur-md border-r-2 border-fuchsia-500/70 rounded-l-xl shadow-[-20px_0_30px_rgba(0,0,0,0.2)] pointer-events-auto transition-all duration-500 ease-out cursor-pointer focus:outline-none"
             >
               <div className="w-[220px] xl:w-[260px] shrink-0 flex flex-col">
                 <div className="flex items-center justify-end h-[40px] xl:h-[48px] gap-2 px-3 bg-fuchsia-500/10 cursor-help">
@@ -205,7 +205,7 @@ export const BuildModeExpertPanels = () => {
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 50, scale: 0.9 }}
               transition={{ type: "spring", damping: 20, stiffness: 300, delay: 0.2 }}
-              className="group w-[40px] hover:w-[200px] focus:w-[200px] xl:w-[48px] xl:hover:w-[240px] focus:w-[240px] max-h-[40px] xl:max-h-[48px] hover:max-h-[600px] focus:max-h-[600px] overflow-hidden flex flex-col items-end bg-black/20 hover:bg-black/60 focus:bg-black/60 backdrop-blur-md border-r-2 border-cyan-500/70 rounded-l-xl shadow-[-20px_0_30px_rgba(0,0,0,0.2)] pointer-events-auto transition-all duration-500 ease-out mt-1 cursor-pointer focus:outline-none"
+              className="group w-[40px] hover:w-[200px] focus:w-[200px] xl:w-[48px] xl:hover:w-[240px] xl:focus:w-[240px] max-h-[40px] xl:max-h-[48px] hover:max-h-[600px] focus:max-h-[600px] overflow-hidden flex flex-col items-end bg-black/20 hover:bg-black/60 focus:bg-black/60 backdrop-blur-md border-r-2 border-cyan-500/70 rounded-l-xl shadow-[-20px_0_30px_rgba(0,0,0,0.2)] pointer-events-auto transition-all duration-500 ease-out mt-1 cursor-pointer focus:outline-none"
             >
               <div className="w-[200px] xl:w-[240px] shrink-0 flex flex-col">
                 <div className="flex items-center justify-end h-[40px] xl:h-[48px] gap-2 px-3 bg-cyan-500/10 cursor-help">
@@ -251,7 +251,7 @@ export const BuildModeExpertPanels = () => {
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 50, scale: 0.9 }}
               transition={{ type: "spring", damping: 20, stiffness: 300, delay: 0.3 }}
-              className="group w-[40px] hover:w-[200px] focus:w-[200px] xl:w-[48px] xl:hover:w-[240px] focus:w-[240px] max-h-[40px] xl:max-h-[48px] hover:max-h-[600px] focus:max-h-[600px] overflow-hidden flex flex-col items-end bg-black/20 hover:bg-black/60 focus:bg-black/60 backdrop-blur-md border-r-2 border-emerald-500/70 rounded-l-xl shadow-[-20px_0_30px_rgba(0,0,0,0.2)] pointer-events-auto transition-all duration-500 ease-out mt-1 cursor-pointer focus:outline-none"
+              className="group w-[40px] hover:w-[200px] focus:w-[200px] xl:w-[48px] xl:hover:w-[240px] xl:focus:w-[240px] max-h-[40px] xl:max-h-[48px] hover:max-h-[600px] focus:max-h-[600px] overflow-hidden flex flex-col items-end bg-black/20 hover:bg-black/60 focus:bg-black/60 backdrop-blur-md border-r-2 border-emerald-500/70 rounded-l-xl shadow-[-20px_0_30px_rgba(0,0,0,0.2)] pointer-events-auto transition-all duration-500 ease-out mt-1 cursor-pointer focus:outline-none"
             >
               <div className="w-[200px] xl:w-[240px] shrink-0 flex flex-col">
                 <div className="flex items-center justify-end h-[40px] xl:h-[48px] gap-2 px-3 bg-emerald-500/10 cursor-help">
