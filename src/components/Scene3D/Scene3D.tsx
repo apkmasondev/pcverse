@@ -214,7 +214,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
       )}
       {pcRGBOn && <directionalLight position={[-10, -10, -10]} intensity={2.0} color="#6366f1" />}
       {mainSpotOn && <spotLight position={[-10, 10, -10]} intensity={3.5} angle={0.3} penumbra={1} />}
-      {ambientOn && <rectAreaLight position={[0, 3, 0]} width={5} height={5} intensity={5.0} color="#e0e7ff" rotation={[-Math.PI / 2, 0, 0]} />}
+      {ambientOn && <hemisphereLight intensity={1.5} color="#ffffff" groundColor="#a0aabf" />}
       {pcRGBOn && <pointLight position={[0, 0, 6]} intensity={15.0} color="#ffffff" distance={30} decay={2} />}
 
       {!isMobile && !disableEffects && cursorLightOn && <CursorLight />}

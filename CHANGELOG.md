@@ -1,5 +1,10 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 33 - Optymalizacja Oświetlenia i Pamięci 💡
+- **Poprawa Stabilności na Słabszym Sprzęcie:** Zastąpiono ekstremalnie ciężki obiekt `rectAreaLight` (Światło Pokoju) lżejszym `hemisphereLight` w trybie standardowym (bez biurka), skutecznie usuwając najczęstszą przyczynę craszowania WebGL na zintegrowanych kartach graficznych i smartfonach.
+- **Optymalizacja Wewnętrznych Świateł (RGB):** Od teraz wewnętrzne światła obudowy (różowe i fioletowe pointLight) są sprzężone z przyciskiem "Tryb RGB". Wyłączenie efektów RGB na panelu deaktywuje najcięższe światła poprawiając zauważalnie płynność klatkowania.
+- **Wyeliminowanie Wycieku Pamięci (VRAM):** Usunięto błąd w `DeskScenery` polegający na braku wywołania `dispose()` dla ręcznie klonowanych lustrzanych tekstur kartonów. Teraz włączenie i wyłączenie podglądu biurka natychmiast uwalnia pamięć GPU.
+- **Zgodność z React 19 (Strict Mode):** Naprawiono ukryty błąd i anty-wzorzec (wskazany przez audyt), uciekając z `useMemo` i przenosząc procedurę rotacji oraz przesuwania tekstur UV (modyfikacja zjawisk pobocznych, tzw. side-effects) do kontrolowanego hooka `useEffect`.
 ## Etap 32 - Audyt v6: Dekompozycja UI, Polerowanie Trybu Budowy i Mobile UX 🧩
 
 ### Polerowanie Trybu Budowy (UX i UI)

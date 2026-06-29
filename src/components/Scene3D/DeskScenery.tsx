@@ -292,15 +292,17 @@ const DeskDetails = ({ reducedMotion }: { reducedMotion: boolean }) => {
     import.meta.env.BASE_URL + 'textures/posters/mb_side_short.webp'
   ]);
 
+  useEffect(() => {
+    texMbSideShort.center.set(0.5, 0.5);
+    texMbSideShort.rotation = Math.PI / 2;
+    texMbSideShort.needsUpdate = true;
+  }, [texMbSideShort]);
+
   const { gpuBoxMaterials, moboBoxMaterials, energyCanMaterials, ramFloorMaterials, postItMaterials, mugMaterial } = useMemo(() => {
     const texSideShortMirrored = texSideShort.clone();
     texSideShortMirrored.wrapS = THREE.RepeatWrapping;
     texSideShortMirrored.repeat.x = -1;
     texSideShortMirrored.needsUpdate = true;
-
-    texMbSideShort.center.set(0.5, 0.5);
-    texMbSideShort.rotation = Math.PI / 2;
-    texMbSideShort.needsUpdate = true;
 
     const texMbSideShortMirrored = texMbSideShort.clone();
     texMbSideShortMirrored.wrapT = THREE.RepeatWrapping; // Use wrapT because it's rotated
@@ -347,6 +349,9 @@ const DeskDetails = ({ reducedMotion }: { reducedMotion: boolean }) => {
 
   useEffect(() => {
     return () => {
+      gpuBoxMaterials[0].map?.dispose();
+      moboBoxMaterials[0].map?.dispose();
+
       gpuBoxMaterials.forEach((m) => { if (m !== gpuBoxSideMat) m.dispose(); });
       moboBoxMaterials.forEach((m) => { if (m !== moboBoxSideMat) m.dispose(); });
       energyCanMaterials.forEach((m) => { if (m !== energyCanTopMat) m.dispose(); });
