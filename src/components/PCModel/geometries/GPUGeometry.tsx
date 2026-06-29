@@ -56,9 +56,10 @@ export const GPUGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string, rgbEna
   }, [rgbColor, rgbMat15, rgbMat10, rgbMat25]);
 
   useFrame((_, delta) => {
-    rgbMat15.emissiveIntensity = THREE.MathUtils.lerp(rgbMat15.emissiveIntensity, rgbEnabled ? 2.5 : 0, delta * 5);
-    rgbMat10.emissiveIntensity = THREE.MathUtils.lerp(rgbMat10.emissiveIntensity, rgbEnabled ? 1.5 : 0, delta * 5);
-    rgbMat25.emissiveIntensity = THREE.MathUtils.lerp(rgbMat25.emissiveIntensity, rgbEnabled ? 3.5 : 0, delta * 5);
+    const dt = Math.min(delta, 0.05);
+    rgbMat15.emissiveIntensity = THREE.MathUtils.lerp(rgbMat15.emissiveIntensity, rgbEnabled ? 2.5 : 0, dt * 5);
+    rgbMat10.emissiveIntensity = THREE.MathUtils.lerp(rgbMat10.emissiveIntensity, rgbEnabled ? 1.5 : 0, dt * 5);
+    rgbMat25.emissiveIntensity = THREE.MathUtils.lerp(rgbMat25.emissiveIntensity, rgbEnabled ? 3.5 : 0, dt * 5);
   });
 
   useEffect(() => {

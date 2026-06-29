@@ -18,7 +18,8 @@ export const RAMGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string, rgbEna
   }, [rgbColor, rgbMat]);
 
   useFrame((_, delta) => {
-    rgbMat.emissiveIntensity = THREE.MathUtils.lerp(rgbMat.emissiveIntensity, rgbEnabled ? 3.0 : 0, delta * 5);
+    const dt = Math.min(delta, 0.05);
+    rgbMat.emissiveIntensity = THREE.MathUtils.lerp(rgbMat.emissiveIntensity, rgbEnabled ? 3.0 : 0, dt * 5);
   });
   useEffect(() => () => rgbMat.dispose(), [rgbMat]);
   

@@ -159,7 +159,8 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
     rgbMaterial.emissive.set(effectiveRgbColor);
   }, [effectiveRgbColor, rgbMaterial]);
   useFrame((_, delta) => {
-    rgbMaterial.emissiveIntensity = THREE.MathUtils.lerp(rgbMaterial.emissiveIntensity, rgbEnabled ? 3.0 : 0, delta * 5);
+    const dt = Math.min(delta, 0.05);
+    rgbMaterial.emissiveIntensity = THREE.MathUtils.lerp(rgbMaterial.emissiveIntensity, rgbEnabled ? 3.0 : 0, dt * 5);
   });
   useEffect(() => {
     return () => rgbMaterial.dispose();

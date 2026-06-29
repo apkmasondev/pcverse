@@ -55,7 +55,7 @@ const AnimatedLights = () => {
   const pointRef = useRef<THREE.PointLight>(null);
 
   useFrame((_, delta) => {
-    const dt = delta * 5;
+    const dt = Math.min(delta, 0.05) * 5;
     if (ambientRef.current) ambientRef.current.intensity = THREE.MathUtils.lerp(ambientRef.current.intensity, ambientOn ? 1.2 : 0, dt);
     if (dirRef1.current) dirRef1.current.intensity = THREE.MathUtils.lerp(dirRef1.current.intensity, mainSpotOn ? 3.5 : 0, dt);
     if (dirRef2.current) dirRef2.current.intensity = THREE.MathUtils.lerp(dirRef2.current.intensity, pcRGBOn ? 2.0 : 0, dt);
