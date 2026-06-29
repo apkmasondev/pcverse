@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { BackSide, CanvasTexture, ClampToEdgeWrapping, DoubleSide, RepeatWrapping, SRGBColorSpace, MeshStandardMaterial } from 'three';
 import { materials } from '../materials';
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useRef } from 'react';
 import { usePCView } from '../../../hooks/usePC';
 
 import { useTexture } from '@react-three/drei';
@@ -58,7 +58,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
     caseBottomTexture.offset.set(0.5, 0.5);
   }, [caseBackTexture, caseBehindTexture, caseBottomTexture]);
 
-  const groupRef = React.useRef<THREE.Group>(null);
+  const groupRef = useRef<THREE.Group>(null);
   
   useFrame((_, delta) => {
     if (groupRef.current) {
@@ -399,7 +399,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
             decay={1.8}
             intensity={rgbEnabled ? 2.5 : 0}
           />
-        </>
+        </group>
       )}
     </group>
   );
