@@ -59,6 +59,7 @@ export const SidebarControls = () => {
     toggleParticles,
     showFog,
     toggleFog,
+    isLowEndGPU,
   } = usePCView();
   const { showLabels, toggleLabels, setShowInstructions } = usePCUI();
   const { ambientOn, toggleAmbient, mainSpotOn, toggleMainSpot, pcRGBOn, togglePcRGB, cursorLightOn, toggleCursorLight } = usePCLighting();
@@ -330,18 +331,20 @@ export const SidebarControls = () => {
                 <div className="hidden md:block h-px bg-white/10 my-1 w-full" />
 
                 <button
-                  aria-label="Przełącz Biurko"
-                  aria-pressed={showDesk}
+                  title={isLowEndGPU ? "Niedostępne dla zintegrowanych kart graficznych" : "Pokaż scenografię"}
+                  disabled={isLowEndGPU}
                   onClick={() => {
-                    playSelectSound();
-                    triggerLoading(toggleDesk);
+                    if (!isLowEndGPU) {
+                      playSelectSound();
+                      triggerLoading(toggleDesk);
+                    }
                     setShowEnv(false);
                   }}
-                  className={`hidden md:block text-left px-3 py-2 rounded-lg text-sm transition-colors ${showDesk ? "bg-amber-500/20 text-amber-300 font-bold" : "text-slate-300 hover:bg-white/10 hover:text-white"}`}
+                  className={`hidden md:flex items-center text-left px-3 py-2 rounded-lg text-sm transition-colors ${isLowEndGPU ? 'opacity-30 cursor-not-allowed bg-[#1a1a1a] border border-white/5 text-slate-500' : (showDesk ? "bg-amber-500/20 text-amber-300 font-bold border border-amber-500/50" : "text-slate-300 hover:bg-white/10 hover:text-white")}`}
                 >
                   <div className="font-medium">Tryb Scenografii</div>
-                  <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">
-                    {showDesk ? "Cyber-Biurko (Wł)" : "Cyber-Biurko (Wył)"}
+                  <div className="text-[10px] opacity-70 ml-2">
+                    {isLowEndGPU ? "Niedostępne" : (showDesk ? "(Wł)" : "(Wył)")}
                   </div>
                 </button>
                 </div>

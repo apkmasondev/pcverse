@@ -250,7 +250,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
           <Environment files={envMap[envPreset] || envMap.studio} environmentIntensity={1.5} />
         </ErrorBoundary>
 
-        {showDesk && !isMobile ? (
+        {showDesk && !isMobile && !isLowEndGPU ? (
           <DeskScenery />
         ) : (
           <Grid
@@ -267,10 +267,10 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
           />
         )}
         {!isMobile && (
-          <EffectComposer multisampling={4}>
+          <EffectComposer multisampling={isLowEndGPU ? 0 : 4}>
             {dofEnabled && !disableEffects ? <DepthOfField key="dof" target={dofTarget} focalLength={0.05} bokehScale={8} height={700} /> : <></>}
             {!disableEffects ? <N8AO key="n8ao" aoRadius={0.5} intensity={2.0} distanceFalloff={0.5} quality="medium" halfRes /> : <></>}
-            <Bloom key="bloom" luminanceThreshold={1.2} mipmapBlur intensity={1.5} />
+            <Bloom key="bloom" luminanceThreshold={1.2} mipmapBlur={!isLowEndGPU} intensity={1.5} />
             <Vignette key="vig" eskil={false} offset={0.1} darkness={0.9} />
             <ChromaticAberration key="ca" offset={new Vector2(0.0005, 0.0005)} radialModulation={false} modulationOffset={0} />
           </EffectComposer>
@@ -307,6 +307,7 @@ export const Scene3D = () => {
   const [hasInteracted, setHasInteracted] = useState(false);
   const [dpr, setDpr] = useState<number | [number, number]>(isMobile ? 1 : [1, 2]);
   const [disableEffects, setDisableEffects] = useState(false);
+  const isLowEndGPU = usePCView(state => state.isLowEndGPU);
 
   return (
     <div
@@ -324,8 +325,8 @@ export const Scene3D = () => {
         </div>
       )}
       <Canvas
-        gl={{ antialias: true }}
-        dpr={dpr}
+        gl={{ antialias: !isLowEndGPU }}
+        dpr={isLowEndGPU ? 1 : dpr}
         frameloop={isMobile ? 'demand' : 'always'}
         onPointerMissed={() => setSelectedComponent(null)}
       >
@@ -335,11 +336,11 @@ export const Scene3D = () => {
             setDisableEffects(true);
           }}
           onIncline={() => {
-            setDpr(isMobile ? 1 : [1, 2]);
-            setDisableEffects(false);
+            setDpr(isLowEndGPU || isMobile ? 1 : [1, 2]);
+            if (!isLowEndGPU) setDisableEffects(false);
           }}
         >
-          <SceneContent isMobile={isMobile} disableEffects={disableEffects} />
+          <SceneContent isMobile={isMobile} disableEffects={disableEffects || isLowEndGPU} />
         </PerformanceMonitor>
         <Preload all />
       </Canvas>

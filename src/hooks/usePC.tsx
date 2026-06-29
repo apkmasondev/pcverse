@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { PCComponent } from '../data/components';
+import { detectLowEndGPU } from '../utils/gpuDetect';
 
 export interface PCSelectionContextType {
   selectedComponent: PCComponent | null;
@@ -18,6 +19,7 @@ export interface PCRGBContextType {
 }
 
 export interface PCViewContextType {
+  isLowEndGPU: boolean;
   xrayMode: boolean;
   toggleXrayMode: () => void;
   showAirflow: boolean;
@@ -119,6 +121,7 @@ export const usePCLighting = create<PCLightingContextType>((set) => ({
 }));
 
 export const usePCView = create<PCViewContextType>((set) => ({
+  isLowEndGPU: detectLowEndGPU(),
   xrayMode: false,
   showAirflow: false,
   envPreset: 'city',
