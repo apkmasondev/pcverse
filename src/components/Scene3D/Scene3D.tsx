@@ -236,11 +236,11 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
         </>
       )}
 
-      <AnimatedLights />
-
-      {!isMobile && !disableEffects && <CursorLight />}
-
       <React.Suspense fallback={null}>
+        <AnimatedLights />
+
+        {!isMobile && !disableEffects && <CursorLight />}
+
         <group position={[0, 1.36, 0]}>
           <PCModel />
         </group>

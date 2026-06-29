@@ -389,7 +389,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
             distance={6}
             color="#6366f1"
             decay={1.8}
-            intensity={rgbEnabled ? 3.0 : 0}
+            intensity={0}
           />
           <pointLight
             ref={(light) => { if (light) light.userData.targetIntensity = rgbEnabled ? 2.5 : 0; }}
@@ -397,7 +397,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
             distance={5}
             color="#ec4899"
             decay={1.8}
-            intensity={rgbEnabled ? 2.5 : 0}
+            intensity={0}
           />
         </group>
       )}
