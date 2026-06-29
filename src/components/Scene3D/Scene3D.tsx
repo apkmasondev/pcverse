@@ -195,7 +195,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
       <color attach="background" args={[bgColor]} />
       {showFog && <fog attach="fog" args={[bgColor, 15, 60]} />}
 
-      {ambientOn && <ambientLight intensity={1.2} />}
+      <ambientLight intensity={ambientOn ? 1.2 : 0} />
 
       <PerspectiveCamera makeDefault position={[0, 3, 16]} fov={50} near={0.5} far={100} />
 
@@ -206,16 +206,14 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
         </>
       )}
 
-      {mainSpotOn && (
-        <directionalLight
-          position={[10, 20, 10]}
-          intensity={3.5}
-        />
-      )}
-      {pcRGBOn && <directionalLight position={[-10, -10, -10]} intensity={2.0} color="#6366f1" />}
-      {mainSpotOn && <spotLight position={[-10, 10, -10]} intensity={3.5} angle={0.3} penumbra={1} />}
-      {ambientOn && <hemisphereLight intensity={1.5} color="#ffffff" groundColor="#a0aabf" />}
-      {pcRGBOn && <pointLight position={[0, 0, 6]} intensity={15.0} color="#ffffff" distance={30} decay={2} />}
+      <directionalLight
+        position={[10, 20, 10]}
+        intensity={mainSpotOn ? 3.5 : 0}
+      />
+      <directionalLight position={[-10, -10, -10]} intensity={pcRGBOn ? 2.0 : 0} color="#6366f1" />
+      <spotLight position={[-10, 10, -10]} intensity={mainSpotOn ? 3.5 : 0} angle={0.3} penumbra={1} />
+      <hemisphereLight intensity={ambientOn ? 1.5 : 0} color="#ffffff" groundColor="#a0aabf" />
+      <pointLight position={[0, 0, 6]} intensity={pcRGBOn ? 15.0 : 0} color="#ffffff" distance={30} decay={2} />
 
       {!isMobile && !disableEffects && cursorLightOn && <CursorLight />}
 

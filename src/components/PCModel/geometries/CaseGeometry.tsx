@@ -367,18 +367,18 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
       ))}
 
       {/* Internal Premium RGB Ambient Lighting - hide in X-Ray mode */}
-      {!xrayMode && rgbEnabled && (
+      {!xrayMode && (
         <>
           <pointLight
             position={[0, 1.2, -0.8]}
-            intensity={3.0}
+            intensity={rgbEnabled ? 3.0 : 0}
             distance={6}
             color="#6366f1"
             decay={1.8}
           />
           <pointLight
             position={[0, -0.8, -0.6]}
-            intensity={2.5}
+            intensity={rgbEnabled ? 2.5 : 0}
             distance={5}
             color="#ec4899"
             decay={1.8}
