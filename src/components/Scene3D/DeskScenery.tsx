@@ -458,7 +458,7 @@ export const DeskEssentials = () => {
 };
 
 export const DeskScenery = () => {
-  const { xrayMode } = usePCView();
+  const xrayMode = usePCView(state => state.xrayMode);
   const isMobile = useIsMobile();
   const reflectorMeshRef = useRef<THREE.Mesh>(null);
   const reducedMotion = useReducedMotion();

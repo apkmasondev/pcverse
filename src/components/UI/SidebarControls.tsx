@@ -44,27 +44,45 @@ const COLORS = [
 ];
 
 export const SidebarControls = () => {
-  const { explodeStep, toggleExploded, triggerCameraReset, setSelectedComponent } = usePCSelection();
-  const { rgbColor, setRgbColor, rgbEnabled, toggleRgbEnabled } = usePCRGB();
-  const {
-    xrayMode,
-    toggleXrayMode,
-    showAirflow,
-    toggleAirflow,
-    envPreset,
-    setEnvPreset,
-    showDesk,
-    toggleDesk,
-    showParticles,
-    toggleParticles,
-    showFog,
-    toggleFog,
-    isLowEndGPU,
-  } = usePCView();
-  const { showLabels, toggleLabels, setShowInstructions } = usePCUI();
-  const { ambientOn, toggleAmbient, mainSpotOn, toggleMainSpot, pcRGBOn, togglePcRGB, cursorLightOn, toggleCursorLight } = usePCLighting();
-  const { triggerLoading } = useAppLoading();
-  const { toggleBuildMode } = useBuildStore();
+  const explodeStep = usePCSelection(state => state.explodeStep);
+  const toggleExploded = usePCSelection(state => state.toggleExploded);
+  const triggerCameraReset = usePCSelection(state => state.triggerCameraReset);
+  const setSelectedComponent = usePCSelection(state => state.setSelectedComponent);
+
+  const rgbColor = usePCRGB(state => state.rgbColor);
+  const setRgbColor = usePCRGB(state => state.setRgbColor);
+  const rgbEnabled = usePCRGB(state => state.rgbEnabled);
+  const toggleRgbEnabled = usePCRGB(state => state.toggleRgbEnabled);
+
+  const xrayMode = usePCView(state => state.xrayMode);
+  const toggleXrayMode = usePCView(state => state.toggleXrayMode);
+  const showAirflow = usePCView(state => state.showAirflow);
+  const toggleAirflow = usePCView(state => state.toggleAirflow);
+  const envPreset = usePCView(state => state.envPreset);
+  const setEnvPreset = usePCView(state => state.setEnvPreset);
+  const showDesk = usePCView(state => state.showDesk);
+  const toggleDesk = usePCView(state => state.toggleDesk);
+  const showParticles = usePCView(state => state.showParticles);
+  const toggleParticles = usePCView(state => state.toggleParticles);
+  const showFog = usePCView(state => state.showFog);
+  const toggleFog = usePCView(state => state.toggleFog);
+  const isLowEndGPU = usePCView(state => state.isLowEndGPU);
+
+  const showLabels = usePCUI(state => state.showLabels);
+  const toggleLabels = usePCUI(state => state.toggleLabels);
+  const setShowInstructions = usePCUI(state => state.setShowInstructions);
+
+  const ambientOn = usePCLighting(state => state.ambientOn);
+  const toggleAmbient = usePCLighting(state => state.toggleAmbient);
+  const mainSpotOn = usePCLighting(state => state.mainSpotOn);
+  const toggleMainSpot = usePCLighting(state => state.toggleMainSpot);
+  const pcRGBOn = usePCLighting(state => state.pcRGBOn);
+  const togglePcRGB = usePCLighting(state => state.togglePcRGB);
+  const cursorLightOn = usePCLighting(state => state.cursorLightOn);
+  const toggleCursorLight = usePCLighting(state => state.toggleCursorLight);
+
+  const triggerLoading = useAppLoading(state => state.triggerLoading);
+  const toggleBuildMode = useBuildStore(state => state.toggleBuildMode);
 
   const [showPalette, setShowPalette] = useState(false);
   const [showEnv, setShowEnv] = useState(false);
@@ -340,11 +358,11 @@ export const SidebarControls = () => {
                     }
                     setShowEnv(false);
                   }}
-                  className={`hidden md:flex items-center text-left px-3 py-2 rounded-lg text-sm transition-colors ${isLowEndGPU ? 'opacity-30 cursor-not-allowed bg-[#1a1a1a] border border-white/5 text-slate-500' : (showDesk ? "bg-amber-500/20 text-amber-300 font-bold border border-amber-500/50" : "text-slate-300 hover:bg-white/10 hover:text-white")}`}
+                  className={`hidden md:flex flex-col items-start text-left px-3 py-2 rounded-lg text-sm transition-colors ${isLowEndGPU ? 'opacity-30 cursor-not-allowed bg-[#1a1a1a] border border-white/5 text-slate-500' : (showDesk ? "bg-amber-500/20 text-amber-300 font-bold border border-amber-500/50" : "text-slate-300 hover:bg-white/10 hover:text-white")}`}
                 >
-                  <div className="font-medium">Tryb Scenografii</div>
-                  <div className="text-[10px] opacity-70 ml-2">
-                    {isLowEndGPU ? "Niedostępne" : (showDesk ? "(Wł)" : "(Wył)")}
+                  <div className="font-medium whitespace-nowrap">Tryb Scenografii</div>
+                  <div className="text-[10px] opacity-70 mt-0.5">
+                    {isLowEndGPU ? "Niedostępne" : (showDesk ? "(Włączono)" : "(Wyłączono)")}
                   </div>
                 </button>
                 </div>

@@ -27,11 +27,23 @@ const CursorLight = () => {
   useFrame(({ raycaster, camera }, delta) => {
     if (lightRef.current) {
       const dt = Math.min(delta, 0.05);
-      // Place light slightly in front of the object the user is pointing at
       const distance = camera.position.length() * 0.6;
       raycaster.ray.at(distance, _vec.current);
-      lightRef.current.position.lerp(_vec.current, 1 - Math.exp(-10 * dt)); // Make lerp frame-rate independent roughly
-      lightRef.current.intensity = THREE.MathUtils.lerp(lightRef.current.intensity, cursorLightOn ? 3.5 : 0, dt * 5);
+      
+      const distPos = lightRef.current.position.distanceTo(_vec.current);
+      if (distPos > 0.001) {
+        lightRef.current.position.lerp(_vec.current, 1 - Math.exp(-10 * dt));
+      } else if (distPos > 0) {
+        lightRef.current.position.copy(_vec.current);
+      }
+
+      const targetIntensity = cursorLightOn ? 3.5 : 0;
+      const diffInt = Math.abs(lightRef.current.intensity - targetIntensity);
+      if (diffInt > 0.001) {
+        lightRef.current.intensity = THREE.MathUtils.lerp(lightRef.current.intensity, targetIntensity, dt * 5);
+      } else if (diffInt > 0) {
+        lightRef.current.intensity = targetIntensity;
+      }
     }
   });
 
@@ -79,9 +91,14 @@ const AnimatedLights = () => {
 
 const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disableEffects?: boolean }) => {
   const isLowEndGPU = usePCView(state => state.isLowEndGPU);
-  const { selectedComponent, cameraResetTrigger, explodeStep } = usePCSelection();
-  const { envPreset, showDesk, showParticles, showFog } = usePCView();
-  const { buildMode } = useBuildStore();
+  const selectedComponent = usePCSelection(state => state.selectedComponent);
+  const cameraResetTrigger = usePCSelection(state => state.cameraResetTrigger);
+  const explodeStep = usePCSelection(state => state.explodeStep);
+  const envPreset = usePCView(state => state.envPreset);
+  const showDesk = usePCView(state => state.showDesk);
+  const showParticles = usePCView(state => state.showParticles);
+  const showFog = usePCView(state => state.showFog);
+  const buildMode = useBuildStore(state => state.buildMode);
   const cameraControlsRef = useRef<CameraControls>(null);
   const { camera } = useThree();
   const reducedMotion = useReducedMotion();

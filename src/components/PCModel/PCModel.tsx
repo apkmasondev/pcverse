@@ -237,11 +237,21 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
     }
 
     targetPosition.set(posArray[0], posArray[1] + liftOffset + floatOffset + explodeLift, posArray[2]);
-    groupRef.current.position.lerp(targetPosition, dt * 5);
+    const distPos = groupRef.current.position.distanceTo(targetPosition);
+    if (distPos > 0.001) {
+      groupRef.current.position.lerp(targetPosition, dt * 5);
+    } else if (distPos > 0) {
+      groupRef.current.position.copy(targetPosition);
+    }
     
     const targetScale = isSelected ? 1.05 : hovered ? 1.03 : 1.0;
     targetScale3.set(targetScale, targetScale, targetScale);
-    groupRef.current.scale.lerp(targetScale3, dt * 8);
+    const distScale = groupRef.current.scale.distanceTo(targetScale3);
+    if (distScale > 0.001) {
+      groupRef.current.scale.lerp(targetScale3, dt * 8);
+    } else if (distScale > 0) {
+      groupRef.current.scale.copy(targetScale3);
+    }
 
     const ringOffsetY = data.id === 'gpu' ? 0.9 : 0.4;
     if (ringRef.current) {
