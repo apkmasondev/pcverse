@@ -4,6 +4,7 @@ import { materials, xrayMaterial } from '../materials';
 import { useRef, useEffect, useMemo } from 'react';
 import { Group, MeshStandardMaterial } from 'three';
 import { useTexture } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
 import heatsinkUrl from '../../../assets/heatsink.webp';
 import heatsinkSideUrl from '../../../assets/heatsink_side.webp';
 import aioFanUrl from '../../../assets/aio_fan.webp';
@@ -16,7 +17,7 @@ import radiatorPlateUrl from '../../../assets/radiator_plate.webp';
 import { usePCRGB, usePCView } from '../../../hooks/usePC';
 import { LocalAirflowParticles } from './LocalAirflowParticles';
 
-export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbColor: string, isExhaust?: boolean, textureUrl?: string }) => {
+export const FanGeometry = ({ rgbColor, rgbEnabled: propRgbEnabled, isExhaust = false, textureUrl }: { rgbColor: string, rgbEnabled?: boolean, isExhaust?: boolean, textureUrl?: string }) => {
   const { rgbEnabled } = usePCRGB();
   const { xrayMode } = usePCView();
   
@@ -32,12 +33,16 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
   const torusRadius = isCaseFan ? 0.47 : 0.455;
   const torusTube = isCaseFan ? 0.028 : 0.027;
   
-  const rgbMaterial = useMemo(() => new MeshStandardMaterial({ emissiveIntensity: 3, toneMapped: false }), []);
+  const rgbMaterial = useMemo(() => new MeshStandardMaterial({ emissiveIntensity: 0, toneMapped: false }), []);
   
   useEffect(() => {
     rgbMaterial.color.set(rgbColor);
     rgbMaterial.emissive.set(rgbColor);
   }, [rgbColor, rgbMaterial]);
+
+  useFrame((_, delta) => {
+    rgbMaterial.emissiveIntensity = THREE.MathUtils.lerp(rgbMaterial.emissiveIntensity, rgbEnabled ? 3 : 0, delta * 5);
+  });
 
   useEffect(() => {
     return () => {
@@ -158,7 +163,7 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
 };
 
 
-export const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string }) => {
+export const CPUCoolerGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string, rgbEnabled?: boolean }) => {
   const { xrayMode } = usePCView();
   const heatsinkTexture = useTexture(heatsinkUrl);
   const heatsinkSideTexture = useTexture(heatsinkSideUrl);

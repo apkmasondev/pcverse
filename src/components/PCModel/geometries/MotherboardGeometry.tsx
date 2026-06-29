@@ -4,6 +4,7 @@ import { MeshStandardMaterial } from 'three';
 import { materials, xrayMaterial } from '../materials';
 import { usePCView } from '../../../hooks/usePC';
 import { useTexture, Instances, Instance } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
 import moboBackUrl from '../../../assets/mobo_back_photo.webp';
 import moboTopUrl from '../../../assets/mobo_top.webp';
 import moboChipsetUrl from '../../../assets/mobo_chipset.webp';
@@ -33,7 +34,7 @@ const XInstances = ({ children, material, ...props }: any) => {
   );
 };
 
-export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
+export const MotherboardGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string, rgbEnabled?: boolean }) => {
   const backTexture = useTexture(moboBackUrl);
   const moboTopTexture = useTexture(moboTopUrl);
   const cpuSocketTexture = useTexture(cpuSocketUrl);
@@ -44,13 +45,17 @@ export const MotherboardGeometry = ({ rgbColor }: { rgbColor: string }) => {
   const m2HeatsinkTexture = useTexture(m2HeatsinkUrl);
 
   const rgbMaterial = useMemo(() => {
-    return new MeshStandardMaterial({ emissiveIntensity: 1.5, toneMapped: false });
+    return new MeshStandardMaterial({ emissiveIntensity: 0, toneMapped: false });
   }, []);
 
   useEffect(() => {
     rgbMaterial.color.set(rgbColor);
     rgbMaterial.emissive.set(rgbColor);
   }, [rgbColor, rgbMaterial]);
+
+  useFrame((_, delta) => {
+    rgbMaterial.emissiveIntensity = THREE.MathUtils.lerp(rgbMaterial.emissiveIntensity, rgbEnabled ? 1.5 : 0, delta * 5);
+  });
 
   useEffect(() => {
     return () => {

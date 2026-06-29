@@ -67,14 +67,14 @@ const ProceduralGeometry = memo(({ data, baseColor }: { data: PCComponent, baseC
   if (Component) {
     if (['case_fan_1', 'case_fan_2', 'rear_fan_1', 'rear_fan_2'].includes(data.id)) {
       const isExhaust = data.id === 'rear_fan_1' || data.id === 'rear_fan_2';
-      return <Component rgbColor={effectiveRgbColor} isExhaust={isExhaust} />;
+      return <Component rgbColor={effectiveRgbColor} rgbEnabled={rgbEnabled} isExhaust={isExhaust} />;
     }
     
     if (data.id === 'case') {
-      return <Component rgbColor={effectiveRgbColor} rgbEnabled={true} />;
+      return <Component rgbColor={effectiveRgbColor} rgbEnabled={rgbEnabled} />;
     }
 
-    return <Component rgbColor={effectiveRgbColor} />;
+    return <Component rgbColor={effectiveRgbColor} rgbEnabled={rgbEnabled} />;
   }
   
   return (

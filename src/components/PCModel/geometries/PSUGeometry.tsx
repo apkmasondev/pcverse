@@ -5,6 +5,7 @@ import { usePCView } from '../../../hooks/usePC';
 import { useRef, useEffect, useMemo } from 'react';
 import { Group, MeshStandardMaterial } from 'three';
 import { useTexture } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
 import psuSideUrl from '../../../assets/psu_side.webp';
 import psuTopUrl from '../../../assets/psu_top.webp';
 import psuBackUrl from '../../../assets/psu_back.webp';
@@ -15,7 +16,7 @@ import { LocalAirflowParticles } from './LocalAirflowParticles';
 
 import { XMesh as Mesh } from './XMesh';
 
-export const PSUGeometry = ({ rgbColor }: { rgbColor: string }) => {
+export const PSUGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string, rgbEnabled?: boolean }) => {
   const { xrayMode } = usePCView();
   const psuTopTexture = useTexture(psuTopUrl);
   const psuSideTexture = useTexture(psuSideUrl);
@@ -32,11 +33,16 @@ export const PSUGeometry = ({ rgbColor }: { rgbColor: string }) => {
     }
   }, []);
 
-  const rgbMat = useMemo(() => new MeshStandardMaterial({ emissiveIntensity: 2, toneMapped: false }), []);
+  const rgbMat = useMemo(() => new MeshStandardMaterial({ emissiveIntensity: 0, toneMapped: false }), []);
   useEffect(() => {
     rgbMat.color.set(rgbColor);
     rgbMat.emissive.set(rgbColor);
   }, [rgbColor, rgbMat]);
+
+  useFrame((_, delta) => {
+    rgbMat.emissiveIntensity = THREE.MathUtils.lerp(rgbMat.emissiveIntensity, rgbEnabled ? 2 : 0, delta * 5);
+  });
+
   useEffect(() => () => rgbMat.dispose(), [rgbMat]);
 
   const texturedMaterials = useMemo(() => ({
