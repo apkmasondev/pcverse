@@ -5,8 +5,8 @@ import { materials, xrayMaterial } from './materials';
 import { usePCSelection, usePCView } from '../../hooks/usePC';
 
 export const CableGeometry = () => {
-  const { explodeStep } = usePCSelection();
-  const { xrayMode } = usePCView();
+  const explodeStep = usePCSelection(s => s.explodeStep);
+  const xrayMode = usePCView(s => s.xrayMode);
   const tubeRefs = useRef<(TubeGeometry | null)[]>([]);
 
   // 24-pin ATX Cable (PSU to Mobo)

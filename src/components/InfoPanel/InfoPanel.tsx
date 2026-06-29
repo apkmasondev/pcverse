@@ -85,7 +85,8 @@ const getImageUrl = (url: string) => {
 };
 
 export const InfoPanel = () => {
-  const { selectedComponent, setSelectedComponent } = usePCSelection();
+  const selectedComponent = usePCSelection(s => s.selectedComponent);
+  const setSelectedComponent = usePCSelection(s => s.setSelectedComponent);
   const [zoomedImageIndex, setZoomedImageIndex] = useState<number | null>(null);
   const isMobile = useIsMobile();
   const { buildMode } = useBuildStore();

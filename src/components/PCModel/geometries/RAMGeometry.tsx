@@ -9,7 +9,7 @@ import ramSideUrl from '../../../assets/ram_side.webp';
 import { XMesh as Mesh } from './XMesh';
 
 export const RAMGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string, rgbEnabled?: boolean }) => {
-  const { xrayMode } = usePCView();
+  const xrayMode = usePCView(s => s.xrayMode);
   const ramSideTexture = useTexture(ramSideUrl);
   
   const rgbMat = useMemo(() => new MeshStandardMaterial({ color: 0x000000, emissiveIntensity: 0, toneMapped: false }), []);

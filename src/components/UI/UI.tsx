@@ -12,8 +12,10 @@ import { InstructionsDialog } from "./InstructionsDialog";
 import { playAmbientSound, stopAmbientSound } from "../../utils/audio";
 
 export const UI = () => {
-  const { showAirflow, xrayMode } = usePCView();
-  const { showInstructions, setShowInstructions } = usePCUI();
+  const showAirflow = usePCView(s => s.showAirflow);
+  const xrayMode = usePCView(s => s.xrayMode);
+  const showInstructions = usePCUI(s => s.showInstructions);
+  const setShowInstructions = usePCUI(s => s.setShowInstructions);
   const { buildMode } = useBuildStore();
   const [showHint, setShowHint] = useState(true);
 

@@ -10,7 +10,7 @@ import { materials, xrayMaterial } from '../materials';
 import { usePCView } from '../../../hooks/usePC';
 
 export const CPUGeometry = () => {
-  const { xrayMode } = usePCView();
+  const xrayMode = usePCView(s => s.xrayMode);
   const cpuTexture = useTexture(cpuTopUrl);
   const cpuBottomTexture = useTexture(cpuBottomUrl);
   const ihsGeoRef = useRef<ExtrudeGeometry>(null);

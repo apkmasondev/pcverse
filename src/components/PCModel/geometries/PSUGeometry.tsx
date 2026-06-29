@@ -17,7 +17,7 @@ import { LocalAirflowParticles } from './LocalAirflowParticles';
 import { XMesh as Mesh } from './XMesh';
 
 export const PSUGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string, rgbEnabled?: boolean }) => {
-  const { xrayMode } = usePCView();
+  const xrayMode = usePCView(s => s.xrayMode);
   const psuTopTexture = useTexture(psuTopUrl);
   const psuSideTexture = useTexture(psuSideUrl);
   const psuBackTexture = useTexture(psuBackUrl);

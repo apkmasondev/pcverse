@@ -1,9 +1,8 @@
 import * as THREE from 'three';
-import React, { useMemo, useEffect } from 'react';
+import { useMemo, useEffect } from 'react';
 import { MeshStandardMaterial } from 'three';
-import { materials, xrayMaterial } from '../materials';
-import { usePCView } from '../../../hooks/usePC';
-import { useTexture, Instances, Instance } from '@react-three/drei';
+import { materials } from '../materials';
+import { useTexture, Instance } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import moboBackUrl from '../../../assets/mobo_back_photo.webp';
 import moboTopUrl from '../../../assets/mobo_top.webp';
@@ -14,25 +13,7 @@ import ssdTopUrl from '../../../assets/ssd_top.webp';
 import cmosBatteryUrl from '../../../assets/cmos_battery.webp';
 import m2HeatsinkUrl from '../../../assets/m2_heatsink.webp';
 
-import { XMesh as Mesh } from './XMesh';
-
-const XInstances = ({ children, material, ...props }: any) => {
-  const { xrayMode } = usePCView();
-  const filteredChildren = React.Children.map(children, (child) => {
-    if (!child) return null;
-    if (xrayMode) {
-      if (child.type === 'meshStandardMaterial' || child.type === 'meshPhysicalMaterial' || child.type === 'primitive') {
-        return null;
-      }
-    }
-    return child;
-  });
-  return (
-    <Instances material={xrayMode ? xrayMaterial : material} {...props}>
-      {filteredChildren}
-    </Instances>
-  );
-};
+import { XMesh as Mesh, XInstances } from './XMesh';
 
 export const MotherboardGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string, rgbEnabled?: boolean }) => {
   const backTexture = useTexture(moboBackUrl);
@@ -129,35 +110,39 @@ export const MotherboardGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string
       </group>
 
       {/* VRM Capacitors (Silver cylinders near CPU) */}
-      {[-0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6].map((x, i) => (
-        <Mesh key={`cap-top-${i}`} position={[x, 1.6, 0.1]} rotation={[Math.PI / 2, 0, 0]}>
-          <cylinderGeometry args={[0.04, 0.04, 0.1, 16]} />
-          <primitive object={materials.silverMetal} attach="material" />
-        </Mesh>
-      ))}
       <XInstances>
         <cylinderGeometry args={[0.04, 0.04, 0.1, 16]} />
         <primitive object={materials.silverMetal} attach="material" />
+        {[-0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6].map((x, i) => (
+          <Instance key={`cap-top-${i}`} position={[x, 1.6, 0.1]} rotation={[Math.PI / 2, 0, 0]} />
+        ))}
         {[1.18, 0.98, 0.77, 0.56, 0.35].map((y, i) => (
           <Instance key={`cap-left-${i}`} position={[-0.7, y, 0.1]} rotation={[Math.PI / 2, 0, 0]} />
         ))}
       </XInstances>
 
       {/* VRM Heatsinks (Detailed with ribs/fins) */}
+      <XInstances>
+        <boxGeometry args={[0.5, 0.05, 0.1]} />
+        <primitive object={materials.darkMetal} attach="material" />
+
+        {/* Left Fins */}
+        {[-0.35, -0.2, -0.05, 0.1, 0.25, 0.4].map((fy, i) => (
+          <Instance key={`vrm-left-fin-${i}`} position={[-1.2, 1.5 + fy, 0.25]} />
+        ))}
+
+        {/* Top Fins */}
+        {[-0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6].map((fy, i) => (
+          <Instance key={`vrm-top-fin-${i}`} position={[fy, 1.85, 0.25]} rotation={[0, 0, -Math.PI / 2]} />
+        ))}
+      </XInstances>
+
       <group position={[-1.2, 1.5, 0.15]}>
         {/* Base */}
         <Mesh position={[0, 0, -0.05]}>
           <boxGeometry args={[0.5, 0.9, 0.2]} />
           <primitive object={materials.darkMetal} attach="material" />
         </Mesh>
-        {/* Fins */}
-        <XInstances>
-          <boxGeometry args={[0.5, 0.05, 0.1]} />
-          <primitive object={materials.darkMetal} attach="material" />
-          {[-0.35, -0.2, -0.05, 0.1, 0.25, 0.4].map((fy, i) => (
-            <Instance key={`vrm-left-fin-${i}`} position={[0, fy, 0.1]} />
-          ))}
-        </XInstances>
       </group>
 
       <group position={[0, 1.85, 0.15]} rotation={[0, 0, -Math.PI / 2]}>
@@ -166,14 +151,6 @@ export const MotherboardGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string
           <boxGeometry args={[0.5, 1.5, 0.2]} />
           <primitive object={materials.darkMetal} attach="material" />
         </Mesh>
-        {/* Fins */}
-        <XInstances>
-          <boxGeometry args={[0.5, 0.05, 0.1]} />
-          <primitive object={materials.darkMetal} attach="material" />
-          {[-0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6].map((fy, i) => (
-            <Instance key={`vrm-top-fin-${i}`} position={[0, fy, 0.1]} />
-          ))}
-        </XInstances>
       </group>
 
       {/* RAM Slots with Clips */}
@@ -284,13 +261,13 @@ export const MotherboardGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string
           </Mesh>
 
           {/* Gold Pins - Short Segment */}
-          <Mesh position={[-1.19, 0, 0.025]}>
+          <Mesh position={[-1.19, 0, 0.04]}>
             <boxGeometry args={[0.3, 0.02, 0.01]} />
             <primitive object={materials.goldMetal} attach="material" />
           </Mesh>
 
           {/* Gold Pins - Long Segment */}
-          <Mesh position={[0.19, 0, 0.025]}>
+          <Mesh position={[0.19, 0, 0.04]}>
             <boxGeometry args={[2.3, 0.02, 0.01]} />
             <primitive object={materials.goldMetal} attach="material" />
           </Mesh>

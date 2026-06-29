@@ -12,7 +12,7 @@ import hddBehindUrl from '../../../assets/hdd_behind.webp';
 import { usePCView } from '../../../hooks/usePC';
 
 export const HDDGeometry = () => {
-  const { xrayMode } = usePCView();
+  const xrayMode = usePCView(s => s.xrayMode);
   const hddTopTexture = useTexture(hddTopUrl);
   const hddBottomTexture = useTexture(hddBottomUrl);
   const hddSideTexture = useTexture(hddSideUrl);

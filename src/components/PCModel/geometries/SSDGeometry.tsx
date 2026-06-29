@@ -7,7 +7,7 @@ import ssdBottomUrl from '../../../assets/ssd_bottom.webp';
 import { usePCView } from '../../../hooks/usePC';
 
 export const SSDGeometry = () => {
-  const { xrayMode } = usePCView();
+  const xrayMode = usePCView(s => s.xrayMode);
   const ssdTexture = useTexture(ssdTopUrl);
   const ssdBottomTexture = useTexture(ssdBottomUrl);
 

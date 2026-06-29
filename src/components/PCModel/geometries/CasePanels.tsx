@@ -25,8 +25,8 @@ export const CasePanels = ({
   caseInteriorTexture: Texture;
   backMeshTexture: CanvasTexture;
 }) => {
-  const { xrayMode } = usePCView();
-  const { explodeStep } = usePCSelection();
+  const xrayMode = usePCView(s => s.xrayMode);
+  const explodeStep = usePCSelection(s => s.explodeStep);
   const isMobile = useIsMobile();
   const buildMode = useBuildStore(state => state.buildMode);
   const bracketTexture = useTexture(bracketUrl);

@@ -24,7 +24,7 @@ import {
 
 
 export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEnabled?: boolean }) => {
-  const { xrayMode } = usePCView();
+  const xrayMode = usePCView(s => s.xrayMode);
   const effectiveRgbColor = rgbEnabled ? rgbColor : '#000000';
   const caseBackTexture = useTexture(caseBackUrl);
   const caseBehindTexture = useTexture(caseBehindUrl);

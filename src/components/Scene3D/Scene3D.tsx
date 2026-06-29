@@ -58,13 +58,14 @@ const CursorLight = () => {
   );
 };
 
-const AnimatedLights = () => {
+const AnimatedLights = ({ isLowEndGPU }: { isLowEndGPU: boolean }) => {
   const { ambientOn, mainSpotOn, pcRGBOn } = usePCLighting();
   const ambientRef = useRef<THREE.AmbientLight>(null);
   const dirRef1 = useRef<THREE.DirectionalLight>(null);
   const dirRef2 = useRef<THREE.DirectionalLight>(null);
   const spotRef = useRef<THREE.SpotLight>(null);
   const hemiRef = useRef<THREE.HemisphereLight>(null);
+  const rectRef = useRef<THREE.RectAreaLight>(null);
   const pointRef = useRef<THREE.PointLight>(null);
 
   useFrame((_, delta) => {
@@ -73,17 +74,30 @@ const AnimatedLights = () => {
     if (dirRef1.current) dirRef1.current.intensity = THREE.MathUtils.lerp(dirRef1.current.intensity, mainSpotOn ? 3.5 : 0, dt);
     if (dirRef2.current) dirRef2.current.intensity = THREE.MathUtils.lerp(dirRef2.current.intensity, pcRGBOn ? 2.0 : 0, dt);
     if (spotRef.current) spotRef.current.intensity = THREE.MathUtils.lerp(spotRef.current.intensity, mainSpotOn ? 3.5 : 0, dt);
-    if (hemiRef.current) hemiRef.current.intensity = THREE.MathUtils.lerp(hemiRef.current.intensity, ambientOn ? 1.5 : 0, dt);
+    
+    if (isLowEndGPU) {
+      if (hemiRef.current) hemiRef.current.intensity = THREE.MathUtils.lerp(hemiRef.current.intensity, ambientOn ? 1.5 : 0, dt);
+    } else {
+      if (ambientRef.current) ambientRef.current.intensity = THREE.MathUtils.lerp(ambientRef.current.intensity, ambientOn ? 1.2 : 0, dt);
+      if (rectRef.current) rectRef.current.intensity = THREE.MathUtils.lerp(rectRef.current.intensity, ambientOn ? 3.0 : 0, dt);
+    }
+    
     if (pointRef.current) pointRef.current.intensity = THREE.MathUtils.lerp(pointRef.current.intensity, pcRGBOn ? 15.0 : 0, dt);
   });
 
   return (
     <>
-      <ambientLight ref={ambientRef} intensity={0} />
+      {isLowEndGPU ? (
+        <hemisphereLight ref={hemiRef} color="#ffffff" groundColor="#a0aabf" intensity={0} />
+      ) : (
+        <>
+          <ambientLight ref={ambientRef} intensity={0} />
+          <rectAreaLight ref={rectRef} width={20} height={20} position={[0, 10, -5]} rotation={[-Math.PI / 2, 0, 0]} intensity={0} />
+        </>
+      )}
       <directionalLight ref={dirRef1} position={[10, 20, 10]} intensity={0} />
       <directionalLight ref={dirRef2} position={[-10, -10, -10]} color="#6366f1" intensity={0} />
       <spotLight ref={spotRef} position={[-10, 10, -10]} angle={0.3} penumbra={1} intensity={0} />
-      <hemisphereLight ref={hemiRef} color="#ffffff" groundColor="#a0aabf" intensity={0} />
       <pointLight ref={pointRef} position={[0, 0, 6]} color="#ffffff" distance={30} decay={2} intensity={0} />
     </>
   );
@@ -255,7 +269,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
         </>
       )}
 
-      <AnimatedLights />
+      <AnimatedLights isLowEndGPU={isLowEndGPU} />
 
       {!isMobile && !disableEffects && <CursorLight />}
 
@@ -321,7 +335,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
 
 export const Scene3D = () => {
   const isMobile = useIsMobile();
-  const { setSelectedComponent } = usePCSelection();
+  const setSelectedComponent = usePCSelection(s => s.setSelectedComponent);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [dpr, setDpr] = useState<number | [number, number]>(isMobile ? 1 : [1, 2]);
   const [disableEffects, setDisableEffects] = useState(false);

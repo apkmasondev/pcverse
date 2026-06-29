@@ -16,7 +16,7 @@ import { LocalAirflowParticles } from './LocalAirflowParticles';
 import { usePCView } from '../../../hooks/usePC';
 
 export const GPUGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string, rgbEnabled?: boolean }) => {
-  const { xrayMode } = usePCView();
+  const xrayMode = usePCView(s => s.xrayMode);
   const fanRef1 = useRef<Group>(null);
   const fanRef2 = useRef<Group>(null);
   const fanRef3 = useRef<Group>(null);

@@ -3,7 +3,8 @@ import { fanBladesRefsZ } from '../FanManager';
 import { materials, xrayMaterial } from '../materials';
 import { useRef, useEffect, useMemo } from 'react';
 import { Group, MeshStandardMaterial } from 'three';
-import { useTexture } from '@react-three/drei';
+import { useTexture, Instance } from '@react-three/drei';
+import { XInstances } from './XMesh';
 import { useFrame } from '@react-three/fiber';
 import heatsinkUrl from '../../../assets/heatsink.webp';
 import heatsinkSideUrl from '../../../assets/heatsink_side.webp';
@@ -18,8 +19,8 @@ import { usePCRGB, usePCView } from '../../../hooks/usePC';
 import { LocalAirflowParticles } from './LocalAirflowParticles';
 
 export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbColor: string, rgbEnabled?: boolean, isExhaust?: boolean, textureUrl?: string }) => {
-  const { rgbEnabled } = usePCRGB();
-  const { xrayMode } = usePCView();
+  const rgbEnabled = usePCRGB(s => s.rgbEnabled);
+  const xrayMode = usePCView(s => s.xrayMode);
   
   const baseTextureUrl = textureUrl || caseFanUrl;
   const rgbTextureUrl = baseTextureUrl === aioFanUrl ? aioFanRgbUrl : caseFanRgbUrl;
@@ -99,12 +100,13 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
           {!xrayMode && <primitive object={materials.darkMetal} attach="material" />}
         </mesh>
         {/* Blades (4 full-width boxes = 8 blades) */}
-        {[0, 1, 2, 3].map(i => (
-          <mesh key={i} rotation={[0, 0, (Math.PI / 4) * i]} material={xrayMode ? xrayMaterial : undefined}>
-            <boxGeometry args={[0.82, 0.03, 0.15]} />
-            {!xrayMode && <primitive object={materials.darkMetal} attach="material" />}
-          </mesh>
-        ))}
+        <XInstances>
+          <boxGeometry args={[0.82, 0.03, 0.15]} />
+          <primitive object={materials.darkMetal} attach="material" />
+          {[0, 1, 2, 3].map(i => (
+            <Instance key={i} rotation={[0, 0, (Math.PI / 4) * i]} />
+          ))}
+        </XInstances>
       </group>
 
       {/* Outer Frame */}
@@ -164,7 +166,7 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
 
 
 export const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string, rgbEnabled?: boolean }) => {
-  const { xrayMode } = usePCView();
+  const xrayMode = usePCView(s => s.xrayMode);
   const heatsinkTexture = useTexture(heatsinkUrl);
   const heatsinkSideTexture = useTexture(heatsinkSideUrl);
   const copperPlateTexture = useTexture(copperPlateUrl);
@@ -229,12 +231,13 @@ export const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string, rgbEnabled?:
         )}
       </mesh>
       {/* Heatpipes */}
-      {[-0.15, 0, 0.15].map((x, i) => (
-        <mesh key={i} position={[x, 0, -0.1]} rotation={[Math.PI / 2, 0, 0]} material={xrayMode ? xrayMaterial : undefined}>
-          <cylinderGeometry args={[0.03, 0.03, 0.3, 16]} />
-          {!xrayMode && <primitive object={materials.chromeMetal} attach="material" />}
-        </mesh>
-      ))}
+      <XInstances>
+        <cylinderGeometry args={[0.03, 0.03, 0.3, 16]} />
+        <primitive object={materials.chromeMetal} attach="material" />
+        {[-0.15, 0, 0.15].map((x, i) => (
+          <Instance key={i} position={[x, 0, -0.1]} rotation={[Math.PI / 2, 0, 0]} />
+        ))}
+      </XInstances>
       {/* Fin Stack - shifted to Z=0.12 and shortened to 0.54 depth to prevent overlapping/smudging with the Fan at Z=0.5 */}
       <mesh position={[0, 0.1, 0.12]} material={xrayMode ? xrayMaterial : undefined}>
         <boxGeometry args={[1, 0.8, 0.54]} />
