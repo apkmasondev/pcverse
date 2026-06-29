@@ -150,9 +150,21 @@ const vec = new Vector3();
 
 ---
 
-## 9. Zarządzanie Stanem i Unikanie Re-renderów Lawinowych
-**Problem:** Opieranie zmiennych 3D o wysokiej częstotliwości zmian (np. kolory RGB, animacje, tryby wyświetlania) o klasyczny `React.Context` powoduje pełne przebudowywanie kilkunastu komponentów naraz, zabijając FPS.
-**Rozwiązanie:** Dla izolowanych stanów 3D używaj wzorców z zewnętrznymi store'ami (Zustand/Jotai) pozwalających na subskrypcję pojedynczych wartości. Nigdy nie ładuj szybko zmieniających się flag (np. `explodeMode`) do wspólnego wora kontekstowego. Do efektów tymczasowych (duchy, hover) używaj globalnie wyeksportowanych materiałów z `materials.ts`, unikając tworzenia nowych obiektów w JSX.
+## 10. Optymalizacja Pętli Renderującej (Omijanie VDOM)
+**Problem:** Animowanie właściwości obiektów (jak skala, pozycja czy dynamiczne podświetlenie w czasie najechania kursorem) poprzez klasyczny stan Reacta (`useState` lub subskrybowany Zustand) na każdy kadr renderowania wymusza lawinową przebudowę struktury VDOM. Przy 60 czy 120 FPS dramatycznie obciąża to główny wątek (tzw. narzut frameworka React).
+**Rozwiązanie:** Do animacji i szybkich reakcji używaj wzorca **Transient State**. Odczytuj stan bez subskrypcji z zewnętrznego store'a (np. `usePCSelection.getState().hoveredId`) bezpośrednio w pętli `useFrame`. Zamiast modyfikować JSX, mutuj parametry obiektu bezpośrednio na wskaźniku: `meshRef.current.scale.set(x, y, z)`, całkowicie omijając cykl życia Reacta.
+
+## 11. Dynamiczna Wydajność (Adaptive Performance)
+**Problem:** Hardcodowanie i "zgadywanie" możliwości sprzętowych na podstawie odczytywania nazwy procesora graficznego (`UNMASKED_RENDERER_WEBGL` szukające słów Intel/Mali/Adreno) to potężny dług technologiczny. Wiele nowoczesnych, zintegrowanych chipów (np. Apple M1) potrafi bić na głowę stare, dedykowane karty, co skutkowało zablokowaniem im ładnej grafiki.
+**Rozwiązanie:** Używaj komponentu `<PerformanceMonitor>` (z Drei) na głównym drzewie sceny. Zamiast zgadywać po nazwie, monitor na bieżąco sprawdza realne klatki na sekundę. W przypadku wystąpienia zdarzenia `onDecline`, "w locie" obcinaj jakość renderowania (zmniejsz DPR do 1, wyłącz Bloom, zatrzymaj generowanie cząsteczek `<Sparkles>`).
+
+## 12. Zabezpieczenie przed Context Loss (PWA / Mobile)
+**Problem:** Przeglądarki mobilne pod systemami iOS i Android są bardzo agresywne w zarządzaniu pamięcią. Gdy użytkownik aplikacji z minimalizuje przeglądarkę (np. żeby odpisać na SMS), a w tle działa rozpędzona, ciężka pętla WebGL, urządzenie natychmiastowo ubije proces GPU dla oszczędności baterii, generując błąd "Context Loss". Po powrocie do PCVerse ekran pozostanie martwy i czarny.
+**Rozwiązanie:** Nasłuchuj na obiekcie dokumentu zdarzenia `visibilitychange`. Jeśli karta stała się ukryta, natychmiast instruuj silnik Three.js aby bezwzględnie wstrzymał renderowanie (w React Three Fiber polega to np. na dynamicznej zmianie trybu `<Canvas frameloop="never">`). Po wyciągnięciu karty na wierzch, obudź pętlę (`frameloop="always"`).
+
+## 13. Transparentność Overlayów HTML (Pointer Events)
+**Problem:** Nakładanie paneli UI oraz etykiet 3D HTML (z biblioteki Drei) często powoduje sytuację, w której "niewidzialny" blok tekstowy typu `div` przejmuje dotyk użytkownika na telefonie. W efekcie, próba obrócenia kamery po trafieniu palcem na etykietę owocuje brakiem reakcji (uderzenie w szklaną ścianę HTML-a), co niszczy User Experience.
+**Rozwiązanie:** Obowiązkowo, każda etykieta HTML nadbudowana nad środowiskiem 3D, nie będąca interaktywnym formularzem lub przyciskiem, musi otrzymać w CSS klasę wyłączającą uwięzienie myszki (np. `pointer-events-none` w TailwindCSS). Dzięki temu zdarzenia dotykowe spływają pod spód HTML, prosto w ręce silnika 3D (`CameraControls`).
 
 ---
-Dbając o powyższe 9 filarów zagwarantujesz, że renderowana scena 3D pozostanie wolna od błędów wizualnych (glitchy) oraz zachowa stabilność pamięci i wydajność powyżej optymalnych 60 FPS na każdym urządzeniu.
+Dbając o powyższe 13 filarów zagwarantujesz, że renderowana scena 3D pozostanie wolna od błędów wizualnych (glitchy) oraz zachowa stabilność pamięci i wydajność powyżej optymalnych 60 FPS na każdym urządzeniu.

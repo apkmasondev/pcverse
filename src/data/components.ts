@@ -84,7 +84,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Współczesny procesor zawiera miliardy mikroskopijnych tranzystorów na powierzchni kilku centymetrów kwadratowych.",
     position: [-0.42, 0.95, -1.6],
-    explodedPosition: [-2.54, 6.5, -2.6],
+    explodedPosition: [-2.9, 6.5, -4],
     color: "#e94560",
     perfImpact: { gaming: 25, ai: 20, productivity: 40 },
     customStats: [
@@ -164,7 +164,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Współczesne układy graficzne (GPU) są wykorzystywane nie tylko w grach, ale także jako potężne 'mózgi' dla sztucznej inteligencji, ponieważ potrafią przetwarzać tysiące operacji matematycznych jednocześnie.",
     position: [-0.25, -0.455, -1],
-    explodedPosition: [-9, 0.65, -3.25],
+    explodedPosition: [-10, 0.65, -3.25],
     color: "#6366f1",
     perfImpact: { gaming: 60, ai: 60, productivity: 15 },
     customStats: [
@@ -284,7 +284,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Najnowsze dyski NVMe (w standardzie PCIe 5.0) osiągają oszałamiającą prędkość odczytu na poziomie przekraczającym 14 000 MB/s!",
     position: [-0.42, 0.35, -1.8],
-    explodedPosition: [5.85, 4, -2.6],
+    explodedPosition: [7, 4, -2.6],
     color: "#f8b500",
     perfImpact: { gaming: 10, ai: 5, productivity: 15 },
     customStats: [
@@ -432,7 +432,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Wyciąg ciepłego powietrza z tyłu jest kluczowy – gorące powietrze naturalnie unosi się do góry i gromadzi z tyłu obudowy.",
     position: [-1.8, 1.4, -0.4],
-    explodedPosition: [-6.3, 2.6, -0.52],
+    explodedPosition: [-6.3, 2.2, -0.52],
     color: "#ffffff",
     perfImpact: { gaming: 10, ai: 10, productivity: 5 },
     customStats: [
@@ -466,7 +466,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Podwójne wentylatory pozwalają kręcić się wolniej przy zachowaniu tej samej wydajności, co obniża hałas.",
     position: [-1.8, 1.4, 0.8],
-    explodedPosition: [-6, 5, 1.04],
+    explodedPosition: [-6, 5.2, 1.04],
     color: "#ffffff",
     perfImpact: { gaming: 5, ai: 5, productivity: 2 },
     customStats: [
