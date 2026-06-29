@@ -372,8 +372,6 @@ export const PCModel = () => {
   const groupRef = useRef<Group>(null);
   const { buildMode, currentStep, maxSteps } = useBuildStore();
   const showAirflow = usePCView(state => state.showAirflow);
-  const { invalidate } = useThree();
-
   useFrame((_, delta) => {
     // Na desktopie i tak renderujemy 60fps (frameloop="always").
     // Na mobile (frameloop="demand") usunięcie invalidate() z wiatraków pozwala faktycznie
