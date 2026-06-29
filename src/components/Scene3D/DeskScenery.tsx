@@ -63,13 +63,14 @@ const AmbilightStrip = () => {
 
   useFrame((_, delta) => {
     if (!groupRef.current) return;
+    const dt = Math.min(delta, 0.05);
     targetColor.current.set(rgbColor);
-    targetIntensity.current = THREE.MathUtils.lerp(targetIntensity.current, rgbEnabled ? 3 : 0, delta * 10);
+    targetIntensity.current = THREE.MathUtils.lerp(targetIntensity.current, rgbEnabled ? 3 : 0, dt * 10);
 
     groupRef.current.children.forEach((child) => {
       if ((child as THREE.PointLight).isLight) {
         const light = child as THREE.PointLight;
-        light.color.lerp(targetColor.current, delta * 5);
+        light.color.lerp(targetColor.current, dt * 5);
         light.intensity = targetIntensity.current;
       }
     });

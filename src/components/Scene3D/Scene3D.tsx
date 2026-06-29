@@ -26,11 +26,12 @@ const CursorLight = () => {
 
   useFrame(({ raycaster, camera }, delta) => {
     if (lightRef.current) {
+      const dt = Math.min(delta, 0.05);
       // Place light slightly in front of the object the user is pointing at
       const distance = camera.position.length() * 0.6;
       raycaster.ray.at(distance, _vec.current);
-      lightRef.current.position.lerp(_vec.current, 1 - Math.exp(-10 * delta)); // Make lerp frame-rate independent roughly
-      lightRef.current.intensity = THREE.MathUtils.lerp(lightRef.current.intensity, cursorLightOn ? 3.5 : 0, delta * 5);
+      lightRef.current.position.lerp(_vec.current, 1 - Math.exp(-10 * dt)); // Make lerp frame-rate independent roughly
+      lightRef.current.intensity = THREE.MathUtils.lerp(lightRef.current.intensity, cursorLightOn ? 3.5 : 0, dt * 5);
     }
   });
 

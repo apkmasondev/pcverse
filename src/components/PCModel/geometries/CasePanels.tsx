@@ -66,6 +66,7 @@ export const CasePanels = ({
   }, []);
 
   useFrame((_state, delta) => {
+    const dt = Math.min(delta, 0.05);
     const FLY_DIST = 50.0;
     const HIDE_THRESHOLD = 35.0;
     const isExplodedOrBuild = explodeStep >= 1 || buildMode;
@@ -78,8 +79,8 @@ export const CasePanels = ({
         sideGlassRef.current.position.x = targetX;
         sideGlassMatRef.current.opacity = targetOpacity;
       } else {
-        sideGlassRef.current.position.x = MathUtils.lerp(sideGlassRef.current.position.x, targetX, delta * 2.5);
-        sideGlassMatRef.current.opacity = MathUtils.lerp(sideGlassMatRef.current.opacity, targetOpacity, delta * 2.5);
+        sideGlassRef.current.position.x = MathUtils.lerp(sideGlassRef.current.position.x, targetX, dt * 2.5);
+        sideGlassMatRef.current.opacity = MathUtils.lerp(sideGlassMatRef.current.opacity, targetOpacity, dt * 2.5);
       }
       
       sideGlassRef.current.visible = !(isExplodedOrBuild && sideGlassRef.current.position.x > HIDE_THRESHOLD);
@@ -93,8 +94,8 @@ export const CasePanels = ({
         frontGlassRef.current.position.z = targetZ;
         frontGlassMatRef.current.opacity = targetOpacity;
       } else {
-        frontGlassRef.current.position.z = MathUtils.lerp(frontGlassRef.current.position.z, targetZ, delta * 2.5);
-        frontGlassMatRef.current.opacity = MathUtils.lerp(frontGlassMatRef.current.opacity, targetOpacity, delta * 2.5);
+        frontGlassRef.current.position.z = MathUtils.lerp(frontGlassRef.current.position.z, targetZ, dt * 2.5);
+        frontGlassMatRef.current.opacity = MathUtils.lerp(frontGlassMatRef.current.opacity, targetOpacity, dt * 2.5);
       }
 
       frontGlassRef.current.visible = !(isExplodedOrBuild && frontGlassRef.current.position.z > HIDE_THRESHOLD);
@@ -105,7 +106,7 @@ export const CasePanels = ({
       if (Math.abs(solidSideRef.current.position.x - targetX) < 0.005) {
         solidSideRef.current.position.x = targetX;
       } else {
-        solidSideRef.current.position.x = MathUtils.lerp(solidSideRef.current.position.x, targetX, delta * 2.5);
+        solidSideRef.current.position.x = MathUtils.lerp(solidSideRef.current.position.x, targetX, dt * 2.5);
       }
 
       solidSideRef.current.visible = !(isExplodedOrBuild && solidSideRef.current.position.x < -HIDE_THRESHOLD);

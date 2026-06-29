@@ -221,6 +221,7 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
   
   useFrame((_state, delta) => {
     if (!groupRef.current) return;
+    const dt = Math.min(delta, 0.05);
 
     const isExploded = buildMode ? isUnbuilt : (explodeStep === 2);
     const posArray = isExploded ? data.explodedPosition : data.position;
@@ -236,15 +237,15 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
     }
 
     targetPosition.set(posArray[0], posArray[1] + liftOffset + floatOffset + explodeLift, posArray[2]);
-    groupRef.current.position.lerp(targetPosition, delta * 5);
+    groupRef.current.position.lerp(targetPosition, dt * 5);
     
     const targetScale = isSelected ? 1.05 : hovered ? 1.03 : 1.0;
     targetScale3.set(targetScale, targetScale, targetScale);
-    groupRef.current.scale.lerp(targetScale3, delta * 8);
+    groupRef.current.scale.lerp(targetScale3, dt * 8);
 
     const ringOffsetY = data.id === 'gpu' ? 0.9 : 0.4;
     if (ringRef.current) {
-      ringRef.current.rotation.z += delta * 0.5;
+      ringRef.current.rotation.z += dt * 0.5;
       ringRef.current.position.y = -data.geometryArgs[1] / 2 - ringOffsetY + Math.sin(_state.clock.elapsedTime * 3) * 0.05;
     }
   });

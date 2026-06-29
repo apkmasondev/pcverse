@@ -62,10 +62,11 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
   
   useFrame((_, delta) => {
     if (groupRef.current) {
+      const dt = Math.min(delta, 0.05);
       groupRef.current.children.forEach((child) => {
         if ((child as THREE.PointLight).isLight && child.userData.targetIntensity !== undefined) {
           const light = child as THREE.PointLight;
-          light.intensity = THREE.MathUtils.lerp(light.intensity, child.userData.targetIntensity, delta * 5);
+          light.intensity = THREE.MathUtils.lerp(light.intensity, child.userData.targetIntensity, dt * 5);
         }
       });
     }
