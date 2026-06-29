@@ -439,13 +439,13 @@ export const SidebarControls = () => {
                   <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">{pcRGBOn ? "(Włączona)" : "(Wyłączona)"}</div>
                 </button>
                 <button
-                  title={isMobile ? "Niedostępne na urządzeniach dotykowych" : "Latarka Kursora"}
-                  disabled={isMobile}
-                  onClick={() => { if (!isMobile) { playSelectSound(); triggerLoading(toggleCursorLight); } }}
-                  className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${isMobile ? 'opacity-30 cursor-not-allowed bg-[#1a1a1a] border border-white/5 text-slate-500' : (cursorLightOn ? "bg-cyan-500/20 text-cyan-300 font-bold" : "text-slate-300 hover:bg-white/10 hover:text-white")}`}
+                  title={(isMobile || isLowEndGPU) ? "Niedostępne ze względu na wydajność" : "Latarka Kursora"}
+                  disabled={isMobile || isLowEndGPU}
+                  onClick={() => { if (!(isMobile || isLowEndGPU)) { playSelectSound(); triggerLoading(toggleCursorLight); } }}
+                  className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${(isMobile || isLowEndGPU) ? 'opacity-30 cursor-not-allowed bg-[#1a1a1a] border border-white/5 text-slate-500' : (cursorLightOn ? "bg-cyan-500/20 text-cyan-300 font-bold" : "text-slate-300 hover:bg-white/10 hover:text-white")}`}
                 >
                   <div className="font-medium whitespace-nowrap">Latarka Kursora</div>
-                  <div className="text-[10px] mt-0.5 opacity-70 leading-tight">{isMobile ? "(Niedostępna)" : (cursorLightOn ? "(Włączona)" : "(Wyłączona)")}</div>
+                  <div className="text-[10px] mt-0.5 opacity-70 leading-tight">{(isMobile || isLowEndGPU) ? "(Niedostępna)" : (cursorLightOn ? "(Włączona)" : "(Wyłączona)")}</div>
                 </button>
                 </div>
               </motion.div>
