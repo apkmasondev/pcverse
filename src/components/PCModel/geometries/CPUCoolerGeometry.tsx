@@ -17,7 +17,7 @@ import radiatorPlateUrl from '../../../assets/radiator_plate.webp';
 import { usePCRGB, usePCView } from '../../../hooks/usePC';
 import { LocalAirflowParticles } from './LocalAirflowParticles';
 
-export const FanGeometry = ({ rgbColor, rgbEnabled: propRgbEnabled, isExhaust = false, textureUrl }: { rgbColor: string, rgbEnabled?: boolean, isExhaust?: boolean, textureUrl?: string }) => {
+export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbColor: string, rgbEnabled?: boolean, isExhaust?: boolean, textureUrl?: string }) => {
   const { rgbEnabled } = usePCRGB();
   const { xrayMode } = usePCView();
   
@@ -163,7 +163,7 @@ export const FanGeometry = ({ rgbColor, rgbEnabled: propRgbEnabled, isExhaust = 
 };
 
 
-export const CPUCoolerGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string, rgbEnabled?: boolean }) => {
+export const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string, rgbEnabled?: boolean }) => {
   const { xrayMode } = usePCView();
   const heatsinkTexture = useTexture(heatsinkUrl);
   const heatsinkSideTexture = useTexture(heatsinkSideUrl);
