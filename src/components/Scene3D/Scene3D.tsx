@@ -78,6 +78,7 @@ const AnimatedLights = () => {
 };
 
 const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disableEffects?: boolean }) => {
+  const isLowEndGPU = usePCView(state => state.isLowEndGPU);
   const { selectedComponent, cameraResetTrigger, explodeStep } = usePCSelection();
   const { envPreset, showDesk, showParticles, showFog } = usePCView();
   const { buildMode } = useBuildStore();
