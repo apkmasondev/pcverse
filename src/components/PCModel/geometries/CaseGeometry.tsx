@@ -5,6 +5,7 @@ import { useMemo, useEffect } from 'react';
 import { usePCView } from '../../../hooks/usePC';
 
 import { useTexture } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
 import { extrudeOpts01, extrudeOpts005 } from '../constants';
 import caseBackUrl from '../../../assets/case_back.webp';
 import caseBehindUrl from '../../../assets/case_behind.webp';
@@ -56,6 +57,19 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
     caseBottomTexture.repeat.set(-1 / 3.8, 1 / 3.8);
     caseBottomTexture.offset.set(0.5, 0.5);
   }, [caseBackTexture, caseBehindTexture, caseBottomTexture]);
+
+  const groupRef = React.useRef<THREE.Group>(null);
+  
+  useFrame((_, delta) => {
+    if (groupRef.current) {
+      groupRef.current.children.forEach((child) => {
+        if ((child as THREE.PointLight).isLight && child.userData.targetIntensity !== undefined) {
+          const light = child as THREE.PointLight;
+          light.intensity = THREE.MathUtils.lerp(light.intensity, child.userData.targetIntensity, delta * 5);
+        }
+      });
+    }
+  });
 
 
 
@@ -368,20 +382,22 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
 
       {/* Internal Premium RGB Ambient Lighting - hide in X-Ray mode */}
       {!xrayMode && (
-        <>
+        <group name="case-internal-lights">
           <pointLight
+            ref={(light) => { if (light) light.userData.targetIntensity = rgbEnabled ? 3.0 : 0; }}
             position={[0, 1.2, -0.8]}
-            intensity={rgbEnabled ? 3.0 : 0}
             distance={6}
             color="#6366f1"
             decay={1.8}
+            intensity={rgbEnabled ? 3.0 : 0}
           />
           <pointLight
+            ref={(light) => { if (light) light.userData.targetIntensity = rgbEnabled ? 2.5 : 0; }}
             position={[0, -0.8, -0.6]}
-            intensity={rgbEnabled ? 2.5 : 0}
             distance={5}
             color="#ec4899"
             decay={1.8}
+            intensity={rgbEnabled ? 2.5 : 0}
           />
         </>
       )}

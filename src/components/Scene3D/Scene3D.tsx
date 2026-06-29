@@ -22,6 +22,7 @@ const envMap: Record<string, string> = {
 const CursorLight = () => {
   const lightRef = useRef<PointLight>(null);
   const _vec = useRef(new Vector3());
+  const cursorLightOn = usePCLighting(state => state.cursorLightOn);
 
   useFrame(({ raycaster, camera }, delta) => {
     if (lightRef.current) {
@@ -29,13 +30,14 @@ const CursorLight = () => {
       const distance = camera.position.length() * 0.6;
       raycaster.ray.at(distance, _vec.current);
       lightRef.current.position.lerp(_vec.current, 1 - Math.exp(-10 * delta)); // Make lerp frame-rate independent roughly
+      lightRef.current.intensity = THREE.MathUtils.lerp(lightRef.current.intensity, cursorLightOn ? 3.5 : 0, delta * 5);
     }
   });
 
   return (
     <pointLight
       ref={lightRef}
-      intensity={3.5}
+      intensity={0}
       distance={8}
       color="#c084fc"
       decay={2}
@@ -43,10 +45,40 @@ const CursorLight = () => {
   );
 };
 
+const AnimatedLights = () => {
+  const { ambientOn, mainSpotOn, pcRGBOn } = usePCLighting();
+  const ambientRef = useRef<THREE.AmbientLight>(null);
+  const dirRef1 = useRef<THREE.DirectionalLight>(null);
+  const dirRef2 = useRef<THREE.DirectionalLight>(null);
+  const spotRef = useRef<THREE.SpotLight>(null);
+  const hemiRef = useRef<THREE.HemisphereLight>(null);
+  const pointRef = useRef<THREE.PointLight>(null);
+
+  useFrame((_, delta) => {
+    const dt = delta * 5;
+    if (ambientRef.current) ambientRef.current.intensity = THREE.MathUtils.lerp(ambientRef.current.intensity, ambientOn ? 1.2 : 0, dt);
+    if (dirRef1.current) dirRef1.current.intensity = THREE.MathUtils.lerp(dirRef1.current.intensity, mainSpotOn ? 3.5 : 0, dt);
+    if (dirRef2.current) dirRef2.current.intensity = THREE.MathUtils.lerp(dirRef2.current.intensity, pcRGBOn ? 2.0 : 0, dt);
+    if (spotRef.current) spotRef.current.intensity = THREE.MathUtils.lerp(spotRef.current.intensity, mainSpotOn ? 3.5 : 0, dt);
+    if (hemiRef.current) hemiRef.current.intensity = THREE.MathUtils.lerp(hemiRef.current.intensity, ambientOn ? 1.5 : 0, dt);
+    if (pointRef.current) pointRef.current.intensity = THREE.MathUtils.lerp(pointRef.current.intensity, pcRGBOn ? 15.0 : 0, dt);
+  });
+
+  return (
+    <>
+      <ambientLight ref={ambientRef} intensity={0} />
+      <directionalLight ref={dirRef1} position={[10, 20, 10]} intensity={0} />
+      <directionalLight ref={dirRef2} position={[-10, -10, -10]} color="#6366f1" intensity={0} />
+      <spotLight ref={spotRef} position={[-10, 10, -10]} angle={0.3} penumbra={1} intensity={0} />
+      <hemisphereLight ref={hemiRef} color="#ffffff" groundColor="#a0aabf" intensity={0} />
+      <pointLight ref={pointRef} position={[0, 0, 6]} color="#ffffff" distance={30} decay={2} intensity={0} />
+    </>
+  );
+};
+
 const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disableEffects?: boolean }) => {
   const { selectedComponent, cameraResetTrigger, explodeStep } = usePCSelection();
   const { envPreset, showDesk, showParticles, showFog } = usePCView();
-  const { ambientOn, mainSpotOn, pcRGBOn, cursorLightOn } = usePCLighting();
   const { buildMode } = useBuildStore();
   const cameraControlsRef = useRef<CameraControls>(null);
   const { camera } = useThree();
@@ -195,8 +227,6 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
       <color attach="background" args={[bgColor]} />
       {showFog && <fog attach="fog" args={[bgColor, 15, 60]} />}
 
-      <ambientLight intensity={ambientOn ? 1.2 : 0} />
-
       <PerspectiveCamera makeDefault position={[0, 3, 16]} fov={50} near={0.5} far={100} />
 
       {!isMobile && !disableEffects && showParticles && !reducedMotion && (
@@ -206,16 +236,9 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
         </>
       )}
 
-      <directionalLight
-        position={[10, 20, 10]}
-        intensity={mainSpotOn ? 3.5 : 0}
-      />
-      <directionalLight position={[-10, -10, -10]} intensity={pcRGBOn ? 2.0 : 0} color="#6366f1" />
-      <spotLight position={[-10, 10, -10]} intensity={mainSpotOn ? 3.5 : 0} angle={0.3} penumbra={1} />
-      <hemisphereLight intensity={ambientOn ? 1.5 : 0} color="#ffffff" groundColor="#a0aabf" />
-      <pointLight position={[0, 0, 6]} intensity={pcRGBOn ? 15.0 : 0} color="#ffffff" distance={30} decay={2} />
+      <AnimatedLights />
 
-      {!isMobile && !disableEffects && cursorLightOn && <CursorLight />}
+      {!isMobile && !disableEffects && <CursorLight />}
 
       <React.Suspense fallback={null}>
         <group position={[0, 1.36, 0]}>
