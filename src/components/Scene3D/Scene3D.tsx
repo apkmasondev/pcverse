@@ -16,7 +16,8 @@ const envMap: Record<string, string> = {
   studio: import.meta.env.BASE_URL + 'environments/studio_small_03_1k.hdr',
   city: import.meta.env.BASE_URL + 'environments/potsdamer_platz_1k.hdr',
   dawn: import.meta.env.BASE_URL + 'environments/kiara_1_dawn_1k.hdr',
-  apartment: import.meta.env.BASE_URL + 'environments/lebombo_1k.hdr'
+  apartment: import.meta.env.BASE_URL + 'environments/lebombo_1k.hdr',
+  night: import.meta.env.BASE_URL + 'environments/moonless_golf_1k.hdr'
 };
 
 const CursorLight = () => {
@@ -66,7 +67,6 @@ const AnimatedLights = ({ isLowEndGPU }: { isLowEndGPU: boolean }) => {
   const spotRef = useRef<THREE.SpotLight>(null);
   const hemiRef = useRef<THREE.HemisphereLight>(null);
   const rectRef = useRef<THREE.RectAreaLight>(null);
-  const pointRef = useRef<THREE.PointLight>(null);
 
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05) * 5;
@@ -81,8 +81,6 @@ const AnimatedLights = ({ isLowEndGPU }: { isLowEndGPU: boolean }) => {
       if (ambientRef.current) ambientRef.current.intensity = THREE.MathUtils.lerp(ambientRef.current.intensity, ambientOn ? 1.2 : 0, dt);
       if (rectRef.current) rectRef.current.intensity = THREE.MathUtils.lerp(rectRef.current.intensity, ambientOn ? 3.0 : 0, dt);
     }
-    
-    if (pointRef.current) pointRef.current.intensity = THREE.MathUtils.lerp(pointRef.current.intensity, pcRGBOn ? 15.0 : 0, dt);
   });
 
   return (
@@ -98,7 +96,6 @@ const AnimatedLights = ({ isLowEndGPU }: { isLowEndGPU: boolean }) => {
       <directionalLight ref={dirRef1} position={[10, 20, 10]} intensity={0} />
       <directionalLight ref={dirRef2} position={[-10, -10, -10]} color="#6366f1" intensity={0} />
       <spotLight ref={spotRef} position={[-10, 10, -10]} angle={0.3} penumbra={1} intensity={0} />
-      <pointLight ref={pointRef} position={[0, 0, 6]} color="#ffffff" distance={30} decay={2} intensity={0} />
     </>
   );
 };
@@ -155,6 +152,8 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
     switch (envPreset) {
       case 'city':
         return { cell: '#1e3a8a', section: '#3b82f6', sparkles: '#06b6d4' }; // Cyberpunk (Niebiesko/Neonowy), pyłki Cyan
+      case 'night':
+        return { cell: '#2e1065', section: '#6b21a8', sparkles: '#d8b4fe' }; // Noc (Mrok), ciemny fiolet
       case 'dawn':
         return { cell: '#7c2d12', section: '#ea580c', sparkles: '#fef08a' }; // Świt (Pomarańcz/Ciepły), pyłki Złote
       case 'apartment':
@@ -166,7 +165,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
   }, [envPreset]);
 
   // Dynamiczny kolor tła zależny od wybranego środowiska HDRi
-  const bgColor = envPreset === 'studio' ? '#13141a' : envPreset === 'city' ? '#0f0a1c' : envPreset === 'apartment' ? '#8492a6' : '#1e1b18';
+  const bgColor = envPreset === 'studio' ? '#13141a' : envPreset === 'city' ? '#0f0a1c' : envPreset === 'apartment' ? '#8492a6' : envPreset === 'night' ? '#05020a' : '#1e1b18';
 
   useEffect(() => {
     if (selectedComponent) {

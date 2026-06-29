@@ -29,6 +29,7 @@ import {
 
 const PRESETS = [
   { id: "city", name: "Cyberpunk", desc: "Nocne miasto" },
+  { id: "night", name: "Noc (Mrok)", desc: "Głęboka czerń" },
   { id: "studio", name: "Studio", desc: "Neutralne światło" },
   { id: "dawn", name: "Świt", desc: "Ciepłe poranne" },
   { id: "apartment", name: "Jasny Pokój", desc: "Bardzo jasne wnętrze" },
@@ -431,12 +432,14 @@ export const SidebarControls = () => {
                   <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">{mainSpotOn ? "(Włączony)" : "(Wyłączony)"}</div>
                 </button>
                 <button
+                  title={(!showDesk || isMobile || isLowEndGPU) ? "Opcja dostępna tylko w Trybie Scenografii na PC (wymaga ściany)" : "Tylna Poświata RGB"}
+                  disabled={!showDesk || isMobile || isLowEndGPU}
                   aria-pressed={pcRGBOn}
-                  onClick={() => { playSelectSound(); triggerLoading(togglePcRGB); }}
-                  className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${pcRGBOn ? "bg-purple-500/20 text-purple-300 font-bold" : "text-slate-300 hover:bg-white/10 hover:text-white"}`}
+                  onClick={() => { if (showDesk && !isMobile && !isLowEndGPU) { playSelectSound(); triggerLoading(togglePcRGB); } }}
+                  className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${(!showDesk || isMobile || isLowEndGPU) ? 'opacity-30 cursor-not-allowed bg-[#1a1a1a] border border-white/5 text-slate-500' : (pcRGBOn ? "bg-purple-500/20 text-purple-300 font-bold" : "text-slate-300 hover:bg-white/10 hover:text-white")}`}
                 >
                   <div className="font-medium">Tylna Poświata RGB</div>
-                  <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">{pcRGBOn ? "(Włączona)" : "(Wyłączona)"}</div>
+                  <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">{(!showDesk || isMobile || isLowEndGPU) ? "(Niedostępna)" : (pcRGBOn ? "(Włączona)" : "(Wyłączona)")}</div>
                 </button>
                 <button
                   title={(isMobile || isLowEndGPU) ? "Niedostępne ze względu na wydajność" : "Latarka Kursora"}
