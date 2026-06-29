@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { CameraControls, Environment, PerspectiveCamera, Sparkles, PerformanceMonitor, Grid, Stars, Preload } from '@react-three/drei';
-import { EffectComposer, Bloom, N8AO, Vignette, ChromaticAberration, DepthOfField } from '@react-three/postprocessing';
+import { EffectComposer, Bloom, N8AO, Vignette, ChromaticAberration, DepthOfField, SMAA } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import { Vector2, Vector3, PointLight } from 'three';
 import { PCModel } from '../PCModel/PCModel';
@@ -320,7 +320,8 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
           />
         )}
         {!isMobile && (
-          <EffectComposer multisampling={isLowEndGPU ? 0 : 4}>
+          <EffectComposer multisampling={0} stencilBuffer={false}>
+            {!isLowEndGPU ? <SMAA /> : <></>}
             {dofEnabled && !disableEffects ? <DepthOfField key="dof" target={dofTarget} focalLength={0.05} bokehScale={8} height={700} /> : <></>}
             {!disableEffects ? <N8AO key="n8ao" aoRadius={0.5} intensity={2.0} distanceFalloff={0.5} quality="medium" halfRes /> : <></>}
             <Bloom key="bloom" luminanceThreshold={1.2} mipmapBlur={!isLowEndGPU} intensity={1.5} />
@@ -393,7 +394,7 @@ export const Scene3D = () => {
         </div>
       )}
       <Canvas
-        gl={{ antialias: !isLowEndGPU }}
+        gl={{ antialias: false, stencil: false }}
         dpr={isLowEndGPU ? 1 : dpr}
         frameloop={frameloop}
         onPointerMissed={() => setSelectedComponent(null)}
