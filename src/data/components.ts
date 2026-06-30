@@ -180,7 +180,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Współczesne układy graficzne (GPU) są wykorzystywane nie tylko w grach, ale także jako potężne 'mózgi' dla sztucznej inteligencji, ponieważ potrafią przetwarzać tysiące operacji matematycznych jednocześnie.",
     position: [-0.25, -0.455, -1],
-    explodedPosition: [-10, 0.65, -3.25],
+    explodedPosition: [-10.5, 3.5, -3.5],
     color: "#6366f1",
     perfImpact: { gaming: 60, ai: 60, productivity: 15 },
     customStats: [
@@ -356,7 +356,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Wydajny zasilacz zamienia mniej prądu w bezużyteczne ciepło, oszczędzając Twoje pieniądze na rachunkach za prąd.",
     position: [-1.2, -1.86, -0.8],
-    explodedPosition: [-4.55, -0.5, 4.0],
+    explodedPosition: [-6, -0.1, 5.0],
     color: "#2a363b",
     perfImpact: { gaming: 0, ai: 0, productivity: 0 },
     customStats: [
@@ -401,7 +401,7 @@ export const pcComponents: PCComponent[] = [
     ],
     funFact: "Wentylatory RGB potrafią synchronizować się tworząc niesamowite, płynne pokazy świetlne wewnątrz obudowy.",
     position: [0.8, -0.8, 1.75],
-    explodedPosition: [4, -1.5, 5],
+    explodedPosition: [4, -1.3, 5],
     color: "#ffffff",
     perfImpact: { gaming: 10, ai: 10, productivity: 5 },
     customStats: [

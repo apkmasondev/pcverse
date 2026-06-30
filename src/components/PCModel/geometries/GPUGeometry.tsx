@@ -31,6 +31,7 @@ export const GPUGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string, rgbEna
     gpuFrontTexture.wrapS = RepeatWrapping;
     gpuFrontTexture.wrapT = RepeatWrapping;
     gpuFrontTexture.repeat.set(3, 1);
+    gpuFrontTexture.needsUpdate = true;
   }, [gpuFrontTexture]);
 
   useEffect(() => {
@@ -214,7 +215,7 @@ export const GPUGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string, rgbEna
 
       {/* Static RGB Rings on the Front Texture - hide when xrayMode is active */}
       {!xrayMode && [-1.14, 0, 1.14].map((x, i) => (
-        <mesh key={`rgb-ring-${i}`} position={[x, -0.385, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <mesh key={`rgb-ring-${i}`} position={[x, -0.39, 0]} rotation={[Math.PI / 2, 0, 0]}>
           <torusGeometry args={[0.54, 0.022, 16, 48]} />
           <primitive object={rgbMat25} attach="material" />
         </mesh>
