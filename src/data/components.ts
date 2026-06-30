@@ -24,6 +24,10 @@ export interface PCComponent {
     tool: string;
     parameter: string;
   };
+  connections?: {
+    name: string;
+    detail: string;
+  }[];
   exampleSpecs?: {
     brand: string;
     model: string;
@@ -57,6 +61,10 @@ export const pcComponents: PCComponent[] = [
       tool: "Wkrętak krzyżakowy (Phillips #2)",
       parameter: "Śruby 6-32 lub M3. Moment: Delikatny opór (Hand-tight)"
     },
+    connections: [
+      { name: "Gniazdo CPU", detail: "Socket AM5 / LGA 1700 / 1851" },
+      { name: "Zasilanie główne", detail: "Kabel 24-pin ATX" }
+    ],
     exampleSpecs: [
       {
         brand: "ASUS",
@@ -97,6 +105,10 @@ export const pcComponents: PCComponent[] = [
       tool: "Dłonie (Brak narzędzi)",
       parameter: "Zerowa siła ucisku, wyrównanie znaczników"
     },
+    connections: [
+      { name: "Styki procesora", detail: "Piny (PGA) lub Pola (LGA)" },
+      { name: "Zasilanie i komunikacja", detail: "Bezpośrednio z gniazda płyty" }
+    ],
     exampleSpecs: [
       {
         brand: "AMD",
@@ -137,6 +149,10 @@ export const pcComponents: PCComponent[] = [
       tool: "Wkrętak krzyżakowy (Phillips #2)",
       parameter: "Śruby sprężynowe. Dokręcać na krzyż (X) do oporu"
     },
+    connections: [
+      { name: "Zasilanie pompy/wiatraka", detail: "Złącze 4-pin PWM (CPU_FAN/PUMP)" },
+      { name: "Synchronizacja RGB", detail: "Złącze 3-pin ARGB (5V)" }
+    ],
     exampleSpecs: [
       {
         brand: "Lian Li (AIO Ciecz)",
@@ -177,6 +193,10 @@ export const pcComponents: PCComponent[] = [
       tool: "Wkrętak krzyżakowy (Phillips #2)",
       parameter: "Śruby 6-32 UNC. Wymagane mocne dociśnięcie śledzia"
     },
+    connections: [
+      { name: "Szyna danych (Płyta Gł.)", detail: "Slot PCIe x16 (Gen 4.0/5.0)" },
+      { name: "Zasilanie dodatkowe", detail: "Wtyk 12V-2x6 (12VHPWR) lub 3x 8-pin" }
+    ],
     exampleSpecs: [
       {
         brand: "NVIDIA",
@@ -217,6 +237,10 @@ export const pcComponents: PCComponent[] = [
       tool: "Dłonie (Brak narzędzi)",
       parameter: "Równomierny obustronny nacisk aż do zatrzaśnięcia"
     },
+    connections: [
+      { name: "Standard Gniazda", detail: "Slot DIMM DDR5" },
+      { name: "Zasilanie układu", detail: "Napięcie ok. 1.1V - 1.45V z płyty" }
+    ],
     exampleSpecs: [
       {
         brand: "G.Skill",
@@ -257,6 +281,10 @@ export const pcComponents: PCComponent[] = [
       tool: "Dłonie (Brak narzędzi)",
       parameter: "Równomierny obustronny nacisk wzdłuż osi"
     },
+    connections: [
+      { name: "Standard Gniazda", detail: "Slot DIMM DDR5" },
+      { name: "Kanał roboczy", detail: "Dual-Channel (razem z modułem nr 1)" }
+    ],
     exampleSpecs: [
       {
         brand: "G.Skill",
@@ -297,6 +325,10 @@ export const pcComponents: PCComponent[] = [
       tool: "Wkrętak precyzyjny (Phillips #0)",
       parameter: "Śruba M2x3mm. Minimalny moment, ryzyko pęknięcia PCB"
     },
+    connections: [
+      { name: "Złącze Płyty Głównej", detail: "Gniazdo M.2 (Klucz M)" },
+      { name: "Magistrala danych", detail: "Protokół NVMe (PCIe x4)" }
+    ],
     exampleSpecs: [
       {
         brand: "Crucial",
@@ -337,6 +369,10 @@ export const pcComponents: PCComponent[] = [
       tool: "Wkrętak krzyżakowy (Phillips #2)",
       parameter: "4x śruby 6-32 UNC na stelażu tylnym. Przełącznik I/O na 0"
     },
+    connections: [
+      { name: "Zasilanie Płyty i CPU", detail: "Kable 24-pin ATX, 2x 8-pin EPS" },
+      { name: "Zasilanie GPU", detail: "Kabel 12V-2x6 (12VHPWR)" }
+    ],
     exampleSpecs: [
       {
         brand: "Seasonic",
@@ -378,6 +414,10 @@ export const pcComponents: PCComponent[] = [
       tool: "Wkrętak krzyżakowy (Phillips #2)",
       parameter: "Śruby samogwintujące. Do oporu i zaprzestania ślizgu"
     },
+    connections: [
+      { name: "Zasilanie silnika", detail: "Kabel 4-pin PWM (SYS_FAN)" },
+      { name: "Podświetlenie", detail: "Kabel 3-pin ARGB (5V)" }
+    ],
     exampleSpecs: [{ brand: "Noctua", model: "NF-A14x25 G2 PWM", specs: "140mm, Sterrox LCP, 0.5mm clearance" }, { brand: "Phanteks", model: "T30-120", specs: "120mm x 30mm, 3000 RPM, Ogromne ciśnienie" }],
     geometryArgs: [1.2, 1.2, 0.2],
     imageUrls: [
@@ -445,6 +485,10 @@ export const pcComponents: PCComponent[] = [
       tool: "Wkrętak krzyżakowy (Phillips #2)",
       parameter: "Śruby samogwintujące lub antywibracyjne kołki silikonowe"
     },
+    connections: [
+      { name: "Zasilanie silnika", detail: "Kabel 4-pin PWM (SYS_FAN)" },
+      { name: "Podświetlenie", detail: "Kabel 3-pin ARGB (5V)" }
+    ],
     exampleSpecs: [{ brand: "Noctua", model: "NF-A14x25 G2 PWM", specs: "140mm, Sterrox LCP, 0.5mm clearance" }, { brand: "Phanteks", model: "T30-120", specs: "120mm x 30mm, 3000 RPM, Ogromne ciśnienie" }],
     geometryArgs: [1.2, 1.2, 0.2],
     imageUrls: [
@@ -507,6 +551,10 @@ export const pcComponents: PCComponent[] = [
       { label: "Wyciszenie Wnętrza", value: 75 },
       { label: "Kultura Pracy", value: 85 }
     ],
+    connections: [
+      { name: "Kable Front Panelu", detail: "USB-C, USB-A, Audio, Power SW" },
+      { name: "Wspierane Płyty Gł.", detail: "E-ATX, ATX, Micro-ATX, Mini-ITX" }
+    ],
     exampleSpecs: [{ brand: "HYTE", model: "Y70 Touch Infinite", specs: "Dwukomorowa, Szkło bez słupków, Ekran 4K" }, { brand: "Lian Li", model: "O11 Vision", specs: "Brak słupków, 3 panele ze szkła hartowanego" }],
     geometryArgs: [4, 5, 2],
     imageUrls: ["/images/components/case.webp", "/images/components/case_macro.webp", "/images/components/case_alt.webp", "/images/components/case_real.webp"],
@@ -536,6 +584,10 @@ export const pcComponents: PCComponent[] = [
       tool: "Wkrętak krzyżakowy (Phillips #2) lub zatrzaski",
       parameter: "Gwint 6-32. Uważać by nie zgnieść gumowych damperów"
     },
+    connections: [
+      { name: "Transfer Danych", detail: "Kabel sygnałowy SATA III (6 Gb/s)" },
+      { name: "Zasilanie napędu", detail: "Kabel zasilający SATA" }
+    ],
     exampleSpecs: [{ brand: "Seagate", model: "IronWolf Pro 24TB", specs: "SATA 6Gb/s, 7200 RPM, Zapis CMR" }, { brand: "WD", model: "Red Pro 24TB", specs: "Optymalizowany pod NAS, Technologia OptiNAND" }],
     geometryArgs: [1.0, 0.45, 1.4],
     imageUrls: [

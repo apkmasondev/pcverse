@@ -118,35 +118,19 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
   const _tempVec = useRef(new Vector3());
   const _tempDir = useRef(new Vector3());
   const _tempFocal = useRef(new Vector3());
-  const targetOffset = useRef({ x: 0, y: 0 });
-  const currentOffset = useRef({ x: 0, y: 0 });
+  // Removed setViewOffset logic in favor of physical camera panning
 
-  useFrame((state, delta) => {
-    const dt = Math.min(delta, 0.05);
-    const cx = currentOffset.current.x;
-    const cy = currentOffset.current.y;
-    const tx = targetOffset.current.x;
-    const ty = targetOffset.current.y;
-    
-    if (Math.abs(cx - tx) > 0.5 || Math.abs(cy - ty) > 0.5) {
-      currentOffset.current.x = THREE.MathUtils.lerp(cx, tx, dt * 5);
-      currentOffset.current.y = THREE.MathUtils.lerp(cy, ty, dt * 5);
-      
-      const { innerWidth, innerHeight } = window;
-      if (state.camera instanceof THREE.PerspectiveCamera) {
-        state.camera.setViewOffset(innerWidth, innerHeight, currentOffset.current.x, currentOffset.current.y, innerWidth, innerHeight);
-        state.camera.updateProjectionMatrix();
-        state.invalidate();
-      }
-    } else if (tx === 0 && ty === 0 && state.camera instanceof THREE.PerspectiveCamera && state.camera.view && state.camera.view.enabled) {
-        state.camera.clearViewOffset();
-        state.camera.updateProjectionMatrix();
-        state.invalidate();
-    }
-  });
-
+  const dofRef = useRef<any>(null);
   const dofTarget = useMemo(() => new Vector3(), []);
   const dofEnabled = !!selectedComponent;
+
+  // Naprawa błędu DepthOfField: upewniamy się, że cel ostrości to ZAWSZE aktualny środek kamery,
+  // co gwarantuje pełną ostrość nawet podczas trwania animacji Panningu kamery.
+  useFrame(() => {
+    if (dofEnabled && dofRef.current && cameraControlsRef.current) {
+      cameraControlsRef.current.getTarget(dofRef.current.target);
+    }
+  });
 
   const gridColors = useMemo(() => {
     switch (envPreset) {
@@ -210,23 +194,30 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
       const dist = isMobile ? 5.5 : 4;
       const targetPos = targetVec.clone().add(dir.multiplyScalar(dist));
 
+      // Fizyczne przesunięcie kamery zamiast setViewOffset (Option A)
+      let panX = 0;
+      let panY = 0;
+      if (isMobile) {
+        panY = -1.2; // Kamera w dół, komponent ląduje wyżej
+      } else {
+        panX = 1.8; // Kamera w prawo, komponent ląduje po lewej
+      }
+      
+      const rightVector = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), dir).normalize();
+      const upVector = new THREE.Vector3(0, 1, 0);
+      
+      targetPos.addScaledVector(rightVector, panX);
+      focalPoint.addScaledVector(rightVector, panX);
+      
+      targetPos.addScaledVector(upVector, panY);
+      focalPoint.addScaledVector(upVector, panY);
+
       cameraControlsRef.current.setLookAt(
         targetPos.x, targetPos.y, targetPos.z,
         focalPoint.x, focalPoint.y, focalPoint.z,
         true
       );
-
-      // Epic UI/UX: Shift the entire camera frustum so the component avoids UI panels
-      if (camera instanceof THREE.PerspectiveCamera) {
-        if (isMobile) {
-          targetOffset.current = { x: 0, y: window.innerHeight * 0.25 };
-        } else {
-          targetOffset.current = { x: window.innerWidth * 0.25, y: 0 };
-        }
-      }
     } else if (!selectedComponent) {
-      // Płynny powrót offsetu
-      targetOffset.current = { x: 0, y: 0 };
       // Płynny powrót kamery na środek
       cameraControlsRef.current?.setLookAt(
         0, 2.5, 20,
@@ -246,7 +237,6 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
 
   useEffect(() => {
     if (cameraControlsRef.current && cameraResetTrigger > 0) {
-      targetOffset.current = { x: 0, y: 0 };
       if (camera instanceof THREE.PerspectiveCamera && camera.view) {
         camera.clearViewOffset();
         camera.updateProjectionMatrix();
@@ -264,7 +254,6 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
     if (!cameraControlsRef.current) return;
 
     if (buildMode) {
-      targetOffset.current = { x: 0, y: 0 };
       if (camera instanceof THREE.PerspectiveCamera && camera.view) {
         camera.clearViewOffset();
         camera.updateProjectionMatrix();
@@ -277,7 +266,6 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
       );
     } else if (hasInitialized.current) {
       // Płynny powrót po wyjściu z Trybu Budowy
-      targetOffset.current = { x: 0, y: 0 };
       cameraControlsRef.current.setLookAt(
         0, 2.5, 20,
         0, 0.7, 0,
@@ -332,7 +320,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
         {!isMobile && (
           <EffectComposer multisampling={0} stencilBuffer={false}>
             {!isLowEndGPU ? <SMAA /> : <></>}
-            {dofEnabled && !disableEffects ? <DepthOfField key="dof" target={dofTarget} focalLength={0.05} bokehScale={8} height={700} /> : <></>}
+            {dofEnabled && !disableEffects ? <DepthOfField ref={dofRef} key="dof" target={dofTarget} focalLength={3.0} bokehScale={5} /> : <></>}
             {!disableEffects ? <N8AO key="n8ao" aoRadius={0.5} intensity={2.0} distanceFalloff={0.5} quality="medium" halfRes /> : <></>}
             <Bloom key="bloom" luminanceThreshold={1.2} mipmapBlur={!isLowEndGPU} intensity={1.5} />
             <Vignette key="vig" eskil={false} offset={0.1} darkness={0.9} />

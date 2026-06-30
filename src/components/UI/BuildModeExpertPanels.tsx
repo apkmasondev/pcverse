@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { GraduationCap, Wrench, Activity, Cpu, Target, Lightbulb, Zap } from "lucide-react";
+import { GraduationCap, Wrench, Activity, Cpu, Target, Lightbulb, Zap, Plug } from "lucide-react";
 import { useBuildStore } from "../../store/useBuildStore";
 import { pcComponents } from "../../data/components";
 
@@ -192,6 +192,42 @@ export const BuildModeExpertPanels = () => {
         </AnimatePresence>
 
         <AnimatePresence>
+          {buildMode && currentComponent?.connections && currentStep <= maxSteps && (
+            <motion.div
+              tabIndex={0}
+              onPointerDown={(e) => {
+                if (document.activeElement === e.currentTarget) {
+                  e.preventDefault();
+                  e.currentTarget.blur();
+                }
+              }}
+              initial={{ opacity: 0, x: 50, scale: 0.9 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: 50, scale: 0.9 }}
+              transition={{ type: "spring", damping: 20, stiffness: 300, delay: 0.3 }}
+              className="group w-[40px] hover:w-[200px] focus:w-[200px] xl:w-[48px] xl:hover:w-[250px] xl:focus:w-[250px] max-h-[40px] xl:max-h-[48px] hover:max-h-[600px] focus:max-h-[600px] overflow-hidden flex flex-col items-end bg-black/20 hover:bg-black/60 focus:bg-black/60 backdrop-blur-md border-r-2 border-orange-500/70 rounded-l-xl shadow-[-20px_0_30px_rgba(0,0,0,0.2)] pointer-events-auto transition-all duration-500 ease-out mt-1 cursor-pointer focus:outline-none"
+            >
+              <div className="w-[200px] xl:w-[250px] shrink-0 flex flex-col">
+                <div className="flex items-center justify-end h-[40px] xl:h-[48px] gap-2 px-3 bg-orange-500/10 cursor-help">
+                  <span className="text-orange-400/90 font-bold uppercase tracking-widest text-[10px] xl:text-[11px] [text-shadow:0_1px_2px_rgba(0,0,0,1)] opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity duration-300 delay-100 whitespace-nowrap">
+                    Złącza i Kompatybilność
+                  </span>
+                  <Plug size={16} className="text-orange-400 drop-shadow-[0_0_5px_rgba(249,115,22,0.8)] shrink-0 xl:w-5 xl:h-5" />
+                </div>
+                <div className="px-3 pb-4 pt-2 flex flex-col gap-2 text-xs xl:text-sm [text-shadow:0_1px_3px_rgba(0,0,0,1)] opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity duration-300 delay-150 text-right">
+                  {currentComponent.connections.map((conn, idx) => (
+                    <div key={idx} className="flex flex-col gap-0.5">
+                      <div className="text-orange-500/80 font-bold uppercase tracking-wider text-[10px] xl:text-[11px]">{conn.name}:</div>
+                      <div className="text-slate-200/90 leading-tight">{conn.detail}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
           {buildMode && currentComponent?.customStats && currentStep <= maxSteps && (
             <motion.div
               tabIndex={0}
@@ -250,7 +286,7 @@ export const BuildModeExpertPanels = () => {
               initial={{ opacity: 0, x: 50, scale: 0.9 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 50, scale: 0.9 }}
-              transition={{ type: "spring", damping: 20, stiffness: 300, delay: 0.3 }}
+              transition={{ type: "spring", damping: 20, stiffness: 300, delay: 0.4 }}
               className="group w-[40px] hover:w-[200px] focus:w-[200px] xl:w-[48px] xl:hover:w-[240px] xl:focus:w-[240px] max-h-[40px] xl:max-h-[48px] hover:max-h-[600px] focus:max-h-[600px] overflow-hidden flex flex-col items-end bg-black/20 hover:bg-black/60 focus:bg-black/60 backdrop-blur-md border-r-2 border-emerald-500/70 rounded-l-xl shadow-[-20px_0_30px_rgba(0,0,0,0.2)] pointer-events-auto transition-all duration-500 ease-out mt-1 cursor-pointer focus:outline-none"
             >
               <div className="w-[200px] xl:w-[240px] shrink-0 flex flex-col">

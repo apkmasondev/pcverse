@@ -1,5 +1,11 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 38 - Optyka Kamery i Post-processing 🎥
+
+- **Perfekcyjny Kinowy Depth of Field (DoF)**: Całkowicie wyeliminowano błąd "falującego kółka" ostrości (CoC Banding / Asymmetric Frustum Bug) występujący w trybie szczegółów komponentu. Zamiast ucinać kadr kamery za pomocą `setViewOffset` (co psuło wyliczenia środka optycznego soczewki w post-processingu), wdrożono zaawansowaną fizyczną translację wektorową osi wzroku kamery (`targetPos` oraz `focalPoint` na podstawie wektora `right` i `up` z kwaternionu kamery). Dzięki temu widok w trybie szczegółów wciąż przesuwa się płynnie w lewo, robiąc miejsce na interfejs UI, ale środek optyczny wirtualnej soczewki pozostaje idealnie wyrównany, zachowując bezbłędny realizm na skrajach głębi ostrości.
+- **Dynamiczne Śledzenie Ostrości**: Dodano śledzenie bieżącego celu kamery (`CameraControls.getTarget()`) w czasie rzeczywistym (`useFrame`) przez silnik Depth of Field. Oznacza to, że punkt ostrości (Focal Plane) idealnie i płynnie podąża za modelem 3D nawet w trakcie wielosekundowej animacji lotu kamery (Panning), eliminując efekt przejściowego całkowitego rozmycia ekranu.
+- **Dopracowanie szerokości ostrości**: Znacząco zwiększono głębię ostrości (`focalLength={3.0}`) na obiekcie docelowym, tak aby cały analizowany podzespół (np. Płyta Główna z wysokim chłodzeniem) mieścił się w płaszczyźnie ostrości, a pięknemu kinowemu rozmyciu ulegało wyłącznie tło.
+
 ## Etap 37 - Poprawki Wydajności z Audytu v9 🚀
 
 - **Nowe Środowisko HDR (Noc / Mrok)**: Dodano nowy, mroczny preset oświetleniowy, działający offline (lokalny plik `moonless_golf_1k.hdr`).
