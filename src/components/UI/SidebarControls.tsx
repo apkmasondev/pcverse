@@ -29,7 +29,7 @@ import {
 
 const PRESETS = [
   { id: "city", name: "Cyberpunk", desc: "Nocne miasto" },
-  { id: "night", name: "Noc (Mrok)", desc: "Głęboka czerń" },
+  { id: "night", name: "Noc", desc: "Głęboka czerń" },
   { id: "studio", name: "Studio", desc: "Neutralne światło" },
   { id: "dawn", name: "Świt", desc: "Ciepłe poranne" },
   { id: "apartment", name: "Jasny Pokój", desc: "Bardzo jasne wnętrze" },

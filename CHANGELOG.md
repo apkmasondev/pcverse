@@ -8,7 +8,7 @@
 
 ## Etap 37 - Poprawki Wydajności z Audytu v9 🚀
 
-- **Nowe Środowisko HDR (Noc / Mrok)**: Dodano nowy, mroczny preset oświetleniowy, działający offline (lokalny plik `moonless_golf_1k.hdr`).
+- **Nowe Środowisko HDR (Noc)**: Dodano nowy, mroczny preset oświetleniowy, działający offline (lokalny plik `moonless_golf_1k.hdr`).
 - **Naprawa Bliku na GPU (Fake Light)**: Usunięto wadliwe, sztuczne, białe światło punktowe (intensity: 15.0), które nieprawidłowo "wypalało" lustrzany blik na karcie graficznej przy włączonym trybie RGB.
 - **Logika UI dla Poświaty RGB**: Uszczelniono przycisk "Tylna Poświata RGB" – teraz automatycznie blokuje się (wyszarza) na urządzeniach mobilnych lub słabych GPU, gdy Tryb Scenografii jest niedostępny.
 - **Prawdziwe Oszczędzanie Baterii na Mobile (Frameloop)**: Usunięto błąd logiczny z `PCModel.tsx`, który za sprawą ciągłej animacji wiatraków wymuszał pełen render 60 FPS (`invalidate()`) w każdej klatce. Dzięki temu na smartfonach parametr `frameloop="demand"` w końcu działa poprawnie – kiedy użytkownik nie dotyka ekranu, silnik GPU całkowicie się usypia, redukując drenaż baterii niemal do zera. Animacje kręcących się elementów na telefonach aktywują się tylko podczas interakcji.
