@@ -107,14 +107,14 @@ export const usePCSelection = create<PCSelectionContextType>((set) => ({
 export const usePCRGB = create<PCRGBContextType>((set) => ({
   rgbColor: '#06b6d4',
   setRgbColor: (color) => set({ rgbColor: color }),
-  rgbEnabled: true,
+  rgbEnabled: false,
   toggleRgbEnabled: () => set((state) => ({ rgbEnabled: !state.rgbEnabled }))
 }));
 
 export const usePCLighting = create<PCLightingContextType>((set) => ({
   ambientOn: false,
   mainSpotOn: false,
-  pcRGBOn: true,
+  pcRGBOn: false,
   cursorLightOn: true,
   toggleAmbient: () => set((state) => ({ ambientOn: !state.ambientOn })),
   toggleMainSpot: () => set((state) => ({ mainSpotOn: !state.mainSpotOn })),

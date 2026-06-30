@@ -277,7 +277,7 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
       needsInvalidate = true;
     }
 
-    const rotArray = (isExploded && data.explodedRotation) ? data.explodedRotation : [0, 0, 0];
+    const rotArray = (isExploded && data.explodedRotation) ? data.explodedRotation : rotationArr;
     eulerBuffer.set(rotArray[0], rotArray[1], rotArray[2]);
     targetQuaternion.setFromEuler(eulerBuffer);
 
