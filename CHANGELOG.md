@@ -1,5 +1,11 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 41 - Hero Rotation i Usprawnienia Trybu Budowy 🔄
+
+- **Kinowy Obrót Komponentów (Hero Rotation)**: Rozszerzono logikę interpolacji w trybie detali (Explode Mode) o sferyczną interpolację liniową (Slerp) z wykorzystaniem kwaternionów. Dzięki temu kluczowe komponenty takie jak GPU, Płyta Główna, Zasilacz, Dyski NVMe, HDD i Pamięci RAM zyskały dedykowane, artystyczne kąty obrotu. Zdecydowanie ułatwia to podziwianie detali modelów.
+- **Odczepione Pierścienie Selekcji (Ghost Rings)**: Pierścienie świetlne w trybie budowy zostały architektonicznie oddzielone od rotującej hierarchii komponentów. Zamiast dziedziczyć niepożądane obroty, pierścienie podążają jedynie za punktem (pozycją) nadrzędnej struktury, zachowując idealny poziom płaski względem gruntu.
+- **Dynamiczne odległości pierścieni**: Wprowadzono offsety pierścienia zależne od gabarytów przedmiotu (`ringOffsetY`), niwelując Z-Fighting i clipping na dużych urządzeniach jak karta graficzna (1.6) czy dysk twardy (0.6).
+
 ## Etap 40 - Dynamiczny Balans Oświetlenia (Anti-Overexposure) 💡
 
 - **Dynamiczna Jasność Środowisk (HDRI)**: System teraz automatycznie obniża jasność mapy otoczenia (z `1.5` na `0.7`) dla jasnych presetów (`studio`, `dawn`, `apartment`), zapobiegając efektowi prześwietlenia przy zachowaniu optymalnego naświetlenia dla presetu nocnego (zmieniono na `1.2`).

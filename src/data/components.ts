@@ -6,6 +6,7 @@ export interface PCComponent {
   funFact: string;
   position: [number, number, number];
   explodedPosition: [number, number, number];
+  explodedRotation?: [number, number, number];
   color: string;
   perfImpact: {
     gaming: number;
@@ -49,6 +50,7 @@ export const pcComponents: PCComponent[] = [
     funFact: "Nowoczesne płyty główne mogą mieć ponad 10 warstw włókna szklanego i miedzianych ścieżek.",
     position: [-0.42, 0, -1.75],
     explodedPosition: [-5.5, 1.5, -9.75],
+    explodedRotation: [Math.PI / 16, Math.PI / 8, 0],
     color: "#1a1a2e",
     perfImpact: { gaming: 5, ai: 5, productivity: 5 },
     customStats: [
@@ -93,6 +95,7 @@ export const pcComponents: PCComponent[] = [
     funFact: "Współczesny procesor zawiera miliardy mikroskopijnych tranzystorów na powierzchni kilku centymetrów kwadratowych.",
     position: [-0.42, 0.95, -1.6],
     explodedPosition: [-2.9, 6.5, -4],
+    explodedRotation: [Math.PI / 6, -Math.PI / 12, 0],
     color: "#e94560",
     perfImpact: { gaming: 25, ai: 20, productivity: 40 },
     customStats: [
@@ -181,6 +184,7 @@ export const pcComponents: PCComponent[] = [
     funFact: "Współczesne układy graficzne (GPU) są wykorzystywane nie tylko w grach, ale także jako potężne 'mózgi' dla sztucznej inteligencji, ponieważ potrafią przetwarzać tysiące operacji matematycznych jednocześnie.",
     position: [-0.25, -0.455, -1],
     explodedPosition: [-10.5, 3.5, -3.5],
+    explodedRotation: [-Math.PI / 4, 0, 0],
     color: "#6366f1",
     perfImpact: { gaming: 60, ai: 60, productivity: 15 },
     customStats: [
@@ -225,6 +229,7 @@ export const pcComponents: PCComponent[] = [
     funFact: "Pamięć RAM jest około 100 000 razy szybsza od tradycyjnego dysku twardego HDD.",
     position: [0.38, 0.86, -1.55],
     explodedPosition: [2.02, 7.15, -5.95],
+    explodedRotation: [0, -Math.PI / 8, Math.PI / 16],
     color: "#00b8a9",
     perfImpact: { gaming: 10, ai: 15, productivity: 20 },
     customStats: [
@@ -269,6 +274,7 @@ export const pcComponents: PCComponent[] = [
     funFact: "Użycie dwóch kości RAM zamiast jednej dużej może zwiększyć wydajność procesora nawet o 15%.",
     position: [0.66, 0.86, -1.55],
     explodedPosition: [3.38, 7.15, -5.95],
+    explodedRotation: [0, -Math.PI / 8, -Math.PI / 16],
     color: "#00b8a9",
     perfImpact: { gaming: 2, ai: 1, productivity: 5 },
     customStats: [
@@ -313,6 +319,7 @@ export const pcComponents: PCComponent[] = [
     funFact: "Najnowsze dyski NVMe (w standardzie PCIe 5.0) osiągają oszałamiającą prędkość odczytu na poziomie przekraczającym 14 000 MB/s!",
     position: [-0.7, -0.5, -1.75],
     explodedPosition: [7, 4, -2.6],
+    explodedRotation: [Math.PI / 6, Math.PI / 12, 0],
     color: "#f8b500",
     perfImpact: { gaming: 10, ai: 5, productivity: 15 },
     customStats: [
@@ -357,6 +364,7 @@ export const pcComponents: PCComponent[] = [
     funFact: "Wydajny zasilacz zamienia mniej prądu w bezużyteczne ciepło, oszczędzając Twoje pieniądze na rachunkach za prąd.",
     position: [-1.2, -1.86, -0.8],
     explodedPosition: [-6, -0.1, 5.0],
+    explodedRotation: [Math.PI / 12, -Math.PI / 6, 0],
     color: "#2a363b",
     perfImpact: { gaming: 0, ai: 0, productivity: 0 },
     customStats: [
@@ -572,6 +580,7 @@ export const pcComponents: PCComponent[] = [
     funFact: 'Talerze w dysku HDD wirują tak szybko, że głowica odczytująca lewituje ledwie 2 nanometry nad nimi! To tak, jakby lecieć Boeingiem 747 milimetr nad ziemią.',
     position: [1.3, -2.18, -0.5],
     explodedPosition: [6.8, 0, 1.5],
+    explodedRotation: [Math.PI / 8, Math.PI / 8, 0],
     color: "#4a6984",
     perfImpact: { gaming: 5, ai: 2, productivity: 30 },
     customStats: [
