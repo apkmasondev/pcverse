@@ -552,6 +552,74 @@ export const SkylightCeiling = () => {
   );
 };
 
+export const DioramaFrame = () => {
+  const tex = useTexture(import.meta.env.BASE_URL + 'images/dark_loft_brick.webp');
+  
+  const frameMatHorizontal = useMemo(() => {
+    const clonedTex = tex.clone();
+    clonedTex.wrapS = THREE.RepeatWrapping;
+    clonedTex.wrapT = THREE.RepeatWrapping;
+    // Dopasowanie skali cegieł (51 szerokości / 5 = ~10 powtórzeń, 2 wysokości / 5 = 0.4)
+    clonedTex.repeat.set(10, 0.4);
+    
+    return new THREE.MeshStandardMaterial({
+      color: '#ffffff',
+      map: clonedTex,
+      bumpMap: clonedTex,
+      bumpScale: 0.1,
+      roughness: 0.95,
+      metalness: 0.05
+    });
+  }, [tex]);
+
+  const frameMatVertical = useMemo(() => {
+    const clonedTex = tex.clone();
+    clonedTex.wrapS = THREE.RepeatWrapping;
+    clonedTex.wrapT = THREE.RepeatWrapping;
+    // Dopasowanie skali cegieł (2 szerokości / 5 = 0.4, 21 wysokości / 5 = ~4.2)
+    // UWAGA: Nie obracamy cegieł, żeby leżały naturalnie poziomo!
+    clonedTex.repeat.set(0.4, 4.2);
+    
+    return new THREE.MeshStandardMaterial({
+      color: '#ffffff',
+      map: clonedTex,
+      bumpMap: clonedTex,
+      bumpScale: 0.1,
+      roughness: 0.95,
+      metalness: 0.05
+    });
+  }, [tex]);
+
+  // Grubsza rama, schowana do wewnątrz sceny (Zasada Dioramy)
+  const beamGeoX = useMemo(() => new THREE.BoxGeometry(51, 2, 2), []);
+  // Skrócona wysokość pionowych belek (z 25 na 21), aby zapobiec Z-fighting na rogach
+  const beamGeoY = useMemo(() => new THREE.BoxGeometry(2, 21, 2), []);
+
+  useEffect(() => {
+    return () => {
+      frameMatHorizontal.map?.dispose();
+      frameMatHorizontal.dispose();
+      frameMatVertical.map?.dispose();
+      frameMatVertical.dispose();
+      beamGeoX.dispose();
+      beamGeoY.dispose();
+    };
+  }, [frameMatHorizontal, frameMatVertical, beamGeoX, beamGeoY]);
+
+  return (
+    <group position={[0, 0, 29.0]}>
+      {/* Dolna belka - wchodzi na podłogę */}
+      <mesh position={[0, 1.0, 0]} geometry={beamGeoX} material={frameMatHorizontal} />
+      {/* Górna belka - chowa się pod sufit */}
+      <mesh position={[0, 24.0, 0]} geometry={beamGeoX} material={frameMatHorizontal} />
+      {/* Lewa belka - wchodzi za lewą ścianę */}
+      <mesh position={[-24.5, 12.5, 0]} geometry={beamGeoY} material={frameMatVertical} />
+      {/* Prawa belka - wchodzi za prawą ścianę */}
+      <mesh position={[24.5, 12.5, 0]} geometry={beamGeoY} material={frameMatVertical} />
+    </group>
+  );
+};
+
 export const DeskScenery = () => {
   const xrayMode = usePCView(state => state.xrayMode);
   const isMobile = useIsMobile();
@@ -600,6 +668,7 @@ export const DeskScenery = () => {
         <Door />
         <LoftWalls />
         <SkylightCeiling />
+        <DioramaFrame />
       </Suspense>
     </group>
   );

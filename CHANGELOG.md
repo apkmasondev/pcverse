@@ -1,5 +1,14 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 39 - Scenografia Dioramy i Ciemna Cegła 🧱
+
+- **Rama Dioramy**: Dodano proceduralną ramę z ciemnej cegły (Loft Brick) okalającą "czwartą ścianę" scenografii za obiektywem kamery, skutecznie eliminując efekt uciętej podłogi i wiszących w próżni krawędzi (efekt "Dioramy").
+- **Korekta Z-Fighting**: Skrócono pionowe belki ramy tak, by idealnie stykały się (bez przenikania) z poziomymi, likwidując awarię graficzną "Z-Fighting" na narożnikach.
+- **Precyzyjne Mapowanie UV**: Stworzono odrębne klony materiałów dla belek poziomych i pionowych, precyzyjnie dostosowując skalę gęstości fug i cegieł na krawędziach, zapobiegając rozciąganiu UV oraz nienaturalnemu układaniu się cegieł.
+- **Optymalizacja Pamięci (VRAM)**: Użyto natywnych instancji (`Instances`) dla ramy i wdrożono rygorystyczny Garbage Collection (`dispose()`) na sklonowanych teksturach i materiałach w `useEffect`, upewniając się, że zamknięcie trybu otoczenia odzyskuje 100% użytej pamięci.
+- **Wymiana Tekstur**: Zamieniono plik źródłowy ciemnej cegły z `.png` na wysoce skompresowany, natywny plik graficzny środowiska webowego `.webp`.
+
+
 ## Etap 38 - Optyka Kamery i Post-processing 🎥
 
 - **Perfekcyjny Kinowy Depth of Field (DoF)**: Całkowicie wyeliminowano błąd "falującego kółka" ostrości (CoC Banding / Asymmetric Frustum Bug) występujący w trybie szczegółów komponentu. Zamiast ucinać kadr kamery za pomocą `setViewOffset` (co psuło wyliczenia środka optycznego soczewki w post-processingu), wdrożono zaawansowaną fizyczną translację wektorową osi wzroku kamery (`targetPos` oraz `focalPoint` na podstawie wektora `right` i `up` z kwaternionu kamery). Dzięki temu widok w trybie szczegółów wciąż przesuwa się płynnie w lewo, robiąc miejsce na interfejs UI, ale środek optyczny wirtualnej soczewki pozostaje idealnie wyrównany, zachowując bezbłędny realizm na skrajach głębi ostrości.
