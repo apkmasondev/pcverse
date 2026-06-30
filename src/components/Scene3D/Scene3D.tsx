@@ -59,8 +59,10 @@ const CursorLight = () => {
   );
 };
 
-const AnimatedLights = ({ isLowEndGPU }: { isLowEndGPU: boolean }) => {
+const AnimatedLights = ({ isLowEndGPU, envPreset }: { isLowEndGPU: boolean, envPreset: string }) => {
   const { ambientOn, mainSpotOn, pcRGBOn } = usePCLighting();
+  const isBrightEnv = ['studio', 'dawn', 'apartment'].includes(envPreset);
+
   const ambientRef = useRef<THREE.AmbientLight>(null);
   const dirRef1 = useRef<THREE.DirectionalLight>(null);
   const dirRef2 = useRef<THREE.DirectionalLight>(null);
@@ -70,16 +72,22 @@ const AnimatedLights = ({ isLowEndGPU }: { isLowEndGPU: boolean }) => {
 
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05) * 5;
-    if (ambientRef.current) ambientRef.current.intensity = THREE.MathUtils.lerp(ambientRef.current.intensity, ambientOn ? 1.2 : 0, dt);
-    if (dirRef1.current) dirRef1.current.intensity = THREE.MathUtils.lerp(dirRef1.current.intensity, mainSpotOn ? 3.5 : 0, dt);
-    if (dirRef2.current) dirRef2.current.intensity = THREE.MathUtils.lerp(dirRef2.current.intensity, pcRGBOn ? 2.0 : 0, dt);
-    if (spotRef.current) spotRef.current.intensity = THREE.MathUtils.lerp(spotRef.current.intensity, mainSpotOn ? 3.5 : 0, dt);
+    
+    const tAmbient = ambientOn ? (isBrightEnv ? 0.3 : 1.2) : 0;
+    const tSpot = mainSpotOn ? (isBrightEnv ? 0.8 : 3.5) : 0;
+    const tPcRgb = pcRGBOn ? (isBrightEnv ? 1.0 : 2.0) : 0;
+    const tHemi = ambientOn ? (isBrightEnv ? 0.4 : 1.5) : 0;
+    const tRect = ambientOn ? (isBrightEnv ? 0.0 : 3.0) : 0;
+
+    if (ambientRef.current) ambientRef.current.intensity = THREE.MathUtils.lerp(ambientRef.current.intensity, tAmbient, dt);
+    if (dirRef1.current) dirRef1.current.intensity = THREE.MathUtils.lerp(dirRef1.current.intensity, tSpot, dt);
+    if (dirRef2.current) dirRef2.current.intensity = THREE.MathUtils.lerp(dirRef2.current.intensity, tPcRgb, dt);
+    if (spotRef.current) spotRef.current.intensity = THREE.MathUtils.lerp(spotRef.current.intensity, tSpot, dt);
     
     if (isLowEndGPU) {
-      if (hemiRef.current) hemiRef.current.intensity = THREE.MathUtils.lerp(hemiRef.current.intensity, ambientOn ? 1.5 : 0, dt);
+      if (hemiRef.current) hemiRef.current.intensity = THREE.MathUtils.lerp(hemiRef.current.intensity, tHemi, dt);
     } else {
-      if (ambientRef.current) ambientRef.current.intensity = THREE.MathUtils.lerp(ambientRef.current.intensity, ambientOn ? 1.2 : 0, dt);
-      if (rectRef.current) rectRef.current.intensity = THREE.MathUtils.lerp(rectRef.current.intensity, ambientOn ? 3.0 : 0, dt);
+      if (rectRef.current) rectRef.current.intensity = THREE.MathUtils.lerp(rectRef.current.intensity, tRect, dt);
     }
   });
 
@@ -288,7 +296,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
         </>
       )}
 
-      <AnimatedLights isLowEndGPU={isLowEndGPU} />
+      <AnimatedLights isLowEndGPU={isLowEndGPU} envPreset={envPreset} />
 
       {!isMobile && !disableEffects && <CursorLight />}
 
@@ -298,7 +306,10 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
           <PCModel />
         </group>
         <ErrorBoundary fallback={null}>
-          <Environment files={envMap[envPreset] || envMap.studio} environmentIntensity={1.5} />
+          <Environment 
+            files={envMap[envPreset] || envMap.studio} 
+            environmentIntensity={['studio', 'dawn', 'apartment'].includes(envPreset) ? 0.7 : 1.2} 
+          />
         </ErrorBoundary>
 
         {showDesk && !isMobile && !isLowEndGPU ? (

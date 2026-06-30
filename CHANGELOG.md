@@ -1,5 +1,11 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 40 - Dynamiczny Balans Oświetlenia (Anti-Overexposure) 💡
+
+- **Dynamiczna Jasność Środowisk (HDRI)**: System teraz automatycznie obniża jasność mapy otoczenia (z `1.5` na `0.7`) dla jasnych presetów (`studio`, `dawn`, `apartment`), zapobiegając efektowi prześwietlenia przy zachowaniu optymalnego naświetlenia dla presetu nocnego (zmieniono na `1.2`).
+- **Inteligentne Przygaszanie Sztucznych Reflektorów**: Przekazano aktualny identyfikator otoczenia do logiki `AnimatedLights`. W jasno oświetlonych środowiskach funkcja matematyczna `lerp` bezinwazyjnie "zjeżdża" z mocą sztucznych lamp (z łącznej mocy ~11.0 na zaledwie ~2.0), zapobiegając drastycznym wypaleniom na teksturach płyt głównych i obudowy komputera. Cały proces jest bezszwowy i nie powoduje rekompilacji shaderów podczas działania programu.
+
+
 ## Etap 39 - Scenografia Dioramy i Ciemna Cegła 🧱
 
 - **Rama Dioramy**: Dodano proceduralną ramę z ciemnej cegły (Loft Brick) okalającą "czwartą ścianę" scenografii za obiektywem kamery, skutecznie eliminując efekt uciętej podłogi i wiszących w próżni krawędzi (efekt "Dioramy").
