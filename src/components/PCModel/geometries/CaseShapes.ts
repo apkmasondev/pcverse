@@ -1,6 +1,7 @@
 import { Path, Shape } from 'three';
 
 
+
 export const leftPanelShape = (() => {
   const shape = new Shape();
   shape.moveTo(-1.95, -2.3);

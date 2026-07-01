@@ -1,6 +1,7 @@
-import * as THREE from 'three';
+import { MathUtils, MeshStandardMaterial } from 'three';
+
 import { useMemo, useEffect } from 'react';
-import { MeshStandardMaterial } from 'three';
+
 import { materials } from '../materials';
 import { usePCView } from '../../../hooks/usePC';
 import { useTexture } from '@react-three/drei';
@@ -19,13 +20,13 @@ export const RAMGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string, rgbEna
 
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);
-    rgbMat.emissiveIntensity = THREE.MathUtils.lerp(rgbMat.emissiveIntensity, rgbEnabled ? 3.0 : 0, dt * 5);
+    rgbMat.emissiveIntensity = MathUtils.lerp(rgbMat.emissiveIntensity, rgbEnabled ? 3.0 : 0, dt * 5);
   });
   useEffect(() => () => rgbMat.dispose(), [rgbMat]);
   
   const texturedMaterials = useMemo(() => ({
-    texMat0: new THREE.MeshStandardMaterial({ map: ramSideTexture, roughness: 0.4, metalness: 0.6 }),
-    texMat1: new THREE.MeshStandardMaterial({ map: ramSideTexture, roughness: 0.4, metalness: 0.6 })
+    texMat0: new MeshStandardMaterial({ map: ramSideTexture, roughness: 0.4, metalness: 0.6 }),
+    texMat1: new MeshStandardMaterial({ map: ramSideTexture, roughness: 0.4, metalness: 0.6 })
   }), [ramSideTexture]);
 
   useEffect(() => {

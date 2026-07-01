@@ -166,5 +166,9 @@ const vec = new Vector3();
 **Problem:** Nakładanie paneli UI oraz etykiet 3D HTML (z biblioteki Drei) często powoduje sytuację, w której "niewidzialny" blok tekstowy typu `div` przejmuje dotyk użytkownika na telefonie. W efekcie, próba obrócenia kamery po trafieniu palcem na etykietę owocuje brakiem reakcji (uderzenie w szklaną ścianę HTML-a), co niszczy User Experience.
 **Rozwiązanie:** Obowiązkowo, każda etykieta HTML nadbudowana nad środowiskiem 3D, nie będąca interaktywnym formularzem lub przyciskiem, musi otrzymać w CSS klasę wyłączającą uwięzienie myszki (np. `pointer-events-none` w TailwindCSS). Dzięki temu zdarzenia dotykowe spływają pod spód HTML, prosto w ręce silnika 3D (`CameraControls`).
 
+## 14. Tree-Shaking i Ograniczanie Rozmiaru Bundla
+**Problem:** Importowanie całej biblioteki przez instrukcję `import * as THREE from 'three'` zmusza bundlery (Vite/Rollup/Webpack) do zaciągnięcia całego masywnego kodu przestrzeni roboczej Three.js (niekiedy ponad 1.3 MB minified) w jeden skrypt. Niszczy to całkowicie szanse na wydajny Tree-Shaking (odcinanie "martwego", nieużywanego kodu silnika).
+**Rozwiązanie:** Bezwzględnie unikaj importowania namespace'u! Korzystaj wyłącznie z selektywnych, nazwanych importów komponentów, siatek i wektorów których realnie używasz w danym pliku. Zamiast `import * as THREE from 'three'` i odwoływania się przez `new THREE.MeshStandardMaterial()`, zadeklaruj od razu `import { MeshStandardMaterial } from 'three';` i zainicjuj przez `new MeshStandardMaterial()`.
+
 ---
-Dbając o powyższe 13 filarów zagwarantujesz, że renderowana scena 3D pozostanie wolna od błędów wizualnych (glitchy) oraz zachowa stabilność pamięci i wydajność powyżej optymalnych 60 FPS na każdym urządzeniu.
+Dbając o powyższe 14 filarów zagwarantujesz, że renderowana scena 3D pozostanie wolna od błędów wizualnych (glitchy) oraz zachowa stabilność pamięci i wydajność powyżej optymalnych 60 FPS na każdym urządzeniu.

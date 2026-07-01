@@ -1,9 +1,10 @@
-import * as THREE from 'three';
+import { MathUtils, MeshStandardMaterial, Group } from 'three';
+
 import { fanBladesRefsY } from '../FanManager';
 import { materials } from '../materials';
 import { usePCView } from '../../../hooks/usePC';
 import { useRef, useEffect, useMemo } from 'react';
-import { Group, MeshStandardMaterial } from 'three';
+
 import { useTexture } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import psuSideUrl from '../../../assets/psu_side.webp';
@@ -40,18 +41,18 @@ export const PSUGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string, rgbEna
 
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);
-    rgbMat.emissiveIntensity = THREE.MathUtils.lerp(rgbMat.emissiveIntensity, rgbEnabled ? 3.0 : 0, dt * 5);
+    rgbMat.emissiveIntensity = MathUtils.lerp(rgbMat.emissiveIntensity, rgbEnabled ? 3.0 : 0, dt * 5);
   });
 
   useEffect(() => () => rgbMat.dispose(), [rgbMat]);
 
   const texturedMaterials = useMemo(() => ({
-    texMat0: new THREE.MeshStandardMaterial({ map: psuTopTexture, roughness: 0.6, metalness: 0.4 }),
-    texMat1: new THREE.MeshStandardMaterial({ map: psuSideTexture, roughness: 0.6, metalness: 0.4 }),
-    texMat2: new THREE.MeshStandardMaterial({ map: psuSideTexture, roughness: 0.6, metalness: 0.4 }),
-    texMat3: new THREE.MeshStandardMaterial({ map: psuBottomTexture, roughness: 0.6, metalness: 0.4 }),
-    texMat4: new THREE.MeshStandardMaterial({ map: psuBackTexture, roughness: 0.8 }),
-    texMat5: new THREE.MeshStandardMaterial({ map: psuFrontTexture, roughness: 0.8 })
+    texMat0: new MeshStandardMaterial({ map: psuTopTexture, roughness: 0.6, metalness: 0.4 }),
+    texMat1: new MeshStandardMaterial({ map: psuSideTexture, roughness: 0.6, metalness: 0.4 }),
+    texMat2: new MeshStandardMaterial({ map: psuSideTexture, roughness: 0.6, metalness: 0.4 }),
+    texMat3: new MeshStandardMaterial({ map: psuBottomTexture, roughness: 0.6, metalness: 0.4 }),
+    texMat4: new MeshStandardMaterial({ map: psuBackTexture, roughness: 0.8 }),
+    texMat5: new MeshStandardMaterial({ map: psuFrontTexture, roughness: 0.8 })
   }), [psuBackTexture, psuBottomTexture, psuFrontTexture, psuSideTexture, psuTopTexture]);
 
   useEffect(() => {

@@ -1,5 +1,22 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 43 - Stabilizacja Kamery i Czystki w Zależnościach 🧹
+
+- **Resize Handler dla Kamery Asymetrycznej**: Rozwiązano krytyczny problem zniekształcenia perspektywy (`setViewOffset`) przy zmianie rozmiaru okna w trybie detali (Explode Mode). Zaimplementowano listener przeliczający asymetryczny rzut matrycy względem nowych proporcji viewportu.
+- **Usunięcie nieużywanych paczek**: Z paczki `package.json` definitywnie wycięto starą zależność `@react-three/a11y`, zmniejszając czas instalacji projektu i odchudzając bundlera.
+
+- **Optymalizacja Pamięci (VRAM) dla Obudowy**: Wyciągnięto 5 potężnych wbudowanych w strukturę `CaseGeometry` materiałów (`<meshStandardMaterial>`) do sfokusowanego, dzielonego na wiele instancji słownika w obrębie bloku `useMemo`. Pozwoliło to radykalnie ograniczyć alokację dodatkowych draw calls przy kompilowaniu komponentów obudowy i odciążyło narzut na WebGL z duplikowanych tekstur.
+- **Rygorystyczny Garbage Collection dla Obudowy**: Zainicjowano referencje (`refs`) na wszystkich wielkogabarytowych, generowanych proceduralnie geometriach (`ExtrudeGeometry`, `ShapeGeometry`) w obudowie i dodano na nich wymuszone usuwanie z pamięci podręcznej GPU (`.dispose()`) w przypadku demontażu komponentu. Zamyka to wycieki pamięci za każdym załadowaniem strony.
+- **Optymalizacja Fallbacku w PCModel**: Zapobieżono duplikowaniu całego, nienazwanego kawałka komponentu używanego do rezerwowania miejsca podczas ładowania poszczególnych podzespołów. Został on wydzielony i ustrukturyzowany do węższego kontekstu.
+
+- **Tree-Shaking Silnika Three.js**: Definitywnie wycięto potężny import przestrzeni nazw (`import * as THREE from 'three'`) z ponad dwunastu plików geometrii oraz głównego obszaru sceny 3D. Zastąpiono je rygorystycznymi, selektywnymi importami deklaratywnymi. Zapobiegnie to wciągnięciu całego ciężkiego silnika (ok. 1.3 MB) i umożliwi zaawansowany Tree-Shaking dla bundlera (Rollup/Vite) w środowisku produkcyjnym.
+- **Atomowe Selektory Stamu**: Naprawiono ukrytego bubla architektonicznego w komponencie głównym `PCModel`, gdzie destrukturne zaczytywanie całościowego stamu Zustand (`const { buildMode, currentStep, maxSteps } = useBuildStore()`) wyzwalało masowe re-rendery całej sceny za każdym razem, gdy cokolwiek drgnęło w globalnym storze budowy komputera. Teraz odczyty selekcjonowane są precyzyjnie za pomocą dedykowanych funkcji-selektorów.
+- **Aktualizacja Zasad Projektowych**: Zgodnie z dobrymi praktykami WebGL, wprowadzono nową i nieugiętą Zasadę nr 14 do `3D_DESIGN_GUIDELINES.md` – oficjalny zakaz deklarowania `import * as THREE`.
+- **Mobilne Blokady Hover**: Przeprowadzono refaktoryzację w `InfoPanel.tsx` polegającą na wstrzyknięciu responsywnych prefixów Tailwind (`md:hover:` oraz `md:group-hover:`) do wszystkich interaktywnych ikon, zdjęć i przycisków. Usunęło to tzw. "lepki hover" na urządzeniach dotykowych, zapobiegając "wieszaniu się" efektów optycznych po oderwaniu palca od ekranu.
+- **Blokada Gestów (touch-none)**: Powiększony podgląd zdjęć w InfoPanelu został opatulony warstwą `touch-none`, co doszczętnie likwiduje ryzyko aktywacji niechcianych wbudowanych gestów przeglądarek (np. pull-to-refresh czy nawigacji w przód/tył) podczas powiększania z bliska śrubek i slotów komponentów na iPhonie lub Androidzie.
+- **TypeScript i Lazy Loading**: Komponent `InfoPanel` otrzymał ścisłe typowanie zwrotne `React.FC`. Audyt potwierdził wbudowaną na poziomie HTML natywną obecność reguły `loading="lazy"` we wszystkich znacznikach `<img>`, gwarantując oszczędność transferu dla wysoce zagęszczonych galerii.
+- **Wyeliminowanie Błędu instanceof**: Rozwiązano krytyczny crash `Right-hand side of 'instanceof' is not callable` występujący przy wejściu w Tryb Budowy. Zamiast Pustych Fragmentów Reacta (`<></>`), do ukrywania efektów graficznych w `EffectComposer` zastosowano wyłączenie poprzez operator `&&`, co omija błąd biblioteki `@react-three/postprocessing`. Ponadto poprawiono import `PerspectiveCamera` by pochodził bezpośrednio z `three`, unikając kolizji z klasą funkcyjną z Drei.
+
 ## Etap 42 - Perfekcyjna Optyka Kamery i Optymalizacje 3D 🎥
 
 - **Asymetryczna Projekcja Kamery (setViewOffset)**: Usunięto fizyczne, nienaturalne przesuwanie wektorów celu kamery (Target/Focal Point). Zaimplementowano asymetryczne ścinanie matrycy (`camera.setViewOffset`), co gwarantuje perfekcyjne orbitowanie myszką wokół absolutnego rdzenia obiektu (np. procesora), utrzymując go wygodnie po lewej stronie ekranu bez zaburzania osi obrotu.

@@ -1,9 +1,10 @@
+import { MathUtils, AmbientLight, DirectionalLight, SpotLight, HemisphereLight, RectAreaLight, PerspectiveCamera as ThreePerspectiveCamera, Vector2, Vector3, PointLight } from 'three';
 import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { CameraControls, Environment, PerspectiveCamera, Sparkles, PerformanceMonitor, Grid, Stars, Preload } from '@react-three/drei';
 import { EffectComposer, Bloom, N8AO, Vignette, ChromaticAberration, DepthOfField, SMAA } from '@react-three/postprocessing';
-import * as THREE from 'three';
-import { Vector2, Vector3, PointLight } from 'three';
+
+
 import { PCModel } from '../PCModel/PCModel';
 import { usePCSelection, usePCView, usePCLighting } from '../../hooks/usePC';
 import { useBuildStore } from '../../store/useBuildStore';
@@ -30,7 +31,7 @@ const CursorLight = () => {
       const dt = Math.min(delta, 0.05);
       const distance = camera.position.length() * 0.6;
       raycaster.ray.at(distance, _vec.current);
-      
+
       const distPos = lightRef.current.position.distanceTo(_vec.current);
       if (distPos > 0.001) {
         lightRef.current.position.lerp(_vec.current, 1 - Math.exp(-10 * dt));
@@ -41,7 +42,7 @@ const CursorLight = () => {
       const targetIntensity = cursorLightOn ? 3.5 : 0;
       const diffInt = Math.abs(lightRef.current.intensity - targetIntensity);
       if (diffInt > 0.001) {
-        lightRef.current.intensity = THREE.MathUtils.lerp(lightRef.current.intensity, targetIntensity, dt * 5);
+        lightRef.current.intensity = MathUtils.lerp(lightRef.current.intensity, targetIntensity, dt * 5);
       } else if (diffInt > 0) {
         lightRef.current.intensity = targetIntensity;
       }
@@ -63,31 +64,31 @@ const AnimatedLights = ({ isLowEndGPU, envPreset }: { isLowEndGPU: boolean, envP
   const { ambientOn, mainSpotOn, pcRGBOn } = usePCLighting();
   const isBrightEnv = ['studio', 'dawn', 'apartment'].includes(envPreset);
 
-  const ambientRef = useRef<THREE.AmbientLight>(null);
-  const dirRef1 = useRef<THREE.DirectionalLight>(null);
-  const dirRef2 = useRef<THREE.DirectionalLight>(null);
-  const spotRef = useRef<THREE.SpotLight>(null);
-  const hemiRef = useRef<THREE.HemisphereLight>(null);
-  const rectRef = useRef<THREE.RectAreaLight>(null);
+  const ambientRef = useRef<AmbientLight>(null);
+  const dirRef1 = useRef<DirectionalLight>(null);
+  const dirRef2 = useRef<DirectionalLight>(null);
+  const spotRef = useRef<SpotLight>(null);
+  const hemiRef = useRef<HemisphereLight>(null);
+  const rectRef = useRef<RectAreaLight>(null);
 
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05) * 5;
-    
+
     const tAmbient = ambientOn ? (isBrightEnv ? 0.3 : 1.2) : 0;
     const tSpot = mainSpotOn ? (isBrightEnv ? 0.8 : 3.5) : 0;
     const tPcRgb = pcRGBOn ? (isBrightEnv ? 1.0 : 2.0) : 0;
     const tHemi = ambientOn ? (isBrightEnv ? 0.4 : 1.5) : 0;
     const tRect = ambientOn ? (isBrightEnv ? 0.0 : 3.0) : 0;
 
-    if (ambientRef.current) ambientRef.current.intensity = THREE.MathUtils.lerp(ambientRef.current.intensity, tAmbient, dt);
-    if (dirRef1.current) dirRef1.current.intensity = THREE.MathUtils.lerp(dirRef1.current.intensity, tSpot, dt);
-    if (dirRef2.current) dirRef2.current.intensity = THREE.MathUtils.lerp(dirRef2.current.intensity, tPcRgb, dt);
-    if (spotRef.current) spotRef.current.intensity = THREE.MathUtils.lerp(spotRef.current.intensity, tSpot, dt);
-    
+    if (ambientRef.current) ambientRef.current.intensity = MathUtils.lerp(ambientRef.current.intensity, tAmbient, dt);
+    if (dirRef1.current) dirRef1.current.intensity = MathUtils.lerp(dirRef1.current.intensity, tSpot, dt);
+    if (dirRef2.current) dirRef2.current.intensity = MathUtils.lerp(dirRef2.current.intensity, tPcRgb, dt);
+    if (spotRef.current) spotRef.current.intensity = MathUtils.lerp(spotRef.current.intensity, tSpot, dt);
+
     if (isLowEndGPU) {
-      if (hemiRef.current) hemiRef.current.intensity = THREE.MathUtils.lerp(hemiRef.current.intensity, tHemi, dt);
+      if (hemiRef.current) hemiRef.current.intensity = MathUtils.lerp(hemiRef.current.intensity, tHemi, dt);
     } else {
-      if (rectRef.current) rectRef.current.intensity = THREE.MathUtils.lerp(rectRef.current.intensity, tRect, dt);
+      if (rectRef.current) rectRef.current.intensity = MathUtils.lerp(rectRef.current.intensity, tRect, dt);
     }
   });
 
@@ -168,8 +169,6 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
     }
   }, [selectedComponent, explodeStep, dofTarget]);
 
-
-
   useEffect(() => {
     if (cameraControlsRef.current && !hasInitialized.current) {
       hasInitialized.current = true;
@@ -183,11 +182,12 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
   }, []);
 
   useEffect(() => {
+    let updateOffset: (() => void) | null = null;
+
     if (cameraControlsRef.current && selectedComponent) {
       const posArray = explodeStep === 2 ? selectedComponent.explodedPosition : selectedComponent.position;
       const targetVec = _tempVec.current.set(posArray[0], posArray[1], posArray[2]);
 
-      // Calculate vector from component to current camera
       const dir = _tempDir.current.copy(camera.position).sub(targetVec);
 
       if (dir.lengthSq() < 0.001) {
@@ -195,26 +195,26 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
       }
       dir.normalize();
 
-      // Keep focal point exactly on the component so it rotates perfectly around its own center
       const focalPoint = _tempFocal.current.copy(targetVec);
 
-      // Set distance: 4 on desktop, 5.5 on mobile to fit the narrow screen better
       const dist = isMobile ? 5.5 : 4;
       const targetPos = targetVec.clone().add(dir.multiplyScalar(dist));
 
-      // Opcja 1: Asymetryczna projekcja matrycy (ViewOffset)
-      if (camera instanceof THREE.PerspectiveCamera) {
-        const w = window.innerWidth;
-        const h = window.innerHeight;
-        if (isMobile) {
-          // Na mobile chcemy komponent wyżej - przesuwamy frustum w dół
-          camera.setViewOffset(w, h, 0, h * 0.15, w, h);
-        } else {
-          // Na desktopie chcemy komponent po lewej (by panel wszedł z prawej)
-          camera.setViewOffset(w, h, w * 0.15, 0, w, h);
+      updateOffset = () => {
+        if (camera instanceof ThreePerspectiveCamera) {
+          const w = window.innerWidth;
+          const h = window.innerHeight;
+          if (isMobile) {
+            camera.setViewOffset(w, h, 0, h * 0.15, w, h);
+          } else {
+            camera.setViewOffset(w, h, w * 0.15, 0, w, h);
+          }
+          camera.updateProjectionMatrix();
         }
-        camera.updateProjectionMatrix();
-      }
+      };
+
+      updateOffset();
+      window.addEventListener('resize', updateOffset);
 
       cameraControlsRef.current.setLookAt(
         targetPos.x, targetPos.y, targetPos.z,
@@ -222,12 +222,11 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
         true
       );
     } else if (!selectedComponent) {
-      if (camera instanceof THREE.PerspectiveCamera && camera.view) {
+      if (camera instanceof ThreePerspectiveCamera && camera.view) {
         camera.clearViewOffset();
         camera.updateProjectionMatrix();
       }
-      
-      // Płynny powrót kamery na środek
+
       cameraControlsRef.current?.setLookAt(
         0, 2.5, 20,
         0, 0.7, 0,
@@ -236,8 +235,10 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
     }
 
     return () => {
-      // Cleanup: reset view offset when unmounting
-      if (camera instanceof THREE.PerspectiveCamera && camera.view) {
+      if (updateOffset) {
+        window.removeEventListener('resize', updateOffset);
+      }
+      if (camera instanceof ThreePerspectiveCamera && camera.view) {
         camera.clearViewOffset();
         camera.updateProjectionMatrix();
       }
@@ -246,7 +247,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
 
   useEffect(() => {
     if (cameraControlsRef.current && cameraResetTrigger > 0) {
-      if (camera instanceof THREE.PerspectiveCamera && camera.view) {
+      if (camera instanceof ThreePerspectiveCamera && camera.view) {
         camera.clearViewOffset();
         camera.updateProjectionMatrix();
       }
@@ -263,7 +264,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
     if (!cameraControlsRef.current) return;
 
     if (buildMode) {
-      if (camera instanceof THREE.PerspectiveCamera && camera.view) {
+      if (camera instanceof ThreePerspectiveCamera && camera.view) {
         camera.clearViewOffset();
         camera.updateProjectionMatrix();
       }
@@ -307,9 +308,9 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
           <PCModel />
         </group>
         <ErrorBoundary fallback={null}>
-          <Environment 
-            files={envMap[envPreset] || envMap.studio} 
-            environmentIntensity={['studio', 'dawn', 'apartment'].includes(envPreset) ? 0.7 : 1.2} 
+          <Environment
+            files={envMap[envPreset] || envMap.studio}
+            environmentIntensity={['studio', 'dawn', 'apartment'].includes(envPreset) ? 0.7 : 1.2}
           />
         </ErrorBoundary>
 
@@ -331,9 +332,9 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
         )}
         {!isMobile && (
           <EffectComposer multisampling={0} stencilBuffer={false}>
-            {!isLowEndGPU ? <SMAA /> : <></>}
-            {dofEnabled && !disableEffects ? <DepthOfField ref={dofRef} key="dof" target={dofTarget} focalLength={3.0} bokehScale={5} /> : <></>}
-            {!disableEffects ? <N8AO key="n8ao" aoRadius={0.5} intensity={2.0} distanceFalloff={0.5} quality="medium" halfRes /> : <></>}
+            {!isLowEndGPU && <SMAA />}
+            {(dofEnabled && !disableEffects) && <DepthOfField ref={dofRef} key="dof" target={dofTarget} focalLength={3.0} bokehScale={5} />}
+            {!disableEffects && <N8AO key="n8ao" aoRadius={0.5} intensity={2.0} distanceFalloff={0.5} quality="medium" halfRes />}
             <Bloom key="bloom" luminanceThreshold={1.2} mipmapBlur={!isLowEndGPU} intensity={1.5} />
             <Vignette key="vig" eskil={false} offset={0.1} darkness={0.9} />
             <ChromaticAberration key="ca" offset={new Vector2(0.0005, 0.0005)} radialModulation={false} modulationOffset={0} />

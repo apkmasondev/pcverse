@@ -1,8 +1,9 @@
-import * as THREE from 'three';
+import { MathUtils, MeshStandardMaterial, Group } from 'three';
+
 import { fanBladesRefsZ } from '../FanManager';
 import { materials, xrayMaterial } from '../materials';
 import { useRef, useEffect, useMemo } from 'react';
-import { Group, MeshStandardMaterial } from 'three';
+
 import { useTexture, Instance } from '@react-three/drei';
 import { XInstances } from './XMesh';
 import { useFrame } from '@react-three/fiber';
@@ -42,7 +43,7 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
 
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);
-    rgbMaterial.emissiveIntensity = THREE.MathUtils.lerp(rgbMaterial.emissiveIntensity, rgbEnabled ? 4.0 : 0, dt * 5);
+    rgbMaterial.emissiveIntensity = MathUtils.lerp(rgbMaterial.emissiveIntensity, rgbEnabled ? 4.0 : 0, dt * 5);
   });
 
   useEffect(() => {
@@ -80,8 +81,8 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
   }, []);
 
   const texturedMaterials = useMemo(() => ({
-    texMat0: new THREE.MeshStandardMaterial({ map: activeTexture, roughness: 0.4, metalness: 0.3, transparent: false, alphaTest: 0.5 }),
-    texMat1: new THREE.MeshStandardMaterial({ map: activeTexture, roughness: 0.4, metalness: 0.3, transparent: false, alphaTest: 0.5 })
+    texMat0: new MeshStandardMaterial({ map: activeTexture, roughness: 0.4, metalness: 0.3, transparent: false, alphaTest: 0.5 }),
+    texMat1: new MeshStandardMaterial({ map: activeTexture, roughness: 0.4, metalness: 0.3, transparent: false, alphaTest: 0.5 })
   }), [activeTexture]);
 
   useEffect(() => {
@@ -205,7 +206,7 @@ export const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string, rgbEnabled?:
   }, [copperMat, sideMat, topMat, plateMat]);
 
   const texturedMaterials = useMemo(() => ({
-    texMat0: new THREE.MeshStandardMaterial({ map: heatsinkTexture, metalness: 0.6, roughness: 0.4 })
+    texMat0: new MeshStandardMaterial({ map: heatsinkTexture, metalness: 0.6, roughness: 0.4 })
   }), [heatsinkTexture]);
 
   useEffect(() => {

@@ -1,10 +1,11 @@
-import * as THREE from 'three';
-import { RepeatWrapping, SRGBColorSpace, MeshStandardMaterial } from 'three';
+import { MathUtils, MeshStandardMaterial, RepeatWrapping, SRGBColorSpace, Group } from 'three';
+
+
 import { fanBladesRefsY } from '../FanManager';
 import { materials, xrayMaterial } from '../materials';
 import { useRef, useMemo, useEffect } from 'react';
 
-import { Group } from 'three';
+
 import { useTexture } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import gpuBottomUrl from '../../../assets/gpu_bottom.webp';
@@ -58,9 +59,9 @@ export const GPUGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string, rgbEna
 
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);
-    rgbMat15.emissiveIntensity = THREE.MathUtils.lerp(rgbMat15.emissiveIntensity, rgbEnabled ? 2.5 : 0, dt * 5);
-    rgbMat10.emissiveIntensity = THREE.MathUtils.lerp(rgbMat10.emissiveIntensity, rgbEnabled ? 1.5 : 0, dt * 5);
-    rgbMat25.emissiveIntensity = THREE.MathUtils.lerp(rgbMat25.emissiveIntensity, rgbEnabled ? 3.5 : 0, dt * 5);
+    rgbMat15.emissiveIntensity = MathUtils.lerp(rgbMat15.emissiveIntensity, rgbEnabled ? 2.5 : 0, dt * 5);
+    rgbMat10.emissiveIntensity = MathUtils.lerp(rgbMat10.emissiveIntensity, rgbEnabled ? 1.5 : 0, dt * 5);
+    rgbMat25.emissiveIntensity = MathUtils.lerp(rgbMat25.emissiveIntensity, rgbEnabled ? 3.5 : 0, dt * 5);
   });
 
   useEffect(() => {
@@ -74,11 +75,11 @@ export const GPUGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string, rgbEna
 
 
   const texturedMaterials = useMemo(() => ({
-    texMat0: new THREE.MeshStandardMaterial({ map: gpuIoTexture, roughness: 0.4, metalness: 0.6 }),
-    texMat1: new THREE.MeshStandardMaterial({ map: gpuBackplateTexture, roughness: 0.3, metalness: 0.7 }),
-    texMat2: new THREE.MeshStandardMaterial({ map: gpuFrontTexture, roughness: 0.3, metalness: 0.5 }),
-    texMat3: new THREE.MeshStandardMaterial({ map: gpuTopTexture, roughness: 0.4, metalness: 0.6 }),
-    texMat4: new THREE.MeshStandardMaterial({ map: gpuBottomTexture, roughness: 0.4, metalness: 0.6 })
+    texMat0: new MeshStandardMaterial({ map: gpuIoTexture, roughness: 0.4, metalness: 0.6 }),
+    texMat1: new MeshStandardMaterial({ map: gpuBackplateTexture, roughness: 0.3, metalness: 0.7 }),
+    texMat2: new MeshStandardMaterial({ map: gpuFrontTexture, roughness: 0.3, metalness: 0.5 }),
+    texMat3: new MeshStandardMaterial({ map: gpuTopTexture, roughness: 0.4, metalness: 0.6 }),
+    texMat4: new MeshStandardMaterial({ map: gpuBottomTexture, roughness: 0.4, metalness: 0.6 })
   }), [gpuBackplateTexture, gpuBottomTexture, gpuFrontTexture, gpuIoTexture, gpuTopTexture]);
 
   useEffect(() => {

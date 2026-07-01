@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { usePCSelection } from '../../hooks/usePC';
 import { useIsMobile } from '../../hooks/useIsMobile';
@@ -84,7 +84,7 @@ const getImageUrl = (url: string) => {
   return `${baseUrl}${url.replace(/^\//, '')}`;
 };
 
-export const InfoPanel = () => {
+export const InfoPanel: React.FC = () => {
   const selectedComponent = usePCSelection(s => s.selectedComponent);
   const setSelectedComponent = usePCSelection(s => s.setSelectedComponent);
   const [zoomedImageIndex, setZoomedImageIndex] = useState<number | null>(null);
@@ -156,7 +156,7 @@ export const InfoPanel = () => {
           <button 
             onClick={() => setSelectedComponent(null)}
             aria-label="Zamknij panel informacyjny"
-            className="absolute top-6 right-6 p-2 hover:bg-white/10 rounded-full transition-all duration-300 hover:scale-110 hover:rotate-90 z-30 bg-black/40 backdrop-blur-md"
+            className="absolute top-6 right-6 p-2 md:hover:bg-white/10 rounded-full transition-all duration-300 md:hover:scale-110 md:hover:rotate-90 z-30 bg-black/40 backdrop-blur-md"
           >
             <X size={16} className="text-slate-300" />
           </button>
@@ -188,7 +188,7 @@ export const InfoPanel = () => {
                 className="relative flex-1 rounded-xl overflow-hidden border border-white/10 shadow-2xl cursor-pointer group"
                 onClick={() => setZoomedImageIndex(0)}
               >
-                <div className="absolute inset-0 bg-indigo-500/20 opacity-0 group-hover:opacity-100 transition-opacity z-10 flex items-center justify-center">
+                <div className="absolute inset-0 bg-indigo-500/20 opacity-0 md:group-hover:opacity-100 transition-opacity z-10 flex items-center justify-center">
                   <Search size={28} className="text-white drop-shadow-lg" />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent z-10 opacity-60"></div>
@@ -196,7 +196,7 @@ export const InfoPanel = () => {
                   src={getImageUrl(selectedComponent.imageUrls[0])} 
                   alt={selectedComponent.name} 
                   loading="lazy"
-                  className="w-full h-40 sm:h-48 object-cover transition-transform duration-700 group-hover:scale-105" 
+                  className="w-full h-40 sm:h-48 object-cover transition-transform duration-700 md:group-hover:scale-105" 
                 />
               </div>
 
@@ -205,14 +205,14 @@ export const InfoPanel = () => {
                   className="relative w-1/3 rounded-xl overflow-hidden border border-white/10 shadow-2xl cursor-pointer group hidden sm:block bg-black"
                   onClick={() => setZoomedImageIndex(1)}
                 >
-                  <div className="absolute inset-0 bg-indigo-500/20 opacity-0 group-hover:opacity-100 transition-opacity z-10 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-indigo-500/20 opacity-0 md:group-hover:opacity-100 transition-opacity z-10 flex items-center justify-center">
                     <Search size={20} className="text-white drop-shadow-md" />
                   </div>
                   <img 
                     src={getImageUrl(selectedComponent.imageUrls[1])} 
                     alt={`${selectedComponent.name} - opcjonalny widok`} 
                     loading="lazy"
-                    className="w-full h-40 sm:h-48 object-cover opacity-90 transition-transform duration-700 group-hover:scale-110 group-hover:opacity-100" 
+                    className="w-full h-40 sm:h-48 object-cover opacity-90 transition-transform duration-700 md:group-hover:scale-110 md:group-hover:opacity-100" 
                   />
                 </div>
               )}
@@ -230,7 +230,7 @@ export const InfoPanel = () => {
             </h3>
             <ul className="space-y-4">
               {selectedComponent.role.map((r, i) => (
-                <li key={i} className="text-[14px] text-slate-300/95 flex items-start gap-3 bg-white/[0.01] hover:bg-white/[0.03] p-4 rounded-xl border border-white/[0.03] transition-all duration-300">
+                <li key={i} className="text-[14px] text-slate-300/95 flex items-start gap-3 bg-white/[0.01] md:hover:bg-white/[0.03] p-4 rounded-xl border border-white/[0.03] transition-all duration-300">
                   <CheckCircle2 size={16} className="text-indigo-400 mt-0.5 shrink-0" />
                   <span className="leading-relaxed">{r}</span>
                 </li>
@@ -281,14 +281,14 @@ export const InfoPanel = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-2xl p-4 md:p-12"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-2xl p-4 md:p-12 touch-none"
         >
           {/* Close Area */}
           <div className="absolute inset-0 cursor-zoom-out" onClick={() => setZoomedImageIndex(null)}></div>
           
           {/* Prev Arrow */}
           <button 
-            className="absolute left-4 md:left-12 z-50 p-3 bg-white/5 hover:bg-white/20 rounded-full text-white backdrop-blur-md transition-colors"
+            className="absolute left-4 md:left-12 z-50 p-3 bg-white/5 md:hover:bg-white/20 rounded-full text-white backdrop-blur-md transition-colors"
             onClick={(e) => {
               e.stopPropagation();
               setZoomedImageIndex((zoomedImageIndex - 1 + selectedComponent.imageUrls.length) % selectedComponent.imageUrls.length);
@@ -315,7 +315,7 @@ export const InfoPanel = () => {
 
           {/* Next Arrow */}
           <button 
-            className="absolute right-4 md:right-12 z-50 p-3 bg-white/5 hover:bg-white/20 rounded-full text-white backdrop-blur-md transition-colors"
+            className="absolute right-4 md:right-12 z-50 p-3 bg-white/5 md:hover:bg-white/20 rounded-full text-white backdrop-blur-md transition-colors"
             onClick={(e) => {
               e.stopPropagation();
               setZoomedImageIndex((zoomedImageIndex + 1) % selectedComponent.imageUrls.length);
@@ -331,7 +331,7 @@ export const InfoPanel = () => {
                 key={idx} 
                 onClick={(e) => { e.stopPropagation(); setZoomedImageIndex(idx); }}
                 aria-label={`Przejdź do zdjęcia ${idx + 1}`}
-                className={`w-2.5 h-2.5 rounded-full transition-all ${idx === zoomedImageIndex ? 'bg-white scale-125' : 'bg-white/30 hover:bg-white/50'}`} 
+                className={`w-2.5 h-2.5 rounded-full transition-all ${idx === zoomedImageIndex ? 'bg-white scale-125' : 'bg-white/30 md:hover:bg-white/50'}`} 
               />
             ))}
           </div>

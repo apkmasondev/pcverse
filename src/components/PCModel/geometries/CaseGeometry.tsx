@@ -1,5 +1,6 @@
-import * as THREE from 'three';
-import { BackSide, CanvasTexture, ClampToEdgeWrapping, DoubleSide, RepeatWrapping, SRGBColorSpace, MeshStandardMaterial } from 'three';
+import { Group, PointLight, MathUtils, MeshStandardMaterial, ExtrudeGeometry, ShapeGeometry, BackSide, CanvasTexture, ClampToEdgeWrapping, DoubleSide, RepeatWrapping, SRGBColorSpace } from 'three';
+
+
 import { materials } from '../materials';
 import { useMemo, useEffect, useRef } from 'react';
 import { usePCView } from '../../../hooks/usePC';
@@ -58,15 +59,15 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
     caseBottomTexture.offset.set(0.5, 0.5);
   }, [caseBackTexture, caseBehindTexture, caseBottomTexture]);
 
-  const groupRef = useRef<THREE.Group>(null);
+  const groupRef = useRef<Group>(null);
   
   useFrame((_, delta) => {
     if (groupRef.current) {
       const dt = Math.min(delta, 0.05);
       groupRef.current.children.forEach((child) => {
-        if ((child as THREE.PointLight).isLight && child.userData.targetIntensity !== undefined) {
-          const light = child as THREE.PointLight;
-          light.intensity = THREE.MathUtils.lerp(light.intensity, child.userData.targetIntensity, dt * 5);
+        if ((child as PointLight).isLight && child.userData.targetIntensity !== undefined) {
+          const light = child as PointLight;
+          light.intensity = MathUtils.lerp(light.intensity, child.userData.targetIntensity, dt * 5);
         }
       });
     }
@@ -161,19 +162,23 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
   }, [effectiveRgbColor, rgbMaterial]);
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);
-    rgbMaterial.emissiveIntensity = THREE.MathUtils.lerp(rgbMaterial.emissiveIntensity, rgbEnabled ? 3.0 : 0, dt * 5);
+    rgbMaterial.emissiveIntensity = MathUtils.lerp(rgbMaterial.emissiveIntensity, rgbEnabled ? 3.0 : 0, dt * 5);
   });
   useEffect(() => {
     return () => rgbMaterial.dispose();
   }, [rgbMaterial]);
 
   const texturedMaterials = useMemo(() => ({
-    texMat0: new THREE.MeshStandardMaterial({ map: caseBehindTexture, metalness: 0.4, roughness: 0.6, side: BackSide }),
-    texMat1: new THREE.MeshStandardMaterial({ map: caseInteriorTexture, metalness: 0.5, roughness: 0.7 }),
-    texMat2: new THREE.MeshStandardMaterial({ map: caseBottomTexture, metalness: 0.5, roughness: 0.7, side: BackSide }),
-    texMat3: new THREE.MeshStandardMaterial({ map: caseBottomTexture, metalness: 0.5, roughness: 0.7 }),
-    texMat4: new THREE.MeshStandardMaterial({ map: caseInteriorTexture, metalness: 0.5, roughness: 0.7 })
-  }), [caseBehindTexture, caseBottomTexture, caseInteriorTexture]);
+    texMat0: new MeshStandardMaterial({ map: caseBehindTexture, metalness: 0.4, roughness: 0.6, side: BackSide }),
+    texMat1: new MeshStandardMaterial({ map: caseInteriorTexture, metalness: 0.5, roughness: 0.7 }),
+    texMat2: new MeshStandardMaterial({ map: caseBottomTexture, metalness: 0.5, roughness: 0.7, side: BackSide }),
+    texMat3: new MeshStandardMaterial({ map: caseBottomTexture, metalness: 0.5, roughness: 0.7 }),
+    texMat4: new MeshStandardMaterial({ map: caseInteriorTexture, metalness: 0.5, roughness: 0.7 }),
+    meshTop: new MeshStandardMaterial({ alphaMap: meshTexture, alphaTest: 0.5, transparent: false, color: "#4a4d54", metalness: 0.8, roughness: 0.3, side: DoubleSide }),
+    meshBackOut: new MeshStandardMaterial({ alphaMap: backMeshTexture, alphaTest: 0.5, transparent: false, color: "#4a4d54", metalness: 0.85, roughness: 0.3, side: DoubleSide }),
+    meshBottomOut: new MeshStandardMaterial({ alphaMap: backMeshTexture, alphaTest: 0.5, transparent: false, color: "#1e1e24", metalness: 0.85, roughness: 0.3, side: DoubleSide }),
+    meshIn: new MeshStandardMaterial({ alphaMap: backMeshTexture, alphaTest: 0.5, transparent: false, color: "#151515", side: DoubleSide })
+  }), [caseBehindTexture, caseBottomTexture, caseInteriorTexture, meshTexture, backMeshTexture]);
 
   useEffect(() => {
     return () => {
@@ -181,21 +186,46 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
     };
   }, [texturedMaterials]);
 
+  // Refs for procedural geometries garbage collection
+  const extBackRef = useRef<ExtrudeGeometry>(null);
+  const extTopRef = useRef<ExtrudeGeometry>(null);
+  const extBotRef = useRef<ExtrudeGeometry>(null);
+  const extMoboRef = useRef<ExtrudeGeometry>(null);
+  const shpBack1Ref = useRef<ShapeGeometry>(null);
+  const shpBack2Ref = useRef<ShapeGeometry>(null);
+  const shpBot1Ref = useRef<ShapeGeometry>(null);
+  const shpBot2Ref = useRef<ShapeGeometry>(null);
+  const shpMoboRef = useRef<ShapeGeometry>(null);
+
+  useEffect(() => {
+    return () => {
+      extBackRef.current?.dispose();
+      extTopRef.current?.dispose();
+      extBotRef.current?.dispose();
+      extMoboRef.current?.dispose();
+      shpBack1Ref.current?.dispose();
+      shpBack2Ref.current?.dispose();
+      shpBot1Ref.current?.dispose();
+      shpBot2Ref.current?.dispose();
+      shpMoboRef.current?.dispose();
+    };
+  }, []);
+
   return (
     <group>
       {/* Back Panel (Solid metal frame with Motherboard/PSU cutout locations) */}
       <Mesh position={[0, 0, -2.0]}>
-        <extrudeGeometry args={[backPanelShape, extrudeOpts01]} />
+        <extrudeGeometry ref={extBackRef} args={[backPanelShape, extrudeOpts01]} />
         <primitive object={materials.grayMetal} attach="material" />
       </Mesh>
       {/* Back Panel Texture */}
       <Mesh position={[0, 0, -2.001]} rotation={[0, 0, 0]}>
-        <shapeGeometry args={[backPanelShape]} />
+        <shapeGeometry ref={shpBack1Ref} args={[backPanelShape]} />
         <primitive object={texturedMaterials.texMat0} />
       </Mesh>
       {/* Back Panel Texture (Inside, facing Motherboard) */}
       <Mesh position={[0, 0, -1.899]}>
-        <shapeGeometry args={[backPanelShape]} />
+        <shapeGeometry ref={shpBack2Ref} args={[backPanelShape]} />
         <primitive object={texturedMaterials.texMat1} />
       </Mesh>
 
@@ -203,50 +233,34 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
 
       {/* Top Panel (Solid Frame) */}
       <Mesh position={[0, 2.50, 0]} rotation={[Math.PI / 2, 0, 0]} material={materials.caseFrame}>
-        <extrudeGeometry args={[topFrameShape, extrudeOpts01]} />
+        <extrudeGeometry ref={extTopRef} args={[topFrameShape, extrudeOpts01]} />
       </Mesh>
 
       {/* Top Panel (Mesh grill inside the frame) */}
       <Mesh position={[0, 2.45, 0]} raycast={() => null}>
         <boxGeometry args={[3.6, 0.02, 3.6]} />
-        <meshStandardMaterial
-          alphaMap={meshTexture}
-          transparent={false}
-          alphaTest={0.5}
-          color="#4a4d54"
-          metalness={0.8}
-          roughness={0.3}
-          side={DoubleSide}
-        />
+        <primitive object={texturedMaterials.meshTop} attach="material" />
       </Mesh>
 
       {/* PSU Back panel with honeycomb mesh cutout */}
       <Mesh position={[0, -1.91, -2.01]} raycast={() => null}>
         <planeGeometry args={[1.5, 0.78]} />
-        <meshStandardMaterial
-          color="#4a4d54"
-          roughness={0.3}
-          metalness={0.85}
-          alphaMap={backMeshTexture}
-          transparent={false}
-          alphaTest={0.5}
-          side={DoubleSide}
-        />
+        <primitive object={texturedMaterials.meshBackOut} attach="material" />
       </Mesh>
 
       {/* Bottom Panel with PSU ventilation cutout */}
       <group position={[0, -2.4, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <Mesh material={materials.caseFrame}>
-          <extrudeGeometry args={[bottomPanelShape, extrudeOpts01]} />
+          <extrudeGeometry ref={extBotRef} args={[bottomPanelShape, extrudeOpts01]} />
         </Mesh>
         {/* Bottom Panel Texture (Outside) */}
         <Mesh position={[0, 0, -0.001]} rotation={[0, 0, 0]}>
-          <shapeGeometry args={[bottomPanelShape]} />
+          <shapeGeometry ref={shpBot1Ref} args={[bottomPanelShape]} />
           <primitive object={texturedMaterials.texMat2} />
         </Mesh>
         {/* Bottom Panel Texture (Inside) */}
         <Mesh position={[0, 0, 0.101]} rotation={[0, 0, 0]}>
-          <shapeGeometry args={[bottomPanelShape]} />
+          <shapeGeometry ref={shpBot2Ref} args={[bottomPanelShape]} />
           <primitive object={texturedMaterials.texMat3} />
         </Mesh>
       </group>
@@ -290,38 +304,24 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
       {/* PSU Bottom Ventilation Mesh (Visible from below) */}
       <Mesh position={[-1.2, -2.405, -0.8]} rotation={[Math.PI / 2, 0, 0]} raycast={() => null}>
         <planeGeometry args={[1.45, 1.45]} />
-        <meshStandardMaterial
-          color="#1e1e24"
-          roughness={0.3}
-          metalness={0.85}
-          alphaMap={backMeshTexture}
-          transparent={false}
-          alphaTest={0.5}
-          side={DoubleSide}
-        />
+        <primitive object={texturedMaterials.meshBottomOut} attach="material" />
       </Mesh>
       {/* PSU Bottom Ventilation Mesh (Visible from inside case) */}
       <Mesh position={[-1.2, -2.39, -0.8]} rotation={[Math.PI / 2, 0, 0]} raycast={() => null}>
         <planeGeometry args={[1.45, 1.45]} />
-        <meshStandardMaterial
-          color="#151515"
-          alphaMap={backMeshTexture}
-          transparent={false}
-          alphaTest={0.5}
-          side={DoubleSide}
-        />
+        <primitive object={texturedMaterials.meshIn} attach="material" />
       </Mesh>
 
       {/* Motherboard Tray with Standoffs (Gwinty) and Routing Holes */}
       <group position={[0, 0, -1.825]}>
         {/* Main Tray */}
         <Mesh>
-          <extrudeGeometry args={[moboTrayShape, extrudeOpts005]} />
+          <extrudeGeometry ref={extMoboRef} args={[moboTrayShape, extrudeOpts005]} />
           <primitive object={materials.darkMetal} attach="material" />
         </Mesh>
         {/* Motherboard Tray Texture */}
         <Mesh position={[0, 0, 0.051]}>
-          <shapeGeometry args={[moboTrayShape]} />
+          <shapeGeometry ref={shpMoboRef} args={[moboTrayShape]} />
           <primitive object={texturedMaterials.texMat4} />
         </Mesh>
 
@@ -358,13 +358,7 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
       {/* CPU Cooler Backplate Mesh Cutout (on the Back Panel, directly behind the CPU) */}
       <Mesh position={[-0.45, 1.0, -2.01]} raycast={() => null}>
         <planeGeometry args={[1.4, 1.4]} />
-        <meshStandardMaterial
-          color="#151515"
-          alphaMap={backMeshTexture}
-          transparent={false}
-          alphaTest={0.5}
-          side={DoubleSide}
-        />
+        <primitive object={texturedMaterials.meshIn} attach="material" />
       </Mesh>
 
       <CasePanels

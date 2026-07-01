@@ -1,4 +1,5 @@
 import { CatmullRomCurve3, CubicBezierCurve3, TubeGeometry, Vector3 } from 'three';
+
 import { useMemo, useEffect, useRef } from 'react';
 import { materials, xrayMaterial } from './materials';
 

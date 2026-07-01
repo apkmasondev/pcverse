@@ -1,5 +1,6 @@
-import * as THREE from 'three';
-import { ExtrudeGeometry, Shape } from 'three';
+import { MeshStandardMaterial, ExtrudeGeometry, Shape } from 'three';
+
+
 import { useRef, useMemo, useEffect } from 'react';
 
 import { useTexture } from '@react-three/drei';
@@ -80,9 +81,9 @@ export const CPUGeometry = () => {
   }, []);
 
   const texturedMaterials = useMemo(() => ({
-    texMat0: new THREE.MeshStandardMaterial({ map: cpuTexture, roughness: 0.9 }),
-    texMat1: new THREE.MeshStandardMaterial({ map: cpuTexture, roughness: 0.4, metalness: 0.7 }),
-    texMat2: new THREE.MeshStandardMaterial({ map: cpuBottomTexture, roughness: 0.4, metalness: 0.8 })
+    texMat0: new MeshStandardMaterial({ map: cpuTexture, roughness: 0.9 }),
+    texMat1: new MeshStandardMaterial({ map: cpuTexture, roughness: 0.4, metalness: 0.7 }),
+    texMat2: new MeshStandardMaterial({ map: cpuBottomTexture, roughness: 0.4, metalness: 0.8 })
   }), [cpuBottomTexture, cpuTexture]);
 
   useEffect(() => {

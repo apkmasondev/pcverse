@@ -1,6 +1,7 @@
-import * as THREE from 'three';
+import { MathUtils, MeshStandardMaterial } from 'three';
+
 import { useMemo, useEffect } from 'react';
-import { MeshStandardMaterial } from 'three';
+
 import { materials } from '../materials';
 import { useTexture, Instance } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
@@ -35,7 +36,7 @@ export const MotherboardGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string
 
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);
-    rgbMaterial.emissiveIntensity = THREE.MathUtils.lerp(rgbMaterial.emissiveIntensity, rgbEnabled ? 3.0 : 0, dt * 5);
+    rgbMaterial.emissiveIntensity = MathUtils.lerp(rgbMaterial.emissiveIntensity, rgbEnabled ? 3.0 : 0, dt * 5);
   });
 
   useEffect(() => {
@@ -45,14 +46,14 @@ export const MotherboardGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string
   }, [rgbMaterial]);
 
   const texturedMaterials = useMemo(() => ({
-    texMat0: new THREE.MeshStandardMaterial({ map: moboTopTexture, roughness: 0.5, metalness: 0.4, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }),
-    texMat1: new THREE.MeshStandardMaterial({ map: backTexture, roughness: 0.4, metalness: 0.2, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }),
-    texMat2: new THREE.MeshStandardMaterial({ map: cpuSocketTexture, metalness: 0.8, roughness: 0.2 }),
-    texMat3: new THREE.MeshStandardMaterial({ map: ssdTexture, roughness: 0.5 }),
-    texMat4: new THREE.MeshStandardMaterial({ map: m2HeatsinkTexture, roughness: 0.4, metalness: 0.6 }),
-    texMat5: new THREE.MeshStandardMaterial({ map: cmosBatteryTexture, metalness: 0.7, roughness: 0.3, color: "#ffffff" }),
-    texMat6: new THREE.MeshStandardMaterial({ map: chipsetTexture, roughness: 0.3, metalness: 0.6 }),
-    texMat7: new THREE.MeshStandardMaterial({ map: moboIoTexture, roughness: 0.6, metalness: 0.4, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 })
+    texMat0: new MeshStandardMaterial({ map: moboTopTexture, roughness: 0.5, metalness: 0.4, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }),
+    texMat1: new MeshStandardMaterial({ map: backTexture, roughness: 0.4, metalness: 0.2, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }),
+    texMat2: new MeshStandardMaterial({ map: cpuSocketTexture, metalness: 0.8, roughness: 0.2 }),
+    texMat3: new MeshStandardMaterial({ map: ssdTexture, roughness: 0.5 }),
+    texMat4: new MeshStandardMaterial({ map: m2HeatsinkTexture, roughness: 0.4, metalness: 0.6 }),
+    texMat5: new MeshStandardMaterial({ map: cmosBatteryTexture, metalness: 0.7, roughness: 0.3, color: "#ffffff" }),
+    texMat6: new MeshStandardMaterial({ map: chipsetTexture, roughness: 0.3, metalness: 0.6 }),
+    texMat7: new MeshStandardMaterial({ map: moboIoTexture, roughness: 0.6, metalness: 0.4, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 })
   }), [backTexture, chipsetTexture, cmosBatteryTexture, cpuSocketTexture, m2HeatsinkTexture, moboIoTexture, moboTopTexture, ssdTexture]);
 
   useEffect(() => {

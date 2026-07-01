@@ -1,5 +1,6 @@
-import * as THREE from 'three';
-import { RepeatWrapping } from 'three';
+import { MeshStandardMaterial, RepeatWrapping } from 'three';
+
+
 import { materials, xrayMaterial } from '../materials';
 
 import { useMemo, useEffect } from 'react';
@@ -32,12 +33,12 @@ export const HDDGeometry = () => {
   }, [hddSideTextureMirrored]);
 
   const texturedMaterials = useMemo(() => ({
-    texMat0: new THREE.MeshStandardMaterial({ map: hddTopTexture, roughness: 0.3, metalness: 0.6 }),
-    texMat1: new THREE.MeshStandardMaterial({ map: hddBottomTexture, roughness: 0.6, metalness: 0.3 }),
-    texMat2: new THREE.MeshStandardMaterial({ map: hddSideTextureMirrored, roughness: 0.5, metalness: 0.5 }),
-    texMat3: new THREE.MeshStandardMaterial({ map: hddSideTexture, roughness: 0.5, metalness: 0.5 }),
-    texMat4: new THREE.MeshStandardMaterial({ map: hddBehindTexture, roughness: 0.4, metalness: 0.6 }),
-    texMat5: new THREE.MeshStandardMaterial({ map: hddPortsTexture, roughness: 0.4, metalness: 0.6 })
+    texMat0: new MeshStandardMaterial({ map: hddTopTexture, roughness: 0.3, metalness: 0.6 }),
+    texMat1: new MeshStandardMaterial({ map: hddBottomTexture, roughness: 0.6, metalness: 0.3 }),
+    texMat2: new MeshStandardMaterial({ map: hddSideTextureMirrored, roughness: 0.5, metalness: 0.5 }),
+    texMat3: new MeshStandardMaterial({ map: hddSideTexture, roughness: 0.5, metalness: 0.5 }),
+    texMat4: new MeshStandardMaterial({ map: hddBehindTexture, roughness: 0.4, metalness: 0.6 }),
+    texMat5: new MeshStandardMaterial({ map: hddPortsTexture, roughness: 0.4, metalness: 0.6 })
   }), [hddBehindTexture, hddBottomTexture, hddPortsTexture, hddSideTexture, hddSideTextureMirrored, hddTopTexture]);
 
   useEffect(() => {

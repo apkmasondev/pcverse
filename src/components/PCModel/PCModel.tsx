@@ -1,3 +1,4 @@
+import { Group, Mesh, Color, Vector3, Quaternion, Euler } from 'three';
 import { fanBladesRefsZ, fanBladesRefsY } from './FanManager';
 import { CPUGeometry } from './geometries/CPUGeometry';
 import { GPUGeometry } from './geometries/GPUGeometry';
@@ -11,7 +12,7 @@ import { CPUCoolerGeometry, FanGeometry } from './geometries/CPUCoolerGeometry';
 import { CableGeometry } from './CableGeometry';
 import { useRef, useMemo, Suspense, memo, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { Group, Mesh, Color, Vector3, Quaternion, Euler } from 'three';
+
 import { Html, useTexture } from '@react-three/drei';
 import { motion, useReducedMotion } from 'framer-motion';
 import { xrayMaterial } from './materials';
@@ -115,7 +116,7 @@ const ComponentLabel = memo(({ data, isUnbuilt, isCurrentStep, isMobile, explode
 
   return (
     <Html
-      position={[0, data.geometryArgs[1] / 2, 0]}
+      position={[0, data.geometryArgs[1] / 2, data.id === 'gpu' ? 0.7 : 0]}
       center
       distanceFactor={12}
       zIndexRange={[20, 0]}
@@ -290,7 +291,7 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
       needsInvalidate = true;
     }
 
-    const ringOffsetY = data.id === 'gpu' ? 1.6 : data.id === 'storage_hdd' ? 0.6 : 0.4;
+    const ringOffsetY = data.id === 'gpu' ? 1.8 : data.id === 'storage_hdd' ? 0.6 : 0.4;
     if (ringRef.current) {
       ringRef.current.rotation.z += dt * 0.5;
       ringRef.current.position.copy(groupRef.current.position);
@@ -356,18 +357,27 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
           usePCUI.getState().setHoveredComponentId(null);
         }}
       >
-
-        <ErrorBoundary fallback={<mesh material={xrayMode ? xrayMaterial : undefined}><boxGeometry args={data.geometryArgs} />{!xrayMode && <meshStandardMaterial color={baseColor} />}</mesh>}>
-          <Suspense fallback={<mesh material={xrayMode ? xrayMaterial : undefined}><boxGeometry args={data.geometryArgs} />{!xrayMode && <meshStandardMaterial color={baseColor} />}</mesh>}>
-            {visual}
-            {data.id !== 'case' && (
-              <mesh>
-                <boxGeometry args={[data.geometryArgs[0] * 1.2, data.geometryArgs[1] * 1.2, data.geometryArgs[2] * 1.2]} />
-                <meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} />
-              </mesh>
-            )}
-          </Suspense>
-        </ErrorBoundary>
+        {(() => {
+          const fallbackMesh = (
+            <mesh material={xrayMode ? xrayMaterial : undefined}>
+              <boxGeometry args={data.geometryArgs} />
+              {!xrayMode && <meshStandardMaterial color={baseColor} />}
+            </mesh>
+          );
+          return (
+            <ErrorBoundary fallback={fallbackMesh}>
+              <Suspense fallback={fallbackMesh}>
+                {visual}
+                {data.id !== 'case' && (
+                  <mesh>
+                    <boxGeometry args={[data.geometryArgs[0] * 1.2, data.geometryArgs[1] * 1.2, data.geometryArgs[2] * 1.2]} />
+                    <meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} />
+                  </mesh>
+                )}
+              </Suspense>
+            </ErrorBoundary>
+          );
+        })()}
 
         {showLabels && !showInstructions && !isSelected && (
           <ComponentLabel
@@ -387,7 +397,9 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
 export const PCModel = () => {
   const isMobile = useIsMobile();
   const groupRef = useRef<Group>(null);
-  const { buildMode, currentStep, maxSteps } = useBuildStore();
+  const buildMode = useBuildStore(state => state.buildMode);
+  const currentStep = useBuildStore(state => state.currentStep);
+  const maxSteps = useBuildStore(state => state.maxSteps);
   const showAirflow = usePCView(state => state.showAirflow);
   useFrame((_, delta) => {
     // Na desktopie i tak renderujemy 60fps (frameloop="always").

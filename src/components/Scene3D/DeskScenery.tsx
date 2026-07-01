@@ -1,4 +1,5 @@
-import * as THREE from 'three';
+import { CylinderGeometry, MeshStandardMaterial, TorusGeometry, BoxGeometry, PlaneGeometry, DoubleSide, Group, Color, MathUtils, PointLight, Texture, RepeatWrapping, Mesh, Material } from 'three';
+
 import { useEffect, useMemo, useRef, Suspense } from 'react';
 import { MeshReflectorMaterial, Float, useTexture, Instances, Instance } from '@react-three/drei';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
@@ -9,67 +10,67 @@ import { useIsMobile } from '../../hooks/useIsMobile';
 // --- Zgodnie z AUDYTEM (Etap 20) ---
 // Współdzielone geometrie i materiały dla rozsypanych elementów, 
 // aby uniknąć wycieków pamięci i tworzenia nowych instancji przy re-renderach.
-const screwGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.06, 8);
-const screwMat = new THREE.MeshStandardMaterial({ color: '#b0b5b9', metalness: 0.9, roughness: 0.3 });
+const screwGeo = new CylinderGeometry(0.04, 0.04, 0.06, 8);
+const screwMat = new MeshStandardMaterial({ color: '#b0b5b9', metalness: 0.9, roughness: 0.3 });
 
-const zipTieGeo = new THREE.TorusGeometry(0.15, 0.02, 8, 16, Math.PI * 1.6);
-const zipTieMat = new THREE.MeshStandardMaterial({ color: '#151515', roughness: 0.8 });
+const zipTieGeo = new TorusGeometry(0.15, 0.02, 8, 16, Math.PI * 1.6);
+const zipTieMat = new MeshStandardMaterial({ color: '#151515', roughness: 0.8 });
 
-const usbBodyGeo = new THREE.BoxGeometry(0.18, 0.05, 0.4);
-const usbBodyMat = new THREE.MeshStandardMaterial({ color: '#2a2c30', roughness: 0.7 });
-const usbTipGeo = new THREE.BoxGeometry(0.14, 0.04, 0.15);
-const usbTipMat = new THREE.MeshStandardMaterial({ color: '#cccccc', metalness: 0.8, roughness: 0.2 });
+const usbBodyGeo = new BoxGeometry(0.18, 0.05, 0.4);
+const usbBodyMat = new MeshStandardMaterial({ color: '#2a2c30', roughness: 0.7 });
+const usbTipGeo = new BoxGeometry(0.14, 0.04, 0.15);
+const usbTipMat = new MeshStandardMaterial({ color: '#cccccc', metalness: 0.8, roughness: 0.2 });
 
-const screwdriverHandleGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.6, 8);
-const screwdriverHandleMat = new THREE.MeshStandardMaterial({ color: '#d32f2f', roughness: 0.6 });
-const screwdriverShaftGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.5, 8);
+const screwdriverHandleGeo = new CylinderGeometry(0.06, 0.06, 0.6, 8);
+const screwdriverHandleMat = new MeshStandardMaterial({ color: '#d32f2f', roughness: 0.6 });
+const screwdriverShaftGeo = new CylinderGeometry(0.02, 0.02, 0.5, 8);
 
-const pasteBodyGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.8, 16);
-const pasteBodyMat = new THREE.MeshStandardMaterial({ color: '#111111', roughness: 0.5 });
-const pasteLabelGeo = new THREE.CylinderGeometry(0.082, 0.082, 0.4, 16);
-const pasteLabelMat = new THREE.MeshStandardMaterial({ color: '#555555', roughness: 0.8 });
-const pasteTipGeo = new THREE.CylinderGeometry(0.02, 0.04, 0.2, 8);
-const pastePlungerGeo = new THREE.CylinderGeometry(0.03, 0.03, 0.4, 8);
+const pasteBodyGeo = new CylinderGeometry(0.08, 0.08, 0.8, 16);
+const pasteBodyMat = new MeshStandardMaterial({ color: '#111111', roughness: 0.5 });
+const pasteLabelGeo = new CylinderGeometry(0.082, 0.082, 0.4, 16);
+const pasteLabelMat = new MeshStandardMaterial({ color: '#555555', roughness: 0.8 });
+const pasteTipGeo = new CylinderGeometry(0.02, 0.04, 0.2, 8);
+const pastePlungerGeo = new CylinderGeometry(0.03, 0.03, 0.4, 8);
 
-const gpuBoxGeo = new THREE.BoxGeometry(3, 0.6, 2.0);
-const gpuBoxSideMat = new THREE.MeshStandardMaterial({ color: '#090a0c', roughness: 0.8 });
+const gpuBoxGeo = new BoxGeometry(3, 0.6, 2.0);
+const gpuBoxSideMat = new MeshStandardMaterial({ color: '#090a0c', roughness: 0.8 });
 
-const moboBoxGeo = new THREE.BoxGeometry(3.5, 0.7, 3.2);
-const moboBoxSideMat = new THREE.MeshStandardMaterial({ color: '#13151a', roughness: 0.9 });
+const moboBoxGeo = new BoxGeometry(3.5, 0.7, 3.2);
+const moboBoxSideMat = new MeshStandardMaterial({ color: '#13151a', roughness: 0.9 });
 
 // RAM (przygotowane pod teksturę)
-const ramStickGeo = new THREE.BoxGeometry(1.75, 0.04, 0.32);
-const ramStickMat = new THREE.MeshStandardMaterial({ color: '#1a1c20', roughness: 0.7, metalness: 0.3 }); // Zostanie zastąpiony po dodaniu tekstury
+const ramStickGeo = new BoxGeometry(1.75, 0.04, 0.32);
+const ramStickMat = new MeshStandardMaterial({ color: '#1a1c20', roughness: 0.7, metalness: 0.3 }); // Zostanie zastąpiony po dodaniu tekstury
 
 // Puszka Energetyka
-const energyCanGeo = new THREE.CylinderGeometry(0.35, 0.35, 1.4, 32);
-const energyCanTopMat = new THREE.MeshStandardMaterial({ color: '#d0d0d0', roughness: 0.3, metalness: 0.8 });
+const energyCanGeo = new CylinderGeometry(0.35, 0.35, 1.4, 32);
+const energyCanTopMat = new MeshStandardMaterial({ color: '#d0d0d0', roughness: 0.3, metalness: 0.8 });
 
 // Żółte Karteczki (Post-it)
-const postItGeo = new THREE.PlaneGeometry(1.2, 1.2);
+const postItGeo = new PlaneGeometry(1.2, 1.2);
 
-const blackMatDouble = new THREE.MeshStandardMaterial({ color: '#0f0f13', roughness: 0.2, metalness: 0.6, side: THREE.DoubleSide });
-const blackMatSingle = new THREE.MeshStandardMaterial({ color: '#0f0f13', roughness: 0.2, metalness: 0.6 });
+const blackMatDouble = new MeshStandardMaterial({ color: '#0f0f13', roughness: 0.2, metalness: 0.6, side: DoubleSide });
+const blackMatSingle = new MeshStandardMaterial({ color: '#0f0f13', roughness: 0.2, metalness: 0.6 });
 
-const crateGeo = new THREE.BoxGeometry(5, 2.0, 5);
-const rugGeo = new THREE.BoxGeometry(22, 12.375, 0.04);
+const crateGeo = new BoxGeometry(5, 2.0, 5);
+const rugGeo = new BoxGeometry(22, 12.375, 0.04);
 
 const AmbilightStrip = () => {
-  const groupRef = useRef<THREE.Group>(null);
+  const groupRef = useRef<Group>(null);
   const rgbColor = usePCRGB(state => state.rgbColor);
   const rgbEnabled = usePCRGB(state => state.rgbEnabled);
-  const targetColor = useRef(new THREE.Color(rgbColor));
+  const targetColor = useRef(new Color(rgbColor));
   const targetIntensity = useRef(0);
 
   useFrame((_, delta) => {
     if (!groupRef.current) return;
     const dt = Math.min(delta, 0.05);
     targetColor.current.set(rgbColor);
-    targetIntensity.current = THREE.MathUtils.lerp(targetIntensity.current, rgbEnabled ? 3 : 0, dt * 10);
+    targetIntensity.current = MathUtils.lerp(targetIntensity.current, rgbEnabled ? 3 : 0, dt * 10);
 
     groupRef.current.children.forEach((child) => {
-      if ((child as THREE.PointLight).isLight) {
-        const light = child as THREE.PointLight;
+      if ((child as PointLight).isLight) {
+        const light = child as PointLight;
         light.color.lerp(targetColor.current, dt * 5);
         light.intensity = targetIntensity.current;
       }
@@ -86,8 +87,8 @@ const AmbilightStrip = () => {
   );
 };
 
-const Poster = ({ tex, position, rotation, size }: { tex: THREE.Texture, position: [number, number, number], rotation?: [number, number, number], size: number }) => {
-  const mat = useMemo(() => new THREE.MeshStandardMaterial({
+const Poster = ({ tex, position, rotation, size }: { tex: Texture, position: [number, number, number], rotation?: [number, number, number], size: number }) => {
+  const mat = useMemo(() => new MeshStandardMaterial({
     map: tex, emissiveMap: tex, emissiveIntensity: 0.2, emissive: "#ffffff", polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1
   }), [tex]);
   useEffect(() => {
@@ -109,7 +110,7 @@ const Poster = ({ tex, position, rotation, size }: { tex: THREE.Texture, positio
 
 const CorkBoard = () => {
   const texCork = useTexture(import.meta.env.BASE_URL + 'textures/posters/corkboard.webp');
-  const corkMat = useMemo(() => new THREE.MeshStandardMaterial({
+  const corkMat = useMemo(() => new MeshStandardMaterial({
     map: texCork,
     roughness: 1,
     polygonOffset: true,
@@ -139,7 +140,7 @@ const CorkBoard = () => {
 
 const Magazine = () => {
   const texMag = useTexture(import.meta.env.BASE_URL + 'textures/posters/magazine.webp');
-  const magMat = useMemo(() => new THREE.MeshStandardMaterial({
+  const magMat = useMemo(() => new MeshStandardMaterial({
     map: texMag,
     roughness: 0.2,
     metalness: 0.1,
@@ -165,7 +166,7 @@ const Magazine = () => {
 
 const CPUProp = () => {
   const texCPU = useTexture(import.meta.env.BASE_URL + 'textures/posters/cplu_floor.jpg');
-  const cpuMat = useMemo(() => new THREE.MeshStandardMaterial({
+  const cpuMat = useMemo(() => new MeshStandardMaterial({
     map: texCPU,
     roughness: 0.3,
     metalness: 0.5,
@@ -193,7 +194,7 @@ const CPUProp = () => {
 
 const Door = () => {
   const texDoor = useTexture(import.meta.env.BASE_URL + 'textures/posters/door.webp');
-  const doorMat = useMemo(() => new THREE.MeshStandardMaterial({
+  const doorMat = useMemo(() => new MeshStandardMaterial({
     map: texDoor,
     roughness: 0.8,
     polygonOffset: true,
@@ -301,50 +302,50 @@ const DeskDetails = ({ reducedMotion }: { reducedMotion: boolean }) => {
 
   const { gpuBoxMaterials, moboBoxMaterials, energyCanMaterials, ramFloorMaterials, postItMaterials, mugMaterial } = useMemo(() => {
     const texSideShortMirrored = texSideShort.clone();
-    texSideShortMirrored.wrapS = THREE.RepeatWrapping;
+    texSideShortMirrored.wrapS = RepeatWrapping;
     texSideShortMirrored.repeat.x = -1;
     texSideShortMirrored.needsUpdate = true;
 
     const texMbSideShortMirrored = texMbSideShort.clone();
-    texMbSideShortMirrored.wrapT = THREE.RepeatWrapping; // Use wrapT because it's rotated
+    texMbSideShortMirrored.wrapT = RepeatWrapping; // Use wrapT because it's rotated
     texMbSideShortMirrored.repeat.y = -1; // Flip on Y since it's rotated 90 deg
     texMbSideShortMirrored.needsUpdate = true;
 
     return {
       gpuBoxMaterials: [
-        new THREE.MeshStandardMaterial({ map: texSideShortMirrored, roughness: 0.4 }),
-        new THREE.MeshStandardMaterial({ map: texSideShort, roughness: 0.4 }),
-        new THREE.MeshStandardMaterial({ map: texGpuBox, roughness: 0.4 }),
+        new MeshStandardMaterial({ map: texSideShortMirrored, roughness: 0.4 }),
+        new MeshStandardMaterial({ map: texSideShort, roughness: 0.4 }),
+        new MeshStandardMaterial({ map: texGpuBox, roughness: 0.4 }),
         gpuBoxSideMat,
-        new THREE.MeshStandardMaterial({ map: texSideLong, roughness: 0.4 }),
-        new THREE.MeshStandardMaterial({ map: texSideLong, roughness: 0.4 }),
+        new MeshStandardMaterial({ map: texSideLong, roughness: 0.4 }),
+        new MeshStandardMaterial({ map: texSideLong, roughness: 0.4 }),
       ],
       moboBoxMaterials: [
-        new THREE.MeshStandardMaterial({ map: texMbSideShortMirrored, roughness: 0.4 }),
-        new THREE.MeshStandardMaterial({ map: texMbSideShort, roughness: 0.4 }),
-        new THREE.MeshStandardMaterial({ map: texMbBox, roughness: 0.4 }),
+        new MeshStandardMaterial({ map: texMbSideShortMirrored, roughness: 0.4 }),
+        new MeshStandardMaterial({ map: texMbSideShort, roughness: 0.4 }),
+        new MeshStandardMaterial({ map: texMbBox, roughness: 0.4 }),
         moboBoxSideMat,
-        new THREE.MeshStandardMaterial({ map: texMbSideLong, roughness: 0.4 }),
-        new THREE.MeshStandardMaterial({ map: texMbSideLong, roughness: 0.4 }),
+        new MeshStandardMaterial({ map: texMbSideLong, roughness: 0.4 }),
+        new MeshStandardMaterial({ map: texMbSideLong, roughness: 0.4 }),
       ],
       energyCanMaterials: [
-        new THREE.MeshStandardMaterial({ map: texEnergyCan, roughness: 0.3, metalness: 0.8 }),
-        new THREE.MeshStandardMaterial({ map: texCanTop, roughness: 0.3, metalness: 0.8 }),
+        new MeshStandardMaterial({ map: texEnergyCan, roughness: 0.3, metalness: 0.8 }),
+        new MeshStandardMaterial({ map: texCanTop, roughness: 0.3, metalness: 0.8 }),
         energyCanTopMat,
       ],
       ramFloorMaterials: [
         ramStickMat,
         ramStickMat,
-        new THREE.MeshStandardMaterial({ map: texRamFloor, roughness: 0.5, metalness: 0.2 }),
+        new MeshStandardMaterial({ map: texRamFloor, roughness: 0.5, metalness: 0.2 }),
         ramStickMat,
         ramStickMat,
         ramStickMat,
       ],
       postItMaterials: [
-        new THREE.MeshStandardMaterial({ map: texNote1, roughness: 0.9 }),
-        new THREE.MeshStandardMaterial({ map: texNote2, roughness: 0.9 })
+        new MeshStandardMaterial({ map: texNote1, roughness: 0.9 }),
+        new MeshStandardMaterial({ map: texNote2, roughness: 0.9 })
       ],
-      mugMaterial: new THREE.MeshStandardMaterial({ map: texNewMug, emissiveMap: texNewMug, emissiveIntensity: 0.2, emissive: "#ffffff", polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 })
+      mugMaterial: new MeshStandardMaterial({ map: texNewMug, emissiveMap: texNewMug, emissiveIntensity: 0.2, emissive: "#ffffff", polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 })
     };
   }, [texSideShort, texGpuBox, texSideLong, texEnergyCan, texCanTop, texRamFloor, texNote1, texNote2, texMbBox, texMbSideLong, texMbSideShort, texNewMug]);
 
@@ -438,8 +439,8 @@ export const DeskEssentials = () => {
   ]);
 
   const { rugMat, crateMat } = useMemo(() => ({
-    rugMat: new THREE.MeshStandardMaterial({ map: texRug, roughness: 0.9 }),
-    crateMat: new THREE.MeshStandardMaterial({ map: texCrate, roughness: 0.9, metalness: 0.0 })
+    rugMat: new MeshStandardMaterial({ map: texRug, roughness: 0.9 }),
+    crateMat: new MeshStandardMaterial({ map: texCrate, roughness: 0.9, metalness: 0.0 })
   }), [texRug, texCrate]);
 
   useEffect(() => {
@@ -462,11 +463,11 @@ export const LoftWalls = () => {
   
   const mat = useMemo(() => {
     const clonedTex = tex.clone();
-    clonedTex.wrapS = THREE.RepeatWrapping;
-    clonedTex.wrapT = THREE.RepeatWrapping;
+    clonedTex.wrapS = RepeatWrapping;
+    clonedTex.wrapT = RepeatWrapping;
     clonedTex.repeat.set(12, 6);
     
-    return new THREE.MeshStandardMaterial({
+    return new MeshStandardMaterial({
       color: '#ffffff',
       map: clonedTex,
       bumpMap: clonedTex,
@@ -505,25 +506,25 @@ export const LoftWalls = () => {
 };
 
 export const SkylightCeiling = () => {
-  const glassMat = useMemo(() => new THREE.MeshStandardMaterial({
+  const glassMat = useMemo(() => new MeshStandardMaterial({
     color: '#aaccff',
     transparent: true,
     opacity: 0.2,
     roughness: 0.1,
     metalness: 0.9,
-    side: THREE.DoubleSide,
+    side: DoubleSide,
     depthWrite: false
   }), []);
 
-  const frameMat = useMemo(() => new THREE.MeshStandardMaterial({
+  const frameMat = useMemo(() => new MeshStandardMaterial({
     color: '#1a1a1c',
     roughness: 0.8,
     metalness: 0.8
   }), []);
 
   // Znacznie pogrubione w osi Y (wysokość 1.2), by mocno wystawały z góry i z dołu
-  const beamGeoX = useMemo(() => new THREE.BoxGeometry(60, 1.2, 0.6), []);
-  const beamGeoZ = useMemo(() => new THREE.BoxGeometry(0.6, 1.2, 60), []);
+  const beamGeoX = useMemo(() => new BoxGeometry(60, 1.2, 0.6), []);
+  const beamGeoZ = useMemo(() => new BoxGeometry(0.6, 1.2, 60), []);
 
   useEffect(() => {
     return () => {
@@ -557,12 +558,12 @@ export const DioramaFrame = () => {
   
   const frameMatHorizontal = useMemo(() => {
     const clonedTex = tex.clone();
-    clonedTex.wrapS = THREE.RepeatWrapping;
-    clonedTex.wrapT = THREE.RepeatWrapping;
+    clonedTex.wrapS = RepeatWrapping;
+    clonedTex.wrapT = RepeatWrapping;
     // Dopasowanie skali cegieł (51 szerokości / 5 = ~10 powtórzeń, 2 wysokości / 5 = 0.4)
     clonedTex.repeat.set(10, 0.4);
     
-    return new THREE.MeshStandardMaterial({
+    return new MeshStandardMaterial({
       color: '#ffffff',
       map: clonedTex,
       bumpMap: clonedTex,
@@ -574,13 +575,13 @@ export const DioramaFrame = () => {
 
   const frameMatVertical = useMemo(() => {
     const clonedTex = tex.clone();
-    clonedTex.wrapS = THREE.RepeatWrapping;
-    clonedTex.wrapT = THREE.RepeatWrapping;
+    clonedTex.wrapS = RepeatWrapping;
+    clonedTex.wrapT = RepeatWrapping;
     // Dopasowanie skali cegieł (2 szerokości / 5 = 0.4, 21 wysokości / 5 = ~4.2)
     // UWAGA: Nie obracamy cegieł, żeby leżały naturalnie poziomo!
     clonedTex.repeat.set(0.4, 4.2);
     
-    return new THREE.MeshStandardMaterial({
+    return new MeshStandardMaterial({
       color: '#ffffff',
       map: clonedTex,
       bumpMap: clonedTex,
@@ -591,9 +592,9 @@ export const DioramaFrame = () => {
   }, [tex]);
 
   // Grubsza rama, schowana do wewnątrz sceny (Zasada Dioramy)
-  const beamGeoX = useMemo(() => new THREE.BoxGeometry(51, 2, 2), []);
+  const beamGeoX = useMemo(() => new BoxGeometry(51, 2, 2), []);
   // Skrócona wysokość pionowych belek (z 25 na 21), aby zapobiec Z-fighting na rogach
-  const beamGeoY = useMemo(() => new THREE.BoxGeometry(2, 21, 2), []);
+  const beamGeoY = useMemo(() => new BoxGeometry(2, 21, 2), []);
 
   useEffect(() => {
     return () => {
@@ -623,13 +624,13 @@ export const DioramaFrame = () => {
 export const DeskScenery = () => {
   const xrayMode = usePCView(state => state.xrayMode);
   const isMobile = useIsMobile();
-  const reflectorMeshRef = useRef<THREE.Mesh>(null);
+  const reflectorMeshRef = useRef<Mesh>(null);
   const reducedMotion = useReducedMotion();
 
   useEffect(() => {
     return () => {
       if (reflectorMeshRef.current?.material) {
-        (reflectorMeshRef.current.material as THREE.Material).dispose();
+        (reflectorMeshRef.current.material as Material).dispose();
       }
     };
   }, []);

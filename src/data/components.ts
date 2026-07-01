@@ -50,7 +50,7 @@ export const pcComponents: PCComponent[] = [
     funFact: "Nowoczesne płyty główne mogą mieć ponad 10 warstw włókna szklanego i miedzianych ścieżek.",
     position: [-0.42, 0, -1.75],
     explodedPosition: [-6.2, 1.5, -9.75],
-    explodedRotation: [Math.PI / 16, Math.PI / 8, 0],
+    explodedRotation: [-Math.PI / 48, Math.PI / 8, 0],
     color: "#1a1a2e",
     perfImpact: { gaming: 5, ai: 5, productivity: 5 },
     customStats: [
@@ -184,7 +184,7 @@ export const pcComponents: PCComponent[] = [
     funFact: "Współczesne układy graficzne (GPU) są wykorzystywane nie tylko w grach, ale także jako potężne 'mózgi' dla sztucznej inteligencji, ponieważ potrafią przetwarzać tysiące operacji matematycznych jednocześnie.",
     position: [-0.25, -0.455, -1],
     explodedPosition: [-11, 3.5, -3.5],
-    explodedRotation: [-Math.PI / 4, 0, 0],
+    explodedRotation: [-Math.PI / 1.7, 0, 0],
     color: "#6366f1",
     perfImpact: { gaming: 60, ai: 60, productivity: 15 },
     customStats: [
@@ -364,7 +364,7 @@ export const pcComponents: PCComponent[] = [
     funFact: "Wydajny zasilacz zamienia mniej prądu w bezużyteczne ciepło, oszczędzając Twoje pieniądze na rachunkach za prąd.",
     position: [-1.2, -1.8, -0.8],
     explodedPosition: [-6, -0.1, 5.0],
-    explodedRotation: [Math.PI / 12, -Math.PI / 6, 0],
+    explodedRotation: [-Math.PI / 12, -Math.PI / 6, 0],
     color: "#2a363b",
     perfImpact: { gaming: 0, ai: 0, productivity: 0 },
     customStats: [

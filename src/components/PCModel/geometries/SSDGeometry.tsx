@@ -1,5 +1,6 @@
+import { MeshStandardMaterial } from 'three';
 import { useMemo, useEffect } from 'react';
-import * as THREE from 'three';
+
 import { materials, xrayMaterial } from '../materials';
 import { useTexture } from '@react-three/drei';
 import ssdTopUrl from '../../../assets/ssd_top.webp';
@@ -12,8 +13,8 @@ export const SSDGeometry = () => {
   const ssdBottomTexture = useTexture(ssdBottomUrl);
 
   const texturedMaterials = useMemo(() => ({
-    texMat0: new THREE.MeshStandardMaterial({ map: ssdTexture, roughness: 0.4, metalness: 0.2, transparent: true }),
-    texMat1: new THREE.MeshStandardMaterial({ map: ssdBottomTexture, roughness: 0.4, metalness: 0.2, transparent: true })
+    texMat0: new MeshStandardMaterial({ map: ssdTexture, roughness: 0.4, metalness: 0.2, transparent: true }),
+    texMat1: new MeshStandardMaterial({ map: ssdBottomTexture, roughness: 0.4, metalness: 0.2, transparent: true })
   }), [ssdBottomTexture, ssdTexture]);
 
   useEffect(() => {

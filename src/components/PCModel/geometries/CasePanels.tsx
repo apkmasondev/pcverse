@@ -1,5 +1,6 @@
-import * as THREE from 'three';
-import { BackSide, CanvasTexture, DoubleSide, Group, MathUtils, Texture, RepeatWrapping, MeshStandardMaterial } from 'three';
+import { MeshStandardMaterial, BackSide, CanvasTexture, DoubleSide, Group, MathUtils, Texture, RepeatWrapping } from 'three';
+
+
 import { useRef, useMemo, useEffect } from 'react';
 
 import { useFrame } from '@react-three/fiber';
@@ -114,8 +115,8 @@ export const CasePanels = ({
   });
 
   const texturedMaterials = useMemo(() => ({
-    texMat0: new THREE.MeshStandardMaterial({ map: caseBackTexture, metalness: 0.4, roughness: 0.6 }),
-    texMat1: new THREE.MeshStandardMaterial({ map: caseInteriorTexture, metalness: 0.5, roughness: 0.7, side: BackSide })
+    texMat0: new MeshStandardMaterial({ map: caseBackTexture, metalness: 0.4, roughness: 0.6 }),
+    texMat1: new MeshStandardMaterial({ map: caseInteriorTexture, metalness: 0.5, roughness: 0.7, side: BackSide })
   }), [caseBackTexture, caseInteriorTexture]);
 
   useEffect(() => {
