@@ -97,17 +97,6 @@ export const MotherboardGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string
         <primitive object={texturedMaterials.texMat2} />
       </Mesh>
 
-      {/* NVMe M.2 SSD */}
-      <group position={[-0.3, 0.1, 0.05]}>
-        <Mesh position={[0, 0, 0]}>
-          <boxGeometry args={[0.8, 0.22, 0.02]} />
-          <primitive object={materials.blackPlastic} attach="material" />
-        </Mesh>
-        <Mesh position={[0, 0, 0.011]} rotation={[0, 0, -Math.PI / 2]}>
-          <planeGeometry args={[0.2, 0.78]} />
-          <primitive object={texturedMaterials.texMat3} />
-        </Mesh>
-      </group>
 
       {/* VRM Capacitors (Silver cylinders near CPU) */}
       <XInstances>

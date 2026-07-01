@@ -202,23 +202,19 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
       const dist = isMobile ? 5.5 : 4;
       const targetPos = targetVec.clone().add(dir.multiplyScalar(dist));
 
-      // Fizyczne przesunięcie kamery zamiast setViewOffset (Option A)
-      let panX = 0;
-      let panY = 0;
-      if (isMobile) {
-        panY = -1.2; // Kamera w dół, komponent ląduje wyżej
-      } else {
-        panX = 1.8; // Kamera w prawo, komponent ląduje po lewej
+      // Opcja 1: Asymetryczna projekcja matrycy (ViewOffset)
+      if (camera instanceof THREE.PerspectiveCamera) {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        if (isMobile) {
+          // Na mobile chcemy komponent wyżej - przesuwamy frustum w dół
+          camera.setViewOffset(w, h, 0, h * 0.15, w, h);
+        } else {
+          // Na desktopie chcemy komponent po lewej (by panel wszedł z prawej)
+          camera.setViewOffset(w, h, w * 0.15, 0, w, h);
+        }
+        camera.updateProjectionMatrix();
       }
-      
-      const rightVector = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), dir).normalize();
-      const upVector = new THREE.Vector3(0, 1, 0);
-      
-      targetPos.addScaledVector(rightVector, panX);
-      focalPoint.addScaledVector(rightVector, panX);
-      
-      targetPos.addScaledVector(upVector, panY);
-      focalPoint.addScaledVector(upVector, panY);
 
       cameraControlsRef.current.setLookAt(
         targetPos.x, targetPos.y, targetPos.z,
@@ -226,6 +222,11 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
         true
       );
     } else if (!selectedComponent) {
+      if (camera instanceof THREE.PerspectiveCamera && camera.view) {
+        camera.clearViewOffset();
+        camera.updateProjectionMatrix();
+      }
+      
       // Płynny powrót kamery na środek
       cameraControlsRef.current?.setLookAt(
         0, 2.5, 20,

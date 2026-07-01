@@ -118,7 +118,7 @@ const ComponentLabel = memo(({ data, isUnbuilt, isCurrentStep, isMobile, explode
       position={[0, data.geometryArgs[1] / 2, 0]}
       center
       distanceFactor={12}
-      zIndexRange={[100, 0]}
+      zIndexRange={[20, 0]}
       wrapperClass="pointer-events-none"
     >
       <motion.div

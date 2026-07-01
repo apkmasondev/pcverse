@@ -1,5 +1,12 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 42 - Perfekcyjna Optyka Kamery i Optymalizacje 3D 🎥
+
+- **Asymetryczna Projekcja Kamery (setViewOffset)**: Usunięto fizyczne, nienaturalne przesuwanie wektorów celu kamery (Target/Focal Point). Zaimplementowano asymetryczne ścinanie matrycy (`camera.setViewOffset`), co gwarantuje perfekcyjne orbitowanie myszką wokół absolutnego rdzenia obiektu (np. procesora), utrzymując go wygodnie po lewej stronie ekranu bez zaburzania osi obrotu.
+- **Z-Index Bleed-Through Fix**: Całkowicie wyeliminowano błąd "przebijania" etykiet HTML (Z-Fighting warstw DOM) przez główne okna interfejsu (np. czarny panel boczny) poprzez obniżenie bezpiecznego limitu odgórnego `zIndexRange={[20, 0]}` na komponentach `Html` Drei.
+- **Bezpieczne Ukrywanie Etykiet**: Wycofano eksperymentalną funkcję `occlude="blending"`, która z powodu wad w maskowaniu materiałowym WebGL (Web Graphics Library) powodowała renderowanie "czarnych prostokątów" pod tekstami, przywracając czyste wyświetlanie.
+- **Uspójnienie Osi Fabularnej (Usunięcie Atrapy NVMe)**: Skalpelem wycięto atrapę dysku NVMe z wirtualnej bryły Płyty Głównej (`MotherboardGeometry.tsx`). Gniazdo M.2 nad procesorem pozostaje puste w trybie eksploracji, robiąc czyste miejsce na rzeczywisty, interaktywny komponent dysku wyciągany z pudełka podczas Trybu Budowy.
+
 ## Etap 41 - Hero Rotation i Usprawnienia Trybu Budowy 🔄
 
 - **Kinowy Obrót Komponentów (Hero Rotation)**: Rozszerzono logikę interpolacji w trybie detali (Explode Mode) o sferyczną interpolację liniową (Slerp) z wykorzystaniem kwaternionów. Dzięki temu kluczowe komponenty takie jak GPU, Płyta Główna, Zasilacz, Dyski NVMe, HDD i Pamięci RAM zyskały dedykowane, artystyczne kąty obrotu. Zdecydowanie ułatwia to podziwianie detali modelów.
