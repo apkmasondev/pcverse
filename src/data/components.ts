@@ -580,7 +580,7 @@ export const pcComponents: PCComponent[] = [
       'System tworzenia kopii zapasowych (Backup)'
     ],
     funFact: 'Talerze w dysku HDD wirują tak szybko, że głowica odczytująca lewituje ledwie 2 nanometry nad nimi! To tak, jakby lecieć Boeingiem 747 milimetr nad ziemią.',
-    position: [1.3, -2, -0.5],
+    position: [1.3, -2, -0.45],
     explodedPosition: [7.5, 0, 1.5],
     explodedRotation: [Math.PI / 8, Math.PI / 8, 0],
     color: "#4a6984",

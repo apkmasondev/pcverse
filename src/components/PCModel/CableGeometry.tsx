@@ -11,7 +11,7 @@ export const CableGeometry = () => {
 
   // 24-pin ATX Cable (PSU to Mobo)
   const curve1 = useMemo(() => new CubicBezierCurve3(
-    new Vector3(-0.5, -2.15, -0.3), // near PSU (updated Z)
+    new Vector3(-0.5, -2.1, -0.3), // near PSU (updated Z)
     new Vector3(1.7, -1.2, -1.6),  // routed far right to clear the GPU (GPU ends at X=1.5)
     new Vector3(2.5, -1, -1.3),   // coming straight up on the right side of the GPU
     new Vector3(0.9, 0.5, -1.7)    // plug into Motherboard right edge
@@ -27,17 +27,17 @@ export const CableGeometry = () => {
 
   // SATA Data Cable (HDD to Mobo)
   const curve3 = useMemo(() => new CubicBezierCurve3(
-    new Vector3(1.4, -2.23, 0.25),  // plug into HDD front connector (facing glass)
-    new Vector3(1.3, -1.7, 0.6),   // route forward towards glass
-    new Vector3(1.7, -1.7, -1),  // route up the right side behind mobo tray
+    new Vector3(1.4, -2, 0.25),  // plug into HDD front connector (facing glass)
+    new Vector3(1.3, -1.6, 0.6),   // route forward towards glass
+    new Vector3(1.7, -1.5, -1),  // route up the right side behind mobo tray
     new Vector3(1.0, -1.4, -1.7)   // plug into bottom right of mobo
   ), []);
 
   // SATA Power Cable (HDD to PSU)
   const curve4 = useMemo(() => new CubicBezierCurve3(
-    new Vector3(1.1, -2.23, 0.25),  // plug into HDD front power connector
-    new Vector3(1.1, -2.18, 0.8),   // route forward towards glass
-    new Vector3(-0.5, -2.18, -0.4), // route along bottom back to PSU
+    new Vector3(1.1, -2, 0.25),  // plug into HDD front power connector
+    new Vector3(1.1, -2.1, 0.8),   // route forward towards glass
+    new Vector3(-0.5, -2.12, -0.4), // route along bottom back to PSU
     new Vector3(-0.5, -1.7, 0.0)  // plug into PSU
   ), []);
 
