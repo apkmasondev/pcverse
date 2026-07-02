@@ -216,7 +216,7 @@ export const CasePanels = ({
           ) : (
             <primitive object={bracketMaterials} attach="material" />
           )}
-          {[-0.85, -1.0, -1.15, -1.3].map((y, i) => (
+          {[-1.0, -1.15, -1.3].map((y, i) => (
             <Instance key={i} position={[-1.97, y, -1.15]} />
           ))}
         </Instances>
