@@ -256,9 +256,9 @@ export const SidebarControls = () => {
                 initial={{ opacity: 0, x: -10, scale: 0.95 }}
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: -10, scale: 0.95 }}
-                className="absolute top-0 left-[50px] md:left-full pl-2 md:pl-4 z-50 w-max"
+                className="absolute top-1/2 -translate-y-1/2 left-[50px] md:left-full pl-2 md:pl-4 z-50 w-max"
               >
-                <div className="p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl grid grid-cols-3 gap-3 shadow-2xl">
+                <div className="p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl grid grid-cols-3 gap-3 shadow-2xl max-h-[60vh] overflow-y-auto">
                 <button
                   aria-label="Wyłącz RGB"
                   onClick={() => {
@@ -332,9 +332,9 @@ export const SidebarControls = () => {
                 initial={{ opacity: 0, x: -10, scale: 0.95 }}
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: -10, scale: 0.95 }}
-                className="absolute top-0 left-[50px] md:left-full pl-2 md:pl-4 z-50 w-48"
+                className="absolute top-1/2 -translate-y-1/2 left-[50px] md:left-full pl-2 md:pl-4 z-50 w-48"
               >
-                <div className="p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col gap-2 shadow-2xl">
+                <div className="p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col gap-2 shadow-2xl max-h-[60vh] overflow-y-auto">
                 {PRESETS.map((p) => (
                   <button
                     key={p.id}
@@ -412,9 +412,9 @@ export const SidebarControls = () => {
                 initial={{ opacity: 0, x: -10, scale: 0.95 }}
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: -10, scale: 0.95 }}
-                className="absolute top-0 left-[50px] md:left-full pl-2 md:pl-4 z-50 w-52"
+                className="absolute top-1/2 -translate-y-1/2 left-[50px] md:left-full pl-2 md:pl-4 z-50 w-52"
               >
-                <div className="p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col gap-2 shadow-2xl">
+                <div className="p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col gap-2 shadow-2xl max-h-[60vh] overflow-y-auto">
                 <button
                   aria-pressed={ambientOn}
                   onClick={() => { playSelectSound(); triggerLoading(toggleAmbient); }}
