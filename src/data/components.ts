@@ -408,7 +408,7 @@ export const pcComponents: PCComponent[] = [
       "Działa w tandemie z systemem wyciągowym"
     ],
     funFact: "Wentylatory RGB potrafią synchronizować się tworząc niesamowite, płynne pokazy świetlne wewnątrz obudowy.",
-    position: [0.8, -0.8, 1.75],
+    position: [0.8, -0.65, 1.75],
     explodedPosition: [4, -1.3, 5],
     color: "#ffffff",
     perfImpact: { gaming: 10, ai: 10, productivity: 5 },
@@ -445,7 +445,7 @@ export const pcComponents: PCComponent[] = [
       "Działa w tandemie z systemem wyciągowym"
     ],
     funFact: "Dwa wentylatory z przodu pozwalają uzyskać pożądany przepływ przy niższych i cichszych obrotach.",
-    position: [0.8, 0.8, 1.75],
+    position: [0.8, 0.85, 1.75],
     explodedPosition: [3.5, 1.5, 5],
     color: "#ffffff",
     perfImpact: { gaming: 10, ai: 10, productivity: 5 },

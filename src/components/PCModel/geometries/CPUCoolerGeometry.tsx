@@ -22,21 +22,21 @@ import { LocalAirflowParticles } from './LocalAirflowParticles';
 export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbColor: string, rgbEnabled?: boolean, isExhaust?: boolean, textureUrl?: string }) => {
   const rgbEnabled = usePCRGB(s => s.rgbEnabled);
   const xrayMode = usePCView(s => s.xrayMode);
-  
+
   const baseTextureUrl = textureUrl || caseFanUrl;
   const rgbTextureUrl = baseTextureUrl === aioFanUrl ? aioFanRgbUrl : caseFanRgbUrl;
-  
+
   const fanBaseTexture = useTexture(baseTextureUrl);
   const fanRgbTexture = useTexture(rgbTextureUrl);
   const activeTexture = rgbEnabled ? fanRgbTexture : fanBaseTexture;
   const fanSideTexture = useTexture(fanSideUrl);
-  
+
   const isCaseFan = baseTextureUrl === caseFanUrl;
   const torusRadius = isCaseFan ? 0.47 : 0.455;
   const torusTube = isCaseFan ? 0.028 : 0.027;
-  
+
   const rgbMaterial = useMemo(() => new MeshStandardMaterial({ color: 0x000000, emissiveIntensity: 0, toneMapped: false }), []);
-  
+
   useEffect(() => {
     rgbMaterial.emissive.set(rgbColor);
   }, [rgbColor, rgbMaterial]);
@@ -124,7 +124,7 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
           </>
         )}
       </mesh>
-      
+
       {/* Front Face Texture */}
       {!xrayMode && (
         <mesh position={[0, 0, 0.101]}>
@@ -132,7 +132,7 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
           <primitive object={texturedMaterials.texMat0} />
         </mesh>
       )}
-      
+
       {/* Front RGB LED Ring - hide when xrayMode is active */}
       {!xrayMode && (
         <mesh position={[0, 0, 0.103]}>
@@ -148,7 +148,7 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
           <primitive object={texturedMaterials.texMat1} />
         </mesh>
       )}
-      
+
       {/* Back RGB LED Ring - hide when xrayMode is active */}
       {!xrayMode && (
         <mesh position={[0, 0, -0.103]} rotation={[0, Math.PI, 0]}>
@@ -172,12 +172,12 @@ export const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string, rgbEnabled?:
   const heatsinkSideTexture = useTexture(heatsinkSideUrl);
   const copperPlateTexture = useTexture(copperPlateUrl);
   const radiatorPlateTexture = useTexture(radiatorPlateUrl);
-  
+
   useEffect(() => {
     heatsinkTexture.rotation = Math.PI / 2;
     heatsinkTexture.center.set(0.5, 0.5);
     heatsinkTexture.needsUpdate = true;
-    
+
     heatsinkSideTexture.rotation = Math.PI / 2;
     heatsinkSideTexture.center.set(0.5, 0.5);
     heatsinkSideTexture.needsUpdate = true;
@@ -216,7 +216,7 @@ export const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string, rgbEnabled?:
   }, [texturedMaterials]);
 
   return (
-    <group scale={1.15} position={[0, 0, 0.0375]}>
+    <group scale={1.25} position={[0, 0, 0.0375]}>
       {/* Base Contact */}
       <mesh position={[0, 0, -0.25]} material={xrayMode ? xrayMaterial : undefined}>
         <boxGeometry args={[0.6, 0.6, 0.05]} />
@@ -258,10 +258,10 @@ export const CPUCoolerGeometry = ({ rgbColor }: { rgbColor: string, rgbEnabled?:
         <boxGeometry args={[1, 0.02, 0.54]} />
         {!xrayMode && <primitive object={texturedMaterials.texMat0} />}
       </mesh>
-    {/* Attached Fan */}
-    <group position={[0, 0.1, 0.52]}>
-      <FanGeometry rgbColor={rgbColor} textureUrl={aioFanUrl} />
+      {/* Attached Fan */}
+      <group position={[0, 0.1, 0.52]}>
+        <FanGeometry rgbColor={rgbColor} textureUrl={aioFanUrl} />
+      </group>
     </group>
-  </group>
   );
 };

@@ -225,7 +225,7 @@ export const CasePanels = ({
             <extrudeGeometry args={[leftPanelShape, extrudeOpts005]} />
           </Mesh>
         </group>
-        <Mesh position={[-1.98, 1.4, 0.2]} rotation={[0, Math.PI / 2, 0]}>
+        <Mesh position={[-1.98, 1.3, 0.2]} rotation={[0, Math.PI / 2, 0]}>
           <planeGeometry args={[2.4, 1.2]} />
           <meshStandardMaterial 
             color="#151515" 
@@ -235,7 +235,7 @@ export const CasePanels = ({
             side={DoubleSide} 
           />
         </Mesh>
-        <Mesh position={[-1.92, 1.4, 0.2]} rotation={[0, -Math.PI / 2, 0]}>
+        <Mesh position={[-1.92, 1.3, 0.2]} rotation={[0, -Math.PI / 2, 0]}>
           <planeGeometry args={[2.4, 1.2]} />
           <meshStandardMaterial 
             color="#151515" 

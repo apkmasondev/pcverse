@@ -12,11 +12,11 @@ export const leftPanelShape = (() => {
 
   // Motherboard IO Cutout
   const ioHole = new Path();
-  ioHole.moveTo(-1.55 - 0.35, 1.2 - 0.725);
-  ioHole.lineTo(-1.55 + 0.35, 1.2 - 0.725);
-  ioHole.lineTo(-1.55 + 0.35, 1.2 + 0.725);
-  ioHole.lineTo(-1.55 - 0.35, 1.2 + 0.725);
-  ioHole.lineTo(-1.55 - 0.35, 1.2 - 0.725);
+  ioHole.moveTo(-1.55 - 0.35, 1.1 - 0.725);
+  ioHole.lineTo(-1.55 + 0.35, 1.1 - 0.725);
+  ioHole.lineTo(-1.55 + 0.35, 1.1 + 0.725);
+  ioHole.lineTo(-1.55 - 0.35, 1.1 + 0.725);
+  ioHole.lineTo(-1.55 - 0.35, 1.1 - 0.725);
   shape.holes.push(ioHole);
 
   // PSU Cutout
@@ -39,11 +39,11 @@ export const leftPanelShape = (() => {
 
   // Side Exhaust Fans Hole (covers both fans)
   const fanHole = new Path();
-  fanHole.moveTo(-1.0, 1.4 - 0.6);
-  fanHole.lineTo(1.4, 1.4 - 0.6);
-  fanHole.lineTo(1.4, 1.4 + 0.6);
-  fanHole.lineTo(-1.0, 1.4 + 0.6);
-  fanHole.lineTo(-1.0, 1.4 - 0.6);
+  fanHole.moveTo(-1.0, 1.3 - 0.6);
+  fanHole.lineTo(1.4, 1.3 - 0.6);
+  fanHole.lineTo(1.4, 1.3 + 0.6);
+  fanHole.lineTo(-1.0, 1.3 + 0.6);
+  fanHole.lineTo(-1.0, 1.3 - 0.6);
   shape.holes.push(fanHole);
 
   return shape;
@@ -77,11 +77,11 @@ export const backPanelShape = (() => {
 
 export const moboTrayShape = (() => {
   const shape = new Shape();
-  shape.moveTo(-1.97, -2.3);
+  shape.moveTo(-1.9, -2.3);
   shape.lineTo(1.97, -2.3);
   shape.lineTo(1.97, 2.4);
-  shape.lineTo(-1.97, 2.4);
-  shape.lineTo(-1.97, -2.3);
+  shape.lineTo(-1.9, 2.4);
+  shape.lineTo(-1.9, -2.3);
 
   const addHole = (x1: number, y1: number, x2: number, y2: number) => {
     const hole = new Path();
