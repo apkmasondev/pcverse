@@ -1,4 +1,4 @@
-import { MathUtils, AmbientLight, DirectionalLight, SpotLight, HemisphereLight, RectAreaLight, PerspectiveCamera as ThreePerspectiveCamera, Vector2, Vector3, PointLight, Object3D } from 'three';
+import { MathUtils, AmbientLight, DirectionalLight, SpotLight, HemisphereLight, RectAreaLight, PerspectiveCamera as ThreePerspectiveCamera, Vector2, Vector3, Object3D } from 'three';
 import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { CameraControls, Environment, PerspectiveCamera, Sparkles, PerformanceMonitor, Grid, Stars, Preload } from '@react-three/drei';
