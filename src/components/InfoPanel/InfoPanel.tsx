@@ -151,7 +151,7 @@ export const InfoPanel: React.FC = () => {
                      w-full md:w-[35vw] lg:w-[30vw] h-[60vh] md:h-screen overflow-y-auto
                      bg-[#050505]/80 backdrop-blur-3xl border-l border-white/10 
                      rounded-t-3xl md:rounded-none p-6 md:p-12
-                     text-slate-200 scrollbar-hide shadow-[-20px_0_50px_-12px_rgba(0,0,0,1)]"
+                     text-slate-200 shadow-[-20px_0_50px_-12px_rgba(0,0,0,1)]"
         >
           <button 
             onClick={() => setSelectedComponent(null)}
@@ -194,7 +194,7 @@ export const InfoPanel: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent z-10 opacity-60"></div>
                 <img 
                   src={getImageUrl(selectedComponent.imageUrls[0])} 
-                  alt={selectedComponent.name} 
+                  alt={`Zdjęcie podzespołu komputera: ${selectedComponent.name}`} 
                   loading="lazy"
                   className="w-full h-40 sm:h-48 object-cover transition-transform duration-700 md:group-hover:scale-105" 
                 />
@@ -210,7 +210,7 @@ export const InfoPanel: React.FC = () => {
                   </div>
                   <img 
                     src={getImageUrl(selectedComponent.imageUrls[1])} 
-                    alt={`${selectedComponent.name} - opcjonalny widok`} 
+                    alt={`Opcjonalny widok podzespołu komputera: ${selectedComponent.name}`} 
                     loading="lazy"
                     className="w-full h-40 sm:h-48 object-cover opacity-90 transition-transform duration-700 md:group-hover:scale-110 md:group-hover:opacity-100" 
                   />
@@ -306,7 +306,7 @@ export const InfoPanel: React.FC = () => {
               exit={{ opacity: 0, x: -20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
               src={getImageUrl(selectedComponent.imageUrls[zoomedImageIndex])} 
-              alt={`${selectedComponent.name} - zdjęcie powiększone`}
+              alt={`Powiększone zdjęcie podzespołu komputera: ${selectedComponent.name}`}
               loading="lazy"
               decoding="async"
               className="relative max-w-full max-h-full object-contain rounded-xl shadow-[0_0_80px_rgba(0,0,0,0.8)] border border-white/5 z-40 pointer-events-none"

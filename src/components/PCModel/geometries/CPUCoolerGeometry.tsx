@@ -1,4 +1,4 @@
-import { MathUtils, MeshStandardMaterial, Group } from 'three';
+import { MathUtils, MeshStandardMaterial, Group, Color } from 'three';
 
 import { fanBladesRefsZ } from '../FanManager';
 import { materials, xrayMaterial } from '../materials';
@@ -37,12 +37,11 @@ export const FanGeometry = ({ rgbColor, isExhaust = false, textureUrl }: { rgbCo
 
   const rgbMaterial = useMemo(() => new MeshStandardMaterial({ color: 0x000000, emissiveIntensity: 0, toneMapped: false }), []);
 
-  useEffect(() => {
-    rgbMaterial.emissive.set(rgbColor);
-  }, [rgbColor, rgbMaterial]);
-
+  const targetColor = useMemo(() => new Color(), []);
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);
+    targetColor.set(rgbColor);
+    rgbMaterial.emissive.lerp(targetColor, dt * 5);
     rgbMaterial.emissiveIntensity = MathUtils.lerp(rgbMaterial.emissiveIntensity, rgbEnabled ? 4.0 : 0, dt * 5);
   });
 

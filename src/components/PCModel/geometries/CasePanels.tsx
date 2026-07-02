@@ -119,11 +119,32 @@ export const CasePanels = ({
     texMat1: new MeshStandardMaterial({ map: caseInteriorTexture, metalness: 0.5, roughness: 0.7, side: BackSide })
   }), [caseBackTexture, caseInteriorTexture]);
 
+  const { frontMeshMat, backMeshMat } = useMemo(() => ({
+    frontMeshMat: new MeshStandardMaterial({
+      color: "#151515",
+      alphaMap: frontMeshTexture,
+      transparent: false,
+      alphaTest: 0.5,
+      side: DoubleSide,
+      metalness: 0.8,
+      roughness: 0.3
+    }),
+    backMeshMat: new MeshStandardMaterial({
+      color: "#151515",
+      alphaMap: backMeshTexture,
+      transparent: false,
+      alphaTest: 0.5,
+      side: DoubleSide
+    })
+  }), [frontMeshTexture, backMeshTexture]);
+
   useEffect(() => {
     return () => {
       Object.values(texturedMaterials).forEach(mat => mat.dispose());
+      frontMeshMat.dispose();
+      backMeshMat.dispose();
     };
-  }, [texturedMaterials]);
+  }, [texturedMaterials, frontMeshMat, backMeshMat]);
 
   return (
     <>
@@ -150,15 +171,7 @@ export const CasePanels = ({
 
         <Mesh position={[0, 0, 0]} raycast={() => null}>
           <shapeGeometry args={[frontMeshShape]} />
-          <meshStandardMaterial 
-            color="#151515" 
-            alphaMap={frontMeshTexture} 
-            transparent={false}
-            alphaTest={0.5}
-            side={DoubleSide} 
-            metalness={0.8}
-            roughness={0.3}
-          />
+          <primitive object={frontMeshMat} attach="material" />
         </Mesh>
         
         {[-1.95, 1.95].map(x => (
@@ -227,23 +240,11 @@ export const CasePanels = ({
         </group>
         <Mesh position={[-1.98, 1.3, 0.2]} rotation={[0, Math.PI / 2, 0]}>
           <planeGeometry args={[2.4, 1.2]} />
-          <meshStandardMaterial 
-            color="#151515" 
-            alphaMap={backMeshTexture} 
-            transparent={false}
-            alphaTest={0.5}
-            side={DoubleSide} 
-          />
+          <primitive object={backMeshMat} attach="material" />
         </Mesh>
         <Mesh position={[-1.92, 1.3, 0.2]} rotation={[0, -Math.PI / 2, 0]}>
           <planeGeometry args={[2.4, 1.2]} />
-          <meshStandardMaterial 
-            color="#151515" 
-            alphaMap={backMeshTexture} 
-            transparent={false}
-            alphaTest={0.5}
-            side={DoubleSide} 
-          />
+          <primitive object={backMeshMat} attach="material" />
         </Mesh>
       </group>
     </>

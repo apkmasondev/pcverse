@@ -26,7 +26,6 @@ function App() {
     <GlobalErrorBoundary>
       <main 
         className="relative w-full h-screen overflow-hidden bg-[#0f0a1c]"
-        role="region"
         aria-label="Główny interfejs aplikacji PCVerse"
       >
         <h1 className="sr-only">PCVerse — Interaktywna Anatomia Komputera 3D</h1>

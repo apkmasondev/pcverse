@@ -27,26 +27,37 @@ const CursorLight = () => {
   const _vec = useRef(new Vector3());
   const cursorLightOn = usePCLighting(state => state.cursorLightOn);
 
-  useFrame(({ raycaster, camera }, delta) => {
+  useFrame(({ raycaster, camera, invalidate }, delta) => {
     if (lightRef.current) {
+      const targetIntensity = cursorLightOn ? 3.5 : 0;
+      
+      // Jeżeli wyłączone i zgaszone, pomijamy obliczenia
+      if (targetIntensity === 0 && lightRef.current.intensity === 0) return;
+
       const dt = Math.min(delta, 0.05);
       const distance = camera.position.length() * 0.6;
       raycaster.ray.at(distance, _vec.current);
 
+      let needsInvalidate = false;
       const distPos = lightRef.current.position.distanceTo(_vec.current);
       if (distPos > 0.001) {
         lightRef.current.position.lerp(_vec.current, 1 - Math.exp(-10 * dt));
+        needsInvalidate = true;
       } else if (distPos > 0) {
         lightRef.current.position.copy(_vec.current);
+        needsInvalidate = true;
       }
 
-      const targetIntensity = cursorLightOn ? 3.5 : 0;
       const diffInt = Math.abs(lightRef.current.intensity - targetIntensity);
       if (diffInt > 0.001) {
         lightRef.current.intensity = MathUtils.lerp(lightRef.current.intensity, targetIntensity, dt * 5);
+        needsInvalidate = true;
       } else if (diffInt > 0) {
         lightRef.current.intensity = targetIntensity;
+        needsInvalidate = true;
       }
+
+      if (needsInvalidate) invalidate();
     }
   });
 
@@ -290,7 +301,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
       <color attach="background" args={[bgColor]} />
       {showFog && <fog attach="fog" args={[bgColor, 15, 60]} />}
 
-      <PerspectiveCamera makeDefault position={[0, 3, 16]} fov={50} near={0.5} far={100} />
+      <PerspectiveCamera makeDefault position={[0, 3, 16]} fov={50} near={0.1} far={100} />
 
       {!isMobile && !disableEffects && showParticles && !reducedMotion && (
         <>
@@ -406,7 +417,8 @@ export const Scene3D = () => {
   return (
     <div
       className="w-full h-[60vh] md:h-screen bg-[#050505] relative"
-      aria-hidden="true"
+      role="region"
+      aria-label="Interaktywna scena 3D z komputerem PC"
       onPointerDown={() => setHasInteracted(true)}
       onTouchStart={() => setHasInteracted(true)}
       onContextMenu={(e) => e.preventDefault()}

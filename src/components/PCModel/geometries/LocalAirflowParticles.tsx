@@ -1,6 +1,6 @@
-import { AdditiveBlending, InstancedMesh, Object3D, Vector3 } from 'three';
+import { AdditiveBlending, InstancedMesh, Object3D, Vector3, MeshBasicMaterial } from 'three';
 
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useEffect } from 'react';
 
 import { useFrame } from '@react-three/fiber';
 import { usePCView } from '../../../hooks/usePC';
@@ -65,16 +65,24 @@ export const LocalAirflowParticles = ({ count = 50, radius = 0.4, length = 1.5, 
     meshRef.current.instanceMatrix.needsUpdate = true;
   });
 
+  const material = useMemo(() => {
+    return new MeshBasicMaterial({
+      color: color,
+      transparent: true,
+      opacity: 0.6,
+      blending: AdditiveBlending,
+      depthWrite: false
+    });
+  }, [color]);
+
+  useEffect(() => {
+    return () => material.dispose();
+  }, [material]);
+
   return (
     <instancedMesh ref={meshRef} args={[undefined as any, undefined as any, count]} visible={isVisible}>
       <sphereGeometry args={[0.015, 8, 8]} />
-      <meshBasicMaterial 
-        color={color} 
-        transparent 
-        opacity={0.6} 
-        blending={AdditiveBlending} 
-        depthWrite={false} 
-      />
+      <primitive object={material} attach="material" />
     </instancedMesh>
   );
 };

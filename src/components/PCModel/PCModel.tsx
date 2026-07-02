@@ -15,7 +15,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 
 import { Html, useTexture } from '@react-three/drei';
 import { motion, useReducedMotion } from 'framer-motion';
-import { xrayMaterial } from './materials';
+import { xrayMaterial, hitboxMaterial } from './materials';
 import { pcComponents } from '../../data/components';
 import type { PCComponent } from '../../data/components';
 import { usePCSelection, usePCRGB, usePCView, usePCUI } from '../../hooks/usePC';
@@ -235,6 +235,10 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
   const maxDim = data.geometryArgs ? Math.max(...data.geometryArgs) : 1;
   const baseLift = Math.max(0.02, Math.min(0.15, 0.1 / maxDim));
 
+  const rotationArr: [number, number, number] = (data.id === 'rear_fan_1' || data.id === 'rear_fan_2') ? [0, Math.PI / 2, 0] :
+    data.id === 'psu' ? [0, Math.PI / 2, 0] :
+      [0, 0, 0];
+
   useFrame((_state, delta) => {
     if (!groupRef.current) return;
     const dt = Math.min(delta, 0.05);
@@ -308,10 +312,6 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
 
   const visual = useMemo(() => <ProceduralGeometry data={data} baseColor={baseColor} />, [data, baseColor]);
 
-  const rotationArr: [number, number, number] = (data.id === 'rear_fan_1' || data.id === 'rear_fan_2') ? [0, Math.PI / 2, 0] :
-    data.id === 'psu' ? [0, Math.PI / 2, 0] :
-      [0, 0, 0];
-
   return (
     <group>
       {isCurrentStep && (
@@ -369,9 +369,8 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
               <Suspense fallback={fallbackMesh}>
                 {visual}
                 {data.id !== 'case' && (
-                  <mesh>
+                  <mesh material={hitboxMaterial}>
                     <boxGeometry args={[data.geometryArgs[0] * 1.2, data.geometryArgs[1] * 1.2, data.geometryArgs[2] * 1.2]} />
-                    <meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} />
                   </mesh>
                 )}
               </Suspense>

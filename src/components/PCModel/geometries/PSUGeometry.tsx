@@ -1,4 +1,4 @@
-import { MathUtils, MeshStandardMaterial, Group } from 'three';
+import { MathUtils, MeshStandardMaterial, Group, Color } from 'three';
 
 import { fanBladesRefsY } from '../FanManager';
 import { materials } from '../materials';
@@ -35,12 +35,11 @@ export const PSUGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string, rgbEna
   }, []);
 
   const rgbMat = useMemo(() => new MeshStandardMaterial({ color: 0x000000, emissiveIntensity: 0, toneMapped: false }), []);
-  useEffect(() => {
-    rgbMat.emissive.set(rgbColor);
-  }, [rgbColor, rgbMat]);
-
+  const targetColor = useMemo(() => new Color(), []);
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);
+    targetColor.set(rgbColor);
+    rgbMat.emissive.lerp(targetColor, dt * 5);
     rgbMat.emissiveIntensity = MathUtils.lerp(rgbMat.emissiveIntensity, rgbEnabled ? 3.0 : 0, dt * 5);
   });
 

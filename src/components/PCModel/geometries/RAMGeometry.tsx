@@ -1,4 +1,4 @@
-import { MathUtils, MeshStandardMaterial } from 'three';
+import { MathUtils, MeshStandardMaterial, Color } from 'three';
 
 import { useMemo, useEffect } from 'react';
 
@@ -14,12 +14,11 @@ export const RAMGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string, rgbEna
   const ramSideTexture = useTexture(ramSideUrl);
   
   const rgbMat = useMemo(() => new MeshStandardMaterial({ color: 0x000000, emissiveIntensity: 0, toneMapped: false }), []);
-  useEffect(() => {
-    rgbMat.emissive.set(rgbColor);
-  }, [rgbColor, rgbMat]);
-
+  const targetColor = useMemo(() => new Color(), []);
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);
+    targetColor.set(rgbColor);
+    rgbMat.emissive.lerp(targetColor, dt * 5);
     rgbMat.emissiveIntensity = MathUtils.lerp(rgbMat.emissiveIntensity, rgbEnabled ? 3.0 : 0, dt * 5);
   });
   useEffect(() => () => rgbMat.dispose(), [rgbMat]);

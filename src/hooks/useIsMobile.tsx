@@ -1,35 +1,35 @@
-import { useState, useEffect } from 'react';
+import { create } from 'zustand';
 
-export const useIsMobile = (breakpoint = 768) => {
-  const [isMobile, setIsMobile] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.matchMedia(`(max-width: ${breakpoint}px)`).matches;
-    }
-    return false;
-  });
+interface MobileStore {
+  isMobile: boolean;
+  setIsMobile: (val: boolean) => void;
+}
 
-  useEffect(() => {
-    // Check if window is defined (for SSR safety, though R3F is usually client-only)
-    if (typeof window === 'undefined') return;
+const getIsMobile = () => {
+  if (typeof window !== 'undefined') {
+    return window.matchMedia('(max-width: 768px)').matches;
+  }
+  return false;
+};
 
-    const mql = window.matchMedia(`(max-width: ${breakpoint}px)`);
-    
-    // Set initial state
-    setIsMobile(mql.matches);
-    
-    // Create event listener
-    const onChange = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    
-    // Modern approach using addEventListener
-    if (mql.addEventListener) {
-      mql.addEventListener('change', onChange);
-      return () => mql.removeEventListener('change', onChange);
-    } else {
-      // Fallback for older browsers
-      mql.addListener(onChange);
-      return () => mql.removeListener(onChange);
-    }
-  }, [breakpoint]);
+export const useMobileStore = create<MobileStore>((set) => ({
+  isMobile: getIsMobile(),
+  setIsMobile: (val) => set({ isMobile: val })
+}));
 
-  return isMobile;
+if (typeof window !== 'undefined') {
+  const mql = window.matchMedia('(max-width: 768px)');
+  const onChange = (e: MediaQueryListEvent) => {
+    useMobileStore.getState().setIsMobile(e.matches);
+  };
+  
+  if (mql.addEventListener) {
+    mql.addEventListener('change', onChange);
+  } else {
+    mql.addListener(onChange); // Fallback
+  }
+}
+
+export const useIsMobile = () => {
+  return useMobileStore((state) => state.isMobile);
 };

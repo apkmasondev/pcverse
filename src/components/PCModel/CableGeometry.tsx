@@ -15,7 +15,7 @@ export const CableGeometry = () => {
     new Vector3(-0.5, -2.1, -0.3), // near PSU (updated Z)
     new Vector3(1.7, -1.2, -1.6),  // routed far right to clear the GPU (GPU ends at X=1.5)
     new Vector3(2.5, -1, -1.3),   // coming straight up on the right side of the GPU
-    new Vector3(0.9, 0.5, -1.7)    // plug into Motherboard right edge
+    new Vector3(1, 0.5, -1.7)    // plug into Motherboard right edge
   ), []);
 
   // 8-pin PCIe Cable (PSU to GPU)

@@ -1,4 +1,4 @@
-import { MathUtils, MeshStandardMaterial, SRGBColorSpace, Group } from 'three';
+import { MathUtils, MeshStandardMaterial, SRGBColorSpace, Group, Color } from 'three';
 
 
 import { fanBladesRefsY } from '../FanManager';
@@ -48,14 +48,15 @@ export const GPUGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string, rgbEna
   const rgbMat10 = useMemo(() => new MeshStandardMaterial({ color: 0x000000, emissiveIntensity: 0, toneMapped: false }), []);
   const rgbMat25 = useMemo(() => new MeshStandardMaterial({ color: 0x000000, emissiveIntensity: 0, toneMapped: false }), []);
 
-  useEffect(() => {
-    rgbMat15.emissive.set(rgbColor);
-    rgbMat10.emissive.set(rgbColor);
-    rgbMat25.emissive.set(rgbColor);
-  }, [rgbColor, rgbMat15, rgbMat10, rgbMat25]);
+  const targetColor = useMemo(() => new Color(), []);
 
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);
+    targetColor.set(rgbColor);
+    rgbMat15.emissive.lerp(targetColor, dt * 5);
+    rgbMat10.emissive.lerp(targetColor, dt * 5);
+    rgbMat25.emissive.lerp(targetColor, dt * 5);
+
     rgbMat15.emissiveIntensity = MathUtils.lerp(rgbMat15.emissiveIntensity, rgbEnabled ? 2.5 : 0, dt * 5);
     rgbMat10.emissiveIntensity = MathUtils.lerp(rgbMat10.emissiveIntensity, rgbEnabled ? 1.5 : 0, dt * 5);
     rgbMat25.emissiveIntensity = MathUtils.lerp(rgbMat25.emissiveIntensity, rgbEnabled ? 3.5 : 0, dt * 5);

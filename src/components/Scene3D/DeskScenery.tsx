@@ -6,7 +6,7 @@ import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { useFrame } from '@react-three/fiber';
 import { usePCView, usePCRGB } from '../../hooks/usePC';
 import { useIsMobile } from '../../hooks/useIsMobile';
-
+import { blackBasicMaterial } from '../PCModel/materials';
 // --- Zgodnie z AUDYTEM (Etap 20) ---
 // Współdzielone geometrie i materiały dla rozsypanych elementów, 
 // aby uniknąć wycieków pamięci i tworzenia nowych instancji przy re-renderach.
@@ -99,7 +99,7 @@ const Poster = ({ tex, position, rotation, size }: { tex: Texture, position: [nu
     <group position={position} rotation={rotation || [0, 0, 0]}>
       <mesh>
         <planeGeometry args={[size + 0.2, size + 0.2]} />
-        <meshBasicMaterial color="#000000" />
+        <primitive object={blackBasicMaterial} attach="material" />
       </mesh>
       <mesh material={mat}>
         <planeGeometry args={[size, size]} />

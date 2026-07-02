@@ -1,4 +1,4 @@
-import { MeshStandardMaterial, MeshPhysicalMaterial } from 'three';
+import { MeshStandardMaterial, MeshPhysicalMaterial, MeshBasicMaterial } from 'three';
 
 export const materials = {
   // Existing materials
@@ -64,3 +64,11 @@ export const ghostMaterial = new MeshPhysicalMaterial({
   blending: 2, // THREE.AdditiveBlending
 });
 
+export const hitboxMaterial = new MeshBasicMaterial({
+  transparent: true,
+  opacity: 0,
+  depthWrite: false,
+  colorWrite: false
+});
+
+export const blackBasicMaterial = new MeshBasicMaterial({ color: '#000000' });

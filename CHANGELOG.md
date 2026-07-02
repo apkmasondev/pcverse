@@ -1,5 +1,29 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 46 - Drobne poprawki i czysty kod 🧹
+
+- **Konsolidacja `useIsMobile`**: Zamiast tworzyć osobny stan lokalny i event listener za każdym razem, gdy komponent wywołuje hooka `useIsMobile`, stan został zintegrowany z globalnym zarządcą Zustand. Zmniejsza to znacząco obciążenie pamięci (jeden nasłuchiwacz zdarzeń `resize` dla całej aplikacji).
+- **Płynne tranzicje RGB**: W komponentach odpowiedzialnych za generowanie modeli 3D podzespołów (np. Płyta Główna, Zasilacz, Karta Graficzna, Chłodzenie) wyeliminowano "skokowe" (natychmiastowe) zmiany koloru. Teraz przejścia RGB są płynnie animowane dzięki użyciu matematycznej interpolacji `Color.lerp` podpiętej do odświeżania silnika WebGL w `useFrame`.
+- **Porządki w kodzie `PCModel` i `XMesh`**: Usunięto nieużywane importy `framer-motion` z `PCModel.tsx`, a w module komponentów X-Ray (`XMesh.tsx`) dodano silne typowanie (MeshProps i InstancesProps).
+- **Zwiększenie głębi kamery (Z-Fighting)**: Zaktualizowano wartość `near` na kamerze z 0.5 do 0.1, co pozwala użytkownikowi bardziej zbliżyć się do modelu bez efektu przycinania (clipping) przednich brył.
+- **Sprzątanie**: Usunięto przestarzałe pliki z audytami V3, V4, V5 i V6 uwalniając drzewo projektu.
+
+## Etap 45 - Dostępność i UX ♿
+
+- **Odblokowanie widoczności Canvas dla czytników**: Usunięto błędny atrybut `aria-hidden="true"` z głównego kontenera silnika `Scene3D` i zastąpiono go etykietą obszaru (`role="region"` i `aria-label`). Umożliwia to zorientowanie się osobom niewidomym w celu tego elementu na stronie.
+- **Dostępne obrazki komponentów (alt-text)**: Zaktualizowano atrybuty `alt` we wszystkich tagach `<img>` panelu szczegółowego (InfoPanel). Etykiety są teraz deskryptywne i odróżniają widok główny od pobocznych oraz powiększenia dla każdego klikniętego podzespołu.
+- **Usunięcie konfliktu semantycznego `<main>`**: Zlikwidowano antywzorzec narzucony na natywny tag `main` w `App.tsx`, usuwając wymuszaną modyfikację roli (`role="region"`), która powodowała błędy w walidatorach semantycznych HTML5 (np. Lighthouse).
+- **Odzyskanie systemowego przewijania**: Z panelu informacji o podzespołach `InfoPanel.tsx` usunięto dyrektywę `scrollbar-hide`. Odtąd użytkownicy otrzymują wizualną informację w postaci klasycznego, systemowego paska postępu scrollowania, co jest uznawane za złoty standard UX w obszarach, gdzie treść potrafi się ukryć poza krawędzią (overflow).
+- **Bezkolizyjne interakcje UI (Hinty)**: Upewniono się, że interfejs pierwszego kontaktu (Hologram z hintem oznaczonym "Kliknij podzespół") absolutnie przepuszcza kliknięcia w dół (`pointer-events-none`), dzięki czemu powiadomienie nigdy nie zasłania kliknięcia w główną płytę systemu.
+
+## Etap 44 - Optymalizacje Pamięci i Wydajności 🧹
+
+- **Globalny Hitbox Material**: Usunięto wyciek pamięci w głównym komponencie `PCModel.tsx`, przenosząc definicję materiału klikalnego (hitbox) bezpośrednio do współdzielonego pliku `materials.ts`.
+- **Rygorystyczny Garbage Collection w Obudowie**: Przebudowano `CasePanels.tsx`, wyciągając tworzone w locie materiały powiązane z teksturami z bloku JSX do `useMemo`, dodając na nich `dispose()` chroniące przed wyciekami VRAM (Video RAM).
+- **Optymalizacja Scenografii**: Przeniesiono tworzenie czarnego materiału tła plakatów z `DeskScenery.tsx` do globalnych zasobów, zapobiegając namnażaniu nieusuwalnych instancji podczas zmiany trybu widoku.
+- **Odciążenie Airflow**: Wyciągnięto inline'owy materiał bazowy czaśteczek przepływu powietrza (`LocalAirflowParticles.tsx`) do bloku zarządzanego pamięciowo, chroniąc przed spadkami klatek w długich sesjach.
+- **Optymalizacja usFrame dla Latarki Kursora**: Zredukowano obciążenie CPU/GPU w module `CursorLight.tsx`. Pętla obliczeniowa od teraz jest całkowicie pomijana, jeżeli światło zostało wyłączone z poziomu interfejsu, a kosztowna funkcja interpolacji (lerp) używa ulepszonego flagowania `invalidate()`.
+
 ## Etap 43 - Stabilizacja Kamery i Czystki w Zależnościach 🧹
 
 - **Resize Handler dla Kamery Asymetrycznej**: Rozwiązano krytyczny problem zniekształcenia perspektywy (`setViewOffset`) przy zmianie rozmiaru okna w trybie detali (Explode Mode). Zaimplementowano listener przeliczający asymetryczny rzut matrycy względem nowych proporcji viewportu.
@@ -73,8 +97,7 @@
 - **HUD Minimalizm (Centralny Panel)**: Gruntownie przeprojektowano główny dolny interfejs Trybu Budowy. Usunięto całkowicie nieprzezroczyste, ciemne tło (tzw. "pudło"), zastępując je lewitującym holograficznym tekstem z potężnymi podwójnymi cieniami (`drop-shadow` + `text-shadow`). Zmiana ta przywraca użytkownikowi pełną widoczność obszaru roboczego (szczególnie cenną na mniejszych monitorach) i nadaje aplikacji czysty, inżynieryjny charakter.
 - **Interaktywna Telemetria (Zwijane Panele Boczne)**: Przeprojektowano boczne panele analityczne Trybu Budowy z użyciem czystego mechanizmu CSS (`group-hover`, `max-height`), unikając długu technologicznego w React. Domyślnie na krawędziach ekranu widoczne są jedynie mikroskopijne ikony, które płynnie rozwijają się do pełnych paneli (tzw. akordeon) po najechaniu kursorem. Zastosowano szklisty styl *Cyber-Accent* z delikatnymi neonowymi krawędziami.
 - **Wsparcie Dotykowe dla Zwijanych Paneli (Mobile UX)**: Rozwiązano natywny problem przeglądarek mobilnych (w szczególności Safari na iOS/iPadOS) polegający na braku obsługi pseudoklasy `:hover`. Wdrożono rozwiązanie w 100% oparte na czystych standardach sieciowych (a11y), dodając do okienek atrybut `tabIndex={0}` z klasami `:focus`. Gwarantuje to perfekcyjne i natychmiastowe rozwijanie się paneli na dotyk palca (lub klawisz TAB), bez obciążania aplikacji zbędnym stanem React. Zaimplementowano również inteligentny przełącznik oparty o `onPointerDown` z metodą `.blur()`, który pozwala łatwo zamknąć panel stuknięciem w niego.
-- **Nowe Karty Danych (Rola, Ciekawostki, Wpływ na Wydajność)**: Wzbogacono Tryb Budowy o ekspozycję nieużywanych wcześniej danych z bazy podzespołów. Dodano animowany wykres paskowy obrazujący realny wpływ komponentu na osiągi (Gaming, AI, Produktywność), wyświetlanie ciekawostek technicznych (`funFact`) oraz punktowaną listę precyzującą strukturalną rolę komponentu w systemie komputera.
-- **Optymalizacja usypiania animacji (Sleep Threshold)**: Dodano ulepszoną matematyczną blokadę wyłączającą mikroskopijne przesunięcia geometrii 3D. Próg tolerancji (`distanceTo < 0.001`) pozwala silnikowi renderującemu całkowicie uśpić animowane komponenty tuż po osiągnięciu przez nie docelowej pozycji, minimalizując zużycie energii.
+- **Karty Danych (Rola, Ciekawostki, Wydajność)**: Wzbogacono Tryb Budowy o ekspozycję nieużywanych wcześniej danych z bazy podzespołów.
 - **Instancjonowanie Obiektów (Redukcja Draw Calls)**: Znacząco obniżono narzut procesora na komunikację z kartą graficzną. Setki powtarzalnych elementów, takich jak kondensatory VRM i żeberka radiatora (`MotherboardGeometry`) oraz łopatki wentylatorów (`CPUCoolerGeometry`), złączono w obiekty instancji (`XInstances`). Powyższy zabieg łączy potężną liczbę operacji renderowania (Draw Calls) do zaledwie kilku.
 - **Wsparcie WCAG (Etykiety HTMl)**: Interaktywne siatki 3D podzespołów komputera generują teraz własne, dostępne dla czytników etykiety za pomocą `<Html>` (aria-live). Zrezygnowano z biblioteki `@react-three/a11y`, ponieważ w środowisku React 19 Strict Mode powodowała ona awarię ("Cannot update an unmounted root") ze względu na błędy w cyklu życia komponentów w tej bibliotece.
 
@@ -291,16 +314,7 @@
 - **Zabezpieczenie Środowiska DEV**: Zaimplementowano warunkowe czyszczenie `.dispose()` dla ciężkich tekstur proceduralnych obudowy PC. Zabezpiecza to kod produkcyjny przed wyciekami, ale szanuje system HMR (Hot Module Replacement) Vite ułatwiający prace deweloperskie bez efektu "znikających paneli".
 - **Szlifowanie Lintera i Kosmetyka**: Usunięto niewykorzystane importy biblioteki `framer-motion` oraz puste bloki, wyciszając ostrzeżenia konsoli przed potencjalnymi błędami przy budowaniu aplikacji w trybie restrykcyjnym.
 
-## Etap 22 - Wdrożenie Poprawek z Audytu v4 (Część 4) 🛠️
-
-### Architektura i Kod
-
-- **Scenografia: Pudełko Płyty Głównej (Motherboard Box)**: Dodano model pudełka po płycie głównej na wirtualnym biurku tuż za pudełkiem po karcie graficznej.
-- **Customowe Tekstury (User-provided)**: Zaaplikowano dostarczone przez użytkownika dedykowane tekstury pudełka płyty głównej (`mb_box.webp`, `mb_side_long.webp`, `mb_side_short.webp`) przy użyciu zaawansowanego mapowania (klonowanie `repeat.x = -1` z zachowaniem instancjonowania) podobnego do pudełka GPU. To nadaje scenografii niesamowitego, personalizowanego realizmu.
-- **Masowa Refaktoryzacja Materiałów (DRY)**: Usunięto dziesiątki powtarzających się deklaracji inline `<meshStandardMaterial>` w komponentach `CPUGeometry`, `GPUGeometry` i `MotherboardGeometry`. Wcześniej ich obecność powodowała, że z każdym re-renderem React (np. po ruchu myszki lub zmianie trybu) generowane były nowe, identyczne instancje z punktu widzenia GPU.
-Podstawowe definicje jednokolorowych materiałów przeniesiono do wspólnego słownika instancji (`cpuDarkCharcoal`, `cpuSilverMetal`, `gpuDarkPlastic`) zlokalizowanego w `materials.ts`, przypinając je za pomocą potężnego propa `primitive`. Radykalnie obniża to narzut na proces Garbage Collectora (GC) i oszczędza kolejne cenne megabajty w pamięci VRAM.
-
-## Etap 22 - Wdrożenie Poprawek z Audytu v4 (Część 3) 🛠️
+## Etap 22 - Wdrożenie Poprawek z Audytu v4 (Części 3 i 4) 🛠️
 
 ### Dostępność i UX (WCAG)
 
@@ -310,11 +324,9 @@ Podstawowe definicje jednokolorowych materiałów przeniesiono do wspólnego sł
 
 ### Poprawione / Zoptymalizowane
 
-- **Zarządzanie Pamięcią i VRAM**: Część 2 wycieków. Zabezpieczono kolejne elementy infrastruktury 3D, dopisując brakujące metody `.dispose()` do szklanych osłon komputera (`frontGlassMatRef` i `sideGlassMatRef`) oraz zaawansowanego materiału odblaskowego na głównym biurku (`MeshReflectorMaterial`). Dzięki temu przełączanie widoku X-Ray oraz Scenografii jest w 100% zoptymalizowane pod kątem zużycia pamięci.
+- **Zarządzanie Pamięcią i VRAM (Osłony i Biurko)**: Część 2 wycieków. Zabezpieczono kolejne elementy infrastruktury 3D, dopisując brakujące metody `.dispose()` do szklanych osłon komputera (`frontGlassMatRef` i `sideGlassMatRef`) oraz zaawansowanego materiału odblaskowego na głównym biurku (`MeshReflectorMaterial`). Dzięki temu przełączanie widoku X-Ray oraz Scenografii jest w 100% zoptymalizowane pod kątem zużycia pamięci.
 - **Bezpieczeństwo Postprocessingu**: Całkowicie wyeliminowano niebezpieczne rzutowania typów (`as any`) przy potężnych efektach wewnątrz warstwy `EffectComposer` (głębia ostrości `DepthOfField` oraz cieniowanie przestrzenne `N8AO`). Kod wykorzystuje teraz bezpieczne renderowanie warunkowe `&&`.
 - **Kompresja (Pojemność)**: Odchudzono nadmiernie powiększoną teksturę na inteligentnym kubku (`new_mug_screen.webp`), redukując jej wagę z ponad 560 KB do minimalnych wartości akceptowalnych dla detali tła. Wpływa to bezpośrednio na szybszy czas pierwszej interakcji.
-
-### Poprawione / Zoptymalizowane
 
 - **Zarządzanie Pamięcią i VRAM**: Rozwiązano krytyczne wycieki materiałów w klasach geometrii. Zrefaktoryzowano wbudowane instrukcje tworzące `meshStandardMaterial` z suwakiem `rgbColor` w komponentach `RAMGeometry` i `PSUGeometry`, wynosząc je do instancji referencyjnych wewnątrz hooków `useMemo` oraz `useEffect`. Każdy materiał jest teraz poprawnie czyszczony w fazie demontażu komponentu wywołaniem metody `.dispose()`.
 - **Globalny Mesh w RAM**: Usunięto przestarzały, własny mechanizm renderujący siatki dla prześwietlenia komponentu (X-Ray Mode) w obiekcie modułów pamięci `RAMGeometry`, podmieniając go na centralnie zdefiniowany zoptymalizowany element `XMesh`.
@@ -462,7 +474,6 @@ Podstawowe definicje jednokolorowych materiałów przeniesiono do wspólnego sł
 - **Rotacja UV wentylatorów**: Zmodyfikowano mapowanie UV na bocznych krawędziach (lewa/prawa) wentylatorów poprzez rotację tekstury o równe 90 stopni (`Math.PI / 2`). Wyeliminowano efekt "pikselowych smug" wynikający z agresywnego zgniatania proporcji tekstury.
 - **Glassmorphism Tooltips**: Wdrożono nowy, elegancki design dymków z nazwami komponentów. Użyto `backdrop-blur-xl`, asymetrycznych zaokrągleń i gradientów, dodając jednocześnie precyzyjny celownik i lepszą typografię z oddzielonym tłumaczeniem (zero wpływu na wydajność, brak bibliotek zewnętrznych).
 - **Z-Index Fix (Loading Screen)**: Naprawiono błąd nakładania się warstw, w którym etykiety 3D (`<Html>`) przebijały ekran ładowania podczas zmiany środowiska. Ekran ładowania otrzymał nadrzędny `z-[9999]`.
-Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 
 ## Etap 12 - Wdrożenie Ostatnich Szlifów Audytu - Faza 7 (Backlog)
 
@@ -582,8 +593,6 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - **Zasilacz (PSU)**: Rozszerzono mapowanie tekstur. Boczna etykieta z modelem (AX1600i) jest teraz symetrycznie aplikowana również na tylną, niewidoczną od frontu stronę PSU. Rozciągnięto również tylny i przedni płaski panel z teksturami do szerokości 1.8 (wcześniej 1.6), co całkowicie wyeliminowało czarne pasy po bokach obudowy zasilacza.
 - **Ekran Ładowania (Loading Screen)**: Dodano wymuszone pobieranie wszystkich 27 tekstur w tle tuż po uruchomieniu aplikacji (`useTexture.preload()`). Dzięki temu menedżer ładowania nie uznaje procesu za zakończony przedwcześnie, a ekran ładowania znika dopiero, gdy wszystkie tekstury i materiały znajdą się w pamięci karty graficznej.
 - **Top Panel Mesh**: Przebudowano CanvasTexture siatki na top panelu, naprawiając skalowanie wycięć (`repeat.set`), dzięki czemu plaster miodu wreszcie jest poprawnie widoczny.
-
-### Zmienione
 
 - Zastosowano hybrydowe podejście do Płyty Głównej: na płaskie PCB naniesiono fotorealistyczną teksturę o wysokiej rozdzielczości (front i tył), a kluczowe trójwymiarowe elementy (gniazdo CPU, chłodzenie VRM, sloty RAM/PCIe) pozostały w pełni wyrenderowanymi bryłami 3D, generując fizyczne cienie na zdjęciu.
 - Dodano "zaślepkę" gniazda CPU na płycie głównej, aby perfekcyjnie ukryć nadrukowany socket z fotografii i wyeksponować tylko fizyczny model 3D bez artefaktów.
