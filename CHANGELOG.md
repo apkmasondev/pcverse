@@ -1,5 +1,10 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 47 - Światło Kursora (Headlamp) 🔦
+
+- **Latarka Czołowa (Headlamp)**: Gruntownie przeprojektowano działanie elementu `CursorLight`. Zamiast statycznego, przedniego światła punktowego (PointLight), zaimplementowano dynamiczny reflektor (SpotLight), który został na sztywno przytwierdzony do wirtualnego obiektywu kamery widza (`camera.position`). 
+- **Optyka i Natężenie**: Dzięki użyciu natywnego parametru `target` z `Object3D`, światło zawsze precyzyjnie celuje w punkt przecięcia kursora z otoczeniem, zachowując przy tym doskonałą wydajność (brak aktualizacji stanu React, wzorzec Transient State z `useFrame`). Zwiększono natężenie oświetlenia do `30.0` oraz poszerzono kąt stożka do `0.4` radiana, co gwarantuje świetny, równomierny blask na wybranych komponentach niezależnie od kąta obrotu kamery wokół PC.
+
 ## Etap 46 - Drobne poprawki i czysty kod 🧹
 
 - **Konsolidacja `useIsMobile`**: Zamiast tworzyć osobny stan lokalny i event listener za każdym razem, gdy komponent wywołuje hooka `useIsMobile`, stan został zintegrowany z globalnym zarządcą Zustand. Zmniejsza to znacząco obciążenie pamięci (jeden nasłuchiwacz zdarzeń `resize` dla całej aplikacji).

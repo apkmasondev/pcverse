@@ -1,4 +1,4 @@
-import { MathUtils, AmbientLight, DirectionalLight, SpotLight, HemisphereLight, RectAreaLight, PerspectiveCamera as ThreePerspectiveCamera, Vector2, Vector3, PointLight } from 'three';
+import { MathUtils, AmbientLight, DirectionalLight, SpotLight, HemisphereLight, RectAreaLight, PerspectiveCamera as ThreePerspectiveCamera, Vector2, Vector3, PointLight, Object3D } from 'three';
 import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { CameraControls, Environment, PerspectiveCamera, Sparkles, PerformanceMonitor, Grid, Stars, Preload } from '@react-three/drei';
@@ -23,28 +23,39 @@ const envMap: Record<string, string> = {
 };
 
 const CursorLight = () => {
-  const lightRef = useRef<PointLight>(null);
+  const lightRef = useRef<SpotLight>(null);
+  const targetObj = useMemo(() => new Object3D(), []);
+  const { scene } = useThree();
   const _vec = useRef(new Vector3());
   const cursorLightOn = usePCLighting(state => state.cursorLightOn);
 
+  useEffect(() => {
+    scene.add(targetObj);
+    return () => { scene.remove(targetObj); };
+  }, [scene, targetObj]);
+
   useFrame(({ raycaster, camera, invalidate }, delta) => {
     if (lightRef.current) {
-      const targetIntensity = cursorLightOn ? 3.5 : 0;
+      const targetIntensity = cursorLightOn ? 30.0 : 0;
       
       // Jeżeli wyłączone i zgaszone, pomijamy obliczenia
       if (targetIntensity === 0 && lightRef.current.intensity === 0) return;
 
       const dt = Math.min(delta, 0.05);
-      const distance = camera.position.length() * 0.6;
+      
+      // Światło startuje bezpośrednio z obiektywu kamery (lub delikatnie obok, by nie oświetlać cząsteczek tuż przed ekranem)
+      lightRef.current.position.copy(camera.position);
+
+      const distance = camera.position.length(); // celujemy prosto w środek sceny
       raycaster.ray.at(distance, _vec.current);
 
       let needsInvalidate = false;
-      const distPos = lightRef.current.position.distanceTo(_vec.current);
+      const distPos = targetObj.position.distanceTo(_vec.current);
       if (distPos > 0.001) {
-        lightRef.current.position.lerp(_vec.current, 1 - Math.exp(-10 * dt));
+        targetObj.position.lerp(_vec.current, 1 - Math.exp(-10 * dt));
         needsInvalidate = true;
       } else if (distPos > 0) {
-        lightRef.current.position.copy(_vec.current);
+        targetObj.position.copy(_vec.current);
         needsInvalidate = true;
       }
 
@@ -62,10 +73,13 @@ const CursorLight = () => {
   });
 
   return (
-    <pointLight
+    <spotLight
       ref={lightRef}
+      target={targetObj}
       intensity={0}
-      distance={8}
+      distance={50}
+      angle={0.4}
+      penumbra={0.8}
       color="#c084fc"
       decay={2}
     />
