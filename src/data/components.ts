@@ -48,7 +48,7 @@ export const pcComponents: PCComponent[] = [
       "Przechowuje oprogramowanie BIOS/UEFI"
     ],
     funFact: "Nowoczesne płyty główne mogą mieć ponad 10 warstw włókna szklanego i miedzianych ścieżek.",
-    position: [-0.42, 0, -1.75],
+    position: [-0.4, 0, -1.75],
     explodedPosition: [-6.2, 1.5, -9.75],
     explodedRotation: [-Math.PI / 48, Math.PI / 8, 0],
     color: "#1a1a2e",
@@ -93,7 +93,7 @@ export const pcComponents: PCComponent[] = [
       "Koordynuje działanie całego systemu, delegując wyspecjalizowane zadania do GPU i RAMu"
     ],
     funFact: "Współczesny procesor zawiera miliardy mikroskopijnych tranzystorów na powierzchni kilku centymetrów kwadratowych.",
-    position: [-0.42, 0.95, -1.6],
+    position: [-0.4, 0.95, -1.6],
     explodedPosition: [-4, 6.5, -4],
     explodedRotation: [Math.PI / 6, -Math.PI / 12, 0],
     color: "#e94560",
@@ -138,7 +138,7 @@ export const pcComponents: PCComponent[] = [
       "Wydmuchuje gorące powietrze za pomocą dedykowanego wentylatora"
     ],
     funFact: "Woda używana w chłodzeniach cieczą (AIO) potrafi odebrać ciepło z procesora ponad 20 razy szybciej niż powietrze, redukując nagłe skoki temperatur (tzw. spiki).",
-    position: [-0.42, 0.85, -1.40],
+    position: [-0.4, 0.85, -1.40],
     explodedPosition: [-0.65, 6.5, 0],
     color: "#a0a0a0",
     perfImpact: { gaming: 5, ai: 5, productivity: 5 },
@@ -182,7 +182,7 @@ export const pcComponents: PCComponent[] = [
       "Przetwarza potężne pakiety danych równolegle"
     ],
     funFact: "Współczesne układy graficzne (GPU) są wykorzystywane nie tylko w grach, ale także jako potężne 'mózgi' dla sztucznej inteligencji, ponieważ potrafią przetwarzać tysiące operacji matematycznych jednocześnie.",
-    position: [-0.25, -0.455, -1],
+    position: [-0.23, -0.455, -1],
     explodedPosition: [-11.2, 3.5, -3.5],
     explodedRotation: [-Math.PI / 1.7, 0, 0],
     color: "#6366f1",
@@ -227,7 +227,7 @@ export const pcComponents: PCComponent[] = [
       "Traci wszystkie dane w momencie odłączenia zasilania"
     ],
     funFact: "Pamięć RAM jest około 100 000 razy szybsza od tradycyjnego dysku twardego HDD.",
-    position: [0.38, 0.86, -1.55],
+    position: [0.4, 0.86, -1.55],
     explodedPosition: [3, 7.15, -5.95],
     explodedRotation: [0, -Math.PI / 8, Math.PI / 16],
     color: "#00b8a9",
@@ -272,7 +272,7 @@ export const pcComponents: PCComponent[] = [
       "Redukuje zacinanie się w nowoczesnych grach"
     ],
     funFact: "Użycie dwóch kości RAM zamiast jednej dużej może zwiększyć wydajność procesora nawet o 15%.",
-    position: [0.66, 0.86, -1.55],
+    position: [0.68, 0.86, -1.55],
     explodedPosition: [4, 7.15, -5.95],
     explodedRotation: [0, -Math.PI / 8, -Math.PI / 16],
     color: "#00b8a9",
