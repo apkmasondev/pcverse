@@ -18,7 +18,8 @@ const envMap: Record<string, string> = {
   city: import.meta.env.BASE_URL + 'environments/potsdamer_platz_1k.hdr',
   dawn: import.meta.env.BASE_URL + 'environments/kiara_1_dawn_1k.hdr',
   apartment: import.meta.env.BASE_URL + 'environments/lebombo_1k.hdr',
-  night: import.meta.env.BASE_URL + 'environments/moonless_golf_1k.hdr'
+  night: import.meta.env.BASE_URL + 'environments/moonless_golf_1k.hdr',
+  lobby: import.meta.env.BASE_URL + 'environments/st_fagans_interior_1k.hdr'
 };
 
 const CursorLight = () => {
@@ -310,7 +311,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
         <ErrorBoundary fallback={null}>
           <Environment
             files={envMap[envPreset] || envMap.studio}
-            environmentIntensity={['studio', 'dawn', 'apartment'].includes(envPreset) ? 0.7 : 1.2}
+            environmentIntensity={['studio', 'dawn', 'apartment', 'lobby'].includes(envPreset) ? 0.7 : 1.2}
           />
         </ErrorBoundary>
 

@@ -1,4 +1,4 @@
-import { MathUtils, MeshStandardMaterial, RepeatWrapping, SRGBColorSpace, Group } from 'three';
+import { MathUtils, MeshStandardMaterial, SRGBColorSpace, Group } from 'three';
 
 
 import { fanBladesRefsY } from '../FanManager';
@@ -29,9 +29,6 @@ export const GPUGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string, rgbEna
 
   useEffect(() => {
     gpuFrontTexture.colorSpace = SRGBColorSpace;
-    gpuFrontTexture.wrapS = RepeatWrapping;
-    gpuFrontTexture.wrapT = RepeatWrapping;
-    gpuFrontTexture.repeat.set(3, 1);
     gpuFrontTexture.needsUpdate = true;
   }, [gpuFrontTexture]);
 
@@ -108,23 +105,12 @@ export const GPUGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string, rgbEna
         </mesh>
         {/* GPU IO Texture Plane */}
         {!xrayMode && (
-          <mesh position={[-0.025, 0, -0.1]} rotation={[0, -Math.PI / 2, 0]}>
+          <mesh position={[-0.025, 0, -0.1]} rotation={[0, -Math.PI / 2, Math.PI]}>
             <planeGeometry args={[1.3, 0.38]} />
             <primitive object={texturedMaterials.texMat0} />
           </mesh>
         )}
-        {/* HDMI Port (Gold plated) */}
-        <mesh position={[-0.02, 0.05, 0.2]} material={xrayMode ? xrayMaterial : undefined}>
-          <boxGeometry args={[0.05, 0.08, 0.15]} />
-          {!xrayMode && <primitive object={materials.goldMetal} attach="material" />}
-        </mesh>
-        {/* 3x DisplayPort */}
-        {[-0.05, -0.25, -0.45].map((z, i) => (
-          <mesh key={`dp-${i}`} position={[-0.02, 0.05, z]} material={xrayMode ? xrayMaterial : undefined}>
-            <boxGeometry args={[0.05, 0.08, 0.15]} />
-            {!xrayMode && <primitive object={materials.darkMetal} attach="material" />}
-          </mesh>
-        ))}
+
       </group>
 
       {/* Main PCB */}
@@ -185,7 +171,7 @@ export const GPUGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string, rgbEna
       {/* RGB Edge Lighting - Front Edge Logo */}
       {!xrayMode && (
         <mesh position={[0, -0.15, 0.59]}>
-          <boxGeometry args={[1.0, 0.06, 0.05]} />
+          <boxGeometry args={[1.17, 0.06, 0.05]} />
           <primitive object={rgbMat15} attach="material" />
         </mesh>
       )}

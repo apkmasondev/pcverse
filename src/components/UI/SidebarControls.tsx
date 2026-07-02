@@ -33,6 +33,7 @@ const PRESETS = [
   { id: "studio", name: "Studio", desc: "Neutralne światło" },
   { id: "dawn", name: "Świt", desc: "Ciepłe poranne" },
   { id: "apartment", name: "Jasny Pokój", desc: "Bardzo jasne wnętrze" },
+  { id: "lobby", name: "Hol / Korytarz", desc: "Eleganckie ciepłe światło" },
 ];
 
 const COLORS = [

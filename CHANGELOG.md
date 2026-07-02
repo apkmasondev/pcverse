@@ -5,8 +5,6 @@
 - **Resize Handler dla Kamery Asymetrycznej**: Rozwiązano krytyczny problem zniekształcenia perspektywy (`setViewOffset`) przy zmianie rozmiaru okna w trybie detali (Explode Mode). Zaimplementowano listener przeliczający asymetryczny rzut matrycy względem nowych proporcji viewportu.
 - **Usunięcie nieużywanych paczek**: Z paczki `package.json` definitywnie wycięto starą zależność `@react-three/a11y`, zmniejszając czas instalacji projektu i odchudzając bundlera.
 - **Responsywność Bocznego Menu (Overflow)**: Naprawiono błąd interfejsu, w którym rozbudowane podmenu (np. wyboru otoczenia HDRi) ucinały się na dole mniejszych ekranów. Wszystkie rozwijane panele w `SidebarControls` zostały wyśrodkowane w osi Y względem przycisków (`top-1/2 -translate-y-1/2`) i zabezpieczone właściwością `max-h-[60vh] overflow-y-auto`, co gwarantuje pełną dostępność opcji poprzez wewnętrzne przewijanie.
-- **Occlusion Etykiet 3D (Raycasting)**: Rozwiązano problem przebijania etykiet informacyjnych komponentów przez bryły po obróceniu kamery. Tagom `<Html>` przypisano flagę `occlude`, angażując wbudowany CPU Raycasting, który dynamicznie wygasza krycie (opacity) etykiety w momencie jej zasłonięcia przez inny obiekt (np. zasilacz).
-
 - **Optymalizacja Pamięci (VRAM) dla Obudowy**: Wyciągnięto 5 potężnych wbudowanych w strukturę `CaseGeometry` materiałów (`<meshStandardMaterial>`) do sfokusowanego, dzielonego na wiele instancji słownika w obrębie bloku `useMemo`. Pozwoliło to radykalnie ograniczyć alokację dodatkowych draw calls przy kompilowaniu komponentów obudowy i odciążyło narzut na WebGL z duplikowanych tekstur.
 - **Rygorystyczny Garbage Collection dla Obudowy**: Zainicjowano referencje (`refs`) na wszystkich wielkogabarytowych, generowanych proceduralnie geometriach (`ExtrudeGeometry`, `ShapeGeometry`) w obudowie i dodano na nich wymuszone usuwanie z pamięci podręcznej GPU (`.dispose()`) w przypadku demontażu komponentu. Zamyka to wycieki pamięci za każdym załadowaniem strony.
 - **Optymalizacja Fallbacku w PCModel**: Zapobieżono duplikowaniu całego, nienazwanego kawałka komponentu używanego do rezerwowania miejsca podczas ładowania poszczególnych podzespołów. Został on wydzielony i ustrukturyzowany do węższego kontekstu.
@@ -37,7 +35,6 @@
 - **Dynamiczna Jasność Środowisk (HDRI)**: System teraz automatycznie obniża jasność mapy otoczenia (z `1.5` na `0.7`) dla jasnych presetów (`studio`, `dawn`, `apartment`), zapobiegając efektowi prześwietlenia przy zachowaniu optymalnego naświetlenia dla presetu nocnego (zmieniono na `1.2`).
 - **Inteligentne Przygaszanie Sztucznych Reflektorów**: Przekazano aktualny identyfikator otoczenia do logiki `AnimatedLights`. W jasno oświetlonych środowiskach funkcja matematyczna `lerp` bezinwazyjnie "zjeżdża" z mocą sztucznych lamp (z łącznej mocy ~11.0 na zaledwie ~2.0), zapobiegając drastycznym wypaleniom na teksturach płyt głównych i obudowy komputera. Cały proces jest bezszwowy i nie powoduje rekompilacji shaderów podczas działania programu.
 
-
 ## Etap 39 - Scenografia Dioramy i Ciemna Cegła 🧱
 
 - **Rama Dioramy**: Dodano proceduralną ramę z ciemnej cegły (Loft Brick) okalającą "czwartą ścianę" scenografii za obiektywem kamery, skutecznie eliminując efekt uciętej podłogi i wiszących w próżni krawędzi (efekt "Dioramy").
@@ -45,7 +42,6 @@
 - **Precyzyjne Mapowanie UV**: Stworzono odrębne klony materiałów dla belek poziomych i pionowych, precyzyjnie dostosowując skalę gęstości fug i cegieł na krawędziach, zapobiegając rozciąganiu UV oraz nienaturalnemu układaniu się cegieł.
 - **Optymalizacja Pamięci (VRAM)**: Użyto natywnych instancji (`Instances`) dla ramy i wdrożono rygorystyczny Garbage Collection (`dispose()`) na sklonowanych teksturach i materiałach w `useEffect`, upewniając się, że zamknięcie trybu otoczenia odzyskuje 100% użytej pamięci.
 - **Wymiana Tekstur**: Zamieniono plik źródłowy ciemnej cegły z `.png` na wysoce skompresowany, natywny plik graficzny środowiska webowego `.webp`.
-
 
 ## Etap 38 - Optyka Kamery i Post-processing 🎥
 

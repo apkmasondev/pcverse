@@ -197,10 +197,6 @@ export const MotherboardGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string
         </group>
       ))}
 
-      {/* 24-Pin ATX Power Connector (Removed) */}
-
-      {/* 8-Pin EPS Power Connectors (Removed due to Z-fighting and lack of visibility) */}
-
       {/* POST Code Display (Diagnostic LED) */}
       <group position={[1.37, 1.40, 0.05]}>
         <Mesh>
@@ -214,7 +210,7 @@ export const MotherboardGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string
       </group>
 
       {/* PCIe Slots (Reinforced) */}
-      {[-0.4, -1.8].map((y, i) => (
+      {[-0.4].map((y, i) => (
         <group key={`pcie-${i}`} position={[-0.05, y, 0.1]}>
           {/* Base Block */}
           <Mesh position={[0, 0, -0.02]}>
@@ -271,14 +267,14 @@ export const MotherboardGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string
       ))}
 
       {/* M.2 NVMe Armor / Heatsinks */}
-      <group position={[-0.2, -1.4, 0.08]}>
+      <group position={[-0.25, -1.4, 0.08]}>
         <Mesh>
-          <boxGeometry args={[1.8, 0.3, 0.1]} />
+          <boxGeometry args={[1.2, 0.45, 0.1]} />
           <primitive object={materials.darkShinyMetal} attach="material" />
         </Mesh>
         {/* Top face with AORUS texture */}
         <Mesh position={[0, 0, 0.051]}>
-          <planeGeometry args={[1.8, 0.3]} />
+          <planeGeometry args={[1.2, 0.45]} />
           <primitive object={texturedMaterials.texMat4} />
         </Mesh>
       </group>
@@ -303,16 +299,12 @@ export const MotherboardGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string
       </group>
 
       {/* Audio Section with RGB Trace */}
-      <Mesh position={[-1.2, -1.5, 0.04]}>
-        <boxGeometry args={[0.4, 0.8, 0.02]} />
+      <Mesh position={[-1.13, -1.5, 0.04]}>
+        <boxGeometry args={[0.5, 0.8, 0.02]} />
         <primitive object={materials.veryDarkGray} attach="material" />
       </Mesh>
-      <Mesh position={[-0.95, -1.5, 0.04]}>
-        <boxGeometry args={[0.02, 0.8, 0.01]} />
-        <primitive object={rgbMaterial} attach="material" />
-      </Mesh>
       {/* Audio Capacitors (Gold) */}
-      {[-1.2, -1.4, -1.6].map((y, i) => (
+      {[-1.3, -1.5, -1.7].map((y, i) => (
         <Mesh key={`audio-cap-${i}`} position={[-1.2, y, 0.08]} rotation={[Math.PI / 2, 0, 0]}>
           <cylinderGeometry args={[0.04, 0.04, 0.12, 16]} />
           <primitive object={materials.goldMetal} attach="material" />
@@ -336,30 +328,25 @@ export const MotherboardGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string
           <planeGeometry args={[1.0, 1.0]} />
           <primitive object={texturedMaterials.texMat6} />
         </Mesh>
-        {/* Sci-fi grooves */}
-        <Mesh position={[-0.2, 0, 0.08]}>
-          <boxGeometry args={[0.1, 1.0, 0.02]} />
-          <primitive object={materials.blackPlastic} attach="material" />
-        </Mesh>
         {/* RGB Accent - Hollow Square Outline */}
         <group position={[0, 0, 0.091]}>
           {/* Top */}
-          <Mesh position={[0, 0.36, 0]}>
-            <planeGeometry args={[0.8, 0.08]} />
+          <Mesh position={[0, 0.4, 0]}>
+            <planeGeometry args={[0.88, 0.08]} />
             <primitive object={rgbMaterial} attach="material" />
           </Mesh>
           {/* Bottom */}
-          <Mesh position={[0, -0.36, 0]}>
-            <planeGeometry args={[0.8, 0.08]} />
+          <Mesh position={[0, -0.4, 0]}>
+            <planeGeometry args={[0.88, 0.08]} />
             <primitive object={rgbMaterial} attach="material" />
           </Mesh>
           {/* Left */}
-          <Mesh position={[-0.36, 0, 0]}>
+          <Mesh position={[-0.4, 0, 0]}>
             <planeGeometry args={[0.08, 0.64]} />
             <primitive object={rgbMaterial} attach="material" />
           </Mesh>
           {/* Right */}
-          <Mesh position={[0.36, 0, 0]}>
+          <Mesh position={[0.4, 0, 0]}>
             <planeGeometry args={[0.08, 0.64]} />
             <primitive object={rgbMaterial} attach="material" />
           </Mesh>
