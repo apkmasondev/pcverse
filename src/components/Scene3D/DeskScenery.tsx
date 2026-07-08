@@ -206,6 +206,8 @@ const Door = () => {
     return () => doorMat.dispose();
   }, [doorMat]);
 
+  const enterMatrix = usePCView(state => state.enterMatrix);
+
   // Zakładamy proporcje 1:2 dla klasycznych drzwi. Wysokość 22 oznacza Y=11 dla idealnego styku z podłogą (Y=0)
   const width = 11;
   const height = 22;
@@ -219,7 +221,12 @@ const Door = () => {
         <meshBasicMaterial color="#000000" />
       </mesh>
       {/* Tekstura drzwi na wierzchu */}
-      <mesh material={doorMat}>
+      <mesh 
+        material={doorMat} 
+        onClick={(e) => { e.stopPropagation(); enterMatrix(); }}
+        onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
+        onPointerOut={() => { document.body.style.cursor = 'auto'; }}
+      >
         <planeGeometry args={[width, height]} />
       </mesh>
     </group>

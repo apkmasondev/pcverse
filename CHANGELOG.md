@@ -1,5 +1,11 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 48 - Matrix Terminal Easter Egg 🐇
+
+- **Nieziemski Cyfrowy Deszcz**: Wprowadzono interaktywny "Easter Egg" podpięty pod drzwi w pokoju 3D. Kliknięcie w nie usypia silnik WebGL i ukazuje unikalny komponent `<MatrixTerminal>`, renderujący klasyczny spadający kod Matrixa z użyciem szybkiego interfejsu Canvas 2D. 
+- **Złudzenie 3D (Aberracja Chromatyczna)**: Aby uzyskać epicki, trójwymiarowy efekt deszczu bez obciążania układu graficznego, zastosowano przesunięcie kanałów RGB na brzegach liter oraz głęboki efekt *Glow* w stylizacji *Cyberpunk*. Spadające znaki to mieszanka japońskiej katakany i rzadko pojawiających się, rzeczywistych komponentów sprzętowych (np. `[RTX_5090]`, `[NVME_GEN5]`).
+- **Terminal Hakera**: Użytkownik znajduje się wewnątrz powłoki `root@pcverse:~#`, gdzie może pisać na prawdziwej klawiaturze. Wpisanie komend takich jak `wake up`, `overclock` czy `sudo rm -rf /matrix` wybudza symulację z potężnym "efektem błysku", resetując aplikację bezpiecznie do głównego biurka. Efekt jest napisany tak, aby nie niszczyć drzewa VDOM ani nie wywoływać wycieków pamięci zgodnie z audytem architektonicznym.
+
 ## Etap 47 - Światło Kursora (Headlamp) 🔦
 
 - **Latarka Czołowa (Headlamp)**: Gruntownie przeprojektowano działanie elementu `CursorLight`. Zamiast statycznego, przedniego światła punktowego (PointLight), zaimplementowano dynamiczny reflektor (SpotLight), który został na sztywno przytwierdzony do wirtualnego obiektywu kamery widza (`camera.position`). 

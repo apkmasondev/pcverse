@@ -1,9 +1,12 @@
 import { Suspense, lazy } from 'react';
 const Scene3D = lazy(() => import('./components/Scene3D/Scene3D').then(module => ({ default: module.Scene3D })));
+const MatrixTerminal = lazy(() => import('./components/EasterEgg/MatrixTerminal').then(module => ({ default: module.MatrixTerminal })));
 import { UI } from './components/UI/UI';
 import { InfoPanel } from './components/InfoPanel/InfoPanel';
 import { GlobalErrorBoundary } from './components/ErrorBoundary';
 import { LoadingScreen } from './components/LoadingScreen/LoadingScreen';
+
+import { usePCView } from './hooks/usePC';
 
 const FallbackLoader = () => (
   <div className="absolute inset-0 z-[9999] flex flex-col items-center justify-center bg-[#050505] text-white">
@@ -21,6 +24,7 @@ const FallbackLoader = () => (
 );
 
 function App() {
+  const inMatrix = usePCView(state => state.inMatrix);
 
   return (
     <GlobalErrorBoundary>
@@ -34,11 +38,21 @@ function App() {
           <a href="#info-panel" className="block py-2 outline-none focus:ring-2 focus:ring-indigo-500">Przejdź do panelu informacji</a>
         </nav>
 
-        <Suspense fallback={<FallbackLoader />}>
-          <Scene3D />
-        </Suspense>
-        <UI />
-        <InfoPanel />
+        {/* Ukrywamy całe UI i silnik 3D gdy jesteśmy w Matrixie. React nie odmontowuje drzewa by nie stracić zasobów WebGL, ale display: none pauzuje wycisza koszty */}
+        <div style={{ display: inMatrix ? 'none' : 'block', width: '100%', height: '100%' }}>
+          <Suspense fallback={<FallbackLoader />}>
+            <Scene3D />
+          </Suspense>
+          <UI />
+          <InfoPanel />
+        </div>
+
+        {inMatrix && (
+          <Suspense fallback={<FallbackLoader />}>
+            <MatrixTerminal />
+          </Suspense>
+        )}
+
         <LoadingScreen />
       </main>
     </GlobalErrorBoundary>

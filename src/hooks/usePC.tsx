@@ -32,6 +32,9 @@ export interface PCViewContextType {
   toggleParticles: () => void;
   showFog: boolean;
   toggleFog: () => void;
+  inMatrix: boolean;
+  enterMatrix: () => void;
+  exitMatrix: () => void;
 }
 
 export interface PCUIContextType {
@@ -131,6 +134,9 @@ export const usePCView = create<PCViewContextType>((set) => ({
   showDesk: false,
   showParticles: false,
   showFog: true,
+  inMatrix: false,
+  enterMatrix: () => set({ inMatrix: true }),
+  exitMatrix: () => set({ inMatrix: false }),
   toggleXrayMode: () => set((state) => ({ xrayMode: !state.xrayMode })),
   toggleAirflow: () => set((state) => ({ showAirflow: !state.showAirflow })),
   setEnvPreset: (preset) => {
