@@ -29,9 +29,16 @@ body {
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
+
 @media (prefers-reduced-motion: reduce) {
-  .animate-pulse, .animate-bounce { animation: none !important; }
+
+  .animate-pulse,
+  .animate-bounce {
+    animation: none !important;
+  }
 }

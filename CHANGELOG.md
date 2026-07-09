@@ -1,5 +1,14 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 49 - Responsywny Pasek Dolny i Bottom Sheety 📱
+
+- **Responsywny Toolbar Dolny**: Wprowadzono dynamiczne dostosowanie paska kontrolnego na małych ekranach lub w przypadku dużego przybliżenia/powiększenia (`window.innerHeight < 780px` lub `window.innerWidth < 768px`). Pionowy pasek boczny automatycznie przekształca się w dyskretny, dolny pasek poziomy ze wszystkimi 12 ikonami ułożonymi w jednym rzędzie, co zapobiega obcinaniu ostatnich przycisków na dole ekranu. Zastosowano niewidoczny suwak `.scrollbar-hide` dla gładkiego przewijania poziomego (swipe).
+- **Złote Zasady UI (Bottom Sheety)**: W trybie kompaktowym podmenu (Wybór HDRi, Oświetlenie, RGB) przestają otwierać się z boku (gdzie wychodziłyby poza obszar ekranu) i stają się nowoczesnymi Bottom Sheetami wysuwanymi płynnie z dołu ekranu.
+- **Efekt Premium**: Bottom Sheety posiadają zaokrąglony uchwyt (drag handle) w stylu iOS/Android, przyciemnioną maskę tła (backdrop overlay) reagującą na kliknięcie w celu zamknięcia panelu, a ich elementy układają się w czytelną siatkę (Grid) dopasowaną do szerokości urządzenia.
+- **Płynna Animacja**: Do wdrożenia wysuwania i chowania Bottom Sheetów wykorzystano fizykę sprężyn z biblioteki Framer Motion (`type: "spring"`).
+
+
+
 ## Etap 48 - Matrix Terminal Easter Egg 🐇
 
 - **Nieziemski Cyfrowy Deszcz**: Wprowadzono interaktywny "Easter Egg" podpięty pod drzwi w pokoju 3D. Kliknięcie w nie usypia silnik WebGL i ukazuje unikalny komponent `<MatrixTerminal>`, renderujący klasyczny spadający kod Matrixa z użyciem szybkiego interfejsu Canvas 2D. 
