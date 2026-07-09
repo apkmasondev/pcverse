@@ -104,6 +104,193 @@ export const SidebarControls = () => {
     return () => window.removeEventListener("resize", checkCompact);
   }, []);
 
+  const renderPaletteMenu = () => (
+    <motion.div
+      key="palette-menu"
+      initial={isCompact ? { y: "100%" } : { opacity: 0, x: -10, scale: 0.95 }}
+      animate={isCompact ? { y: 0 } : { opacity: 1, x: 0, scale: 1 }}
+      exit={isCompact ? { y: "100%" } : { opacity: 0, x: -10, scale: 0.95 }}
+      transition={isCompact ? { type: "spring", damping: 25, stiffness: 220 } : { duration: 0.2 }}
+      className={isCompact 
+        ? "fixed bottom-0 left-0 right-0 z-[100] w-full max-w-full pl-0"
+        : "absolute top-1/2 -translate-y-1/2 left-[50px] md:left-full pl-2 md:pl-4 z-50 w-max"
+      }
+    >
+      <div className={isCompact
+        ? "p-6 bg-[#0a0a0a]/95 backdrop-blur-2xl border-t border-white/10 rounded-t-3xl shadow-2xl flex flex-col gap-4 max-h-[80vh] overflow-y-auto custom-scrollbar"
+        : "p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl grid grid-cols-3 gap-3 shadow-2xl max-h-[60vh] overflow-y-auto custom-scrollbar"
+      }>
+        {isCompact && (
+          <div className="w-12 h-1.5 rounded-full bg-white/20 mx-auto mb-2" />
+        )}
+        {isCompact && (
+          <div className="text-center text-sm font-bold text-slate-400 mb-2">Wybierz kolor RGB</div>
+        )}
+        
+        <div className={isCompact ? "grid grid-cols-5 gap-3 justify-items-center" : "contents"}>
+          <button
+            aria-label="Wyłącz RGB"
+            onClick={() => {
+              playSelectSound();
+              if (rgbEnabled) toggleRgbEnabled();
+              setShowPalette(false);
+            }}
+            className={`w-10 h-10 rounded-full border-2 transition-transform hover:scale-125 cursor-pointer flex-shrink-0 flex items-center justify-center bg-[#111] ${!rgbEnabled ? "border-red-500 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]" : "border-white/10 text-white/50 hover:border-white/30"}`}
+            title="Wyłącz RGB"
+          >
+            <span className="text-[10px] font-bold">OFF</span>
+          </button>
+
+          {COLORS.map((c) => (
+            <button
+              key={c.hex}
+              aria-label={`Kolor RGB ${c.name}`}
+              onClick={() => {
+                playSelectSound();
+                setRgbColor(c.hex);
+                if (!rgbEnabled) toggleRgbEnabled();
+                setShowPalette(false);
+              }}
+              className="w-10 h-10 rounded-full border-2 transition-transform hover:scale-125 cursor-pointer flex-shrink-0"
+              style={{
+                backgroundColor: c.hex,
+                borderColor: rgbColor === c.hex && rgbEnabled ? "white" : "transparent",
+                boxShadow: rgbColor === c.hex && rgbEnabled ? `0 0 10px ${c.hex}` : "none",
+              }}
+              title={c.name}
+            />
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+
+  const renderEnvMenu = () => (
+    <motion.div
+      key="env-menu"
+      initial={isCompact ? { y: "100%" } : { opacity: 0, x: -10, scale: 0.95 }}
+      animate={isCompact ? { y: 0 } : { opacity: 1, x: 0, scale: 1 }}
+      exit={isCompact ? { y: "100%" } : { opacity: 0, x: -10, scale: 0.95 }}
+      transition={isCompact ? { type: "spring", damping: 25, stiffness: 220 } : { duration: 0.2 }}
+      className={isCompact
+        ? "fixed bottom-0 left-0 right-0 z-[100] w-full max-w-full pl-0"
+        : "absolute top-1/2 -translate-y-1/2 left-[50px] md:left-full pl-2 md:pl-4 z-50 w-48"
+      }
+    >
+      <div className={isCompact
+        ? "p-6 bg-[#0a0a0a]/95 backdrop-blur-2xl border-t border-white/10 rounded-t-3xl shadow-2xl flex flex-col gap-3 max-h-[80vh] overflow-y-auto custom-scrollbar"
+        : "p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col gap-2 shadow-2xl max-h-[60vh] overflow-y-auto custom-scrollbar"
+      }>
+        {isCompact && (
+          <div className="w-12 h-1.5 rounded-full bg-white/20 mx-auto mb-2" />
+        )}
+        {isCompact && (
+          <div className="text-center text-sm font-bold text-slate-400 mb-2">Otoczenie (HDRi) i Scenografia</div>
+        )}
+
+        <div className={isCompact ? "grid grid-cols-2 gap-3" : "contents"}>
+          {PRESETS.map((p) => (
+            <button
+              key={p.id}
+              aria-label={`Otoczenie ${p.name}`}
+              onClick={() => {
+                playSelectSound();
+                setEnvPreset(p.id);
+                setShowEnv(false);
+              }}
+              className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${envPreset === p.id ? "bg-amber-500/20 text-amber-300 font-bold" : "text-slate-300 hover:bg-white/10 hover:text-white"}`}
+            >
+              <div className="font-medium">{p.name}</div>
+              <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">{p.desc}</div>
+            </button>
+          ))}
+
+          <button
+            title={isLowEndGPU ? "Niedostępne ze względu na spadki płynności (FPS)" : "Pokaż scenografię"}
+            disabled={isLowEndGPU}
+            onClick={() => {
+              if (!isLowEndGPU) {
+                playSelectSound();
+                triggerLoading(toggleDesk);
+              }
+              setShowEnv(false);
+            }}
+            className={`flex flex-col items-start text-left px-3 py-2 rounded-lg text-sm transition-colors ${isCompact ? "" : "hidden md:flex"} ${isLowEndGPU ? 'opacity-30 cursor-not-allowed bg-[#1a1a1a] border border-white/5 text-slate-500' : (showDesk ? "bg-amber-500/20 text-amber-300 font-bold border border-amber-500/50" : "text-slate-300 hover:bg-white/10 hover:text-white")}`}
+          >
+            <div className="font-medium whitespace-nowrap">Tryb Scenografii</div>
+            <div className="text-[10px] opacity-70 mt-0.5">
+              {isLowEndGPU ? "Niedostępne" : (showDesk ? "(Włączono)" : "(Wyłączono)")}
+            </div>
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  );
+
+  const renderLightsMenu = () => (
+    <motion.div
+      key="lights-menu"
+      initial={isCompact ? { y: "100%" } : { opacity: 0, x: -10, scale: 0.95 }}
+      animate={isCompact ? { y: 0 } : { opacity: 1, x: 0, scale: 1 }}
+      exit={isCompact ? { y: "100%" } : { opacity: 0, x: -10, scale: 0.95 }}
+      transition={isCompact ? { type: "spring", damping: 25, stiffness: 220 } : { duration: 0.2 }}
+      className={isCompact
+        ? "fixed bottom-0 left-0 right-0 z-[100] w-full max-w-full pl-0"
+        : "absolute top-1/2 -translate-y-1/2 left-[50px] md:left-full pl-2 md:pl-4 z-50 w-52"
+      }
+    >
+      <div className={isCompact
+        ? "p-6 bg-[#0a0a0a]/95 backdrop-blur-2xl border-t border-white/10 rounded-t-3xl shadow-2xl flex flex-col gap-3 max-h-[80vh] overflow-y-auto custom-scrollbar"
+        : "p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col gap-2 shadow-2xl max-h-[60vh] overflow-y-auto custom-scrollbar"
+      }>
+        {isCompact && (
+          <div className="w-12 h-1.5 rounded-full bg-white/20 mx-auto mb-2" />
+        )}
+        {isCompact && (
+          <div className="text-center text-sm font-bold text-slate-400 mb-2">Opcje oświetlenia</div>
+        )}
+
+        <div className={isCompact ? "grid grid-cols-2 gap-3" : "contents"}>
+          <button
+            aria-pressed={ambientOn}
+            onClick={() => { playSelectSound(); triggerLoading(toggleAmbient); }}
+            className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${ambientOn ? "bg-yellow-500/20 text-yellow-300 font-bold" : "text-slate-300 hover:bg-white/10 hover:text-white"}`}
+          >
+            <div className="font-medium">Światło Pokoju</div>
+            <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">{ambientOn ? "(Włączone)" : "(Wyłączone)"}</div>
+          </button>
+          <button
+            aria-pressed={mainSpotOn}
+            onClick={() => { playSelectSound(); triggerLoading(toggleMainSpot); }}
+            className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${mainSpotOn ? "bg-yellow-500/20 text-yellow-300 font-bold" : "text-slate-300 hover:bg-white/10 hover:text-white"}`}
+          >
+            <div className="font-medium">Główny Reflektor</div>
+            <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">{mainSpotOn ? "(Włączony)" : "(Wyłączony)"}</div>
+          </button>
+          <button
+            title={(!showDesk || isMobile || isLowEndGPU) ? "Opcja dostępna tylko w Trybie Scenografii na PC (wymaga ściany)" : "Tylna Poświata RGB"}
+            disabled={!showDesk || isMobile || isLowEndGPU}
+            aria-pressed={pcRGBOn}
+            onClick={() => { if (showDesk && !isMobile && !isLowEndGPU) { playSelectSound(); triggerLoading(togglePcRGB); } }}
+            className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${(!showDesk || isMobile || isLowEndGPU) ? 'opacity-30 cursor-not-allowed bg-[#1a1a1a] border border-white/5 text-slate-500' : (pcRGBOn ? "bg-purple-500/20 text-purple-300 font-bold" : "text-slate-300 hover:bg-white/10 hover:text-white")}`}
+          >
+            <div className="font-medium">Tylna Poświata RGB</div>
+            <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">{(!showDesk || isMobile || isLowEndGPU) ? "(Niedostępna)" : (pcRGBOn ? "(Włączona)" : "(Wyłączona)")}</div>
+          </button>
+          <button
+            title={(isMobile || isLowEndGPU) ? "Niedostępne ze względu na wydajność" : "Latarka Kursora"}
+            disabled={isMobile || isLowEndGPU}
+            onClick={() => { if (!(isMobile || isLowEndGPU)) { playSelectSound(); triggerLoading(toggleCursorLight); } }}
+            className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${(isMobile || isLowEndGPU) ? 'opacity-30 cursor-not-allowed bg-[#1a1a1a] border border-white/5 text-slate-500' : (cursorLightOn ? "bg-cyan-500/20 text-cyan-300 font-bold" : "text-slate-300 hover:bg-white/10 hover:text-white")}`}
+          >
+            <div className="font-medium whitespace-nowrap">Latarka Kursora</div>
+            <div className="text-[10px] mt-0.5 opacity-70 leading-tight">{(isMobile || isLowEndGPU) ? "(Niedostępna)" : (cursorLightOn ? "(Włączona)" : "(Wyłączona)")}</div>
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  );
+
   return (
     <>
       <AnimatePresence>
@@ -122,6 +309,12 @@ export const SidebarControls = () => {
         )}
       </AnimatePresence>
 
+      <AnimatePresence>
+        {isCompact && showPalette && renderPaletteMenu()}
+        {isCompact && showEnv && renderEnvMenu()}
+        {isCompact && showLights && renderLightsMenu()}
+      </AnimatePresence>
+
       <motion.div
         id="ui-controls"
         role="region"
@@ -131,7 +324,7 @@ export const SidebarControls = () => {
         transition={{ duration: 0.8, ease: "easeOut" }}
         className={`group fixed z-10 flex gap-2 p-2 bg-[#0a0a0a]/60 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-all duration-500 ${
           isCompact 
-            ? "bottom-6 left-6 right-6 top-auto flex-row overflow-x-auto scrollbar-hide h-[60px] w-auto justify-start items-center" 
+            ? "bottom-6 left-1/2 -translate-x-1/2 flex-row overflow-x-auto scrollbar-hide h-[60px] w-max max-w-[95vw] justify-center items-center px-4" 
             : "top-6 left-6 bottom-auto flex-col w-[60px] hover:w-[220px] overflow-visible"
         }`}
       >
@@ -293,65 +486,7 @@ export const SidebarControls = () => {
           </motion.button>
 
           <AnimatePresence>
-            {showPalette && (
-              <motion.div
-                initial={isCompact ? { y: "100%" } : { opacity: 0, x: -10, scale: 0.95 }}
-                animate={isCompact ? { y: 0 } : { opacity: 1, x: 0, scale: 1 }}
-                exit={isCompact ? { y: "100%" } : { opacity: 0, x: -10, scale: 0.95 }}
-                transition={isCompact ? { type: "spring", damping: 25, stiffness: 220 } : { duration: 0.2 }}
-                className={isCompact 
-                  ? "fixed bottom-0 left-0 right-0 z-[100] w-full max-w-full pl-0"
-                  : "absolute top-1/2 -translate-y-1/2 left-[50px] md:left-full pl-2 md:pl-4 z-50 w-max"
-                }
-              >
-                <div className={isCompact
-                  ? "p-6 bg-[#0a0a0a]/95 backdrop-blur-2xl border-t border-white/10 rounded-t-3xl shadow-2xl flex flex-col gap-4 max-h-[80vh] overflow-y-auto custom-scrollbar"
-                  : "p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl grid grid-cols-3 gap-3 shadow-2xl max-h-[60vh] overflow-y-auto custom-scrollbar"
-                }>
-                  {isCompact && (
-                    <div className="w-12 h-1.5 rounded-full bg-white/20 mx-auto mb-2" />
-                  )}
-                  {isCompact && (
-                    <div className="text-center text-sm font-bold text-slate-400 mb-2">Wybierz kolor RGB</div>
-                  )}
-                  
-                  <div className={isCompact ? "grid grid-cols-5 gap-3 justify-items-center" : "contents"}>
-                    <button
-                      aria-label="Wyłącz RGB"
-                      onClick={() => {
-                        playSelectSound();
-                        if (rgbEnabled) toggleRgbEnabled();
-                        setShowPalette(false);
-                      }}
-                      className={`w-10 h-10 rounded-full border-2 transition-transform hover:scale-125 cursor-pointer flex-shrink-0 flex items-center justify-center bg-[#111] ${!rgbEnabled ? "border-red-500 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]" : "border-white/10 text-white/50 hover:border-white/30"}`}
-                      title="Wyłącz RGB"
-                    >
-                      <span className="text-[10px] font-bold">OFF</span>
-                    </button>
-
-                    {COLORS.map((c) => (
-                      <button
-                        key={c.hex}
-                        aria-label={`Kolor RGB ${c.name}`}
-                        onClick={() => {
-                          playSelectSound();
-                          setRgbColor(c.hex);
-                          if (!rgbEnabled) toggleRgbEnabled();
-                          setShowPalette(false);
-                        }}
-                        className="w-10 h-10 rounded-full border-2 transition-transform hover:scale-125 cursor-pointer flex-shrink-0"
-                        style={{
-                          backgroundColor: c.hex,
-                          borderColor: rgbColor === c.hex && rgbEnabled ? "white" : "transparent",
-                          boxShadow: rgbColor === c.hex && rgbEnabled ? `0 0 10px ${c.hex}` : "none",
-                        }}
-                        title={c.name}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            )}
+            {!isCompact && showPalette && renderPaletteMenu()}
           </AnimatePresence>
         </div>
 
@@ -388,66 +523,7 @@ export const SidebarControls = () => {
           </motion.button>
 
           <AnimatePresence>
-            {showEnv && (
-              <motion.div
-                initial={isCompact ? { y: "100%" } : { opacity: 0, x: -10, scale: 0.95 }}
-                animate={isCompact ? { y: 0 } : { opacity: 1, x: 0, scale: 1 }}
-                exit={isCompact ? { y: "100%" } : { opacity: 0, x: -10, scale: 0.95 }}
-                transition={isCompact ? { type: "spring", damping: 25, stiffness: 220 } : { duration: 0.2 }}
-                className={isCompact
-                  ? "fixed bottom-0 left-0 right-0 z-[100] w-full max-w-full pl-0"
-                  : "absolute top-1/2 -translate-y-1/2 left-[50px] md:left-full pl-2 md:pl-4 z-50 w-48"
-                }
-              >
-                <div className={isCompact
-                  ? "p-6 bg-[#0a0a0a]/95 backdrop-blur-2xl border-t border-white/10 rounded-t-3xl shadow-2xl flex flex-col gap-3 max-h-[80vh] overflow-y-auto custom-scrollbar"
-                  : "p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col gap-2 shadow-2xl max-h-[60vh] overflow-y-auto custom-scrollbar"
-                }>
-                  {isCompact && (
-                    <div className="w-12 h-1.5 rounded-full bg-white/20 mx-auto mb-2" />
-                  )}
-                  {isCompact && (
-                    <div className="text-center text-sm font-bold text-slate-400 mb-2">Otoczenie (HDRi) i Scenografia</div>
-                  )}
-
-                  <div className={isCompact ? "grid grid-cols-2 gap-3" : "contents"}>
-                    {PRESETS.map((p) => (
-                      <button
-                        key={p.id}
-                        aria-label={`Otoczenie ${p.name}`}
-                        onClick={() => {
-                          playSelectSound();
-                          setEnvPreset(p.id);
-                          setShowEnv(false);
-                        }}
-                        className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${envPreset === p.id ? "bg-amber-500/20 text-amber-300 font-bold" : "text-slate-300 hover:bg-white/10 hover:text-white"}`}
-                      >
-                        <div className="font-medium">{p.name}</div>
-                        <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">{p.desc}</div>
-                      </button>
-                    ))}
-
-                    <button
-                      title={isLowEndGPU ? "Niedostępne ze względu na spadki płynności (FPS)" : "Pokaż scenografię"}
-                      disabled={isLowEndGPU}
-                      onClick={() => {
-                        if (!isLowEndGPU) {
-                          playSelectSound();
-                          triggerLoading(toggleDesk);
-                        }
-                        setShowEnv(false);
-                      }}
-                      className={`flex flex-col items-start text-left px-3 py-2 rounded-lg text-sm transition-colors ${isCompact ? "" : "hidden md:flex"} ${isLowEndGPU ? 'opacity-30 cursor-not-allowed bg-[#1a1a1a] border border-white/5 text-slate-500' : (showDesk ? "bg-amber-500/20 text-amber-300 font-bold border border-amber-500/50" : "text-slate-300 hover:bg-white/10 hover:text-white")}`}
-                    >
-                      <div className="font-medium whitespace-nowrap">Tryb Scenografii</div>
-                      <div className="text-[10px] opacity-70 mt-0.5">
-                        {isLowEndGPU ? "Niedostępne" : (showDesk ? "(Włączono)" : "(Wyłączono)")}
-                      </div>
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            )}
+            {!isCompact && showEnv && renderEnvMenu()}
           </AnimatePresence>
         </div>
 
@@ -485,68 +561,7 @@ export const SidebarControls = () => {
           </motion.button>
 
           <AnimatePresence>
-            {showLights && (
-              <motion.div
-                initial={isCompact ? { y: "100%" } : { opacity: 0, x: -10, scale: 0.95 }}
-                animate={isCompact ? { y: 0 } : { opacity: 1, x: 0, scale: 1 }}
-                exit={isCompact ? { y: "100%" } : { opacity: 0, x: -10, scale: 0.95 }}
-                transition={isCompact ? { type: "spring", damping: 25, stiffness: 220 } : { duration: 0.2 }}
-                className={isCompact
-                  ? "fixed bottom-0 left-0 right-0 z-[100] w-full max-w-full pl-0"
-                  : "absolute top-1/2 -translate-y-1/2 left-[50px] md:left-full pl-2 md:pl-4 z-50 w-52"
-                }
-              >
-                <div className={isCompact
-                  ? "p-6 bg-[#0a0a0a]/95 backdrop-blur-2xl border-t border-white/10 rounded-t-3xl shadow-2xl flex flex-col gap-3 max-h-[80vh] overflow-y-auto custom-scrollbar"
-                  : "p-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col gap-2 shadow-2xl max-h-[60vh] overflow-y-auto custom-scrollbar"
-                }>
-                  {isCompact && (
-                    <div className="w-12 h-1.5 rounded-full bg-white/20 mx-auto mb-2" />
-                  )}
-                  {isCompact && (
-                    <div className="text-center text-sm font-bold text-slate-400 mb-2">Opcje oświetlenia</div>
-                  )}
-
-                  <div className={isCompact ? "grid grid-cols-2 gap-3" : "contents"}>
-                    <button
-                      aria-pressed={ambientOn}
-                      onClick={() => { playSelectSound(); triggerLoading(toggleAmbient); }}
-                      className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${ambientOn ? "bg-yellow-500/20 text-yellow-300 font-bold" : "text-slate-300 hover:bg-white/10 hover:text-white"}`}
-                    >
-                      <div className="font-medium">Światło Pokoju</div>
-                      <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">{ambientOn ? "(Włączone)" : "(Wyłączone)"}</div>
-                    </button>
-                    <button
-                      aria-pressed={mainSpotOn}
-                      onClick={() => { playSelectSound(); triggerLoading(toggleMainSpot); }}
-                      className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${mainSpotOn ? "bg-yellow-500/20 text-yellow-300 font-bold" : "text-slate-300 hover:bg-white/10 hover:text-white"}`}
-                    >
-                      <div className="font-medium">Główny Reflektor</div>
-                      <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">{mainSpotOn ? "(Włączony)" : "(Wyłączony)"}</div>
-                    </button>
-                    <button
-                      title={(!showDesk || isMobile || isLowEndGPU) ? "Opcja dostępna tylko w Trybie Scenografii na PC (wymaga ściany)" : "Tylna Poświata RGB"}
-                      disabled={!showDesk || isMobile || isLowEndGPU}
-                      aria-pressed={pcRGBOn}
-                      onClick={() => { if (showDesk && !isMobile && !isLowEndGPU) { playSelectSound(); triggerLoading(togglePcRGB); } }}
-                      className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${(!showDesk || isMobile || isLowEndGPU) ? 'opacity-30 cursor-not-allowed bg-[#1a1a1a] border border-white/5 text-slate-500' : (pcRGBOn ? "bg-purple-500/20 text-purple-300 font-bold" : "text-slate-300 hover:bg-white/10 hover:text-white")}`}
-                    >
-                      <div className="font-medium">Tylna Poświata RGB</div>
-                      <div className="text-[10px] text-slate-300 font-normal mt-0.5 leading-tight">{(!showDesk || isMobile || isLowEndGPU) ? "(Niedostępna)" : (pcRGBOn ? "(Włączona)" : "(Wyłączona)")}</div>
-                    </button>
-                    <button
-                      title={(isMobile || isLowEndGPU) ? "Niedostępne ze względu na wydajność" : "Latarka Kursora"}
-                      disabled={isMobile || isLowEndGPU}
-                      onClick={() => { if (!(isMobile || isLowEndGPU)) { playSelectSound(); triggerLoading(toggleCursorLight); } }}
-                      className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${(isMobile || isLowEndGPU) ? 'opacity-30 cursor-not-allowed bg-[#1a1a1a] border border-white/5 text-slate-500' : (cursorLightOn ? "bg-cyan-500/20 text-cyan-300 font-bold" : "text-slate-300 hover:bg-white/10 hover:text-white")}`}
-                    >
-                      <div className="font-medium whitespace-nowrap">Latarka Kursora</div>
-                      <div className="text-[10px] mt-0.5 opacity-70 leading-tight">{(isMobile || isLowEndGPU) ? "(Niedostępna)" : (cursorLightOn ? "(Włączona)" : "(Wyłączona)")}</div>
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            )}
+            {!isCompact && showLights && renderLightsMenu()}
           </AnimatePresence>
         </div>
 
