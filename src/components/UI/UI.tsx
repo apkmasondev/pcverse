@@ -110,11 +110,11 @@ export const UI = () => {
       <AnimatePresence>
         {showHint && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
+            exit={{ opacity: 0, y: -10 }}
             transition={{ delay: 2, duration: 0.8 }}
-            className="fixed bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 px-6 py-3 bg-black/70 backdrop-blur-xl border border-white/10 rounded-full text-slate-300 text-sm z-30 shadow-2xl pointer-events-none"
+            className="fixed top-8 left-1/2 -translate-x-1/2 flex items-center gap-3 px-6 py-3 bg-black/70 backdrop-blur-xl border border-white/10 rounded-full text-slate-300 text-sm z-30 shadow-2xl pointer-events-none"
           >
             <MousePointerClick
               aria-hidden="true"
