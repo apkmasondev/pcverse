@@ -148,7 +148,7 @@ export const InfoPanel: React.FC = () => {
           aria-label={`Informacje o podzespole: ${selectedComponent.name}`}
           style={isMobile ? {} : { rotateX, rotateY, transformPerspective: 1200 }}
           className="absolute bottom-0 md:bottom-0 md:top-0 md:right-0 z-20 
-                     w-full md:w-[35vw] lg:w-[30vw] h-[60vh] md:h-screen overflow-y-auto
+                     w-full md:w-[35vw] lg:w-[30vw] h-[60vh] md:h-screen overflow-y-auto custom-scrollbar
                      bg-[#050505]/80 backdrop-blur-3xl border-l border-white/10 
                      rounded-t-3xl md:rounded-none p-6 md:p-12
                      text-slate-200 shadow-[-20px_0_50px_-12px_rgba(0,0,0,1)]"
