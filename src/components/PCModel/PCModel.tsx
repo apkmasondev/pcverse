@@ -14,7 +14,8 @@ import { useRef, useMemo, Suspense, memo, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 
 import { Html, useTexture } from '@react-three/drei';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { xrayMaterial, hitboxMaterial } from './materials';
 import { pcComponents } from '../../data/components';
 import type { PCComponent } from '../../data/components';

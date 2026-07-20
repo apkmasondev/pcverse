@@ -3,6 +3,7 @@ import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { CameraControls, Environment, PerspectiveCamera, Sparkles, PerformanceMonitor, Grid, Stars, Preload } from '@react-three/drei';
 import { EffectComposer, Bloom, N8AO, Vignette, ChromaticAberration, DepthOfField, SMAA } from '@react-three/postprocessing';
+import type { DepthOfFieldEffect } from 'postprocessing';
 
 
 import { PCModel } from '../PCModel/PCModel';
@@ -155,14 +156,14 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
   const _tempFocal = useRef(new Vector3());
   // Removed setViewOffset logic in favor of physical camera panning
 
-  const dofRef = useRef<any>(null);
+  const dofRef = useRef<DepthOfFieldEffect>(null);
   const dofTarget = useMemo(() => new Vector3(), []);
   const dofEnabled = !!selectedComponent;
 
   // Naprawa błędu DepthOfField: upewniamy się, że cel ostrości to ZAWSZE aktualny środek kamery,
   // co gwarantuje pełną ostrość nawet podczas trwania animacji Panningu kamery.
   useFrame(() => {
-    if (dofEnabled && dofRef.current && cameraControlsRef.current) {
+    if (dofEnabled && dofRef.current && dofRef.current.target && cameraControlsRef.current) {
       cameraControlsRef.current.getTarget(dofRef.current.target);
     }
   });

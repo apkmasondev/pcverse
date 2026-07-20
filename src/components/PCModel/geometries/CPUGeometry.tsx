@@ -107,7 +107,7 @@ export const CPUGeometry = () => {
 
       {/* 3D Raised IHS (Octopus Shape with Bevels) */}
       <mesh position={[0, 0, 0.021]} material={xrayMode ? xrayMaterial : undefined}>
-        <extrudeGeometry ref={ihsGeoRef as any} args={[ihsShape, extrudeOptsIhs]} />
+        <extrudeGeometry ref={ihsGeoRef} args={[ihsShape, extrudeOptsIhs]} />
         {!xrayMode && (
           <>
             <primitive object={texturedMaterials.texMat1} attach="material-0" />

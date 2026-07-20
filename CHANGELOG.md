@@ -1,5 +1,12 @@
 # Dziennik Zmian (Changelog)
 
+## Etap 50 - Poprawki Audytowe i SEO 🚀
+
+- **SEO i Meta Tagi**: Zamieniono okładkę Open Graph (`og-cover.png`) na zoptymalizowany format `.jpg`. Zaktualizowano `apple-touch-icon.png` oraz dodano plik `robots.txt` dla robotów indeksujących.
+- **Bezpieczeństwo Typów (TypeScript)**: Wyeliminowano liczne wystąpienia rzutowania `as any` w referencjach geometrii (m.in. `CPUGeometry`, `CasePanels`, `LocalAirflowParticles`). Wprowadzono poprawne typowanie dla `GlobalErrorBoundary` (`Error | null`) oraz `DepthOfFieldEffect` z postprocessingu.
+- **Konfiguracja Vite**: Zwiększono limit ostrzeżeń o rozmiarze paczki (`chunkSizeWarningLimit: 1000`) i włączono ukryte mapy kodu (`sourcemap: 'hidden'`), aby wyciszyć komunikaty w środowisku produkcyjnym i zabezpieczyć kod źródłowy.
+- **Naprawa AudioContext**: Wprowadzono globalną deklarację typu dla przestarzałego interfejsu `webkitAudioContext` w Safari, eliminując irytujące ostrzeżenia z konsoli.
+- **Czystki**: Usunięto deweloperski skrypt `resize_mug.py` z głównego repozytorium.
 ## Etap 49 - Responsywny Pasek Dolny i Bottom Sheety 📱
 
 - **Responsywny Toolbar Dolny**: Wprowadzono dynamiczne dostosowanie paska kontrolnego na małych ekranach lub w przypadku dużego przybliżenia/powiększenia (`window.innerHeight < 780px` lub `window.innerWidth < 768px`). Pionowy pasek boczny automatycznie przekształca się w dyskretny, dolny pasek poziomy ze wszystkimi 12 ikonami ułożonymi w jednym rzędzie, co zapobiega obcinaniu ostatnich przycisków na dole ekranu. Zastosowano niewidoczny suwak `.scrollbar-hide` dla gładkiego przewijania poziomego (swipe).

@@ -1,8 +1,14 @@
+declare global {
+  interface Window {
+    webkitAudioContext?: typeof AudioContext;
+  }
+}
+
 let audioCtx: AudioContext | null = null;
 
 const getContext = () => {
   if (!audioCtx) {
-    audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    audioCtx = new (window.AudioContext || window.webkitAudioContext!)();
   }
   if (audioCtx.state === 'suspended') {
     audioCtx.resume();

@@ -149,7 +149,7 @@ export const CasePanels = ({
   return (
     <>
       {!xrayMode && (
-      <group position={[0, 0, 1.95]} ref={frontGlassRef as any}>
+      <group position={[0, 0, 1.95]} ref={frontGlassRef}>
         <Mesh position={[0, 0, -0.01]} raycast={() => null}>
           <extrudeGeometry args={[frontPanelShape, { depth: 0.02, bevelEnabled: false }]} />
           {isMobile ? (
@@ -194,7 +194,7 @@ export const CasePanels = ({
       )}
       
       {!xrayMode && (
-      <group position={[1.95, 0, 0]} ref={sideGlassRef as any}>
+      <group position={[1.95, 0, 0]} ref={sideGlassRef}>
         <Mesh raycast={() => null}>
           <boxGeometry args={[0.02, 4.84, 3.84]} />
           {isMobile ? (
@@ -221,7 +221,7 @@ export const CasePanels = ({
       </group>
       )}
 
-      <group ref={solidSideRef as any}>
+      <group ref={solidSideRef}>
         <Instances limit={6}>
           <boxGeometry args={[0.04, 0.14, 1.2]} />
           {xrayMode ? (

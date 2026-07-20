@@ -10,6 +10,7 @@ export default defineConfig({
   ],
   base: '/pcverse/',
   build: {
+    sourcemap: 'hidden',
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {

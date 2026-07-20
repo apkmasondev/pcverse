@@ -80,7 +80,7 @@ export const LocalAirflowParticles = ({ count = 50, radius = 0.4, length = 1.5, 
   }, [material]);
 
   return (
-    <instancedMesh ref={meshRef} args={[undefined as any, undefined as any, count]} visible={isVisible}>
+    <instancedMesh ref={meshRef} args={[null!, null!, count]} visible={isVisible}>
       <sphereGeometry args={[0.015, 8, 8]} />
       <primitive object={material} attach="material" />
     </instancedMesh>

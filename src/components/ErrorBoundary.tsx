@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import type { ReactNode } from 'react';
 
-export class GlobalErrorBoundary extends Component<{ fallback?: ReactNode, children: ReactNode }, { hasError: boolean, error: any }> {
+export class GlobalErrorBoundary extends Component<{ fallback?: ReactNode, children: ReactNode }, { hasError: boolean, error: Error | null }> {
   constructor(props: { fallback?: ReactNode, children: ReactNode }) {
     super(props);
     this.state = { hasError: false, error: null };
