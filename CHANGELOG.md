@@ -2,6 +2,7 @@
 
 ## Etap 51 - Audyt Przedwdrożeniowy i Stabilizacja Mobile ✅
 
+- **Kompaktowy pasek na niskich ekranach laptopów**: Rozdzielono szerokość dolnego paska dla telefonu i desktopowego trybu compact. Na mobile pasek nadal wykorzystuje dostępną szerokość i zachowuje przewijanie dotykowe, natomiast na laptopach z niskim viewportem dopasowuje się do zawartości, pozostaje wyśrodkowany i ma bezpieczne ograniczenie do szerokości okna.
 - **Naprawiony lockfile CI**: Ponownie wygenerowano `package-lock.json`, uzupełniając brakujące zagnieżdżone zależności WASM `@emnapi/*`, przez które GitHub Actions odrzucał `npm ci` jako niespójne z `package.json`. Przy okazji zaktualizowano podatny pakiet deweloperski `brace-expansion`; pełny `npm audit` ponownie zgłasza 0 podatności.
 - **Uszczelniona ochrona słabszego sprzętu**: Zweryfikowano wcześniejszą implementację adaptacyjnej jakości. Sam `PerformanceMonitor` reagował dopiero po spadku FPS, dlatego dodano wczesne wykrywanie ograniczonej pamięci RAM/liczby wątków CPU oraz kontrolę możliwości WebGL i renderowania programowego. Wykrycie słabszego urządzenia natychmiast wyłącza scenografię i cząsteczki, a magazyn stanu odrzuca próbę ponownego włączenia scenografii. Przycisk jest teraz poprawnie zablokowany również na mobile; niezależna osłona renderera nadal nie montuje `DeskScenery` na mobile ani przy niskiej wydajności.
 - **Domyślne otoczenie Noc**: Początkowy preset HDRi zmieniono z Cyberpunku (`city`) na Noc (`night`). Domyślne stany świateł zostały zsynchronizowane z konfiguracją nocnego presetu, dzięki czemu pierwszy render nie różni się od późniejszego ręcznego wyboru „Noc”.
@@ -22,6 +23,7 @@
 - **Konfiguracja Vite**: Zwiększono limit ostrzeżeń o rozmiarze paczki (`chunkSizeWarningLimit: 1000`) i włączono ukryte mapy kodu (`sourcemap: 'hidden'`), aby wyciszyć komunikaty w środowisku produkcyjnym i zabezpieczyć kod źródłowy.
 - **Naprawa AudioContext**: Wprowadzono globalną deklarację typu dla przestarzałego interfejsu `webkitAudioContext` w Safari, eliminując irytujące ostrzeżenia z konsoli.
 - **Czystki**: Usunięto deweloperski skrypt `resize_mug.py` z głównego repozytorium.
+
 ## Etap 49 - Responsywny Pasek Dolny i Bottom Sheety 📱
 
 - **Responsywny Toolbar Dolny**: Wprowadzono dynamiczne dostosowanie paska kontrolnego na małych ekranach lub w przypadku dużego przybliżenia/powiększenia (`window.innerHeight < 780px` lub `window.innerWidth < 768px`). Pionowy pasek boczny automatycznie przekształca się w dyskretny, dolny pasek poziomy ze wszystkimi 12 ikonami ułożonymi w jednym rzędzie, co zapobiega obcinaniu ostatnich przycisków na dole ekranu. Zastosowano niewidoczny suwak `.scrollbar-hide` dla gładkiego przewijania poziomego (swipe).
@@ -29,17 +31,15 @@
 - **Efekt Premium**: Bottom Sheety posiadają zaokrąglony uchwyt (drag handle) w stylu iOS/Android, przyciemnioną maskę tła (backdrop overlay) reagującą na kliknięcie w celu zamknięcia panelu, a ich elementy układają się w czytelną siatkę (Grid) dopasowaną do szerokości urządzenia.
 - **Płynna Animacja**: Do wdrożenia wysuwania i chowania Bottom Sheetów wykorzystano fizykę sprężyn z biblioteki Framer Motion (`type: "spring"`).
 
-
-
 ## Etap 48 - Matrix Terminal Easter Egg 🐇
 
-- **Nieziemski Cyfrowy Deszcz**: Wprowadzono interaktywny "Easter Egg" podpięty pod drzwi w pokoju 3D. Kliknięcie w nie usypia silnik WebGL i ukazuje unikalny komponent `<MatrixTerminal>`, renderujący klasyczny spadający kod Matrixa z użyciem szybkiego interfejsu Canvas 2D. 
+- **Nieziemski Cyfrowy Deszcz**: Wprowadzono interaktywny "Easter Egg" podpięty pod drzwi w pokoju 3D. Kliknięcie w nie usypia silnik WebGL i ukazuje unikalny komponent `<MatrixTerminal>`, renderujący klasyczny spadający kod Matrixa z użyciem szybkiego interfejsu Canvas 2D.
 - **Złudzenie 3D (Aberracja Chromatyczna)**: Aby uzyskać epicki, trójwymiarowy efekt deszczu bez obciążania układu graficznego, zastosowano przesunięcie kanałów RGB na brzegach liter oraz głęboki efekt *Glow* w stylizacji *Cyberpunk*. Spadające znaki to mieszanka japońskiej katakany i rzadko pojawiających się, rzeczywistych komponentów sprzętowych (np. `[RTX_5090]`, `[NVME_GEN5]`).
 - **Terminal Hakera**: Użytkownik znajduje się wewnątrz powłoki `root@pcverse:~#`, gdzie może pisać na prawdziwej klawiaturze. Wpisanie komend takich jak `wake up`, `overclock` czy `sudo rm -rf /matrix` wybudza symulację z potężnym "efektem błysku", resetując aplikację bezpiecznie do głównego biurka. Efekt jest napisany tak, aby nie niszczyć drzewa VDOM ani nie wywoływać wycieków pamięci zgodnie z audytem architektonicznym.
 
 ## Etap 47 - Światło Kursora (Headlamp) 🔦
 
-- **Latarka Czołowa (Headlamp)**: Gruntownie przeprojektowano działanie elementu `CursorLight`. Zamiast statycznego, przedniego światła punktowego (PointLight), zaimplementowano dynamiczny reflektor (SpotLight), który został na sztywno przytwierdzony do wirtualnego obiektywu kamery widza (`camera.position`). 
+- **Latarka Czołowa (Headlamp)**: Gruntownie przeprojektowano działanie elementu `CursorLight`. Zamiast statycznego, przedniego światła punktowego (PointLight), zaimplementowano dynamiczny reflektor (SpotLight), który został na sztywno przytwierdzony do wirtualnego obiektywu kamery widza (`camera.position`).
 - **Optyka i Natężenie**: Dzięki użyciu natywnego parametru `target` z `Object3D`, światło zawsze precyzyjnie celuje w punkt przecięcia kursora z otoczeniem, zachowując przy tym doskonałą wydajność (brak aktualizacji stanu React, wzorzec Transient State z `useFrame`). Zwiększono natężenie oświetlenia do `30.0` oraz poszerzono kąt stożka do `0.4` radiana, co gwarantuje świetny, równomierny blask na wybranych komponentach niezależnie od kąta obrotu kamery wokół PC.
 
 ## Etap 46 - Drobne poprawki i czysty kod 🧹

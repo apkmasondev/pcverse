@@ -100,6 +100,9 @@ export const SidebarControls = () => {
   const [showEnv, setShowEnv] = useState(false);
   const [showLights, setShowLights] = useState(false);
   const [isCompact, setIsCompact] = useState(getIsCompact);
+  const compactToolbarWidth = isMobile
+    ? "left-2 right-2 w-auto max-w-none"
+    : "left-4 right-4 mx-auto w-max max-w-[calc(100vw-2rem)]";
 
   useEffect(() => {
     const checkCompact = () => {
@@ -330,7 +333,7 @@ export const SidebarControls = () => {
         transition={{ duration: 0.8, ease: "easeOut" }}
         className={`group fixed z-10 flex gap-2 p-2 bg-[#0a0a0a]/60 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-all duration-500 ${
           isCompact 
-            ? "bottom-6 left-2 right-2 flex-row overflow-x-auto overscroll-x-contain scrollbar-hide h-[60px] w-auto max-w-none justify-start items-center px-4 touch-pan-x"
+            ? `bottom-6 ${compactToolbarWidth} flex-row overflow-x-auto overscroll-x-contain scrollbar-hide h-[60px] justify-start items-center px-4 touch-pan-x`
             : "top-6 left-6 bottom-auto flex-col w-[60px] hover:w-[220px] overflow-visible"
         }`}
       >
