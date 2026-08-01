@@ -21,15 +21,13 @@ export const UI = () => {
 
   // Ukrycie hintu po czasie lub interakcji
   useEffect(() => {
-    let timer: ReturnType<typeof setTimeout>;
-    
     const handleFirstInteraction = () => {
       setShowHint(false);
       window.removeEventListener('pointerdown', handleFirstInteraction);
       clearTimeout(timer);
     };
 
-    timer = setTimeout(handleFirstInteraction, 15000);
+    const timer = setTimeout(handleFirstInteraction, 15000);
     window.addEventListener('pointerdown', handleFirstInteraction, { once: true });
     
     return () => {

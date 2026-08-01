@@ -635,10 +635,9 @@ export const DeskScenery = () => {
   const reducedMotion = useReducedMotion();
 
   useEffect(() => {
+    const reflectorMaterial = reflectorMeshRef.current?.material as Material | undefined;
     return () => {
-      if (reflectorMeshRef.current?.material) {
-        (reflectorMeshRef.current.material as Material).dispose();
-      }
+      reflectorMaterial?.dispose();
     };
   }, []);
 

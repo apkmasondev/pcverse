@@ -10,7 +10,7 @@ import { PSUGeometry } from './geometries/PSUGeometry';
 import { CaseGeometry } from './geometries/CaseGeometry';
 import { CPUCoolerGeometry, FanGeometry } from './geometries/CPUCoolerGeometry';
 import { CableGeometry } from './CableGeometry';
-import { useRef, useMemo, Suspense, memo, useEffect } from 'react';
+import { useRef, useMemo, Suspense, memo, useEffect, useCallback } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 
 import { Html, useTexture } from '@react-three/drei';
@@ -93,10 +93,11 @@ interface ComponentLabelProps {
   isCurrentStep: boolean;
   isMobile: boolean;
   explodeStep: number;
+  onSelect: () => void;
 }
 
 // --- Extract Component Label to prevent RGB-based re-renders in ComponentMesh ---
-const ComponentLabel = memo(({ data, isUnbuilt, isCurrentStep, isMobile, explodeStep }: ComponentLabelProps) => {
+const ComponentLabel = memo(({ data, isUnbuilt, isCurrentStep, isMobile, explodeStep, onSelect }: ComponentLabelProps) => {
   const isHovered = usePCUI(state => state.hoveredComponentId === data.id);
   const setHoveredComponentId = usePCUI(state => state.setHoveredComponentId);
 
@@ -104,7 +105,6 @@ const ComponentLabel = memo(({ data, isUnbuilt, isCurrentStep, isMobile, explode
   const rgbEnabled = usePCRGB(state => state.rgbEnabled);
   const effectiveRgbColor = rgbEnabled ? rgbColor : '#000000';
 
-  const setSelectedComponent = usePCSelection(state => state.setSelectedComponent);
   const buildMode = useBuildStore(state => state.buildMode);
   const advanceStep = useBuildStore(state => state.advanceStep);
 
@@ -160,7 +160,7 @@ const ComponentLabel = memo(({ data, isUnbuilt, isCurrentStep, isMobile, explode
               return;
             }
             playSelectSound();
-            setSelectedComponent(data);
+            onSelect();
           }}
         >
           <div className="flex flex-col items-center text-center">
@@ -228,6 +228,7 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
   }, [isCurrentStep, isMobile]);
 
   const targetPosition = useMemo(() => new Vector3(), []);
+  const selectionFocus = useMemo(() => new Vector3(), []);
   const targetScale3 = useMemo(() => new Vector3(), []);
   const targetQuaternion = useMemo(() => new Quaternion(), []);
   const eulerBuffer = useMemo(() => new Euler(), []);
@@ -235,6 +236,16 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
 
   const maxDim = data.geometryArgs ? Math.max(...data.geometryArgs) : 1;
   const baseLift = Math.max(0.02, Math.min(0.15, 0.1 / maxDim));
+
+  const selectComponent = useCallback(() => {
+    if (!groupRef.current) {
+      setSelectedComponent(data);
+      return;
+    }
+
+    groupRef.current.getWorldPosition(selectionFocus);
+    setSelectedComponent(data, [selectionFocus.x, selectionFocus.y, selectionFocus.z]);
+  }, [data, selectionFocus, setSelectedComponent]);
 
   const rotationArr: [number, number, number] = (data.id === 'rear_fan_1' || data.id === 'rear_fan_2') ? [0, Math.PI / 2, 0] :
     data.id === 'psu' ? [0, Math.PI / 2, 0] :
@@ -254,7 +265,7 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
     let explodeLift = 0;
     if (isExploded) {
       explodeLift = 0.15;
-      if (!shouldReduceMotion) {
+      if (!shouldReduceMotion && !isSelected) {
         const phase = data.id.split('').reduce((acc, char) => acc + char.charCodeAt(0) * 17, 0);
         floatOffset = Math.sin(_state.clock.getElapsedTime() * 1.2 + phase) * 0.08;
       }
@@ -339,7 +350,7 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
           if (!isSelected) {
             playSelectSound();
           }
-          setSelectedComponent(data);
+          selectComponent();
         }}
         onPointerOver={(e) => {
           if (isMobile) return;
@@ -386,6 +397,7 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
             isCurrentStep={isCurrentStep}
             isMobile={isMobile}
             explodeStep={explodeStep}
+            onSelect={selectComponent}
           />
         )}
       </group>
@@ -396,7 +408,6 @@ const ComponentMesh = memo(({ data, isMobile }: { data: PCComponent, isMobile: b
 
 export const PCModel = () => {
   const isMobile = useIsMobile();
-  const groupRef = useRef<Group>(null);
   const buildMode = useBuildStore(state => state.buildMode);
   const currentStep = useBuildStore(state => state.currentStep);
   const maxSteps = useBuildStore(state => state.maxSteps);
@@ -416,7 +427,7 @@ export const PCModel = () => {
   });
 
   return (
-    <group position={[0, isMobile ? -0.5 : -1, 0]} scale={isMobile ? 0.7 : 1} ref={groupRef}>
+    <group>
       {pcComponents.map((comp) => {
         return <ComponentMesh key={comp.id} data={comp} isMobile={isMobile} />;
       })}

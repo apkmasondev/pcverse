@@ -10,21 +10,21 @@ export default defineConfig({
   ],
   base: '/pcverse/',
   build: {
-    sourcemap: 'hidden',
+    sourcemap: false,
     chunkSizeWarningLimit: 1000,
-    rollupOptions: {
+    rolldownOptions: {
       output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('framer-motion')) return 'vendor-motion';
-            if (id.includes('@react-three/postprocessing') || id.includes('postprocessing')) return 'vendor-postprocessing';
-            if (id.includes('@react-three')) return 'vendor-r3f';
-            if (id.includes('three')) return 'vendor-three';
-            if (id.includes('lucide-react')) return 'vendor-lucide';
-            if (id.includes('react/') || id.includes('react-dom/')) return 'vendor-react';
-            return 'vendor-core';
-          }
-        }
+        codeSplitting: {
+          minSize: 20 * 1024,
+          maxSize: 700 * 1024,
+          groups: [
+            {
+              name: 'vendor',
+              test: /node_modules[\\/]/,
+              entriesAware: true,
+            },
+          ],
+        },
       }
     }
   }

@@ -23,6 +23,29 @@ const envMap: Record<string, string> = {
   lobby: import.meta.env.BASE_URL + 'environments/st_fagans_interior_1k.hdr'
 };
 
+const PC_MODEL_BASE_Y_OFFSET = 1.36;
+const PC_MODEL_DESKTOP_Y_OFFSET = -1;
+const PC_MODEL_MOBILE_Y_OFFSET = -0.5;
+const PC_MODEL_MOBILE_SCALE = 0.7;
+
+const setComponentWorldPosition = (
+  target: Vector3,
+  position: [number, number, number],
+  isMobile: boolean,
+  isExploded: boolean,
+) => {
+  const modelScale = isMobile ? PC_MODEL_MOBILE_SCALE : 1;
+  const modelYOffset = PC_MODEL_BASE_Y_OFFSET
+    + (isMobile ? PC_MODEL_MOBILE_Y_OFFSET : PC_MODEL_DESKTOP_Y_OFFSET);
+  const explodeLift = isExploded ? 0.15 : 0;
+
+  return target.set(
+    position[0] * modelScale,
+    (position[1] + explodeLift) * modelScale + modelYOffset,
+    position[2] * modelScale,
+  );
+};
+
 const CursorLight = () => {
   const lightRef = useRef<SpotLight>(null);
   const targetObj = useMemo(() => new Object3D(), []);
@@ -139,6 +162,7 @@ const AnimatedLights = ({ isLowEndGPU, envPreset }: { isLowEndGPU: boolean, envP
 const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disableEffects?: boolean }) => {
   const isLowEndGPU = usePCView(state => state.isLowEndGPU);
   const selectedComponent = usePCSelection(state => state.selectedComponent);
+  const selectedComponentFocus = usePCSelection(state => state.selectedComponentFocus);
   const cameraResetTrigger = usePCSelection(state => state.cameraResetTrigger);
   const explodeStep = usePCSelection(state => state.explodeStep);
   const envPreset = usePCView(state => state.envPreset);
@@ -147,14 +171,14 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
   const showFog = usePCView(state => state.showFog);
   const buildMode = useBuildStore(state => state.buildMode);
   const cameraControlsRef = useRef<CameraControls>(null);
-  const { camera } = useThree();
+  const { camera, size } = useThree();
   const reducedMotion = useReducedMotion();
 
   const hasInitialized = useRef(false);
   const _tempVec = useRef(new Vector3());
   const _tempDir = useRef(new Vector3());
   const _tempFocal = useRef(new Vector3());
-  // Removed setViewOffset logic in favor of physical camera panning
+  // Reusable vectors for camera transitions without per-render allocations.
 
   const dofRef = useRef<DepthOfFieldEffect>(null);
   const dofTarget = useMemo(() => new Vector3(), []);
@@ -189,12 +213,16 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
 
   useEffect(() => {
     if (selectedComponent) {
-      const posArray = explodeStep === 2 ? selectedComponent.explodedPosition : selectedComponent.position;
-      dofTarget.set(posArray[0], posArray[1], posArray[2]);
+      if (selectedComponentFocus) {
+        dofTarget.fromArray(selectedComponentFocus);
+      } else {
+        const posArray = explodeStep === 2 ? selectedComponent.explodedPosition : selectedComponent.position;
+        setComponentWorldPosition(dofTarget, posArray, isMobile, explodeStep === 2);
+      }
     } else {
       dofTarget.set(0, 0, 0);
     }
-  }, [selectedComponent, explodeStep, dofTarget]);
+  }, [selectedComponent, selectedComponentFocus, explodeStep, dofTarget, isMobile]);
 
   useEffect(() => {
     if (cameraControlsRef.current && !hasInitialized.current) {
@@ -209,11 +237,16 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
   }, []);
 
   useEffect(() => {
-    let updateOffset: (() => void) | null = null;
-
     if (cameraControlsRef.current && selectedComponent) {
       const posArray = explodeStep === 2 ? selectedComponent.explodedPosition : selectedComponent.position;
-      const targetVec = _tempVec.current.set(posArray[0], posArray[1], posArray[2]);
+      const targetVec = selectedComponentFocus
+        ? _tempVec.current.fromArray(selectedComponentFocus)
+        : setComponentWorldPosition(
+            _tempVec.current,
+            posArray,
+            isMobile,
+            explodeStep === 2,
+          );
 
       const dir = _tempDir.current.copy(camera.position).sub(targetVec);
 
@@ -224,24 +257,24 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
 
       const focalPoint = _tempFocal.current.copy(targetVec);
 
-      const dist = isMobile ? 5.5 : 4;
+      const dist = isMobile ? 8 : 4;
       const targetPos = targetVec.clone().add(dir.multiplyScalar(dist));
 
-      updateOffset = () => {
-        if (camera instanceof ThreePerspectiveCamera) {
-          const w = window.innerWidth;
-          const h = window.innerHeight;
-          if (isMobile) {
-            camera.setViewOffset(w, h, 0, h * 0.15, w, h);
-          } else {
-            camera.setViewOffset(w, h, w * 0.15, 0, w, h);
-          }
-          camera.updateProjectionMatrix();
+      if (camera instanceof ThreePerspectiveCamera) {
+        if (isMobile) {
+          if (camera.view) camera.clearViewOffset();
+        } else {
+          camera.setViewOffset(
+            size.width,
+            size.height,
+            size.width * 0.15,
+            0,
+            size.width,
+            size.height,
+          );
         }
-      };
-
-      updateOffset();
-      window.addEventListener('resize', updateOffset);
+        camera.updateProjectionMatrix();
+      }
 
       cameraControlsRef.current.setLookAt(
         targetPos.x, targetPos.y, targetPos.z,
@@ -262,15 +295,12 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
     }
 
     return () => {
-      if (updateOffset) {
-        window.removeEventListener('resize', updateOffset);
-      }
       if (camera instanceof ThreePerspectiveCamera && camera.view) {
         camera.clearViewOffset();
         camera.updateProjectionMatrix();
       }
     };
-  }, [selectedComponent, explodeStep, camera, isMobile]);
+  }, [selectedComponent, selectedComponentFocus, explodeStep, camera, isMobile, size.width, size.height]);
 
   useEffect(() => {
     if (cameraControlsRef.current && cameraResetTrigger > 0) {
@@ -331,7 +361,14 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
 
       <React.Suspense fallback={null}>
 
-        <group position={[0, 1.36, 0]}>
+        <group
+          position={[
+            0,
+            PC_MODEL_BASE_Y_OFFSET + (isMobile ? PC_MODEL_MOBILE_Y_OFFSET : PC_MODEL_DESKTOP_Y_OFFSET),
+            0,
+          ]}
+          scale={isMobile ? PC_MODEL_MOBILE_SCALE : 1}
+        >
           <PCModel />
         </group>
         <ErrorBoundary fallback={null}>
@@ -450,6 +487,21 @@ export const Scene3D = () => {
         dpr={isLowEndGPU ? 1 : dpr}
         frameloop={frameloop}
         onPointerMissed={() => setSelectedComponent(null)}
+        onCreated={({ gl }) => {
+          const context = gl.getContext();
+          const debugRendererInfo = context.getExtension('WEBGL_debug_renderer_info');
+          const rendererName = debugRendererInfo
+            ? String(context.getParameter(debugRendererInfo.UNMASKED_RENDERER_WEBGL))
+            : '';
+          const usesSoftwareRenderer = /swiftshader|llvmpipe|software|microsoft basic render/i.test(rendererName);
+          const hasLimitedWebGL = gl.capabilities.maxTextureSize < 8192;
+
+          if (usesSoftwareRenderer || hasLimitedWebGL) {
+            setDpr(1);
+            setDisableEffects(true);
+            setLowEndGPU(true);
+          }
+        }}
       >
         <PerformanceMonitor
           onDecline={() => {

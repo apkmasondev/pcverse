@@ -6,6 +6,11 @@ import { useFrame } from '@react-three/fiber';
 import { usePCView } from '../../../hooks/usePC';
 import { useReducedMotion } from 'framer-motion';
 
+const pseudoRandom = (index: number, salt: number) => {
+  const value = Math.sin((index + 1) * 12.9898 + salt * 78.233) * 43758.5453;
+  return value - Math.floor(value);
+};
+
 export const LocalAirflowParticles = ({ count = 50, radius = 0.4, length = 1.5, speedMult = 1, color = "#38bdf8" }: { count?: number, radius?: number, length?: number, speedMult?: number, color?: string }) => {
   const showAirflow = usePCView(s => s.showAirflow);
   const shouldReduceMotion = useReducedMotion();
@@ -15,19 +20,19 @@ export const LocalAirflowParticles = ({ count = 50, radius = 0.4, length = 1.5, 
   const dummy = useMemo(() => new Object3D(), []);
   
   const particles = useMemo(() => {
-    return Array.from({ length: count }).map(() => {
-      const angle = Math.random() * Math.PI * 2;
-      const r = Math.sqrt(Math.random()) * radius;
+    return Array.from({ length: count }).map((_, index) => {
+      const angle = pseudoRandom(index, 1) * Math.PI * 2;
+      const r = Math.sqrt(pseudoRandom(index, 2)) * radius;
       return {
         position: new Vector3(
           Math.cos(angle) * r,
           Math.sin(angle) * r,
-          Math.random() * length
+          pseudoRandom(index, 3) * length
         ),
-        speed: (1.5 + Math.random() * 2) * speedMult,
-        wobbleSpeed: 2 + Math.random() * 4,
-        wobbleSize: 0.02 + Math.random() * 0.03,
-        baseScale: 0.5 + Math.random() * 1.5,
+        speed: (1.5 + pseudoRandom(index, 4) * 2) * speedMult,
+        wobbleSpeed: 2 + pseudoRandom(index, 5) * 4,
+        wobbleSize: 0.02 + pseudoRandom(index, 6) * 0.03,
+        baseScale: 0.5 + pseudoRandom(index, 7) * 1.5,
         angleOffset: angle
       };
     });

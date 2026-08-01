@@ -47,6 +47,11 @@ const COLORS = [
   { name: "White", hex: "#ffffff" },
 ];
 
+const getIsCompact = () => (
+  typeof window !== "undefined"
+  && (window.innerWidth < 768 || window.innerHeight < 780)
+);
+
 export const SidebarControls = () => {
   const explodeStep = usePCSelection(state => state.explodeStep);
   const toggleExploded = usePCSelection(state => state.toggleExploded);
@@ -73,6 +78,7 @@ export const SidebarControls = () => {
   const isLowEndGPU = usePCView(state => state.isLowEndGPU);
   const isMobile = useIsMobile();
   const reducedMotion = useReducedMotion();
+  const sceneryUnavailable = isMobile || isLowEndGPU;
 
   const showLabels = usePCUI(state => state.showLabels);
   const toggleLabels = usePCUI(state => state.toggleLabels);
@@ -93,11 +99,11 @@ export const SidebarControls = () => {
   const [showPalette, setShowPalette] = useState(false);
   const [showEnv, setShowEnv] = useState(false);
   const [showLights, setShowLights] = useState(false);
-  const [isCompact, setIsCompact] = useState(false);
+  const [isCompact, setIsCompact] = useState(getIsCompact);
 
   useEffect(() => {
     const checkCompact = () => {
-      setIsCompact(window.innerWidth < 768 || window.innerHeight < 780);
+      setIsCompact(getIsCompact());
     };
     checkCompact();
     window.addEventListener("resize", checkCompact);
@@ -206,20 +212,20 @@ export const SidebarControls = () => {
           ))}
 
           <button
-            title={isLowEndGPU ? "Niedostępne ze względu na spadki płynności (FPS)" : "Pokaż scenografię"}
-            disabled={isLowEndGPU}
+            title={sceneryUnavailable ? "Niedostępne ze względu na wydajność urządzenia" : "Pokaż scenografię"}
+            disabled={sceneryUnavailable}
             onClick={() => {
-              if (!isLowEndGPU) {
+              if (!sceneryUnavailable) {
                 playSelectSound();
                 triggerLoading(toggleDesk);
               }
               setShowEnv(false);
             }}
-            className={`flex flex-col items-start text-left px-3 py-2 rounded-lg text-sm transition-colors ${isCompact ? "" : "hidden md:flex"} ${isLowEndGPU ? 'opacity-30 cursor-not-allowed bg-[#1a1a1a] border border-white/5 text-slate-500' : (showDesk ? "bg-amber-500/20 text-amber-300 font-bold border border-amber-500/50" : "text-slate-300 hover:bg-white/10 hover:text-white")}`}
+            className={`flex flex-col items-start text-left px-3 py-2 rounded-lg text-sm transition-colors ${isCompact ? "" : "hidden md:flex"} ${sceneryUnavailable ? 'opacity-30 cursor-not-allowed bg-[#1a1a1a] border border-white/5 text-slate-500' : (showDesk ? "bg-amber-500/20 text-amber-300 font-bold border border-amber-500/50" : "text-slate-300 hover:bg-white/10 hover:text-white")}`}
           >
             <div className="font-medium whitespace-nowrap">Tryb Scenografii</div>
             <div className="text-[10px] opacity-70 mt-0.5">
-              {isLowEndGPU ? "Niedostępne" : (showDesk ? "(Włączono)" : "(Wyłączono)")}
+              {sceneryUnavailable ? "Niedostępne" : (showDesk ? "(Włączono)" : "(Wyłączono)")}
             </div>
           </button>
         </div>
@@ -324,7 +330,7 @@ export const SidebarControls = () => {
         transition={{ duration: 0.8, ease: "easeOut" }}
         className={`group fixed z-10 flex gap-2 p-2 bg-[#0a0a0a]/60 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-all duration-500 ${
           isCompact 
-            ? "bottom-6 left-1/2 -translate-x-1/2 flex-row overflow-x-auto scrollbar-hide h-[60px] w-max max-w-[95vw] justify-center items-center px-4" 
+            ? "bottom-6 left-2 right-2 flex-row overflow-x-auto overscroll-x-contain scrollbar-hide h-[60px] w-auto max-w-none justify-start items-center px-4 touch-pan-x"
             : "top-6 left-6 bottom-auto flex-col w-[60px] hover:w-[220px] overflow-visible"
         }`}
       >

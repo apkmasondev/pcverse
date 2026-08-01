@@ -19,4 +19,16 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    // React Three Fiber intentionally mutates Three.js objects in frame callbacks.
+    // These objects live outside React state, so the React immutability rule does
+    // not model their lifecycle correctly. Keep every other hooks rule enabled.
+    files: [
+      'src/components/PCModel/**/*.tsx',
+      'src/components/Scene3D/DeskScenery.tsx',
+    ],
+    rules: {
+      'react-hooks/immutability': 'off',
+    },
+  },
 ])

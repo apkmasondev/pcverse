@@ -9,14 +9,11 @@ export const LoadingScreen = () => {
   const { isManualLoading } = useAppLoading();
   const [show, setShow] = useState(true);
 
-useEffect(() => {
-    if (active || isManualLoading) {
-      setShow(true);
-    } else {
-      const timer = setTimeout(() => setShow(false), 800);
-      return () => clearTimeout(timer);
-    }
-  }, [active, progress, isManualLoading]);
+  useEffect(() => {
+    const isLoading = active || isManualLoading;
+    const timer = window.setTimeout(() => setShow(isLoading), isLoading ? 0 : 800);
+    return () => window.clearTimeout(timer);
+  }, [active, isManualLoading]);
 
   return (
     <AnimatePresence>

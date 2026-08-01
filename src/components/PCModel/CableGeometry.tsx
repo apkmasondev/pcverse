@@ -63,9 +63,10 @@ export const CableGeometry = () => {
   const cables = useMemo(() => [curve1, curve2, curve3, curve4, curve5, curve6], [curve1, curve2, curve3, curve4, curve5, curve6]);
 
   useEffect(() => {
+    const geometries = tubeRefs.current;
     return () => {
       // Memory Leak cleanup! (C7/C8)
-      tubeRefs.current.forEach(geo => {
+      geometries.forEach(geo => {
         if (geo) geo.dispose();
       });
     };

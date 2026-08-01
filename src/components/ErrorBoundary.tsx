@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import type { ReactNode } from 'react';
+import type { ErrorInfo, ReactNode } from 'react';
 
 export class GlobalErrorBoundary extends Component<{ fallback?: ReactNode, children: ReactNode }, { hasError: boolean, error: Error | null }> {
   constructor(props: { fallback?: ReactNode, children: ReactNode }) {
@@ -7,11 +7,11 @@ export class GlobalErrorBoundary extends Component<{ fallback?: ReactNode, child
     this.state = { hasError: false, error: null };
   }
 
-  static getDerivedStateFromError(error: any) {
+  static getDerivedStateFromError(error: Error) {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: any, errorInfo: any) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error("Global Error Boundary Caught:", error, errorInfo);
   }
 

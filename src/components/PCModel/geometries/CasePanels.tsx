@@ -1,4 +1,4 @@
-import { MeshStandardMaterial, BackSide, CanvasTexture, DoubleSide, Group, MathUtils, Texture, RepeatWrapping } from 'three';
+import { MeshStandardMaterial, MeshPhysicalMaterial, BackSide, CanvasTexture, DoubleSide, Group, MathUtils, Texture, RepeatWrapping } from 'three';
 
 
 import { useRef, useMemo, useEffect } from 'react';
@@ -54,15 +54,17 @@ export const CasePanels = ({
   }, [flippedTexture, bracketMaterials]);
 
   const sideGlassRef = useRef<Group>(null);
-  const sideGlassMatRef = useRef<any>(null);
+  const sideGlassMatRef = useRef<MeshStandardMaterial | MeshPhysicalMaterial>(null);
   const frontGlassRef = useRef<Group>(null);
-  const frontGlassMatRef = useRef<any>(null);
+  const frontGlassMatRef = useRef<MeshStandardMaterial | MeshPhysicalMaterial>(null);
   const solidSideRef = useRef<Group>(null);
 
   useEffect(() => {
+    const frontGlassMaterial = frontGlassMatRef.current;
+    const sideGlassMaterial = sideGlassMatRef.current;
     return () => {
-      if (frontGlassMatRef.current) frontGlassMatRef.current.dispose();
-      if (sideGlassMatRef.current) sideGlassMatRef.current.dispose();
+      frontGlassMaterial?.dispose();
+      sideGlassMaterial?.dispose();
     };
   }, []);
 

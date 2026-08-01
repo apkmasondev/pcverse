@@ -87,27 +87,32 @@ const getImageUrl = (url: string) => {
 export const InfoPanel: React.FC = () => {
   const selectedComponent = usePCSelection(s => s.selectedComponent);
   const setSelectedComponent = usePCSelection(s => s.setSelectedComponent);
-  const [zoomedImageIndex, setZoomedImageIndex] = useState<number | null>(null);
+  const [zoomedImage, setZoomedImage] = useState<{ componentId: string; index: number } | null>(null);
+  const zoomedImageIndex = zoomedImage && zoomedImage.componentId === selectedComponent?.id
+    ? zoomedImage.index
+    : null;
   const isMobile = useIsMobile();
   const { buildMode } = useBuildStore();
-
-  useEffect(() => {
-    setZoomedImageIndex(null);
-  }, [selectedComponent?.id]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && selectedComponent) {
         if (zoomedImageIndex !== null) {
-          setZoomedImageIndex(null);
+          setZoomedImage(null);
         } else {
           setSelectedComponent(null);
         }
       } else if (zoomedImageIndex !== null && selectedComponent?.imageUrls) {
         if (e.key === 'ArrowRight') {
-          setZoomedImageIndex((zoomedImageIndex + 1) % selectedComponent.imageUrls.length);
+          setZoomedImage({
+            componentId: selectedComponent.id,
+            index: (zoomedImageIndex + 1) % selectedComponent.imageUrls.length,
+          });
         } else if (e.key === 'ArrowLeft') {
-          setZoomedImageIndex((zoomedImageIndex - 1 + selectedComponent.imageUrls.length) % selectedComponent.imageUrls.length);
+          setZoomedImage({
+            componentId: selectedComponent.id,
+            index: (zoomedImageIndex - 1 + selectedComponent.imageUrls.length) % selectedComponent.imageUrls.length,
+          });
         }
       }
     };
@@ -186,7 +191,7 @@ export const InfoPanel: React.FC = () => {
             <motion.div variants={itemVariants} className="mb-8 flex gap-3">
               <div 
                 className="relative flex-1 rounded-xl overflow-hidden border border-white/10 shadow-2xl cursor-pointer group"
-                onClick={() => setZoomedImageIndex(0)}
+                onClick={() => setZoomedImage({ componentId: selectedComponent.id, index: 0 })}
               >
                 <div className="absolute inset-0 bg-indigo-500/20 opacity-0 md:group-hover:opacity-100 transition-opacity z-10 flex items-center justify-center">
                   <Search size={28} className="text-white drop-shadow-lg" />
@@ -203,7 +208,7 @@ export const InfoPanel: React.FC = () => {
               {selectedComponent.imageUrls[1] && (
                 <div 
                   className="relative w-1/3 rounded-xl overflow-hidden border border-white/10 shadow-2xl cursor-pointer group hidden sm:block bg-black"
-                  onClick={() => setZoomedImageIndex(1)}
+                  onClick={() => setZoomedImage({ componentId: selectedComponent.id, index: 1 })}
                 >
                   <div className="absolute inset-0 bg-indigo-500/20 opacity-0 md:group-hover:opacity-100 transition-opacity z-10 flex items-center justify-center">
                     <Search size={20} className="text-white drop-shadow-md" />
@@ -284,14 +289,17 @@ export const InfoPanel: React.FC = () => {
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-2xl p-4 md:p-12 touch-none"
         >
           {/* Close Area */}
-          <div className="absolute inset-0 cursor-zoom-out" onClick={() => setZoomedImageIndex(null)}></div>
+          <div className="absolute inset-0 cursor-zoom-out" onClick={() => setZoomedImage(null)}></div>
           
           {/* Prev Arrow */}
           <button 
             className="absolute left-4 md:left-12 z-50 p-3 bg-white/5 md:hover:bg-white/20 rounded-full text-white backdrop-blur-md transition-colors"
             onClick={(e) => {
               e.stopPropagation();
-              setZoomedImageIndex((zoomedImageIndex - 1 + selectedComponent.imageUrls.length) % selectedComponent.imageUrls.length);
+              setZoomedImage({
+                componentId: selectedComponent.id,
+                index: (zoomedImageIndex - 1 + selectedComponent.imageUrls.length) % selectedComponent.imageUrls.length,
+              });
             }}
             aria-label="Poprzednie zdjęcie"
           >
@@ -318,7 +326,10 @@ export const InfoPanel: React.FC = () => {
             className="absolute right-4 md:right-12 z-50 p-3 bg-white/5 md:hover:bg-white/20 rounded-full text-white backdrop-blur-md transition-colors"
             onClick={(e) => {
               e.stopPropagation();
-              setZoomedImageIndex((zoomedImageIndex + 1) % selectedComponent.imageUrls.length);
+              setZoomedImage({
+                componentId: selectedComponent.id,
+                index: (zoomedImageIndex + 1) % selectedComponent.imageUrls.length,
+              });
             }}
             aria-label="Następne zdjęcie"
           >
@@ -329,7 +340,10 @@ export const InfoPanel: React.FC = () => {
             {selectedComponent.imageUrls.map((_, idx) => (
               <button 
                 key={idx} 
-                onClick={(e) => { e.stopPropagation(); setZoomedImageIndex(idx); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setZoomedImage({ componentId: selectedComponent.id, index: idx });
+                }}
                 aria-label={`Przejdź do zdjęcia ${idx + 1}`}
                 className={`w-2.5 h-2.5 rounded-full transition-all ${idx === zoomedImageIndex ? 'bg-white scale-125' : 'bg-white/30 md:hover:bg-white/50'}`} 
               />

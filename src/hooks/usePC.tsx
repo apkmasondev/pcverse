@@ -3,9 +3,13 @@ import type { PCComponent } from '../data/components';
 
 export interface PCSelectionContextType {
   selectedComponent: PCComponent | null;
+  selectedComponentFocus: [number, number, number] | null;
   explodeStep: number;
   cameraResetTrigger: number;
-  setSelectedComponent: (component: PCComponent | null) => void;
+  setSelectedComponent: (
+    component: PCComponent | null,
+    focus?: [number, number, number] | null,
+  ) => void;
   toggleExploded: () => void;
   triggerCameraReset: () => void;
 }
@@ -77,16 +81,34 @@ export const useAppLoading = create<AppLoadingContextType>((set) => ({
 let isAnimating = false;
 let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
+const hasLimitedHardwareHints = () => {
+  if (typeof navigator === 'undefined') return false;
+
+  const deviceMemory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory;
+  const logicalProcessors = navigator.hardwareConcurrency;
+
+  return (deviceMemory !== undefined && deviceMemory <= 4)
+    || (logicalProcessors !== undefined && logicalProcessors <= 4);
+};
+
 export const usePCSelection = create<PCSelectionContextType>((set) => ({
   selectedComponent: null,
+  selectedComponentFocus: null,
   explodeStep: 0,
   cameraResetTrigger: 0,
-  setSelectedComponent: (component) => set({ selectedComponent: component }),
-  triggerCameraReset: () => set((state) => ({ cameraResetTrigger: state.cameraResetTrigger + 1, selectedComponent: null })),
+  setSelectedComponent: (component, focus = null) => set({
+    selectedComponent: component,
+    selectedComponentFocus: component ? focus : null,
+  }),
+  triggerCameraReset: () => set((state) => ({
+    cameraResetTrigger: state.cameraResetTrigger + 1,
+    selectedComponent: null,
+    selectedComponentFocus: null,
+  })),
   toggleExploded: () => {
     if (isAnimating) return;
     isAnimating = true;
-    set({ selectedComponent: null });
+    set({ selectedComponent: null, selectedComponentFocus: null });
     set((state) => {
       if (state.explodeStep === 0) {
         if (timeoutId) clearTimeout(timeoutId);
@@ -115,10 +137,10 @@ export const usePCRGB = create<PCRGBContextType>((set) => ({
 }));
 
 export const usePCLighting = create<PCLightingContextType>((set) => ({
-  ambientOn: false,
-  mainSpotOn: false,
+  ambientOn: true,
+  mainSpotOn: true,
   pcRGBOn: false,
-  cursorLightOn: true,
+  cursorLightOn: false,
   toggleAmbient: () => set((state) => ({ ambientOn: !state.ambientOn })),
   toggleMainSpot: () => set((state) => ({ mainSpotOn: !state.mainSpotOn })),
   togglePcRGB: () => set((state) => ({ pcRGBOn: !state.pcRGBOn })),
@@ -126,11 +148,15 @@ export const usePCLighting = create<PCLightingContextType>((set) => ({
 }));
 
 export const usePCView = create<PCViewContextType>((set) => ({
-  isLowEndGPU: false,
-  setLowEndGPU: (val) => set({ isLowEndGPU: val }),
+  isLowEndGPU: hasLimitedHardwareHints(),
+  setLowEndGPU: (val) => set((state) => ({
+    isLowEndGPU: val,
+    showDesk: val ? false : state.showDesk,
+    showParticles: val ? false : state.showParticles,
+  })),
   xrayMode: false,
   showAirflow: false,
-  envPreset: 'city',
+  envPreset: 'night',
   showDesk: false,
   showParticles: false,
   showFog: true,
@@ -147,7 +173,9 @@ export const usePCView = create<PCViewContextType>((set) => ({
       usePCLighting.setState({ ambientOn: true, mainSpotOn: true, pcRGBOn: false, cursorLightOn: false });
     }
   },
-  toggleDesk: () => set((state) => ({ showDesk: !state.showDesk })),
+  toggleDesk: () => set((state) => (
+    state.isLowEndGPU ? state : { showDesk: !state.showDesk }
+  )),
   toggleParticles: () => set((state) => ({ showParticles: !state.showParticles })),
   toggleFog: () => set((state) => ({ showFog: !state.showFog }))
 }));
@@ -160,4 +188,3 @@ export const usePCUI = create<PCUIContextType>((set) => ({
   setShowInstructions: (show) => set({ showInstructions: show }),
   setHoveredComponentId: (id) => set({ hoveredComponentId: id })
 }));
-

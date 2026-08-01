@@ -198,16 +198,19 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
   const shpMoboRef = useRef<ShapeGeometry>(null);
 
   useEffect(() => {
+    const geometries = [
+      extBackRef.current,
+      extTopRef.current,
+      extBotRef.current,
+      extMoboRef.current,
+      shpBack1Ref.current,
+      shpBack2Ref.current,
+      shpBot1Ref.current,
+      shpBot2Ref.current,
+      shpMoboRef.current,
+    ];
     return () => {
-      extBackRef.current?.dispose();
-      extTopRef.current?.dispose();
-      extBotRef.current?.dispose();
-      extMoboRef.current?.dispose();
-      shpBack1Ref.current?.dispose();
-      shpBack2Ref.current?.dispose();
-      shpBot1Ref.current?.dispose();
-      shpBot2Ref.current?.dispose();
-      shpMoboRef.current?.dispose();
+      geometries.forEach(geometry => geometry?.dispose());
     };
   }, []);
 

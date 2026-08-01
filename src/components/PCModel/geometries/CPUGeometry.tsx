@@ -77,7 +77,8 @@ export const CPUGeometry = () => {
   }, [ihsShape]);
 
   useEffect(() => {
-    return () => ihsGeoRef.current?.dispose();
+    const geometry = ihsGeoRef.current;
+    return () => geometry?.dispose();
   }, []);
 
   const texturedMaterials = useMemo(() => ({
