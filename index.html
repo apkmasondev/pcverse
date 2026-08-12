@@ -43,25 +43,39 @@
     </script>
     <link rel="canonical" href="https://pcverse.app/" />
     <script>
-      function checkWebGL() {
+      // Scena wymaga WebGL 2 — Three.js porzucił wsparcie dla WebGL 1 w r163.
+      // Rozróżniamy trzy przypadki, bo dla użytkownika oznaczają zupełnie co innego:
+      // pełne wsparcie, tylko WebGL 1 (za stara przeglądarka/sterownik) i całkowity brak.
+      function detectWebGL() {
         try {
           var canvas = document.createElement('canvas');
-          return !!(window.WebGL2RenderingContext && canvas.getContext('webgl2'));
+          if (window.WebGL2RenderingContext && canvas.getContext('webgl2')) return 'webgl2';
+          if (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')) return 'webgl1';
+          return 'none';
         } catch (e) {
-          return false;
+          return 'none';
         }
       }
-      if (!checkWebGL()) {
-        document.documentElement.className += ' no-webgl';
+      var webglSupport = detectWebGL();
+      if (webglSupport !== 'webgl2') {
+        document.documentElement.className += ' no-webgl no-' + webglSupport;
       }
     </script>
     <style>
       .no-webgl #root { display: none !important; }
       .no-webgl-msg { display: none; }
-      .no-webgl .no-webgl-msg { display: flex; align-items: center; justify-content: center; height: 100vh; background: #0f0a1c; color: white; text-align: center; font-family: sans-serif; padding: 2rem; }
-      .no-webgl .no-webgl-box { max-width: 28rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 1.5rem; border-radius: 1rem; }
-      .no-webgl h1 { font-size: 1.5rem; color: #f87171; margin-bottom: 1rem; }
-      .no-webgl p { color: #cbd5e1; line-height: 1.5; }
+      .no-webgl .no-webgl-msg { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #0f0a1c; color: white; font-family: sans-serif; padding: 2rem; }
+      .no-webgl .no-webgl-box { max-width: 36rem; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); padding: 1.75rem; border-radius: 1rem; }
+      .no-webgl h1 { font-size: 1.5rem; color: #f87171; margin: 0 0 1rem; }
+      .no-webgl h2 { font-size: 1rem; color: #a5b4fc; margin: 1.75rem 0 0.75rem; }
+      .no-webgl p { color: #cbd5e1; line-height: 1.6; margin: 0 0 0.75rem; }
+      .no-webgl ul { color: #cbd5e1; line-height: 1.6; padding-left: 1.25rem; margin: 0; }
+      .no-webgl li { margin-bottom: 0.5rem; }
+      .no-webgl li strong { color: #e2e8f0; }
+      .no-webgl .webgl1-note { display: none; }
+      .no-webgl1 .webgl1-note { display: block; }
+      .no-none .webgl-none-note { display: block; }
+      .no-webgl1 .webgl-none-note { display: none; }
     </style>
   </head>
   <body>
@@ -70,8 +84,20 @@
     </noscript>
     <div class="no-webgl-msg">
       <div class="no-webgl-box">
-        <h1>Brak Obsługi WebGL</h1>
-        <p>Twoja przeglądarka lub urządzenie nie obsługuje WebGL, który jest wymagany do uruchomienia aplikacji PCVerse. Spróbuj zaktualizować sterowniki karty graficznej lub użyć innej przeglądarki.</p>
+        <h1>Scena 3D jest niedostępna</h1>
+        <p class="webgl-none-note">Twoja przeglądarka lub urządzenie nie obsługuje WebGL, który jest wymagany do uruchomienia interaktywnej sceny PCVerse. Spróbuj zaktualizować sterowniki karty graficznej lub użyć innej przeglądarki.</p>
+        <p class="webgl1-note">Twoja przeglądarka obsługuje wyłącznie WebGL 1. PCVerse wymaga WebGL 2 (Chrome/Edge 56+, Firefox 51+, Safari 15+). Zaktualizuj przeglądarkę lub sterowniki karty graficznej.</p>
+
+        <h2>Skrócony przewodnik tekstowy po podzespołach</h2>
+        <ul>
+          <li><strong>Procesor (CPU)</strong> — wykonuje instrukcje programów; decyduje o płynności obliczeń i logice gier.</li>
+          <li><strong>Karta graficzna (GPU)</strong> — renderuje obraz i przyspiesza obliczenia równoległe, w tym uczenie maszynowe.</li>
+          <li><strong>Pamięć RAM</strong> — ulotna pamięć robocza na dane aktualnie używanych programów.</li>
+          <li><strong>Płyta główna</strong> — łączy wszystkie podzespoły magistralami i zasila je.</li>
+          <li><strong>Dysk SSD / HDD</strong> — trwałe przechowywanie systemu, programów i plików.</li>
+          <li><strong>Zasilacz (PSU)</strong> — przekształca prąd zmienny z gniazdka na stałe napięcia 12 V, 5 V i 3,3 V.</li>
+          <li><strong>Chłodzenie i wentylatory</strong> — odprowadzają ciepło, zapobiegając throttlingowi procesora i karty graficznej.</li>
+        </ul>
       </div>
     </div>
     <div id="root"></div>
