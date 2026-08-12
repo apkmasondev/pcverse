@@ -68,25 +68,43 @@ export interface AppLoadingContextType {
   triggerLoading: (callback: () => void) => void;
 }
 
+/** Opóźnienie przed wykonaniem akcji, by ekran ładowania zdążył się pojawić. */
+const LOADING_SHOW_DELAY_MS = 150;
+/** Minimalny czas widoczności ekranu ładowania po wykonaniu akcji. */
+const LOADING_HIDE_DELAY_MS = 800;
+/** Czas trwania animacji rozkładania/składania modelu. */
+const EXPLODE_ANIMATION_MS = 800;
+
+let loadingRunTimer: ReturnType<typeof setTimeout> | null = null;
+let loadingHideTimer: ReturnType<typeof setTimeout> | null = null;
+
 export const useAppLoading = create<AppLoadingContextType>((set) => ({
   isManualLoading: false,
   triggerLoading: (callback) => {
+    // Szybkie, kolejne wywołania muszą zresetować poprzedni cykl — inaczej timer
+    // pierwszego zgłoszenia chowa ekran ładowania w trakcie drugiego.
+    if (loadingRunTimer) clearTimeout(loadingRunTimer);
+    if (loadingHideTimer) clearTimeout(loadingHideTimer);
+
     set({ isManualLoading: true });
-    setTimeout(() => {
+    loadingRunTimer = setTimeout(() => {
+      loadingRunTimer = null;
       callback();
-      setTimeout(() => set({ isManualLoading: false }), 800);
-    }, 150);
+      loadingHideTimer = setTimeout(() => {
+        loadingHideTimer = null;
+        set({ isManualLoading: false });
+      }, LOADING_HIDE_DELAY_MS);
+    }, LOADING_SHOW_DELAY_MS);
   }
 }));
 
-let isAnimating = false;
-let timeoutId: ReturnType<typeof setTimeout> | null = null;
+let explodeTimer: ReturnType<typeof setTimeout> | null = null;
 
 // Pełna detekcja (WebGL2/WebGL1/brak, GPU, rdzenie, pamięć) żyje w utils/deviceCapabilities.
 // Tutaj interesuje nas tylko, czy start odbywa się na najniższym poziomie jakości.
 const hasLimitedHardwareHints = () => detectDeviceCapabilities().tier === 'low';
 
-export const usePCSelection = create<PCSelectionContextType>((set) => ({
+export const usePCSelection = create<PCSelectionContextType>((set, get) => ({
   selectedComponent: null,
   selectedComponentFocus: null,
   explodeStep: 0,
@@ -101,26 +119,19 @@ export const usePCSelection = create<PCSelectionContextType>((set) => ({
     selectedComponentFocus: null,
   })),
   toggleExploded: () => {
-    if (isAnimating) return;
-    isAnimating = true;
-    set({ selectedComponent: null, selectedComponentFocus: null });
-    set((state) => {
-      if (state.explodeStep === 0) {
-        if (timeoutId) clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          set({ explodeStep: 2 });
-          isAnimating = false;
-        }, 800);
-        return { explodeStep: 1 };
-      } else {
-        if (timeoutId) clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          set({ explodeStep: 0 });
-          isAnimating = false;
-        }, 800);
-        return { explodeStep: 1 };
-      }
-    });
+    // Krok 1 oznacza trwającą animację — stan sam w sobie jest blokadą, więc nie
+    // potrzebujemy dodatkowej flagi `isAnimating` żyjącej poza magazynem.
+    const currentStep = get().explodeStep;
+    if (currentStep === 1) return;
+
+    const targetStep = currentStep === 0 ? 2 : 0;
+    set({ selectedComponent: null, selectedComponentFocus: null, explodeStep: 1 });
+
+    if (explodeTimer) clearTimeout(explodeTimer);
+    explodeTimer = setTimeout(() => {
+      explodeTimer = null;
+      set({ explodeStep: targetStep });
+    }, EXPLODE_ANIMATION_MS);
   }
 }));
 

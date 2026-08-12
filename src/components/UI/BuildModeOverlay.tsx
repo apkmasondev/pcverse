@@ -77,7 +77,7 @@ export const BuildModeOverlay = () => {
                 usePCLighting.setState({ pcRGBOn: true });
               }
             }}
-            className={`pointer-events-auto px-6 py-2.5 xl:px-8 xl:py-3.5 rounded-full transition-all font-bold text-xs xl:text-sm flex items-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.5)] border ${
+            className={`group relative overflow-hidden pointer-events-auto px-6 py-2.5 xl:px-8 xl:py-3.5 rounded-full transition-all font-bold text-xs xl:text-sm flex items-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.5)] border ${
               isComplete
                 ? "bg-amber-500/20 text-amber-300 border-amber-500/50 hover:bg-amber-500/40 hover:text-amber-100 hover:shadow-[0_0_30px_rgba(245,158,11,0.5)] backdrop-blur-md"
                 : "bg-black/60 text-white/90 border-white/10 hover:bg-red-500/40 hover:text-white hover:border-red-500/50 backdrop-blur-md"
@@ -93,8 +93,9 @@ export const BuildModeOverlay = () => {
             )}
             
             {isComplete && (
-              <motion.div 
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" 
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-amber-400/20 to-transparent transition-transform duration-700 group-hover:translate-x-full"
               />
             )}
           </motion.button>
