@@ -1,7 +1,7 @@
 import { MathUtils, AmbientLight, DirectionalLight, SpotLight, HemisphereLight, RectAreaLight, PerspectiveCamera as ThreePerspectiveCamera, Vector2, Vector3, Object3D } from 'three';
-import React, { useRef, useEffect, useState, useMemo } from 'react';
+import React, { useRef, useEffect, useState, useMemo, useCallback } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { CameraControls, Environment, PerspectiveCamera, Sparkles, PerformanceMonitor, Grid, Stars, Preload } from '@react-three/drei';
+import { CameraControls, Environment, PerspectiveCamera, Sparkles, Grid, Stars, Preload } from '@react-three/drei';
 import { EffectComposer, Bloom, N8AO, Vignette, ChromaticAberration, DepthOfField, SMAA } from '@react-three/postprocessing';
 import type { DepthOfFieldEffect } from 'postprocessing';
 
@@ -9,9 +9,12 @@ import type { DepthOfFieldEffect } from 'postprocessing';
 import { PCModel } from '../PCModel/PCModel';
 import { usePCSelection, usePCView, usePCLighting } from '../../hooks/usePC';
 import { useBuildStore } from '../../store/useBuildStore';
+import { useQualityStore } from '../../store/useQualityStore';
+import type { QualitySettings } from '../../store/useQualityStore';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { GlobalErrorBoundary as ErrorBoundary } from '../ErrorBoundary';
 import { DeskScenery } from './DeskScenery';
+import { AdaptiveQuality } from './AdaptiveQuality';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 
 const envMap: Record<string, string> = {
@@ -22,6 +25,23 @@ const envMap: Record<string, string> = {
   night: import.meta.env.BASE_URL + 'environments/moonless_golf_1k.hdr',
   lobby: import.meta.env.BASE_URL + 'environments/st_fagans_interior_1k.hdr'
 };
+
+/** Presety HDRi o wysokiej luminancji — wymagają przyciszenia świateł sceny. */
+const BRIGHT_ENVIRONMENTS = ['studio', 'dawn', 'apartment', 'lobby'];
+
+/** Kolor tła (i mgły) dopasowany do presetu HDRi. */
+const BACKGROUND_COLORS: Record<string, string> = {
+  studio: '#13141a',
+  city: '#0f0a1c',
+  apartment: '#8492a6',
+  night: '#05020a',
+  lobby: '#241c14',
+  dawn: '#1e1b18',
+};
+
+// Stała offsetu — tworzenie nowego Vector2 przy każdym renderze wymuszało
+// rekonstrukcję efektu w postprocessing.
+const CHROMATIC_ABERRATION_OFFSET = new Vector2(0.0005, 0.0005);
 
 const PC_MODEL_BASE_Y_OFFSET = 1.36;
 const PC_MODEL_DESKTOP_Y_OFFSET = -1;
@@ -110,9 +130,9 @@ const CursorLight = () => {
   );
 };
 
-const AnimatedLights = ({ isLowEndGPU, envPreset }: { isLowEndGPU: boolean, envPreset: string }) => {
+const AnimatedLights = ({ simplifiedLighting, envPreset }: { simplifiedLighting: boolean, envPreset: string }) => {
   const { ambientOn, mainSpotOn, pcRGBOn } = usePCLighting();
-  const isBrightEnv = ['studio', 'dawn', 'apartment'].includes(envPreset);
+  const isBrightEnv = BRIGHT_ENVIRONMENTS.includes(envPreset);
 
   const ambientRef = useRef<AmbientLight>(null);
   const dirRef1 = useRef<DirectionalLight>(null);
@@ -135,7 +155,7 @@ const AnimatedLights = ({ isLowEndGPU, envPreset }: { isLowEndGPU: boolean, envP
     if (dirRef2.current) dirRef2.current.intensity = MathUtils.lerp(dirRef2.current.intensity, tPcRgb, dt);
     if (spotRef.current) spotRef.current.intensity = MathUtils.lerp(spotRef.current.intensity, tSpot, dt);
 
-    if (isLowEndGPU) {
+    if (simplifiedLighting) {
       if (hemiRef.current) hemiRef.current.intensity = MathUtils.lerp(hemiRef.current.intensity, tHemi, dt);
     } else {
       if (rectRef.current) rectRef.current.intensity = MathUtils.lerp(rectRef.current.intensity, tRect, dt);
@@ -144,7 +164,7 @@ const AnimatedLights = ({ isLowEndGPU, envPreset }: { isLowEndGPU: boolean, envP
 
   return (
     <>
-      {isLowEndGPU ? (
+      {simplifiedLighting ? (
         <hemisphereLight ref={hemiRef} color="#ffffff" groundColor="#a0aabf" intensity={0} />
       ) : (
         <>
@@ -159,8 +179,7 @@ const AnimatedLights = ({ isLowEndGPU, envPreset }: { isLowEndGPU: boolean, envP
   );
 };
 
-const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disableEffects?: boolean }) => {
-  const isLowEndGPU = usePCView(state => state.isLowEndGPU);
+const SceneContent = ({ isMobile, settings }: { isMobile: boolean, settings: QualitySettings }) => {
   const selectedComponent = usePCSelection(state => state.selectedComponent);
   const selectedComponentFocus = usePCSelection(state => state.selectedComponentFocus);
   const cameraResetTrigger = usePCSelection(state => state.cameraResetTrigger);
@@ -202,6 +221,8 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
         return { cell: '#7c2d12', section: '#ea580c', sparkles: '#fef08a' }; // Świt (Pomarańcz/Ciepły), pyłki Złote
       case 'apartment':
         return { cell: '#3f3f46', section: '#a1a1aa', sparkles: '#e5e7eb' }; // Mieszkanie (Ciepłe szarości), pyłki Białe
+      case 'lobby':
+        return { cell: '#4a3a28', section: '#a98a5c', sparkles: '#fde68a' }; // Hol (Ciepłe drewno), pyłki Bursztynowe
       case 'studio':
       default:
         return { cell: '#4b5563', section: '#6b7280', sparkles: '#9ca3af' }; // Studio (Neutralny), pyłki Szare
@@ -209,7 +230,7 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
   }, [envPreset]);
 
   // Dynamiczny kolor tła zależny od wybranego środowiska HDRi
-  const bgColor = envPreset === 'studio' ? '#13141a' : envPreset === 'city' ? '#0f0a1c' : envPreset === 'apartment' ? '#8492a6' : envPreset === 'night' ? '#05020a' : '#1e1b18';
+  const bgColor = BACKGROUND_COLORS[envPreset] ?? BACKGROUND_COLORS.studio;
 
   useEffect(() => {
     if (selectedComponent) {
@@ -348,16 +369,16 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
 
       <PerspectiveCamera makeDefault position={[0, 3, 16]} fov={50} near={0.1} far={100} />
 
-      {!isMobile && !disableEffects && showParticles && !reducedMotion && (
+      {!isMobile && settings.atmosphere && showParticles && !reducedMotion && (
         <>
-          <Sparkles count={500} scale={30} size={4} speed={0.5} opacity={0.5} color={gridColors.sparkles} />
-          <Stars radius={50} depth={50} count={3000} factor={3} saturation={0.5} fade speed={1.5} />
+          <Sparkles count={settings.sparkleCount} scale={30} size={4} speed={0.5} opacity={0.5} color={gridColors.sparkles} />
+          <Stars radius={50} depth={50} count={settings.starCount} factor={3} saturation={0.5} fade speed={1.5} />
         </>
       )}
 
-      <AnimatedLights isLowEndGPU={isLowEndGPU} envPreset={envPreset} />
+      <AnimatedLights simplifiedLighting={settings.simplifiedLighting} envPreset={envPreset} />
 
-      {!isMobile && !disableEffects && <CursorLight />}
+      {!isMobile && settings.cursorLight && <CursorLight />}
 
       <React.Suspense fallback={null}>
 
@@ -374,12 +395,12 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
         <ErrorBoundary fallback={null}>
           <Environment
             files={envMap[envPreset] || envMap.studio}
-            environmentIntensity={['studio', 'dawn', 'apartment', 'lobby'].includes(envPreset) ? 0.7 : 1.2}
+            environmentIntensity={BRIGHT_ENVIRONMENTS.includes(envPreset) ? 0.7 : 1.2}
           />
         </ErrorBoundary>
 
-        {showDesk && !isMobile && !isLowEndGPU ? (
-          <DeskScenery />
+        {showDesk && !isMobile && settings.scenery ? (
+          <DeskScenery reflectorResolution={settings.reflectorResolution} />
         ) : (
           <Grid
             position={[0, -4.1, 0]}
@@ -394,22 +415,26 @@ const SceneContent = ({ isMobile, disableEffects }: { isMobile: boolean, disable
             fadeStrength={2}
           />
         )}
-        {!isMobile && (() => {
+        {!isMobile && settings.postProcessing && (() => {
           const effects: React.ReactElement[] = [];
-          
-          if (!isLowEndGPU) {
+
+          if (settings.antialias) {
             effects.push(<SMAA key="smaa" />);
           }
-          if (dofEnabled && !disableEffects) {
+          if (settings.depthOfField && dofEnabled) {
             effects.push(<DepthOfField ref={dofRef} key="dof" target={dofTarget} focalLength={3.0} bokehScale={5} />);
           }
-          if (!disableEffects) {
+          if (settings.ambientOcclusion) {
             effects.push(<N8AO key="n8ao" aoRadius={0.5} intensity={2.0} distanceFalloff={0.5} quality="medium" halfRes />);
           }
-          
-          effects.push(<Bloom key="bloom" luminanceThreshold={1.2} mipmapBlur={!isLowEndGPU} intensity={1.5} />);
+
+          effects.push(<Bloom key="bloom" luminanceThreshold={1.2} mipmapBlur={settings.bloomMipmap} intensity={1.5} />);
           effects.push(<Vignette key="vig" eskil={false} offset={0.1} darkness={0.9} />);
-          effects.push(<ChromaticAberration key="ca" offset={new Vector2(0.0005, 0.0005)} radialModulation={false} modulationOffset={0} />);
+          if (settings.chromaticAberration) {
+            // `radialModulation` domyślnie jest wyłączone, a `modulationOffset` działa
+            // wyłącznie razem z nim — obie wartości pomijamy (od 3.0.5 nie ma ich w typach).
+            effects.push(<ChromaticAberration key="ca" offset={CHROMATIC_ABERRATION_OFFSET} />);
+          }
 
           return (
             <EffectComposer multisampling={0} stencilBuffer={false}>
@@ -447,10 +472,14 @@ export const Scene3D = () => {
   const isMobile = useIsMobile();
   const setSelectedComponent = usePCSelection(s => s.setSelectedComponent);
   const [hasInteracted, setHasInteracted] = useState(false);
-  const [dpr, setDpr] = useState<number | [number, number]>(isMobile ? 1 : [1, 2]);
-  const [disableEffects, setDisableEffects] = useState(false);
-  const setLowEndGPU = usePCView(state => state.setLowEndGPU);
-  const isLowEndGPU = usePCView(state => state.isLowEndGPU);
+  const [contextLost, setContextLost] = useState(false);
+
+  const settings = useQualityStore(state => state.settings);
+  const applyTier = useQualityStore(state => state.applyTier);
+
+  // Na urządzeniach mobilnych `dpr` trzymamy na 1 niezależnie od tieru —
+  // ekrany 3x DPR potrafią potroić liczbę pikseli do wyrenderowania.
+  const dpr = isMobile ? 1 : settings.dpr;
 
   const [frameloop, setFrameloop] = useState<'always' | 'demand' | 'never'>(isMobile ? 'demand' : 'always');
 
@@ -465,6 +494,25 @@ export const Scene3D = () => {
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, [isMobile]);
+
+  // Utrata kontekstu WebGL zdarza się realnie na słabych/mobilnych GPU przy
+  // presji pamięci. Bez obsługi użytkownik widzi zamrożoną, czarną scenę.
+  const handleCreated = useCallback(({ gl }: { gl: { domElement: HTMLCanvasElement; capabilities: { maxTextureSize: number } } }) => {
+    const canvas = gl.domElement;
+    const onLost = (event: Event) => {
+      event.preventDefault();
+      setContextLost(true);
+    };
+    const onRestored = () => setContextLost(false);
+    canvas.addEventListener('webglcontextlost', onLost);
+    canvas.addEventListener('webglcontextrestored', onRestored);
+
+    // Ostateczna weryfikacja na żywym kontekście — sonda przy starcie mogła
+    // trafić na inny (np. programowy) backend niż faktyczny renderer sceny.
+    if (gl.capabilities.maxTextureSize < 8192) {
+      applyTier('low', `MAX_TEXTURE_SIZE = ${gl.capabilities.maxTextureSize}`);
+    }
+  }, [applyTier]);
 
   return (
     <div
@@ -482,40 +530,43 @@ export const Scene3D = () => {
           </div>
         </div>
       )}
+      {contextLost && (
+        <div
+          role="alert"
+          className="absolute inset-0 z-20 flex items-center justify-center bg-[#050505]/95 p-6 text-center"
+        >
+          <div className="max-w-md rounded-2xl border border-amber-500/30 bg-amber-500/10 p-6">
+            <h2 className="mb-3 text-lg font-bold text-amber-300">Przerwano rendering 3D</h2>
+            <p className="text-sm leading-relaxed text-slate-300">
+              Karta graficzna utraciła kontekst WebGL — najczęściej z powodu braku pamięci
+              lub aktualizacji sterownika. Odśwież stronę, aby wrócić do sceny.
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-5 rounded-lg bg-amber-500/20 px-4 py-2 text-sm font-medium text-amber-100 transition-colors hover:bg-amber-500/30"
+            >
+              Odśwież stronę
+            </button>
+          </div>
+        </div>
+      )}
       <Canvas
-        gl={{ antialias: false, stencil: false }}
-        dpr={isLowEndGPU ? 1 : dpr}
+        gl={{
+          antialias: false,
+          stencil: false,
+          alpha: false,
+          depth: true,
+          powerPreference: settings.powerPreference,
+        }}
+        dpr={dpr}
         frameloop={frameloop}
         onPointerMissed={() => setSelectedComponent(null)}
-        onCreated={({ gl }) => {
-          const context = gl.getContext();
-          const debugRendererInfo = context.getExtension('WEBGL_debug_renderer_info');
-          const rendererName = debugRendererInfo
-            ? String(context.getParameter(debugRendererInfo.UNMASKED_RENDERER_WEBGL))
-            : '';
-          const usesSoftwareRenderer = /swiftshader|llvmpipe|software|microsoft basic render/i.test(rendererName);
-          const hasLimitedWebGL = gl.capabilities.maxTextureSize < 8192;
-
-          if (usesSoftwareRenderer || hasLimitedWebGL) {
-            setDpr(1);
-            setDisableEffects(true);
-            setLowEndGPU(true);
-          }
-        }}
+        onCreated={handleCreated}
       >
-        <PerformanceMonitor
-          onDecline={() => {
-            setDpr(1);
-            setDisableEffects(true);
-            setLowEndGPU(true);
-          }}
-          onIncline={() => {
-            setDpr(isLowEndGPU || isMobile ? 1 : [1, 2]);
-            if (!isLowEndGPU) setDisableEffects(false);
-          }}
-        >
-          <SceneContent isMobile={isMobile} disableEffects={disableEffects || isLowEndGPU} />
-        </PerformanceMonitor>
+        {/* Pomiar FPS ma sens tylko przy ciągłej pętli renderowania — w trybie
+            `demand` liczba klatek odzwierciedla aktywność użytkownika, nie wydajność. */}
+        <AdaptiveQuality active={frameloop === 'always'} />
+        <SceneContent isMobile={isMobile} settings={settings} />
         <Preload all />
       </Canvas>
     </div>

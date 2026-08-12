@@ -628,7 +628,7 @@ export const DioramaFrame = () => {
   );
 };
 
-export const DeskScenery = () => {
+export const DeskScenery = ({ reflectorResolution = 512 }: { reflectorResolution?: number }) => {
   const xrayMode = usePCView(state => state.xrayMode);
   const isMobile = useIsMobile();
   const reflectorMeshRef = useRef<Mesh>(null);
@@ -643,23 +643,31 @@ export const DeskScenery = () => {
 
   if (xrayMode || isMobile) return null;
 
+  // resolution = 0 oznacza rezygnację z odbić (osobny render target sceny w każdej klatce)
+  // na rzecz zwykłej, matowej podłogi.
+  const reflectionsEnabled = reflectorResolution > 0;
+
   return (
     <group position={[0, -4.1, 0]}>
       <mesh ref={reflectorMeshRef} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
         <planeGeometry args={[60, 60]} />
-        <MeshReflectorMaterial
-          blur={[300, 100]}
-          resolution={512}
-          mixBlur={1}
-          mixStrength={20}
-          roughness={0.5}
-          depthScale={1.2}
-          minDepthThreshold={0.4}
-          maxDepthThreshold={1.4}
-          color="#151515"
-          metalness={0.5}
-          mirror={1}
-        />
+        {reflectionsEnabled ? (
+          <MeshReflectorMaterial
+            blur={[300, 100]}
+            resolution={reflectorResolution}
+            mixBlur={1}
+            mixStrength={20}
+            roughness={0.5}
+            depthScale={1.2}
+            minDepthThreshold={0.4}
+            maxDepthThreshold={1.4}
+            color="#151515"
+            metalness={0.5}
+            mirror={1}
+          />
+        ) : (
+          <meshStandardMaterial color="#151515" roughness={0.85} metalness={0.2} />
+        )}
       </mesh>
 
       <Suspense fallback={null}>

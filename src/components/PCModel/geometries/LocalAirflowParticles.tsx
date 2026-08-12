@@ -4,21 +4,27 @@ import { useRef, useMemo, useEffect } from 'react';
 
 import { useFrame } from '@react-three/fiber';
 import { usePCView } from '../../../hooks/usePC';
-import { useReducedMotion } from 'framer-motion';
+import { useReducedMotion } from '../../../hooks/useReducedMotion';
+import { useQualityStore } from '../../../store/useQualityStore';
 
 const pseudoRandom = (index: number, salt: number) => {
   const value = Math.sin((index + 1) * 12.9898 + salt * 78.233) * 43758.5453;
   return value - Math.floor(value);
 };
 
-export const LocalAirflowParticles = ({ count = 50, radius = 0.4, length = 1.5, speedMult = 1, color = "#38bdf8" }: { count?: number, radius?: number, length?: number, speedMult?: number, color?: string }) => {
+export const LocalAirflowParticles = ({ count: requestedCount = 50, radius = 0.4, length = 1.5, speedMult = 1, color = "#38bdf8" }: { count?: number, radius?: number, length?: number, speedMult?: number, color?: string }) => {
   const showAirflow = usePCView(s => s.showAirflow);
   const shouldReduceMotion = useReducedMotion();
+  const particleScale = useQualityStore(s => s.settings.particleScale);
   const isVisible = showAirflow && !shouldReduceMotion;
   const meshRef = useRef<InstancedMesh>(null);
-  
+
+  // LOD instancji: na słabszym sprzęcie renderujemy ułamek cząsteczek,
+  // zachowując co najmniej kilka, by efekt pozostał czytelny.
+  const count = Math.max(6, Math.round(requestedCount * particleScale));
+
   const dummy = useMemo(() => new Object3D(), []);
-  
+
   const particles = useMemo(() => {
     return Array.from({ length: count }).map((_, index) => {
       const angle = pseudoRandom(index, 1) * Math.PI * 2;

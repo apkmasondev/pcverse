@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { PCComponent } from '../data/components';
+import { detectDeviceCapabilities } from '../utils/deviceCapabilities';
 
 export interface PCSelectionContextType {
   selectedComponent: PCComponent | null;
@@ -81,15 +82,9 @@ export const useAppLoading = create<AppLoadingContextType>((set) => ({
 let isAnimating = false;
 let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-const hasLimitedHardwareHints = () => {
-  if (typeof navigator === 'undefined') return false;
-
-  const deviceMemory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory;
-  const logicalProcessors = navigator.hardwareConcurrency;
-
-  return (deviceMemory !== undefined && deviceMemory <= 4)
-    || (logicalProcessors !== undefined && logicalProcessors <= 4);
-};
+// Pełna detekcja (WebGL2/WebGL1/brak, GPU, rdzenie, pamięć) żyje w utils/deviceCapabilities.
+// Tutaj interesuje nas tylko, czy start odbywa się na najniższym poziomie jakości.
+const hasLimitedHardwareHints = () => detectDeviceCapabilities().tier === 'low';
 
 export const usePCSelection = create<PCSelectionContextType>((set) => ({
   selectedComponent: null,
