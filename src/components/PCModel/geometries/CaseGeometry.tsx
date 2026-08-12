@@ -24,6 +24,9 @@ import {
 } from './CaseShapes';
 
 
+/** Docelowe natężenia wewnętrznych świateł RGB, w kolejności renderowania w grupie. */
+const RGB_LIGHT_INTENSITIES = [3.0, 2.5];
+
 export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEnabled?: boolean }) => {
   const xrayMode = usePCView(s => s.xrayMode);
   const effectiveRgbColor = rgbEnabled ? rgbColor : '#000000';
@@ -59,18 +62,21 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
     caseBottomTexture.offset.set(0.5, 0.5);
   }, [caseBackTexture, caseBehindTexture, caseBottomTexture]);
 
+  // Referencja grupy wewnętrznych świateł RGB obudowy. Musi wskazywać dokładnie
+  // grupę z pointLightami — pętla poniżej przegląda wyłącznie jej bezpośrednie dzieci.
   const groupRef = useRef<Group>(null);
-  
+
   useFrame((_, delta) => {
-    if (groupRef.current) {
-      const dt = Math.min(delta, 0.05);
-      groupRef.current.children.forEach((child) => {
-        if ((child as PointLight).isLight && child.userData.targetIntensity !== undefined) {
-          const light = child as PointLight;
-          light.intensity = MathUtils.lerp(light.intensity, child.userData.targetIntensity, dt * 5);
-        }
-      });
-    }
+    const group = groupRef.current;
+    if (!group) return;
+
+    const dt = Math.min(delta, 0.05);
+    group.children.forEach((child, index) => {
+      const light = child as PointLight;
+      if (!light.isLight) return;
+      const target = rgbEnabled ? (RGB_LIGHT_INTENSITIES[index] ?? 0) : 0;
+      light.intensity = MathUtils.lerp(light.intensity, target, dt * 5);
+    });
   });
 
 
@@ -383,9 +389,8 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
 
       {/* Internal Premium RGB Ambient Lighting - hide in X-Ray mode */}
       {!xrayMode && (
-        <group name="case-internal-lights">
+        <group name="case-internal-lights" ref={groupRef}>
           <pointLight
-            ref={(light) => { if (light) light.userData.targetIntensity = rgbEnabled ? 3.0 : 0; }}
             position={[0, 1.2, -0.8]}
             distance={6}
             color="#6366f1"
@@ -393,7 +398,6 @@ export const CaseGeometry = ({ rgbColor, rgbEnabled }: { rgbColor: string; rgbEn
             intensity={0}
           />
           <pointLight
-            ref={(light) => { if (light) light.userData.targetIntensity = rgbEnabled ? 2.5 : 0; }}
             position={[0, -0.8, -0.6]}
             distance={5}
             color="#ec4899"

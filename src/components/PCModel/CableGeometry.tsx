@@ -77,7 +77,9 @@ export const CableGeometry = () => {
       {cables.map((curve, i) => (
         <mesh key={`cable-${i}`} material={xrayMode ? xrayMaterial : undefined}>
           <tubeGeometry
-            ref={(el) => tubeRefs.current[i] = el}
+            // Blok, nie wyrażenie: w React 19 wartość zwrócona z callback refa
+            // jest traktowana jako funkcja czyszcząca i wywoływana przy odmontowaniu.
+            ref={(el) => { tubeRefs.current[i] = el; }}
             args={[curve, 64, i === 0 ? 0.08 : i === 2 ? 0.03 : 0.05, 8, false]}
           />
           {!xrayMode && (
