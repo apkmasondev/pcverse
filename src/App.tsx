@@ -38,7 +38,9 @@ function App() {
           <a href="#info-panel" className="block py-2 outline-none focus:ring-2 focus:ring-indigo-500">Przejdź do panelu informacji</a>
         </nav>
 
-        {/* Ukrywamy całe UI i silnik 3D gdy jesteśmy w Matrixie. React nie odmontowuje drzewa by nie stracić zasobów WebGL, ale display: none pauzuje wycisza koszty */}
+        {/* Ukrywamy całe UI i silnik 3D gdy jesteśmy w Matrixie. Drzewo nie jest odmontowywane,
+            żeby nie tracić kontekstu i zasobów WebGL. Samo `display: none` nie zatrzymuje jednak
+            renderowania — pętlę wstrzymuje Scene3D, przełączając `frameloop` na `never`. */}
         <div style={{ display: inMatrix ? 'none' : 'block', width: '100%', height: '100%' }}>
           <Suspense fallback={<FallbackLoader />}>
             <Scene3D />

@@ -481,19 +481,22 @@ export const Scene3D = () => {
   // ekrany 3x DPR potrafią potroić liczbę pikseli do wyrenderowania.
   const dpr = isMobile ? 1 : settings.dpr;
 
-  const [frameloop, setFrameloop] = useState<'always' | 'demand' | 'never'>(isMobile ? 'demand' : 'always');
+  // Scena jest chowana (a nie odmontowywana) na czas Matrixa, żeby nie tracić
+  // zasobów WebGL. `display: none` nie zatrzymuje jednak pętli renderowania —
+  // dopiero `frameloop="never"` faktycznie wstrzymuje klatki.
+  const inMatrix = usePCView(state => state.inMatrix);
+  const [documentHidden, setDocumentHidden] = useState(false);
 
   useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        setFrameloop('never');
-      } else {
-        setFrameloop(isMobile ? 'demand' : 'always');
-      }
-    };
+    const handleVisibilityChange = () => setDocumentHidden(document.hidden);
+    handleVisibilityChange();
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [isMobile]);
+  }, []);
+
+  const frameloop: 'always' | 'demand' | 'never' = documentHidden || inMatrix
+    ? 'never'
+    : isMobile ? 'demand' : 'always';
 
   // Utrata kontekstu WebGL zdarza się realnie na słabych/mobilnych GPU przy
   // presji pamięci. Bez obsługi użytkownik widzi zamrożoną, czarną scenę.
