@@ -7,23 +7,39 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Zależności i artefakty builda
 node_modules
 dist
 dist-ssr
 *.local
-*.cjs
+
+# Zmienne środowiskowe (nigdy nie commitujemy sekretów)
+.env
+.env.*
+!.env.example
+
+# Cache narzędzi
+.vite
+.eslintcache
+*.tsbuildinfo
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
 .DS_Store
+Thumbs.db
+desktop.ini
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
 
-# AI Scratchpad
+# Lokalna konfiguracja narzędzi AI
+.claude/
+
+# Jednorazowe skrypty pomocnicze (patche generowane ad hoc, nieużywane w buildzie)
 scratch/
 scratch_*.txt
+scripts/
