@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { usePCView } from '../../hooks/usePC';
 
 // The PC words to occasionally drop
@@ -10,20 +10,21 @@ export const MatrixTerminal = () => {
   const [isWakingUp, setWakingUp] = useState(false);
   const [isError, setIsError] = useState(false);
   const errorRef = useRef(false);
-  
+  const wakingRef = useRef(false);
+  const wakeTimeoutRef = useRef<number | null>(null);
+  const errorTimeoutRef = useRef<number | null>(null);
+
   const exitMatrix = usePCView(state => state.exitMatrix);
-  
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    
+
     let animationId: number;
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-    canvas.width = width;
-    canvas.height = height;
+    let width = 0;
+    let height = 0;
 
     const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレゲゼデベペオォコソトノホモヨョロゴゾドボポヴッン';
     const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -31,16 +32,39 @@ export const MatrixTerminal = () => {
     const alphabet = katakana + latin + nums;
 
     const fontSize = 18;
-    const columns = Math.floor(width / fontSize);
-    
+
     // Arrays to track drops
-    const drops: number[] = [];
-    const characters: string[][] = [];
-    
-    for (let x = 0; x < columns; x++) {
-      drops[x] = 1;
-      characters[x] = [];
-    }
+    let columns = 0;
+    let drops: number[] = [];
+    let characters: string[][] = [];
+
+    // Rozmiar bufora liczymy w pikselach fizycznych (DPR), a rysujemy w logicznych.
+    // Bez tego deszcz znaków jest rozmyty na ekranach o wysokiej gęstości.
+    const resize = () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const nextColumns = Math.max(1, Math.floor(width / fontSize));
+      if (nextColumns === columns) return;
+
+      // Zachowujemy stan istniejących kolumn, a nowe (po poszerzeniu okna)
+      // inicjalizujemy — inaczej dołożony obszar zostawał trwale pusty.
+      const nextDrops: number[] = new Array(nextColumns);
+      const nextCharacters: string[][] = new Array(nextColumns);
+      for (let x = 0; x < nextColumns; x++) {
+        nextDrops[x] = drops[x] ?? Math.floor(Math.random() * (height / fontSize));
+        nextCharacters[x] = characters[x] ?? [];
+      }
+      columns = nextColumns;
+      drops = nextDrops;
+      characters = nextCharacters;
+    };
+
+    resize();
 
     const aberrationColor1 = 'rgba(239, 68, 68, 0.4)'; // Red
     const aberrationColor2 = 'rgba(6, 182, 212, 0.4)'; // Cyan
@@ -92,9 +116,11 @@ export const MatrixTerminal = () => {
         ctx.shadowColor = primaryColor;
         ctx.fillText(text, x, y);
 
-        // Draw the trailing character slightly above it
-        if (drops[i] > 1) {
-            const prevText = characters[i][drops[i]-1];
+        // Draw the trailing character slightly above it.
+        // Czyszczenie bufora znaków poniżej mogło usunąć poprzedni znak — bez tej
+        // osłony canvas rysowałby dosłowny napis "undefined".
+        const prevText = drops[i] > 1 ? characters[i][drops[i] - 1] : undefined;
+        if (prevText) {
             ctx.fillStyle = primaryColor;
             ctx.shadowBlur = 5;
             ctx.fillText(prevText, x, y - fontSize);
@@ -107,7 +133,7 @@ export const MatrixTerminal = () => {
         }
         
         // Accelerate everything if waking up or error
-        if (isWakingUp || isErr) {
+        if (wakingRef.current || isErr) {
             drops[i] += 2;
         } else {
             drops[i]++;
@@ -129,39 +155,44 @@ export const MatrixTerminal = () => {
 
     draw();
 
-    const handleResize = () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
-    };
-    
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', resize);
 
     return () => {
       cancelAnimationFrame(animationId);
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', resize);
     };
-  }, [isWakingUp]);
+    // Animacja czyta stan wybudzania i błędu przez referencje, dzięki czemu
+    // nie restartuje się (i nie gubi stanu deszczu) przy każdej zmianie stanu.
+  }, []);
+
+  const startWakeUp = useCallback(() => {
+    setWakingUp(true);
+    wakingRef.current = true;
+    // The screen will flash white via CSS transitions
+    wakeTimeoutRef.current = window.setTimeout(exitMatrix, 1200);
+  }, [exitMatrix]);
+
+  // Timeouty muszą zniknąć razem z komponentem, inaczej `exitMatrix` lub reset
+  // błędu wykonują się po odmontowaniu.
+  useEffect(() => () => {
+    if (wakeTimeoutRef.current !== null) window.clearTimeout(wakeTimeoutRef.current);
+    if (errorTimeoutRef.current !== null) window.clearTimeout(errorTimeoutRef.current);
+  }, []);
 
   const handleCommand = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       const cmd = inputVal.toLowerCase().trim();
       if (!cmd) return;
-      
+
       if (cmd === 'wake up' || cmd === 'exit' || cmd === 'overclock' || cmd === 'sudo rm -rf /matrix') {
-        setWakingUp(true);
-        // The screen will flash white via CSS transitions
-        setTimeout(() => {
-          exitMatrix();
-        }, 1200);
+        startWakeUp();
       } else {
         // TRIGGER ACCESS DENIED EFFECT
         setIsError(true);
         errorRef.current = true;
         setInputVal('');
-        
-        setTimeout(() => {
+
+        errorTimeoutRef.current = window.setTimeout(() => {
           setIsError(false);
           errorRef.current = false;
         }, 800);
